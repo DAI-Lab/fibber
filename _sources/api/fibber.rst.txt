@@ -1,0 +1,17 @@
+fibber package
+==============
+
+Submodules
+----------
+
+.. toctree::
+
+   fibber.fibber
+
+Module contents
+---------------
+
+.. automodule:: fibber
+   :members:
+   :undoc-members:
+   :show-inheritance:
