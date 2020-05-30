@@ -1,0 +1,21 @@
+fibber.evaluate package
+=======================
+
+Submodules
+----------
+
+.. toctree::
+
+   fibber.evaluate.evaluation
+   fibber.evaluate.measuring_editing_distance
+   fibber.evaluate.measuring_glove_similarity
+   fibber.evaluate.measuring_gpt2_quality
+   fibber.evaluate.measuring_use_similarity
+
+Module contents
+---------------
+
+.. automodule:: fibber.evaluate
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+fibber.evaluate.measuring\_use\_similarity module
+=================================================
+
+.. automodule:: fibber.evaluate.measuring_use_similarity
+   :members:
+   :undoc-members:
+   :show-inheritance:

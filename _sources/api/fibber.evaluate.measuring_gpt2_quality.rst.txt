@@ -1,0 +1,7 @@
+fibber.evaluate.measuring\_gpt2\_quality module
+===============================================
+
+.. automodule:: fibber.evaluate.measuring_gpt2_quality
+   :members:
+   :undoc-members:
+   :show-inheritance:

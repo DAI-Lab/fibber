@@ -1,6 +1,13 @@
 fibber package
 ==============
 
+Subpackages
+-----------
+
+.. toctree::
+
+   fibber.evaluate
+
 Module contents
 ---------------
 
