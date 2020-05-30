@@ -21,7 +21,7 @@ class EditingDistance(object):
     s2 = s2.split()
     if len(s1) == 0 or len(s2) == 0:
       return len(s1) + len(s2)
-    return len(s1) - self._lcs(s1, s2)
+    return max(len(s1), len(s2)) - self._lcs(s1, s2)
 
 
 if __name__ == "__main__":
