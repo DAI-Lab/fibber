@@ -1,5 +1,9 @@
 import argparse
+import json
 import logging
+import os
+
+import classifier
 import data_utils
 
 logging.basicConfig(format='%(asctime)s - %(message)s',
@@ -21,6 +25,7 @@ parser.add_argument("--leaderboard", type=str, default=None,
                     help="leaderboard filename.")
 
 # Classifier configs
+parser.add_argument("--clf_bs", type=int, default=32)
 parser.add_argument("--clf_opt", type=str, default="adamw")
 parser.add_argument("--clf_lr", type=float, default=0.00002)
 parser.add_argument("--clf_decay", type=float, default=0.001)
@@ -46,12 +51,18 @@ parser.add_argument("--gibbs_topk", type=int, default=100)
 
 
 def main(FLAGS):
+  logging.info("all flags: %s", FLAGS)
+  with open(FLAGS.output_dir + "/config.json", "w") as f:
+    json.dump(vars(FLAGS), f, indent=2)
   trainset, testset = data_utils.load_data(FLAGS.data_dir, FLAGS.dataset)
   testset_attack = data_utils.subsample_data(testset, FLAGS.n_attack)
 
+  logging.info("train classifier.")
+  clf_model = classifier.get_clf(FLAGS, trainset, testset)
 
 
 if __name__ == "__main__":
   FLAGS = parser.parse_args()
-
+  assert FLAGS.output_dir is not None
+  os.makedirs(FLAGS.output_dir, exist_ok=True)
   main(FLAGS)
