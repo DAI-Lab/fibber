@@ -4,11 +4,11 @@ import os
 import numpy as np
 import tqdm
 
-import data_utils
-import optim_utils
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from transformers import BertForSequenceClassification
+
+from . import data_utils, optim_utils
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 

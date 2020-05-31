@@ -81,8 +81,6 @@ class Dataset(torch.utils.data.IterableDataset):
     self._masked_lm = masked_lm
     self._masked_lm_ratio = masked_lm_ratio
     self._mask_tok_id = self._tokenizer.mask_token_id
-    if masked_lm:
-      assert mask_tok_id is not None
 
     counter = 0
     for item in tqdm.tqdm(dataset["data"]):
@@ -156,5 +154,5 @@ class Dataset(torch.utils.data.IterableDataset):
                    + (rand_t >= 0.8) * (rand_t < 0.9) * filling
                    + (rand_t >= 0.9) * texts)
         texts = masked_pos * filling + (1 - masked_pos) * texts
-        yield (torch.tensor(texts), torch.tensor(masks), orch.tensor(tok_types),
+        yield (torch.tensor(texts), torch.tensor(masks), torch.tensor(tok_types),
                torch.tensor(labels), torch.tensor(lm_labels))
