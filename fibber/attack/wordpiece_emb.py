@@ -1,4 +1,4 @@
-import logging
+from .. import log
 import os
 
 import numpy as np
@@ -10,6 +10,7 @@ from torch import nn
 from transformers import BertTokenizer
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+logger = log.setup_custom_logger('wpe')
 
 
 def load_glove_model(glove_file, dim=300):
@@ -19,7 +20,7 @@ def load_glove_model(glove_file, dim=300):
   id_to_tok = []
   tok_to_id = {}
 
-  logging.info("load glove embeddings for learning word piece embeddings.")
+  logger.info("load glove embeddings for learning word piece embeddings.")
   id = 0
   for line in tqdm.tqdm(glove_file_lines):
     split_line = line.split()
@@ -47,7 +48,7 @@ class WordPieceDataset(torch.utils.data.Dataset):
         self._glove_emb[self._glove_tok2id[word], :] = 0
 
     data = []
-    logging.info("processing data for wordpiece embedding training")
+    logger.info("processing data for wordpiece embedding training")
     for item in tqdm.tqdm(dataset["data"]):
       text = item["s0"]
       if "s1" in item:
@@ -79,7 +80,7 @@ def get_wordpiece_emb(FLAGS, trainset):
       FLAGS.wpe_step // 1000)
   if os.path.exists(filename):
     state_dict = torch.load(filename)
-    logging.info("load wordpiece embeddings from %s", filename)
+    logger.info("load wordpiece embeddings from %s", filename)
     return state_dict["embs"]
 
   if trainset["cased"]:
@@ -103,7 +104,7 @@ def get_wordpiece_emb(FLAGS, trainset):
       linear.weight.data[:, wid] = torch.tensor(
           dataset._glove_emb[dataset._glove_tok2id[w.lower()]]).to(DEVICE)
 
-  logging.info("train word piece embeddings")
+  logger.info("train word piece embeddings")
   pbar = tqdm.tqdm(total=FLAGS.wpe_step)
   losses = []
   global_step = 0

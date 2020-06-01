@@ -1,4 +1,3 @@
-import logging
 import os
 
 import numpy as np
@@ -9,9 +8,10 @@ import torch.nn.functional as F
 from torch.utils.tensorboard import SummaryWriter
 from transformers import BertForMaskedLM
 
-from .. import data_utils, optim_utils
+from .. import data_utils, log, optim_utils
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+logger = log.setup_custom_logger('lm')
 
 
 def construct_lm_text_example(tokenizer, seq, mask, label, lm_label, lm_pred):
@@ -132,7 +132,7 @@ def prepare_lm(FLAGS, trainset, filter):
   ckpt_path = (output_dir + "/model/checkpoint-%04dk.pt" %
                (FLAGS.lm_step // 1000))
   if os.path.exists(ckpt_path):
-    logging.info("Lm exists %s", ckpt_path)
+    logger.info("Lm exists %s", ckpt_path)
     return
 
   lm_model = BertForMaskedLM.from_pretrained(model_init).to(DEVICE)
@@ -146,7 +146,7 @@ def prepare_lm(FLAGS, trainset, filter):
   if filter != -1:
     ckpt_path = (FLAGS.output_dir + "/lm_all/model/checkpoint-%04dk.pt" %
                  (FLAGS.lm_step // 1000))
-    logging.info("load general lm from %s", ckpt_path)
+    logger.info("load general lm from %s", ckpt_path)
     state = torch.load(ckpt_path)
     lm_model.load_state_dict(state["lm_model"])
 

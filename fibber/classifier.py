@@ -1,4 +1,3 @@
-import logging
 import os
 
 import numpy as np
@@ -8,10 +7,10 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 from transformers import BertForSequenceClassification
 
-from . import data_utils, optim_utils
+from . import data_utils, log, optim_utils
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
+logger = log.setup_custom_logger('clf')
 
 def run_evaluate(model, dataloader_iter, eval_steps, summary, global_step):
   model.eval()
@@ -60,8 +59,8 @@ def get_clf(FLAGS, trainset, testset):
       model_init, num_labels=num_labels).to(DEVICE)
   model.train()
 
-  logging.info("use %s tokenizer and classifier", model_init)
-  logging.info("num labels: %s", num_labels)
+  logger.info("use %s tokenizer and classifier", model_init)
+  logger.info("num labels: %s", num_labels)
 
   output_dir = FLAGS.output_dir + "/" + model_init
 
@@ -69,7 +68,7 @@ def get_clf(FLAGS, trainset, testset):
                (FLAGS.clf_step // 1000))
 
   if os.path.exists(ckpt_path):
-    logging.info("load existing clf from %s", ckpt_path)
+    logger.info("load existing clf from %s", ckpt_path)
     state_dict = torch.load(ckpt_path)
     model.load_state_dict(state_dict["model"])
     model.eval()
@@ -128,4 +127,5 @@ def get_clf(FLAGS, trainset, testset):
 
     if global_step >= FLAGS.clf_step:
       break
+  model.eval()
   return model

@@ -1,15 +1,12 @@
 import argparse
 import json
-import logging
 import os
 
+from . import classifier, data_utils, log
 from .attack.advsampler import AdvSampler
 
-from . import classifier, data_utils
+logger = log.setup_custom_logger('root')
 
-logging.basicConfig(format='%(asctime)s - %(message)s',
-                    datefmt='%m-%d %H:%M:%S',
-                    level=logging.INFO)
 
 parser = argparse.ArgumentParser()
 
@@ -54,9 +51,10 @@ parser.add_argument("--wpe_peroid_lr_halve", type=int, default=1000)
 
 
 # AdvSampler configs
-parser.add_argument("--lm_method", choices=["full", "adv"], default="adv",
-                    help=("full: fine tune LM on all data.\t"
+parser.add_argument("--attack_method", choices=["all", "adv"], default="adv",
+                    help=("all: fine tune LM on all data.\t"
                           "adv: fine tune LM excluding each category"))
+parser.add_argument("--gibbs_max_len", type=int, default=200)
 parser.add_argument("--gibbs_round", type=int, default=2)
 parser.add_argument("--gibbs_iter", type=int, default=50)
 parser.add_argument("--gibbs_block", type=int, default=1)
@@ -65,19 +63,22 @@ parser.add_argument("--gibbs_eps2", type=float, default=0.95)
 parser.add_argument("--gibbs_smooth", type=float, default=1000)
 parser.add_argument("--gibbs_order", choices=["seq", "rand"], default="seq")
 parser.add_argument("--gibbs_topk", type=int, default=100)
+parser.add_argument("--gibbs_keep_entity", choices=["0", "1"], default="1")
 
 
 def main(FLAGS):
-  logging.info("all flags: %s", FLAGS)
+  logger.info("all flags: %s", FLAGS)
   with open(FLAGS.output_dir + "/config.json", "w") as f:
     json.dump(vars(FLAGS), f, indent=2)
   trainset, testset = data_utils.load_data(FLAGS.data_dir, FLAGS.dataset)
-  testset_attack = data_utils.subsample_data(testset, FLAGS.n_attack)
+  attackset = data_utils.subsample_data(testset, FLAGS.n_attack)
 
-  logging.info("train classifier.")
+  logger.info("train classifier.")
   clf_model = classifier.get_clf(FLAGS, trainset, testset)
 
   attacker = AdvSampler(FLAGS, trainset, testset)
+  attacker.attack_clf(FLAGS, attackset, clf_model)
+
 
 if __name__ == "__main__":
   FLAGS = parser.parse_args()

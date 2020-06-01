@@ -1,7 +1,9 @@
-import logging
-
 import numpy as np
 import tqdm
+
+from .. import log
+
+logger = log.setup_custom_logger('measure-glove')
 
 
 def load_glove_model(glove_file, dim=300):
@@ -11,7 +13,7 @@ def load_glove_model(glove_file, dim=300):
   id_to_tok = []
   tok_to_id = {}
 
-  logging.info("load glove embeddings for glove similarity measurement.")
+  logger.info("load glove embeddings for glove similarity measurement.")
   id = 0
   for line in tqdm.tqdm(glove_file_lines):
     split_line = line.split()
@@ -36,15 +38,15 @@ def compute_emb(emb_table, id_to_tok, tok_to_id, x):
 def compute_emb_sim(emb_table, id_to_tok, tok_to_id, x, y):
   ex = compute_emb(emb_table, id_to_tok, tok_to_id, x)
   ey = compute_emb(emb_table, id_to_tok, tok_to_id, y)
-  return ((ex * ey).sum() /
-          (np.linalg.norm(ex) + 1e-8) /
-          (np.linalg.norm(ey) + 1e-8))
+  return ((ex * ey).sum()
+          / (np.linalg.norm(ex) + 1e-8)
+          / (np.linalg.norm(ey) + 1e-8))
 
 
 class GloVeSimilarity(object):
   def __init__(self, embfile, dim, stopfile):
     super(GloVeSimilarity, self).__init__()
-    logging.info("load glove embeddings.")
+    logger.info("load glove embeddings.")
     self._emb_table, self._id_to_tok, self._tok_to_id = load_glove_model(
         embfile, dim)
 

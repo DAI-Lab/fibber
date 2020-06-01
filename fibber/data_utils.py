@@ -1,13 +1,15 @@
 import copy
 import hashlib
 import json
-import logging
+from . import log
 
 import numpy as np
 import tqdm
 
 import torch
 from transformers import BertTokenizer
+
+logger = log.setup_custom_logger('root')
 
 
 def load_data(datafolder, dataset):
@@ -107,7 +109,7 @@ class Dataset(torch.utils.data.IterableDataset):
           self._data[bucket_id].append((text_ids, y, len(s0_ids), len(s1_ids)))
           break
 
-    logging.info("Load %d documents. with filter %d.", counter, exclude)
+    logger.info("Load %d documents. with filter %d.", counter, exclude)
     self._bucket_prob = np.asarray([len(x) for x in self._data])
     self._bucket_prob = self._bucket_prob / np.sum(self._bucket_prob)
 
