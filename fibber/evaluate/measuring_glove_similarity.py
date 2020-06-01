@@ -38,9 +38,9 @@ def compute_emb(emb_table, id_to_tok, tok_to_id, x):
 def compute_emb_sim(emb_table, id_to_tok, tok_to_id, x, y):
   ex = compute_emb(emb_table, id_to_tok, tok_to_id, x)
   ey = compute_emb(emb_table, id_to_tok, tok_to_id, y)
-  return ((ex * ey).sum()
-          / (np.linalg.norm(ex) + 1e-8)
-          / (np.linalg.norm(ey) + 1e-8))
+  return ((ex * ey).sum() /
+          (np.linalg.norm(ex) + 1e-8) /
+          (np.linalg.norm(ey) + 1e-8))
 
 
 class GloVeSimilarity(object):
@@ -60,7 +60,7 @@ class GloVeSimilarity(object):
 
   def __call__(self, s1, s2):
     return float(compute_emb_sim(self._emb_table, self._id_to_tok,
-                           self._tok_to_id, s1, s2))
+                                 self._tok_to_id, s1, s2))
 
 
 if __name__ == "__main__":
