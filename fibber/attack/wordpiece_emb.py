@@ -125,6 +125,8 @@ def get_wordpiece_emb(FLAGS, trainset):
       global_step += 1
       if global_step >= FLAGS.wpe_step:
         break
+    if global_step >= FLAGS.wpe_step:
+      break
 
   pbar.close()
   wordpiece_emb = linear.weight.data.cpu().numpy()
