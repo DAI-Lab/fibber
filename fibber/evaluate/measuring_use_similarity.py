@@ -40,7 +40,7 @@ class USESimilarity(object):
             self.sts_input1: [s1],
             self.sts_input2: [s2],
         })
-    return scores[0][0]
+    return float(scores[0][0])
 
 
 if __name__ == "__main__":

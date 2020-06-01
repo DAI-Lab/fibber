@@ -1,7 +1,7 @@
-from measuring_editing_distance import EditingDistance
-from measuring_glove_similarity import GloVeSimilarity
-from measuring_gpt2_quality import GPT2Quality
-from measuring_use_similarity import USESimilarity
+from .measuring_editing_distance import EditingDistance
+from .measuring_glove_similarity import GloVeSimilarity
+from .measuring_gpt2_quality import GPT2Quality
+from .measuring_use_similarity import USESimilarity
 
 MEASURE_GLOVE = "glove_sim"
 MEASURE_USE = "use_sim"

@@ -59,8 +59,8 @@ class GloVeSimilarity(object):
         self._emb_table[self._tok_to_id[word], :] = 0
 
   def __call__(self, s1, s2):
-    return compute_emb_sim(self._emb_table, self._id_to_tok,
-                           self._tok_to_id, s1, s2)
+    return float(compute_emb_sim(self._emb_table, self._id_to_tok,
+                           self._tok_to_id, s1, s2))
 
 
 if __name__ == "__main__":

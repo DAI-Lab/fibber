@@ -56,7 +56,7 @@ class GPT2Quality(object):
                          index=toks_output.unsqueeze(dim=2)).squeeze(dim=2)
     ppl = torch.exp(-(logpw * mask).sum(dim=1) / mask.sum(dim=1))
     ppl = ppl.detach().cpu().numpy()
-    return ppl[1] / ppl[0]
+    return float(ppl[1] / ppl[0])
 
 
 if __name__ == "__main__":

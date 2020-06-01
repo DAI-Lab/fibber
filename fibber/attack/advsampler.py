@@ -14,6 +14,10 @@ from .wordpiece_emb import get_wordpiece_emb
 logger = log.setup_custom_logger('adv')
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+def tostring(tokenizer, seq):
+  return tokenizer.convert_tokens_to_string(
+      tokenizer.convert_ids_to_tokens(seq))
+
 
 def compute_clf(clf_model, seq, tok_type):
   return clf_model(seq.unsqueeze(0), token_type_ids=tok_type.unsqueeze(0)
@@ -28,8 +32,9 @@ def load_model(model_init, checkpoint):
   return lm_model
 
 
-def compute_emb_word_prob(word_embs, current, mask, tok_type, target, eps, smooth):
-  emb = (word_embs(current) * mask[:, :, None] * tok_type[:, :, None])
+def compute_emb_word_prob(word_embs, current, mask,
+                          target, eps, smooth, st, ed):
+  emb = (word_embs(current[:, st:ed]) * mask[:, st:ed, None])
   emb = emb.sum(dim=1)  # batch * dim
   emb = (emb[:, None, :] + word_embs.weight[None, :, :])  # batch * vocab * dim
 
@@ -39,8 +44,8 @@ def compute_emb_word_prob(word_embs, current, mask, tok_type, target, eps, smoot
   return logpdf.detach().to(DEVICE)
 
 
-def get_emb(word_embs, seq, tok_type):
-  return (word_embs(seq) * tok_type[:, None]).sum(dim=0)
+def get_emb(word_embs, seq, st, ed):
+  return (word_embs(seq[st:ed])).sum(dim=0)
 
 
 def compute_sim(x, y):
@@ -56,8 +61,8 @@ def sample_text(lm_model, word_embs, keep_words, seq, tok_type, target,
   mask_t = torch.ones_like(seq)
   mask_t[:, 0] = 0
 
-  keep_words = (F.one_hot(seq * tok_type, keep_words.size(0)) *
-                keep_words).sum(dim=1)
+  keep_words = (F.one_hot(seq * tok_type, keep_words.size(0))
+                * keep_words).sum(dim=1)
   # 1 * vocab_size
 
   seq_len = ed - st
@@ -90,9 +95,9 @@ def sample_text(lm_model, word_embs, keep_words, seq, tok_type, target,
       for p in pos_t:
         if p == -1:
           continue
-        logits = lm_model(seq)[0][:, p]
-        logits2 = compute_emb_word_prob(word_embs, seq, mask_t, tok_type,
-                                        target, eps, FLAGS.gibbs_smooth)
+        logits = lm_model(seq, token_type_ids=tok_type)[0][:, p]
+        logits2 = compute_emb_word_prob(word_embs, seq, mask_t, target,
+                                        eps, FLAGS.gibbs_smooth, st, ed)
 
         if FLAGS.gibbs_topk > 0:
           topk_v, topk_id = torch.topk(logits + logits2, FLAGS.gibbs_topk)
@@ -116,7 +121,7 @@ def sample_text(lm_model, word_embs, keep_words, seq, tok_type, target,
 
 def attack(lm_model, clf_model, word_embs, keep_words, seq, tok_type, label,
            MASK_ID, FLAGS, pbar, st, ed):
-  target_emb = get_emb(word_embs, seq, tok_type)
+  target_emb = get_emb(word_embs, seq, st, ed)
 
   sampled_seq = sample_text(
       lm_model, word_embs, keep_words, seq, tok_type, target_emb,
@@ -178,7 +183,8 @@ class AdvSampler(object):
     correct_ori = 0
     correct_adv = 0
 
-    pbar = tqdm.tqdm(total=num_label * FLAGS.gibbs_round * FLAGS.gibbs_iter)
+    pbar = tqdm.tqdm(total=len(attackset["data"]) *
+                     FLAGS.gibbs_round * FLAGS.gibbs_iter)
     attacker_name = (
         "/{method}-round{round}-iter{iter}-block{block}-eps{eps1}~{eps2}"
         "-smooth{smooth}-{order}-top{topk}".format(
@@ -204,8 +210,8 @@ class AdvSampler(object):
       elif FLAGS.attack_method == "adv":
         lm_model = load_model(
             model_init,
-            FLAGS.output_dir +
-            "/%s/model/checkpoint-%04dk.pt" % (
+            FLAGS.output_dir
+            + "/%s/model/checkpoint-%04dk.pt" % (
                 "lm_no_c%d" % label, FLAGS.lm_step // 1000))
       else:
         assert 0
@@ -269,10 +275,11 @@ class AdvSampler(object):
               "label": label,
               "ori": {
                   "s0": data_record["s0"],
-                  "pred": ori_pred,
+                  "pred": label,
               },
               "adv": {
-                  "s0": tostring(tokenizer, adv_seq)
+                  "s0": tostring(tokenizer, adv_seq[1:]),
+                  "pred": int(adv_label)
               }
           })
         else:

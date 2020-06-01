@@ -4,6 +4,7 @@ import os
 
 from . import classifier, data_utils, log
 from .attack.advsampler import AdvSampler
+from .evaluate.evaluation import make_measures, evaluate
 
 logger = log.setup_custom_logger('root')
 
@@ -73,12 +74,29 @@ def main(FLAGS):
   trainset, testset = data_utils.load_data(FLAGS.data_dir, FLAGS.dataset)
   attackset = data_utils.subsample_data(testset, FLAGS.n_attack)
 
-  logger.info("train classifier.")
+  logger.info("train classifier")
   clf_model = classifier.get_clf(FLAGS, trainset, testset)
 
+  logger.info("prepare attacker")
   attacker = AdvSampler(FLAGS, trainset, testset)
-  attacker.attack_clf(FLAGS, attackset, clf_model)
+  logger.info("attack")
+  name, result = attacker.attack_clf(FLAGS, attackset, clf_model)
+  del attacker
 
+  logger.info("evaluation")
+  measures = make_measures("data/", use_editing=True, use_use=True)
+  if "nli" in FLAGS.dataset:
+    measure_sentence = "s1"
+  else:
+    measure_sentence = "s0"
+
+  for item in result:
+    item["eval"] = evaluate(item["ori"][measure_sentence],
+                            item["adv"][measure_sentence],
+                            measures)
+
+  with open(FLAGS.output_dir + "/" + name + ".json", "w") as f:
+    json.dump(result, f, indent=2)
 
 if __name__ == "__main__":
   FLAGS = parser.parse_args()
