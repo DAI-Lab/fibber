@@ -115,7 +115,7 @@ def compute_lm_loss(lm_model, seq, mask, tok_type,
   return lm_loss
 
 
-def train_lm(FLAGS, trainset, filter):
+def prepare_lm(FLAGS, trainset, filter):
   if filter == -1:
     output_dir = FLAGS.output_dir + "/lm_all"
   else:
@@ -129,17 +129,14 @@ def train_lm(FLAGS, trainset, filter):
   else:
     model_init = "bert-base-uncased"
 
-  lm_model = BertForMaskedLM.from_pretrained(model_init).to(DEVICE)
-  lm_model.train()
-
   ckpt_path = (output_dir + "/model/checkpoint-%04dk.pt" %
                (FLAGS.lm_step // 1000))
   if os.path.exists(ckpt_path):
-    logging.info("load existing lm from %s", ckpt_path)
-    state_dict = torch.load(ckpt_path)
-    lm_model.load_state_dict(state_dict["lm_model"])
-    lm_model.eval()
-    return lm_model
+    logging.info("Lm exists %s", ckpt_path)
+    return
+
+  lm_model = BertForMaskedLM.from_pretrained(model_init).to(DEVICE)
+  lm_model.train()
 
   dataset = data_utils.Dataset(trainset, model_init, FLAGS.lm_bs,
                                exclude=filter, masked_lm=True)
@@ -195,4 +192,3 @@ def train_lm(FLAGS, trainset, filter):
 
     if global_step >= FLAGS.lm_step:
       break
-  return lm_model

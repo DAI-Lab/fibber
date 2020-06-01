@@ -3,7 +3,7 @@ import json
 import logging
 import os
 
-from .attack import advsampler
+from .attack.advsampler import AdvSampler
 
 from . import classifier, data_utils
 
@@ -36,7 +36,7 @@ parser.add_argument("--clf_period_val", type=int, default=500)
 parser.add_argument("--clf_period_save", type=int, default=5000)
 parser.add_argument("--clf_val_step", type=int, default=10)
 
-# Classifier configs
+# LM configs
 parser.add_argument("--lm_bs", type=int, default=32)
 parser.add_argument("--lm_opt", type=str, default="adamw")
 parser.add_argument("--lm_lr", type=float, default=0.0001)
@@ -44,6 +44,14 @@ parser.add_argument("--lm_decay", type=float, default=0.01)
 parser.add_argument("--lm_step", type=int, default=10000)
 parser.add_argument("--lm_period_summary", type=int, default=100)
 parser.add_argument("--lm_period_save", type=int, default=5000)
+
+# WPE configs
+parser.add_argument("--wpe_bs", type=int, default=5000)
+parser.add_argument("--wpe_lr", type=float, default=1)
+parser.add_argument("--wpe_momentum", type=float, default=0)
+parser.add_argument("--wpe_step", type=int, default=2000)
+parser.add_argument("--wpe_peroid_lr_halve", type=int, default=1000)
+
 
 # AdvSampler configs
 parser.add_argument("--lm_method", choices=["full", "adv"], default="adv",
@@ -69,9 +77,7 @@ def main(FLAGS):
   logging.info("train classifier.")
   clf_model = classifier.get_clf(FLAGS, trainset, testset)
 
-  logging.info("train language models.")
-  advsampler.prepare_lm(FLAGS, trainset, testset)
-
+  attacker = AdvSampler(FLAGS, trainset, testset)
 
 if __name__ == "__main__":
   FLAGS = parser.parse_args()
