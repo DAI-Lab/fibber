@@ -80,7 +80,10 @@ def main(FLAGS):
   logger.info("prepare attacker")
   attacker = AdvSampler(FLAGS, trainset, testset)
   logger.info("attack")
-  name, result = attacker.attack_clf(FLAGS, attackset, clf_model)
+  if "nli" in FLAGS.dataset:
+    name, result = attacker.attack_nli(FLAGS, attackset, clf_model)
+  else:
+    name, result = attacker.attack_clf(FLAGS, attackset, clf_model)
   del attacker
 
   logger.info("evaluation")
@@ -91,9 +94,10 @@ def main(FLAGS):
     measure_sentence = "s0"
 
   for item in result:
-    item["eval"] = evaluate(item["ori"][measure_sentence],
-                            item["adv"][measure_sentence],
-                            measures)
+    if "adv" in item:
+      item["eval"] = evaluate(item["ori"][measure_sentence],
+                              item["adv"][measure_sentence],
+                              measures)
 
   with open(FLAGS.output_dir + "/" + name + ".json", "w") as f:
     json.dump(result, f, indent=2)

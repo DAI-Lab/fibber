@@ -59,7 +59,7 @@ def subsample_data(dataset, n):
   for i in range(len(bins)):
     bins[i] = sorted(bins[i], key=lambda x: x[1])
     for j in range(n // len(bins)):
-      datalist.append(copy.deepcopy(dataset["data"][idx]))
+      datalist.append(copy.deepcopy(dataset["data"][bins[i][j][0]]))
 
   subset["data"] = datalist
 
