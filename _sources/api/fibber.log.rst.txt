@@ -1,0 +1,7 @@
+fibber.log module
+=================
+
+.. automodule:: fibber.log
+   :members:
+   :undoc-members:
+   :show-inheritance:

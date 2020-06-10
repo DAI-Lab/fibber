@@ -6,7 +6,19 @@ Subpackages
 
 .. toctree::
 
+   fibber.attack
    fibber.evaluate
+
+Submodules
+----------
+
+.. toctree::
+
+   fibber.classifier
+   fibber.data_utils
+   fibber.log
+   fibber.main
+   fibber.optim_utils
 
 Module contents
 ---------------

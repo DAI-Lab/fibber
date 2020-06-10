@@ -1,0 +1,7 @@
+fibber.attack.advsampler module
+===============================
+
+.. automodule:: fibber.attack.advsampler
+   :members:
+   :undoc-members:
+   :show-inheritance:
