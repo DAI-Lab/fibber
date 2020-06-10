@@ -65,7 +65,7 @@ parser.add_argument("--gibbs_smooth", type=float, default=1000)
 parser.add_argument("--gibbs_order", choices=["seq", "rand"], default="seq")
 parser.add_argument("--gibbs_topk", type=int, default=100)
 parser.add_argument("--gibbs_keep_entity", choices=["0", "1"], default="1")
-
+parser.add_argument("--gibbs_intermediate", type=int, default=0)
 
 def main(FLAGS):
   logger.info("all flags: %s", FLAGS)
@@ -99,6 +99,7 @@ def main(FLAGS):
                               item["adv"][measure_sentence],
                               measures)
 
+  print(result)
   with open(FLAGS.output_dir + "/" + name + ".json", "w") as f:
     json.dump(result, f, indent=2)
 

@@ -14,6 +14,7 @@ from .wordpiece_emb import get_wordpiece_emb
 logger = log.setup_custom_logger('adv')
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+
 def tostring(tokenizer, seq):
   return tokenizer.convert_tokens_to_string(
       tokenizer.convert_ids_to_tokens(seq))
@@ -61,8 +62,8 @@ def sample_text(lm_model, word_embs, keep_words, seq, tok_type, target,
   mask_t = torch.ones_like(seq)
   mask_t[:, 0] = 0
 
-  keep_words = (F.one_hot(seq * tok_type, keep_words.size(0))
-                * keep_words).sum(dim=1)
+  keep_words = (F.one_hot(seq * tok_type, keep_words.size(0)) *
+                keep_words).sum(dim=1)
   # 1 * vocab_size
 
   seq_len = ed - st
@@ -113,6 +114,9 @@ def sample_text(lm_model, word_embs, keep_words, seq, tok_type, target,
         mask_t[:, p] = 1
         if keep_words[0][idx[0]] > 0:
           keep_words[0][idx[0]] += 1
+    if (FLAGS.gibbs_intermediate != 0
+            and (step + 1) % FLAGS.gibbs_intermediate == 0):
+      ret.append(seq[0].clone().detach())
 
     ret.append(seq[0].clone().detach())
     pbar.update(1)
@@ -187,8 +191,8 @@ class AdvSampler(object):
     correct_ori = 0
     correct_adv = 0
 
-    pbar = tqdm.tqdm(total=len(attackset["data"]) *
-                     FLAGS.gibbs_round * FLAGS.gibbs_iter)
+    pbar = tqdm.tqdm(total=len(attackset["data"])
+                     * FLAGS.gibbs_round * FLAGS.gibbs_iter)
     attacker_name = (
         "/{method}-round{round}-iter{iter}-block{block}-eps{eps1}~{eps2}"
         "-smooth{smooth}-{order}-top{topk}".format(
@@ -214,8 +218,8 @@ class AdvSampler(object):
       elif FLAGS.attack_method == "adv":
         lm_model = load_model(
             model_init,
-            FLAGS.output_dir
-            + "/%s/model/checkpoint-%04dk.pt" % (
+            FLAGS.output_dir +
+            "/%s/model/checkpoint-%04dk.pt" % (
                 "lm_no_c%d" % label, FLAGS.lm_step // 1000))
       else:
         assert 0
@@ -257,7 +261,7 @@ class AdvSampler(object):
               "label": label,
               "ori": {
                   "s0": data_record["s0"],
-                  "pred": ori_pred,
+                  "pred": int(ori_pred),
               }
           })
           pbar.update(FLAGS.gibbs_iter * FLAGS.gibbs_round)
@@ -325,8 +329,8 @@ class AdvSampler(object):
     correct_ori = 0
     correct_adv = 0
 
-    pbar = tqdm.tqdm(total=len(attackset["data"]) *
-                     FLAGS.gibbs_round * FLAGS.gibbs_iter)
+    pbar = tqdm.tqdm(total=len(attackset["data"])
+                     * FLAGS.gibbs_round * FLAGS.gibbs_iter)
     attacker_name = (
         "/{method}-round{round}-iter{iter}-block{block}-eps{eps1}~{eps2}"
         "-smooth{smooth}-{order}-top{topk}".format(
@@ -352,8 +356,8 @@ class AdvSampler(object):
       elif FLAGS.attack_method == "adv":
         lm_model = load_model(
             model_init,
-            FLAGS.output_dir
-            + "/%s/model/checkpoint-%04dk.pt" % (
+            FLAGS.output_dir +
+            "/%s/model/checkpoint-%04dk.pt" % (
                 "lm_no_c%d" % label, FLAGS.lm_step // 1000))
       else:
         assert 0
@@ -429,7 +433,7 @@ class AdvSampler(object):
               },
               "adv": {
                   "s0": tostring(tokenizer, adv_seq[1:l0]),
-                  "s1": tostring(tokenizer, adv_seq[l0+1:]),
+                  "s1": tostring(tokenizer, adv_seq[l0 + 1:]),
                   "pred": int(adv_label)
               }
           })
