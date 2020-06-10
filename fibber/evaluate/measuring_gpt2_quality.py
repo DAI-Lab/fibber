@@ -1,5 +1,3 @@
-import logging
-
 import numpy as np
 
 import torch
@@ -7,7 +5,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
+from .. import log
+
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+logger = log.setup_custom_logger('measure-gpt2')
 
 
 def make_input_output_pair(tokenizer, x):
@@ -34,7 +35,7 @@ class GPT2Quality(object):
   def __init__(self, pretrained="gpt2"):
     super(GPT2Quality, self).__init__()
 
-    logging.info("load gpt2 model.")
+    logger.info("load gpt2 model.")
     self._tokenizer = GPT2Tokenizer.from_pretrained(pretrained)
     self._model = GPT2LMHeadModel.from_pretrained(pretrained).to(DEVICE)
 
@@ -55,7 +56,7 @@ class GPT2Quality(object):
                          index=toks_output.unsqueeze(dim=2)).squeeze(dim=2)
     ppl = torch.exp(-(logpw * mask).sum(dim=1) / mask.sum(dim=1))
     ppl = ppl.detach().cpu().numpy()
-    return ppl[1] / ppl[0]
+    return float(ppl[1] / ppl[0])
 
 
 if __name__ == "__main__":

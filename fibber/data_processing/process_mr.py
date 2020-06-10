@@ -31,21 +31,21 @@ def main():
 
   for id, item in enumerate(neg):
     if id % 10 == 0:
-      trainlist.append({
+      testlist.append({
           "label": 0,
           "s0": item.strip()})
     else:
-      testlist.append({
+      trainlist.append({
           "label": 0,
           "s0": item.strip()})
 
   for id, item in enumerate(pos):
     if id % 10 == 0:
-      trainlist.append({
+      testlist.append({
           "label": 1,
           "s0": item.strip()})
     else:
-      testlist.append({
+      trainlist.append({
           "label": 1,
           "s0": item.strip()})
 

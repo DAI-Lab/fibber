@@ -1,18 +1,20 @@
-import logging
 import os
 
 import tensorflow as tf
 import tensorflow_hub as hub
 
+from .. import log
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 tf.get_logger().setLevel('ERROR')
+logger = log.setup_custom_logger('measure-use')
 
 
 class USESimilarity(object):
   def __init__(self):
     super(USESimilarity, self).__init__()
-    logging.info("load universal sentence encoder")
+    logger.info("load universal sentence encoder")
     module_url = "https://tfhub.dev/google/universal-sentence-encoder-large/3"
     self.embed = hub.Module(module_url)
     config = tf.ConfigProto()
@@ -38,7 +40,7 @@ class USESimilarity(object):
             self.sts_input1: [s1],
             self.sts_input2: [s2],
         })
-    return scores[0][0]
+    return float(scores[0][0])
 
 
 if __name__ == "__main__":
