@@ -23,5 +23,15 @@ resources = {
         "filename": "rt-polaritydata.tar.gz",
         "url": "http://www.cs.cornell.edu/people/pabo/movie-review-data/rt-polaritydata.tar.gz",
         "md5": "50c1c2c047b4225e148e97aa7708c34e",
+    },
+    "snli-raw": {
+        "filename": "snli_1.0.zip",
+        "url": "https://nlp.stanford.edu/projects/snli/snli_1.0.zip",
+        "md5": "981c3df556bbaea3f17f752456d0088c",
+    },
+    "mnli-raw": {
+        "filename": "multinli_1.0.zip",
+        "url": "https://cims.nyu.edu/~sbowman/multinli/multinli_1.0.zip",
+        "md5": "0f70aaf66293b3c088a864891db51353",
     }
 }

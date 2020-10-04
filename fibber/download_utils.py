@@ -1,6 +1,7 @@
 import hashlib
 import os
 import tarfile
+import zipfile
 
 from tensorflow.keras.utils import get_file as tf_get_file
 
@@ -23,7 +24,7 @@ def check_file_md5(filename, md5):
     return hash_md5.hexdigest() == md5
 
 
-def download_file(filename, url, md5_checksum, subdir=None, untar=False):
+def download_file(filename, url, md5_checksum, subdir=None, untar=False, unzip=False):
     target_dir = get_root_dir()
     if subdir is not None:
         target_dir = os.path.join(target_dir, subdir)
@@ -37,7 +38,11 @@ def download_file(filename, url, md5_checksum, subdir=None, untar=False):
             my_tar = tarfile.open(target_file_absolute_path)
             my_tar.extractall(target_dir)
             my_tar.close()
+        if unzip:
+            my_zip = zipfile.ZipFile(target_file_absolute_path, "r")
+            my_zip.extractall(target_dir)
+            my_zip.close()
     else:
         logger.info("Download %s to %s", filename, target_dir)
         tf_get_file(filename, origin=url, cache_subdir="",
-                    file_hash=md5_checksum, extract=untar, cache_dir=target_dir)
+                    file_hash=md5_checksum, extract=untar or unzip, cache_dir=target_dir)
