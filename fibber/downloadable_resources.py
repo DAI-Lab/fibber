@@ -13,5 +13,10 @@ resources = {
         "filename": "aclImdb_v1.tar.gz",
         "url": "https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz",
         "md5": "7c2ac02c03563afcf9b574c7e56c153a",
+    },
+    "yelp-raw": {
+        "filename": "yelp_review_polarity_csv.tgz",
+        "url": "https://s3.amazonaws.com/fast-ai-nlp/yelp_review_polarity_csv.tgz",
+        "md5": "0f09b3af1a79c136ef9ca5f29df9ed9a",
     }
 }
