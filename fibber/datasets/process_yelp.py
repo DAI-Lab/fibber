@@ -56,7 +56,7 @@ def download_and_process_yelp():
     process_data(os.path.join(root_dir, dataset_dir, "raw/yelp_review_polarity_csv/train.csv"),
                  os.path.join(root_dir, dataset_dir, "train.json"))
     process_data(os.path.join(root_dir, dataset_dir, "raw/yelp_review_polarity_csv/test.csv"),
-                 os.path.join(root_dir, dataset_dir, "tesst.json"))
+                 os.path.join(root_dir, dataset_dir, "test.json"))
 
 
 if __name__ == "__main__":

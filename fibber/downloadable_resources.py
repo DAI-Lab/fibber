@@ -33,5 +33,10 @@ resources = {
         "filename": "multinli_1.0.zip",
         "url": "https://cims.nyu.edu/~sbowman/multinli/multinli_1.0.zip",
         "md5": "0f70aaf66293b3c088a864891db51353",
+    },
+    "processed-datasets": {
+        "filename": "datasets.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/datasets_v0.1.tgz",
+        "md5": "614bcf6f287a826cb0ee64796741b52d",
     }
 }

@@ -1,12 +1,13 @@
 import json
 import os
 
+import tqdm
+
 from .. import log
 from ..download_utils import download_file, get_root_dir
 from ..downloadable_resources import resources
-import tqdm
-logger = log.setup_custom_logger(__name__)
 
+logger = log.setup_custom_logger(__name__)
 
 
 def process_data(input_filename, output_filename):
