@@ -1,7 +1,9 @@
 import glob
 import json
 import os
+
 import tqdm
+
 from .. import log
 from ..download_utils import download_file, get_root_dir
 from ..downloadable_resources import resources

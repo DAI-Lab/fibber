@@ -18,5 +18,10 @@ resources = {
         "filename": "yelp_review_polarity_csv.tgz",
         "url": "https://s3.amazonaws.com/fast-ai-nlp/yelp_review_polarity_csv.tgz",
         "md5": "0f09b3af1a79c136ef9ca5f29df9ed9a",
+    },
+    "mr-raw": {
+        "filename": "rt-polaritydata.tar.gz",
+        "url": "http://www.cs.cornell.edu/people/pabo/movie-review-data/rt-polaritydata.tar.gz",
+        "md5": "50c1c2c047b4225e148e97aa7708c34e",
     }
 }

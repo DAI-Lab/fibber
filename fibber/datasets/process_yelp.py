@@ -1,11 +1,12 @@
-import glob
 import json
 import os
+
+import pandas as pd
 import tqdm
+
 from .. import log
 from ..download_utils import download_file, get_root_dir
 from ..downloadable_resources import resources
-import pandas as pd
 
 logger = log.setup_custom_logger(__name__)
 
@@ -14,12 +15,16 @@ REPLACE_TOKS = [
     ("\\n", " ")
 ]
 
+
 def process_data(input_filename, output_filename):
+    logger.info("Start processing data, and save at %s.", output_filename)
+
     df = pd.read_csv(input_filename, header=None)
 
     data = {
-        "label_mapping": ["neg", "pos"],
-        "cased": True
+        "label_mapping": ["negative", "positive"],
+        "cased": True,
+        "paraphrase_field": "text0",
     }
 
     datalist = []
@@ -31,7 +36,7 @@ def process_data(input_filename, output_filename):
 
         datalist.append({
             "label": y,
-            "s0": text
+            "text0": text
         })
 
     data["data"] = datalist
@@ -39,7 +44,7 @@ def process_data(input_filename, output_filename):
         json.dump(data, f, indent=2)
 
 
-def main():
+def download_and_process_yelp():
     root_dir = get_root_dir()
     dataset_dir = "datasets/yelp/"
 
@@ -53,5 +58,6 @@ def main():
     process_data(os.path.join(root_dir, dataset_dir, "raw/yelp_review_polarity_csv/test.csv"),
                  os.path.join(root_dir, dataset_dir, "tesst.json"))
 
+
 if __name__ == "__main__":
-    main()
+    download_and_process_yelp()
