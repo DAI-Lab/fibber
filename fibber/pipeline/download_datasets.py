@@ -4,7 +4,7 @@ import json
 import os
 
 from .. import log
-from ..datasets import (
+from ..dataset import (
   process_ag, process_imdb, process_mnli, process_mr, process_snli, process_yelp)
 from ..datasets.dataset_utils import verify_dataset
 from ..download_utils import download_file, get_root_dir
