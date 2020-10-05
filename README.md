@@ -22,6 +22,79 @@ Fibber is a benchmarking suite for adversarial attacks on text classification.
 
 TODO: Provide a short overview of the project here.
 
+# Datasets
+Here are the information of datasets in fibber.
+
+| Type                       | Name                    | Size (train/test) | Classes                             |
+|----------------------------|-------------------------|-------------------|-------------------------------------|
+| Topic Classification       | [ag](http://groups.di.unipi.it/~gulli/AG_corpus_of_news_articles.html)| 120k / 7.6k       | World / Sport / Business / Sci-Tech                                                                                |
+| Sentiment classification   | [mr](http://www.cs.cornell.edu/people/pabo/movie-review-data/)           | 9k / 1k           |  Negative / Positive |
+| Sentiment classification   | [yelp](https://academictorrents.com/details/66ab083bda0c508de6c641baabb1ec17f72dc480) | 160k / 38k        | Negative / Positive                 | 
+| Sentiment classification   | [imdb](https://ai.stanford.edu/~amaas/data/sentiment/)| 25k / 25k         | Negative / Positive                 |
+| Natural Language Inference | [snli](https://nlp.stanford.edu/projects/snli/) | 570k / 10k        | Entailment / Neutral / Contradict   |                                                                                                            |
+| Natural Language Inference | [mnli](https://cims.nyu.edu/~sbowman/multinli/)                | 433k / 10k        | Entailment / Neutral / Contradict   | 
+
+
+## Format
+Each dataset is stored in multiple json files. For example, the ag dataset is stored in `train.json` and `test.json`.
+
+The JSON file contains the following fields:
+
+- label\_mapping: a list of strings. The label_mapping maps an integer label to the actual meaning of that label. This list is not used in the algorithm. 
+- cased: a bool value indicates if it is a cased dataset or uncased dataset. Sentences in uncased datasets are all in lowercase.
+paraphrase\_field: choose from text0 and text1. Paraphrase_field indicates which sentence in each data record should be paraphrased. 
+- data: a list of data records. Each data records contains:
+	- label: an integer indicating the classification label of the text. 
+	- text0: 
+		- For topic and sentiment classification datasets, text0 stores the text to be classified. 
+		- For natural language inference datasets, text0 stores the premise. 
+	- text1:
+		- For topic and sentiment classification datasets, this field is omitted. 
+		- For natural language inference datasets, text1 stores the hypothesis.
+
+Here is an example:
+
+```
+{
+  "label_mapping": [
+    "World",
+    "Sports",
+    "Business",
+    "Sci/Tech"
+  ],
+  "cased": true,
+  "paraphrase_field": "text0",
+  "data": [
+    {
+      "label": 1,
+      "text0": "Boston won the NBA championship in 2008."
+    },
+    {
+      "label": 3,
+      "text0": "Apple releases its latest cell phone."
+    },
+    ...
+  ]
+}
+```
+
+## Download datasets
+We have scripts to help you easily download all datasets. We provide two options to download datasets:
+
+- **Download data preprocessed by us.** We preprocessed datasets and uploaded to aws. You can use the following command to download all datasets. 
+```
+python3 -m fibber.pipeline download_datasets
+```
+After executing the command, the dataset is stored at `~/.fibber/datasets/<dataset_name>/*.json`. For example, the ag dataset is stored in `~/.fibber/datasets/ag/`. And there will be two sets `train.json` and `test.json` in the folder.
+- **Download and process data from original source.** You can also download the orginal dataset version and process it locally. 
+```
+python3 -m fibber.pipeline download_datasets --process_raw 1
+```
+This script will download data from the original source to `~/.fibber/datasets/<dataset_name>/raw/` folder. And process the raw data to generate the json files. 
+
+
+
+
 # Install
 
 ## Requirements
