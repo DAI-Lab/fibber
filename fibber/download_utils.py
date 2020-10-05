@@ -31,8 +31,8 @@ def download_file(filename, url, md5_checksum, subdir=None, untar=False, unzip=F
     os.makedirs(target_dir, exist_ok=True)
     target_file_absolute_path = os.path.join(target_dir, filename)
 
-    if (os.path.exists(target_file_absolute_path) and
-            check_file_md5(target_file_absolute_path, md5_checksum)):
+    if (os.path.exists(target_file_absolute_path)
+            and check_file_md5(target_file_absolute_path, md5_checksum)):
         logger.info("Load %s from cache. md5 checksum is correct.", filename)
         if untar:
             my_tar = tarfile.open(target_file_absolute_path)

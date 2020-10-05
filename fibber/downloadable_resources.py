@@ -38,5 +38,15 @@ resources = {
         "filename": "datasets.tgz",
         "url": "https://fibber-data.s3.amazonaws.com/datasets_v0.1.tgz",
         "md5": "614bcf6f287a826cb0ee64796741b52d",
+    },
+    "default-glove-embeddings": {
+        "filename": "glove.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/glove.tgz",
+        "md5": "7deac3ce2cfd8be24f97bc4ba007a19c"
+    },
+    "default-stopwords": {
+        "filename": "stopwords.txt",
+        "url": "https://fibber-data.s3.amazonaws.com/stopwords.txt",
+        "md5": "daa3fc5e7b540439c8ff9afc5dcbed99"
     }
 }
