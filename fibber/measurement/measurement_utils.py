@@ -1,3 +1,4 @@
+from .bert_clf_flip_pred import BertClfFlipPred
 from .editing_distance import EditingDistance
 from .glove_semantic_similarity import GloVeSemanticSimilarity
 from .gpt2_grammar_quality import GPT2GrammarQuality
@@ -13,6 +14,7 @@ class MeasurementBundle(object):
                  use_use_semantic_simialrity=True,
                  use_glove_semantic_similarity=True,
                  use_gpt2_grammar_quality=True,
+                 use_bert_clf_flip_pred=False,
                  customized_measurements=[],
                  **kargs):
         super(MeasurementBundle, self).__init__()
@@ -30,6 +32,8 @@ class MeasurementBundle(object):
             self._measurements.append(GloVeSemanticSimilarity(**kargs))
         if use_gpt2_grammar_quality:
             self._measurements.append(GPT2GrammarQuality(**kargs))
+        if use_bert_clf_flip_pred:
+            self._measurements.append(BertClfFlipPred(**kargs))
         self._measurements += customized_measurements
 
     def _evaluate(self, origin, paraphrase):

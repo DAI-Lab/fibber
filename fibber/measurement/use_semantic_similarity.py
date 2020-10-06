@@ -14,8 +14,6 @@ logger.root.handlers = []    # tensorflow_hub mess up the python logging
 
 
 def config_tf_gpu(gpu_id):
-    if gpu_id is None:
-        gpu_id = -1
     if tf.__version__ >= "2.3.0":
         gpus = tf.config.list_physical_devices(device_type="GPU")
         gpus = [item for item in gpus if item.name.endswith("GPU:%d" % gpu_id)]
@@ -31,10 +29,14 @@ def config_tf_gpu(gpu_id):
 
 
 class USESemanticSimilarity(MeasurementBase):
-    def __init__(self, use_gpu_id=None, **kargs):
+    def __init__(self, use_gpu_id=-1, **kargs):
         super(USESemanticSimilarity, self).__init__()
         logger.info("load universal sentence encoder")
         config_tf_gpu(use_gpu_id)
+        if use_gpu_id == -1:
+            logger.warning("Universal sentence encoder is using CPU.")
+        else:
+            logger.info("Universal sentence encoder measurement is using GPU %d.", use_gpu_id)
         module_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
         self.model = hub.load(module_url)
         logger.root.handlers = []    # tensorflow_hub mess up the python logging

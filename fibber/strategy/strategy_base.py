@@ -28,8 +28,9 @@ class StrategyBase(object):
 
         for data_record in tqdm.tqdm(paraphrase_set["data"]):
             data_record = copy.copy(data_record)
-            data_record["paraphrase"] = self.paraphrase_example(
-                data_record, paraphrase_set["paraphrase_field"], n)
+            data_record[paraphrase_set["paraphrase_field"] + "_paraphrases"] = (
+                self.paraphrase_example(
+                    data_record, paraphrase_set["paraphrase_field"], n))
             results.append(data_record)
 
             # save tmp output every 30 seconds

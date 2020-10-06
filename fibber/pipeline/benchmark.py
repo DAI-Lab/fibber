@@ -5,6 +5,7 @@ import os
 from .. import log
 from ..dataset.dataset_utils import get_dataset, subsample_dataset
 from ..strategy.random_strategy import RandomStrategy
+from .pipeline_utils import measure_quality
 
 logger = log.setup_custom_logger(__name__)
 
@@ -30,7 +31,7 @@ def get_output_filename(FLAGS, prefix="", suffix=""):
     return prefix + G_EXP_NAME + suffix
 
 
-def benchmark(FLAGS, trainset, testset):
+def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
     paraphrase_strategy = RandomStrategy()
     paraphrase_strategy.fit(trainset)
 
@@ -38,9 +39,13 @@ def benchmark(FLAGS, trainset, testset):
         FLAGS.output_dir, get_output_filename(FLAGS, suffix="-tmp.json"))
     logger.info("Write paraphrase temporary results in %s.", tmp_output_filename)
     results = paraphrase_strategy.paraphrase(
-        testset, FLAGS.num_paraphrases_per_text, tmp_output_filename)
+        paraphrase_set, FLAGS.num_paraphrases_per_text, tmp_output_filename)
 
-    # MeasurementBundle()
+    output_filename = os.path.join(
+        FLAGS.output_dir, get_output_filename(FLAGS, suffix="-with-measurement.json"))
+    results = measure_quality(dataset_name=dataset_name, trainset=trainset, testset=testset, results=results,
+                              paraphrase_field=paraphrase_set["paraphrase_field"], output_filename=output_filename,
+                              measurement_gpu=FLAGS.measurement_gpu)
 
 
 if __name__ == "__main__":
@@ -53,6 +58,6 @@ if __name__ == "__main__":
         logger, os.path.join(FLAGS.output_dir, "log", get_output_filename(FLAGS, suffix=".log")))
 
     trainset, testset = get_dataset(FLAGS.dataset)
-    testset = subsample_dataset(testset, FLAGS.subsample_testset)
+    paraphrase_set = subsample_dataset(testset, FLAGS.subsample_testset)
     logger.info("Subsample test set to %d.", FLAGS.subsample_testset)
-    benchmark(FLAGS, trainset, testset)
+    benchmark(FLAGS, FLAGS.dataset, trainset, testset, paraphrase_set)

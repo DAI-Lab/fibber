@@ -30,12 +30,12 @@ def make_batch(toks_list):
 
 class GPT2GrammarQuality(MeasurementBase):
 
-    def __init__(self, gpt2_pretrained_model="gpt2", gpt2_gpu_id=None, **kargs):
+    def __init__(self, gpt2_pretrained_model="gpt2", gpt2_gpu_id=-1, **kargs):
         super(GPT2GrammarQuality, self).__init__()
 
         logger.info("load gpt2 model.")
         self._tokenizer = GPT2Tokenizer.from_pretrained(gpt2_pretrained_model)
-        if gpt2_gpu_id is None:
+        if gpt2_gpu_id == -1:
             logger.warning("GPT2 measurement is running on CPU.")
             self._device = torch.device("cpu")
         else:
