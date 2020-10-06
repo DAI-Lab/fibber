@@ -1,17 +1,21 @@
 import logging
 
+G_FORMATTER = logging.Formatter(
+    fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s")
 
-def setup_custom_logger(name, filename=None, level="INFO"):
+
+def setup_custom_logger(name, level="INFO"):
     logger = logging.getLogger(name)
 
-    formatter = logging.Formatter(
-        fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s")
     handler = logging.StreamHandler()
-    handler.setFormatter(formatter)
+    handler.setFormatter(G_FORMATTER)
     logger.addHandler(handler)
-
-    if filename is not None:
-        logger.addHandler(logging.FileHandler("log.txt"))
 
     logger.setLevel(getattr(logging, level))
     return logger
+
+
+def add_filehandler(logger, filename):
+    file_handler = logging.FileHandler(filename)
+    file_handler.setFormatter(G_FORMATTER)
+    logger.root.addHandler(file_handler)

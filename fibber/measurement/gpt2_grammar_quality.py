@@ -6,7 +6,7 @@ from transformers import GPT2LMHeadModel, GPT2Tokenizer
 from .. import log
 from .measurement_base import MeasurementBase
 
-logger = log.setup_custom_logger('gpt2_grammar_quality')
+logger = log.setup_custom_logger(__name__)
 
 
 def make_input_output_pair(tokenizer, x):
