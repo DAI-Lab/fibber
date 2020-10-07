@@ -1,5 +1,7 @@
 import datetime
 import json
+import os
+import pandas as pd
 
 import tqdm
 
@@ -10,12 +12,15 @@ logger = log.setup_custom_logger(__name__)
 
 
 def measure_quality(dataset_name, trainset, testset, results,
-                    paraphrase_field, output_filename, measurement_gpu):
+                    paraphrase_field, output_filename, gpt2_gpu,
+                    bert_gpu, use_gpu):
     logger.info("Build measurement bundle.")
     measurement_bundle = MeasurementBundle(
+        use_glove_semantic_similarity=False,
+
         use_bert_clf_flip_pred=True,
-        use_gpu_id=measurement_gpu, gpt2_gpu_id=measurement_gpu,
-        bert_gpu_id=measurement_gpu, dataset_name=dataset_name,
+        use_gpu_id=use_gpu, gpt2_gpu_id=gpt2_gpu,
+        bert_gpu_id=bert_gpu, dataset_name=dataset_name,
         trainset=trainset, testset=testset)
 
     last_output_save_time = -1
@@ -38,3 +43,29 @@ def measure_quality(dataset_name, trainset, testset, results,
         json.dump(results, f, indent=2)
 
     return results
+
+def aggregate_measurements(model_name, experiment_name, results, customize_metric, filename):
+    if os.path.exists(filename):
+        dataset_view = pd.read_csv(filename)
+    else:
+        dataset_view = pd.DataFrame()
+
+    aggregate_result = pd.DataFrame()
+    for data_record in results:
+        agg_t = dict(pd.DataFrame(data_record["paraphrase_measurement"]).mean())
+        agg_t = dict([(k + "_Avg", v) for k, v in agg_t.items()])
+        agg_t["ParaphrasesPerExample"] = len(data_record["paraphrase_measurement"])
+
+        for name, fn in customize_metric.items():
+            agg_t[name] = fn(data_record["paraphrase_measurement"])
+
+        aggregate_result = aggregate_result.append(agg_t, ignore_index=True)
+
+    aggregate_result = dict(aggregate_result.mean())
+    # hack column order by adding 0
+    aggregate_result["0_model_name"] = model_name
+    aggregate_result["0_experiment_name"] = experiment_name
+
+    dataset_view = dataset_view.append(aggregate_result, ignore_index=True)
+    dataset_view.to_csv(filename, index=None)
+    return dataset_view

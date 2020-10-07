@@ -12,6 +12,14 @@ with open('HISTORY.md', encoding='utf-8') as history_file:
     history = history_file.read()
 
 install_requires = [
+    'numpy>=1.18.0',
+    'tensorflow>=2.0.0',
+    'tensorflow-hub>=0.9.0',
+    'torch<2,>=1.0',
+    'torchvision<1,>=0.4.2',
+    'transformers>=2.4.0',
+    'tqdm>=4.0.0',
+    'spacy>=2.0.0'
 ]
 
 setup_requires = [

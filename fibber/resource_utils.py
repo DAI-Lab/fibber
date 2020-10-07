@@ -73,3 +73,8 @@ def get_stopwords():
         stopwords = f.readlines()
     stopwords = [x.strip().lower() for x in stopwords]
     return stopwords
+
+def get_dataset_result_filename(dataset_name):
+    result_dir = os.path.join(get_root_dir(), "results")
+    os.makedirs(result_dir, exist_ok=True)
+    return os.path.join(result_dir, "%s.csv" % dataset_name)
