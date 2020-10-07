@@ -12,7 +12,7 @@ class EditingDistance(MeasurementBase):
         super(EditingDistance, self).__init__()
         self._no_puctuation = editing_distance_ignore_punctuation
 
-    def __call__(self, origin, paraphrase):
+    def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         if self._no_puctuation:
             origin = re.sub(r"[^a-zA-Z0-9]", " ", origin)
             paraphrase = re.sub(r"[^a-zA-Z0-9]", " ", paraphrase)

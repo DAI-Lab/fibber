@@ -5,7 +5,7 @@ import os
 from .. import log
 from ..dataset.dataset_utils import get_dataset, subsample_dataset
 from ..measurement.measurement_utils import aggregate_measurements, measure_quality
-from ..resource_utils import get_dataset_result_filename
+from ..resource_utils import update_detailed_result
 from ..strategy.random_strategy import RandomStrategy
 
 logger = log.setup_custom_logger(__name__)
@@ -37,14 +37,14 @@ def get_output_filename(FLAGS, prefix="", suffix=""):
     return prefix + G_EXP_NAME + suffix
 
 
-def flip_pred_agg_fn(use_sim, ppl_score):
-    def agg_fn(paraphrase_measurement):
-        for item in paraphrase_measurement:
-            if (item["BertClfFlipPred"] == 1
+def paraphrase_pred_accuracy_agg_fn(use_sim, ppl_score):
+    def agg_fn(data_record):
+        for item in data_record["paraphrase_measurements"]:
+            if (item["BertClfPrediction"] != data_record["label"]
                 and item["GPT2GrammarQuality"] < ppl_score
                     and item["USESemanticSimilarity"] < use_sim):
-                return 1
-        return 0
+                return 0
+        return 1
     return agg_fn
 
 
@@ -75,11 +75,12 @@ def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
                               use_gpu=FLAGS.use_gpu)
 
     customize_metric = {
-        "FlipPred_sim0.95_ppl2": flip_pred_agg_fn(use_sim=0.95, ppl_score=2),
-        "FlipPred_sim0.90_ppl5": flip_pred_agg_fn(use_sim=0.90, ppl_score=5)
+        "ParaphraseAcc_sim0.95_ppl2": paraphrase_pred_accuracy_agg_fn(use_sim=0.95, ppl_score=2),
+        "ParaphraseAcc_sim0.90_ppl5": paraphrase_pred_accuracy_agg_fn(use_sim=0.90, ppl_score=5)
     }
-    aggregate_measurements("RandomStrategy", G_EXP_NAME, results, customize_metric,
-                           get_dataset_result_filename(dataset_name))
+    aggregated_result = aggregate_measurements(
+        "RandomStrategy", G_EXP_NAME, results, customize_metric)
+    update_detailed_result(dataset_name, aggregated_result)
 
 
 if __name__ == "__main__":

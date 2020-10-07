@@ -41,6 +41,6 @@ class GloVeSemanticSimilarity(MeasurementBase):
             if word in self._glove["tok2id"]:
                 self._glove["emb_table"][self._glove["tok2id"][word], :] = 0
 
-    def __call__(self, origin, paraphrase):
+    def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         return float(compute_emb_sim(self._glove["emb_table"], self._glove["id2tok"],
                                      self._glove["tok2id"], origin, paraphrase))

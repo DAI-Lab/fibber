@@ -153,13 +153,15 @@ def load_or_train_bert_clf(tokenizer,
     return model
 
 
-class BertClfFlipPred(MeasurementBase):
+class BertClfPrediction(MeasurementBase):
+    """Generate BERT prediction for paraphrase."""
+
     def __init__(self, dataset_name, trainset, testset, bert_gpu_id=-1,
                  bert_clf_steps=20000, bert_clf_bs=32, bert_clf_lr=0.00002,
                  bert_clf_optimizer="adamw", bert_clf_weight_decay=0.001,
                  bert_clf_period_summary=100, bert_clf_period_val=500,
                  bert_clf_period_save=5000, bert_clf_val_steps=10, **kargs):
-        super(BertClfFlipPred, self).__init__()
+        super(BertClfPrediction, self).__init__()
 
         if trainset["cased"]:
             model_init = "bert-base-cased"
@@ -195,10 +197,28 @@ class BertClfFlipPred(MeasurementBase):
             bert_clf_val_steps=bert_clf_val_steps,
             device=self._device)
 
-    def predict(self, text):
-        seq = ["[CLS]"] + self._tokenizer.tokenize(text)
-        seq_tensor = torch.tensor(self._tokenizer.convert_tokens_to_ids(seq)).to(self._device)
-        return self._model(seq_tensor.unsqueeze(0))[0].argmax(dim=1)[0].detach().cpu().numpy()
+    def predict(self, text0, text1):
+        if text1 is None:
+            seq = ["[CLS]"] + self._tokenizer.tokenize(text0)
+            seq_tensor = torch.tensor(self._tokenizer.convert_tokens_to_ids(seq)).to(self._device)
+            return int(
+                self._model(seq_tensor.unsqueeze(0))[0].argmax(dim=1)[0].detach().cpu().numpy())
+        else:
+            seq0 = self._tokenizer.tokenize(text0)
+            seq1 = self._tokenizer.tokenize(text1)
+            l0 = len(seq0)
+            l1 = len(seq1)
+            seq_tensor = torch.tensor(
+                self._tokenizer.convert_tokens_to_ids(["[CLS]"] + seq0 + seq1)
+            ).to(self._device).unsqueeze(0)
+            tok_type = torch.tensor(
+                [0] * (l0 + 1) + [1] * l1).to(self._device).unsqueeze(0)
+            return int(self._model(seq_tensor, token_type_ids=tok_type
+                                   )[0].argmax(dim=1)[0].detach().cpu().numpy())
 
-    def __call__(self, origin, paraphrase):
-        return int(self.predict(origin) != self.predict(paraphrase))
+    def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+        if paraphrase_field == "text0":
+            return self.predict(paraphrase, None)
+        else:
+            assert paraphrase_field == "text1"
+            return self.predict(data_record["text0"], paraphrase)

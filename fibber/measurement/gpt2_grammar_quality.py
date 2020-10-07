@@ -63,6 +63,6 @@ class GPT2GrammarQuality(MeasurementBase):
         ppl = ppl.detach().cpu().numpy()
         return ppl
 
-    def __call__(self, origin, paraphrase):
+    def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         ppl = self._get_ppl(origin, paraphrase)
         return float(ppl[1] / ppl[0])

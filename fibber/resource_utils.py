@@ -1,6 +1,7 @@
 import os
 
 import numpy as np
+import pandas as pd
 import tqdm
 
 from . import log
@@ -75,7 +76,27 @@ def get_stopwords():
     return stopwords
 
 
-def get_dataset_result_filename(dataset_name):
+def update_detailed_result(dataset_name, aggregated_result):
     result_dir = os.path.join(get_root_dir(), "results")
     os.makedirs(result_dir, exist_ok=True)
-    return os.path.join(result_dir, "%s.csv" % dataset_name)
+    result_filename = os.path.join(result_dir, "%s.csv" % dataset_name)
+    if os.path.exists(result_filename):
+        results = pd.read_csv(result_filename)
+    else:
+        results = pd.DataFrame()
+
+    results = results.append(aggregated_result, ignore_index=True)
+    results.to_csv(result_filename)
+
+
+def update_overview_result(overview_result):
+    result_dir = os.path.join(get_root_dir(), "results")
+    os.makedirs(result_dir, exist_ok=True)
+    result_filename = os.path.join(result_dir, "overview.csv")
+    if os.path.exists(result_filename):
+        results = pd.read_csv(result_filename)
+    else:
+        results = pd.DataFrame()
+
+    results = results.append(overview_result, ignore_index=True)
+    results.to_csv(result_filename)
