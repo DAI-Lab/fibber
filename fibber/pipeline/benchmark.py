@@ -4,9 +4,9 @@ import os
 
 from .. import log
 from ..dataset.dataset_utils import get_dataset, subsample_dataset
-from ..strategy.random_strategy import RandomStrategy
-from .pipeline_utils import measure_quality, aggregate_measurements
+from ..measurement.measurement_utils import aggregate_measurements, measure_quality
 from ..resource_utils import get_dataset_result_filename
+from ..strategy.random_strategy import RandomStrategy
 
 logger = log.setup_custom_logger(__name__)
 
@@ -18,10 +18,13 @@ parser.add_argument("--output_dir", type=str, default=None)
 parser.add_argument("--num_paraphrases_per_text", type=int, default=20)
 parser.add_argument("--subsample_testset", type=int, default=1000)
 
+parser.add_argument("--strategy", type=str, default="RandomStrategy")
+
 parser.add_argument("--gpt2_gpu", type=int, default=-1)
 parser.add_argument("--bert_gpu", type=int, default=-1)
 parser.add_argument("--use_gpu", type=int, default=-1)
 
+RandomStrategy.add_parser_args(parser)
 
 G_EXP_NAME = None
 
@@ -29,9 +32,9 @@ G_EXP_NAME = None
 def get_output_filename(FLAGS, prefix="", suffix=""):
     global G_EXP_NAME
     if G_EXP_NAME is None:
-        G_EXP_NAME = FLAGS.dataset + "-" + datetime.datetime.now().strftime("%m%d-%H%M%S")
+        G_EXP_NAME = (FLAGS.dataset + "-" + FLAGS.strategy + "-"
+                      + datetime.datetime.now().strftime("%m%d-%H%M%S"))
     return prefix + G_EXP_NAME + suffix
-
 
 
 def flip_pred_agg_fn(use_sim, ppl_score):
@@ -39,15 +42,22 @@ def flip_pred_agg_fn(use_sim, ppl_score):
         for item in paraphrase_measurement:
             if (item["BertClfFlipPred"] == 1
                 and item["GPT2GrammarQuality"] < ppl_score
-                and item["USESemanticSimilarity"] < use_sim):
+                    and item["USESemanticSimilarity"] < use_sim):
                 return 1
         return 0
     return agg_fn
 
 
+def get_strategy(FLAGS, strategy_name):
+    if strategy_name == "RandomStrategy":
+        return RandomStrategy(FLAGS)
+    else:
+        assert 0
+
 
 def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
-    paraphrase_strategy = RandomStrategy()
+
+    paraphrase_strategy = get_strategy(FLAGS, FLAGS.strategy)
     paraphrase_strategy.fit(trainset)
 
     tmp_output_filename = os.path.join(
@@ -69,7 +79,8 @@ def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
         "FlipPred_sim0.90_ppl5": flip_pred_agg_fn(use_sim=0.90, ppl_score=5)
     }
     aggregate_measurements("RandomStrategy", G_EXP_NAME, results, customize_metric,
-                            get_dataset_result_filename(dataset_name))
+                           get_dataset_result_filename(dataset_name))
+
 
 if __name__ == "__main__":
     FLAGS = parser.parse_args()
