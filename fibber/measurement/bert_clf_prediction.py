@@ -201,6 +201,7 @@ class BertClfPrediction(MeasurementBase):
         if text1 is None:
             seq = ["[CLS]"] + self._tokenizer.tokenize(text0)
             seq_tensor = torch.tensor(self._tokenizer.convert_tokens_to_ids(seq)).to(self._device)
+            seq_tensor = seq_tensor[:200]
             return int(
                 self._model(seq_tensor.unsqueeze(0))[0].argmax(dim=1)[0].detach().cpu().numpy())
         else:
@@ -213,6 +214,8 @@ class BertClfPrediction(MeasurementBase):
             ).to(self._device).unsqueeze(0)
             tok_type = torch.tensor(
                 [0] * (l0 + 1) + [1] * l1).to(self._device).unsqueeze(0)
+            seq_tensor = seq_tensor[:, :200]
+            tok_type = tok_type[:, :200]
             return int(self._model(seq_tensor, token_type_ids=tok_type
                                    )[0].argmax(dim=1)[0].detach().cpu().numpy())
 
