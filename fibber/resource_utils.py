@@ -49,11 +49,12 @@ def get_glove_emb():
     """
     data_dir = get_root_dir()
     data_dir = os.path.join(data_dir, "common")
-    download_file(filename=resources["default-glove-embeddings"]["filename"],
-                  url=resources["default-glove-embeddings"]["url"],
-                  md5_checksum=resources["default-glove-embeddings"]["md5"],
-                  subdir=os.path.join(data_dir), untar=True)
-
+    if not os.path.exists(os.path.join(data_dir, "glove.6B.300d.txt")):
+        download_file(filename=resources["default-glove-embeddings"]["filename"],
+                      url=resources["default-glove-embeddings"]["url"],
+                      md5_checksum=resources["default-glove-embeddings"]["md5"],
+                      subdir=os.path.join(data_dir), untar=True)
+    
     return load_glove_model(os.path.join(data_dir, "glove.6B.300d.txt"), 300)
 
 
@@ -86,7 +87,7 @@ def update_detailed_result(dataset_name, aggregated_result):
         results = pd.DataFrame()
 
     results = results.append(aggregated_result, ignore_index=True)
-    results.to_csv(result_filename)
+    results.to_csv(result_filename, index=None)
 
 
 def update_overview_result(overview_result):
@@ -99,4 +100,4 @@ def update_overview_result(overview_result):
         results = pd.DataFrame()
 
     results = results.append(overview_result, ignore_index=True)
-    results.to_csv(result_filename)
+    results.to_csv(result_filename, index=None)

@@ -5,7 +5,7 @@ import os
 from .. import log
 from ..dataset.dataset_utils import get_dataset, subsample_dataset
 from ..measurement.measurement_utils import aggregate_measurements, measure_quality
-from ..resource_utils import update_detailed_result
+from ..resource_utils import update_detailed_result, update_overview_result
 from ..strategy.random_strategy import RandomStrategy
 
 logger = log.setup_custom_logger(__name__)
@@ -20,9 +20,11 @@ parser.add_argument("--subsample_testset", type=int, default=1000)
 
 parser.add_argument("--strategy", type=str, default="RandomStrategy")
 
+# measurement args
 parser.add_argument("--gpt2_gpu", type=int, default=-1)
 parser.add_argument("--bert_gpu", type=int, default=-1)
 parser.add_argument("--use_gpu", type=int, default=-1)
+parser.add_argument("--bert_clf_steps", type=int, default=20000)
 
 RandomStrategy.add_parser_args(parser)
 
@@ -72,7 +74,8 @@ def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
                               paraphrase_field=paraphrase_set["paraphrase_field"], output_filename=output_filename,
                               gpt2_gpu=FLAGS.gpt2_gpu,
                               bert_gpu=FLAGS.bert_gpu,
-                              use_gpu=FLAGS.use_gpu)
+                              use_gpu=FLAGS.use_gpu,
+                              bert_clf_steps=FLAGS.bert_clf_steps)
 
     customize_metric = {
         "ParaphraseAcc_sim0.95_ppl2": paraphrase_pred_accuracy_agg_fn(use_sim=0.95, ppl_score=2),
@@ -81,6 +84,13 @@ def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
     aggregated_result = aggregate_measurements(
         "RandomStrategy", G_EXP_NAME, results, customize_metric)
     update_detailed_result(dataset_name, aggregated_result)
+
+    overview_field = ["1_model_name", "2_experiment_name",
+                      "GPT2GrammarQuality_mean", "USESemanticSimilarity_mean",
+                      "ParaphraseAcc_sim0.95_ppl2", "ParaphraseAcc_sim0.90_ppl5"]
+    overview_result = dict([(k, v) for (k, v) in aggregated_result.items() if k in overview_field])
+    overview_result["0_dataset"] = dataset_name
+    update_overview_result(overview_result)
 
 
 if __name__ == "__main__":

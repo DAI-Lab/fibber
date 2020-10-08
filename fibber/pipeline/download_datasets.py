@@ -6,7 +6,7 @@ import os
 from .. import log
 from ..dataset import (
   process_ag, process_imdb, process_mnli, process_mr, process_snli, process_yelp)
-from ..datasets.dataset_utils import verify_dataset
+from ..dataset.dataset_utils import verify_dataset
 from ..download_utils import download_file, get_root_dir
 from ..downloadable_resources import resources
 

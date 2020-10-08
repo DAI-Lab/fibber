@@ -46,7 +46,7 @@ class MeasurementBundle(object):
             self._measurements.append(BertClfPrediction(**kargs))
         self._measurements += customized_measurements
 
-    def _evaluate(self, origin, paraphrase, data_record, paraphrase_field):
+    def _evaluate(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         ret = {}
         for measurement in self._measurements:
             ret[str(measurement)] = measurement(origin, paraphrase, data_record, paraphrase_field)
@@ -66,13 +66,13 @@ class MeasurementBundle(object):
 
 def measure_quality(dataset_name, trainset, testset, results,
                     paraphrase_field, output_filename, gpt2_gpu,
-                    bert_gpu, use_gpu):
+                    bert_gpu, use_gpu, **kargs):
     logger.info("Build measurement bundle.")
     measurement_bundle = MeasurementBundle(
         use_bert_clf_prediction=True,
         use_gpu_id=use_gpu, gpt2_gpu_id=gpt2_gpu,
         bert_gpu_id=bert_gpu, dataset_name=dataset_name,
-        trainset=trainset, testset=testset)
+        trainset=trainset, testset=testset, **kargs)
 
     last_output_save_time = -1
     logger.info("Start measuring bundle.")
@@ -154,7 +154,7 @@ def aggregate_measurements(model_name, experiment_name, results, customize_metri
 
     aggregated_result = dict(aggregated_result.mean())
     # hack column order by adding 0
-    aggregated_result["0_model_name"] = model_name
-    aggregated_result["0_experiment_name"] = experiment_name
+    aggregated_result["1_model_name"] = model_name
+    aggregated_result["2_experiment_name"] = experiment_name
 
     return aggregated_result
