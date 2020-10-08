@@ -6,7 +6,7 @@
 <!-- Uncomment these lines after releasing the package to PyPI for version and downloads badges -->
 <!--[![PyPI Shield](https://img.shields.io/pypi/v/fibber.svg)](https://pypi.python.org/pypi/fibber)-->
 <!--[![Downloads](https://pepy.tech/badge/fibber)](https://pepy.tech/project/fibber)-->
-[![Travis CI Shield](https://travis-ci.org/DAI-Lab/fibber.svg?branch=master)](https://travis-ci.org/DAI-Lab/fibber)
+[![Travis CI Shield](https://travis-ci.com/DAI-Lab/fibber.svg?token=g6BnJQz9Aaqdj1paqcNM&branch=master&status=started)](https://travis-ci.org/DAI-Lab/fibber)
 [![Coverage Status](https://codecov.io/gh/DAI-Lab/fibber/branch/master/graph/badge.svg)](https://codecov.io/gh/DAI-Lab/fibber)
 
 
