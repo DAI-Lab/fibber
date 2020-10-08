@@ -147,7 +147,17 @@ The result tables will be stored at `~/.fibber/results/ag.csv` and `~/.fibber/re
 
 The following table shows the benchmarking result.
 
-For detailed tables, see .
+| dataset | model_name   | GPT2GrammarQuality | USESemanticSimilarit | ParaphraseAcc(use>0.90,gpt2<5) | ParaphraseAcc(use>0.95,gpt2<2) |
+|-----------|----------------|-------------------------|----------------------------|----------------------------|----------------------------|
+| ag        | RandomStrategy | 43.0882519              | 0.91529946                 | 1                          | 1                          |
+| mr        | RandomStrategy | 15.760386               | 0.84152539                 | 0.92                       | 0.98                       |
+| snli      | RandomStrategy | 40.4389165              | 0.8038205                  | 0.79                       | 0.89                       |
+| mnli      | RandomStrategy | 42.8590095              | 0.80939928                 | 0.84                       | 0.94                       |
+| mnli_mis  | RandomStrategy | 47.3342925              | 0.81349877                 | 0.91                       | 0.98                       |
+| yelp      | RandomStrategy | 28.6441136              | 0.8548079                  | 1                          | 1                          |
+| imdb      | RandomStrategy | 29.4195759              | 0.8768223                  | 1                          | 1                          |
+
+For detailed tables, see [Google Sheet](https://docs.google.com/spreadsheets/d/1B_5RiMfndNVhxZLX5ykMqt5SCjpy3MxOovBi_RL41Fw/edit?usp=sharing).
 
 
 # Datasets

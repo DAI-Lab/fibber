@@ -11,6 +11,7 @@ logger = log.setup_custom_logger(__name__)
 
 def make_input_output_pair(tokenizer, x):
     toks = tokenizer.encode(x, add_special_tokens=True)
+    toks = toks[:200]
     return [tokenizer.bos_token_id] + toks[:-1], toks
 
 

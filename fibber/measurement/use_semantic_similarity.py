@@ -42,5 +42,7 @@ class USESemanticSimilarity(MeasurementBase):
         logger.root.handlers = []    # tensorflow_hub mess up the python logging
 
     def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+        origin = " ".join(origin.split()[:200])
+        paraphrase = " ".join(paraphrase.split()[:200])
         embs = self.model([origin, paraphrase]).numpy()
         return float(np.sum(embs[0] * embs[1]) / np.linalg.norm(embs[0]) / np.linalg.norm(embs[1]))
