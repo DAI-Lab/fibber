@@ -13,14 +13,14 @@
 
 # fibber
 
-Fibber is a benchmarking suite for adversarial attacks on text classification.
+Fibber is a library to evaluate different strategies to paraphrase natural language, especially how each strategy can flip the prediction of text classifiers without changing the meaning of a sentence. 
 
 - Documentation: https://DAI-Lab.github.io/fibber
 - Homepage: https://github.com/DAI-Lab/fibber
 
 # Overview
 
-TODO: Provide a short overview of the project here.
+Fibber is a library to evaluate different strategies to paraphrase natural language. In this library, we have several built-in paraphrasing strategies. We also have a benchmark framework to evaluate the quality of paraphrase. In particular, we use the GPT2 language model to measure how meaningful is the paraphrased text. We use a universal sentence encoder to evaluate the semantic similarity between original and paraphrased text. We also train a BERT classifier on the original dataset, and check of paraphrased sentences can break the text classifier. 
 
 # Install
 
@@ -39,7 +39,7 @@ These are the minimum commands needed to create a conda environment using python
 conda create -n fibber_env python=3.6
 ```
 
-Afterwards, you have to execute this command to activate the environment:
+Afterward, you have to execute this command to activate the environment:
 
 ```bash
 conda activate fibber_env
@@ -99,7 +99,7 @@ make install
 
 # Quickstart
 
-In this short tutorial we will guide you through a series of steps that will help you
+In this short tutorial, we will guide you through a series of steps that will help you
 getting started with **fibber**.
 
 ### (1) Install Fibber
@@ -116,7 +116,7 @@ All datasets will be downloaded and stored at `~/.fibber/datasets`.
 
 ### (3) Execute the benchmark on one dataset using one paraphrase strategy.
 
-The following command will run the `random` strategy on the `ag` dataset. 
+The following command will run the `random` strategy on the `ag` dataset. To use other datasets, see the [datasets](#Datasets) section.
 
 ```bash
 python -m fibber.pipeline.benchmark \
@@ -131,13 +131,13 @@ python -m fibber.pipeline.benchmark \
 	--bert_clf_steps 20000
 ```
 
-It first subsample the test set to `100` examples, then generate `20` paraphrases for each example. During this process, the paraphrased sentences will be stored at `exp-ag/ag-random-<date>-<time>-tmp.json`. 
+It first subsamples the test set to `100` examples, then generates `20` paraphrases for each example. During this process, the paraphrased sentences will be stored at `exp-ag/ag-random-<date>-<time>-tmp.json`. 
 
 Then the pipeline will initialize all the evaluation metrics. 
 
-- We will use a `GPT2` model to evaluate if a sentence is meaningful. The `GPT2` language model will be executed on `gpt2_gpu`. You should change the argument to a proper gpu id.
-- We will use a `Universal sentence encoder (USE)` model to measure the similarity between two paraphrased sentences and the original sentence. The `USE` will be executed on `use_gpu`. You should change the argument to a proper gpu id.
-- We will use a `BERT` model to predict the classification label for paraphrases. The `BERT` will be executed on `bert_gpu`. You should change the argument to a proper gpu id. **Note that, the BERT classifier will be trained at the first time you execute the pipeline. Then the trained model will be saved at `~/.fibber/bert_clf/<dataset_name>/`. Because of the training, it will use more GPU memory than GPT2 and USE. So assign BERT to a seperate GPU if you have multiple GPUs.**
+- We will use a `GPT2` model to evaluate if a sentence is meaningful. The `GPT2` language model will be executed on `gpt2_gpu`. You should change the argument to a proper GPU id.
+- We will use a `Universal sentence encoder (USE)` model to measure the similarity between two paraphrased sentences and the original sentence. The `USE` will be executed on `use_gpu`. You should change the argument to a proper GPU id.
+- We will use a `BERT` model to predict the classification label for paraphrases. The `BERT` will be executed on `bert_gpu`. You should change the argument to a proper GPU id. **Note that the BERT classifier will be trained for the first time you execute the pipeline. Then the trained model will be saved at `~/.fibber/bert_clf/<dataset_name>/`. Because of the training, it will use more GPU memory than GPT2 and USE. So assign BERT to a separate GPU if you have multiple GPUs.**
 
 After the execution, the evaluation metric for each of the paraphrases will be stored at `exp-ag/ag-random-<date>-<time>-with-measurement.json`.
 
@@ -161,7 +161,7 @@ For detailed tables, see [Google Sheet](https://docs.google.com/spreadsheets/d/1
 
 
 # Datasets
-Here are the information of datasets in fibber.
+Here is the information about datasets in fibber.
 
 | Type                       | Name                    | Size (train/test) | Classes                             |
 |----------------------------|-------------------------|-------------------|-------------------------------------|
@@ -172,9 +172,11 @@ Here are the information of datasets in fibber.
 | Natural Language Inference | [snli](https://nlp.stanford.edu/projects/snli/) | 570k / 10k        | Entailment / Neutral / Contradict   |                                                                                                            |
 | Natural Language Inference | [mnli](https://cims.nyu.edu/~sbowman/multinli/)                | 433k / 10k        | Entailment / Neutral / Contradict   |
 
+Note that mnli has two configurations. Use `mnli` for matched testset, and `mnli_mis` for mismatched testset. 
+
 
 ## Format
-Each dataset is stored in multiple json files. For example, the ag dataset is stored in `train.json` and `test.json`.
+Each dataset is stored in multiple JSON files. For example, the ag dataset is stored in `train.json` and `test.json`.
 
 The JSON file contains the following fields:
 
@@ -219,16 +221,16 @@ Here is an example:
 ## Download datasets
 We have scripts to help you easily download all datasets. We provide two options to download datasets:
 
-- **Download data preprocessed by us.** We preprocessed datasets and uploaded to aws. You can use the following command to download all datasets.
+- **Download data preprocessed by us.** We preprocessed datasets and uploaded them to AWS. You can use the following command to download all datasets.
 ```
 python3 -m fibber.pipeline download_datasets
 ```
 After executing the command, the dataset is stored at `~/.fibber/datasets/<dataset_name>/*.json`. For example, the ag dataset is stored in `~/.fibber/datasets/ag/`. And there will be two sets `train.json` and `test.json` in the folder.
-- **Download and process data from original source.** You can also download the orginal dataset version and process it locally.
+- **Download and process data from the original source.** You can also download the original dataset version and process it locally.
 ```
 python3 -m fibber.pipeline download_datasets --process_raw 1
 ```
-This script will download data from the original source to `~/.fibber/datasets/<dataset_name>/raw/` folder. And process the raw data to generate the json files.
+This script will download data from the original source to `~/.fibber/datasets/<dataset_name>/raw/` folder. And process the raw data to generate the JSON files.
 
 
 
