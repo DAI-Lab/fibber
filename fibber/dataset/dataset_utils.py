@@ -15,6 +15,14 @@ logger = log.setup_custom_logger(__name__)
 
 
 def get_dataset(dataset_name):
+    """Get datasets.
+
+    Args:
+        dataset_name: the name of the dataset.
+
+    Returns:
+        the training set and test set as a dictionary.
+    """
     data_dir = get_root_dir()
     data_dir = os.path.join(data_dir, "datasets")
 
@@ -52,6 +60,18 @@ def text_md5(x):
 
 
 def subsample_dataset(dataset, n):
+    """Subsample n data from the dataset to n.
+
+    Sample (n // k) examples from each category. Within each category, we pick examples with the
+    lowest md5 hash value.
+
+    Args:
+        dataset: a dataset dictionary.
+        n: the size of the subsampled dataset.
+
+    Returns:
+        a subsampled dataset as a dictionary.
+    """
     if n > len(dataset["data"]):
         return copy.deepcopy(dataset)
 
@@ -80,6 +100,13 @@ def subsample_dataset(dataset, n):
 
 
 def verify_dataset(data):
+    """Verify if the dataset dictionary contains necessary fields.
+
+    Args:
+        data: a dataset dictionary.
+    raises:
+        assertion error when there are missing or incorrect fields.
+    """
     assert "label_mapping" in data
     assert "cased" in data
     assert "paraphrase_field" in data
@@ -101,8 +128,23 @@ def verify_dataset(data):
 
 
 class DatasetForBert(torch.utils.data.IterableDataset):
+    """Bert dataset wrapper for dataset dictionary. """
+
     def __init__(self, dataset, model_init, batch_size, exclude=-1,
                  masked_lm=False, masked_lm_ratio=0.2, seed=0):
+        """Create dataset for a bert model.
+
+        Args:
+            dataset: a dataset dictionary.
+            model_init: the pretrained model name. select from 'bert-base-cased',
+                        'bert-base-uncased', 'bert-large-cased', and 'bert-large-uncased'.
+            batch_size: the batch size in each step.
+            exclude: exclude one category from the data.
+                     Use -1 (default) to include all categories.
+            masked_lm: whether to randomly replace words with mask tokens.
+            masked_lm_ratio: the ratio of random masks. Ignored when masked_lm is False.
+            seed: random seed.
+        """
 
         self._buckets = [30, 50, 100, 200]
         self._max_len = self._buckets[-1]
@@ -149,6 +191,15 @@ class DatasetForBert(torch.utils.data.IterableDataset):
         self._bucket_prob = self._bucket_prob / np.sum(self._bucket_prob)
 
     def __iter__(self):
+        """Generate data.
+
+        Returns:
+            text: a tensor of size (batch_size, L).
+            masks: a tensor of size (batch_size, L).
+            tok_types: a tensor of size (batch_size, L).
+            labels: a tensor of size (batch_size,).
+            lm_labels: a tensor of size (batch_size, L). (when masked_lm is True)
+        """
         worker_info = torch.utils.data.get_worker_info()
         if worker_info is None:
             self._rng = np.random.RandomState(self._seed)

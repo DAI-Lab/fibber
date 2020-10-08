@@ -12,6 +12,18 @@ logger = log.setup_custom_logger(__name__)
 
 
 def load_glove_model(glove_file, dim):
+    """Load glove embeddings from txt file.
+
+    Args:
+        glove_file: filename.
+        dim: the dimension of the embedding.
+
+    Returns:
+        a dictionary:
+            "emb_table": a numpy array of size(N, 300)
+            "id2tok": a list of strings.
+            "tok2id": a dictionary that maps word (string) to its id.
+    """
     glove_file_lines = open(glove_file, 'r').readlines()
 
     emb_table = np.zeros((len(glove_file_lines), dim), dtype='float32')
@@ -54,7 +66,7 @@ def get_glove_emb():
                       url=resources["default-glove-embeddings"]["url"],
                       md5_checksum=resources["default-glove-embeddings"]["md5"],
                       subdir=os.path.join(data_dir), untar=True)
-    
+
     return load_glove_model(os.path.join(data_dir, "glove.6B.300d.txt"), 300)
 
 
@@ -78,6 +90,13 @@ def get_stopwords():
 
 
 def update_detailed_result(dataset_name, aggregated_result):
+    """Read dataset detailed results and add a row to the file. Create a new file if the table
+    does not exist.
+
+    Args:
+        dataset_name: the name of the dataset.
+        aggregated_result: the aggregated result as a dictionary.
+    """
     result_dir = os.path.join(get_root_dir(), "results")
     os.makedirs(result_dir, exist_ok=True)
     result_filename = os.path.join(result_dir, "%s.csv" % dataset_name)
@@ -91,6 +110,12 @@ def update_detailed_result(dataset_name, aggregated_result):
 
 
 def update_overview_result(overview_result):
+    """Read overview results and add a row to the file. Create a new file if the table
+    does not exist.
+
+    Args:
+        overview_result: the overview result as a dictionary.
+    """
     result_dir = os.path.join(get_root_dir(), "results")
     os.makedirs(result_dir, exist_ok=True)
     result_filename = os.path.join(result_dir, "overview.csv")

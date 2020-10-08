@@ -4,7 +4,7 @@ from .strategy_base import StrategyBase
 
 
 class RandomStrategy(StrategyBase):
-    """docstring for RandomStrategy."""
+    """A baseline strategy. Randomly shuffle words in a sentence to generate paraphrases."""
 
     def paraphrase_example(self, data_record, field_name, n):
         text = data_record[field_name]

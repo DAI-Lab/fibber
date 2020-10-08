@@ -1,5 +1,5 @@
 class MeasurementBase(object):
-    """docstring for MeasurementBase."""
+    """Base class for measurements."""
 
     def __init__(self, **kargs):
         super(MeasurementBase, self).__init__()

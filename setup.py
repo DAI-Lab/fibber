@@ -19,7 +19,8 @@ install_requires = [
     'torchvision<1,>=0.4.2',
     'transformers>=2.4.0',
     'tqdm>=4.0.0',
-    'spacy>=2.0.0'
+    'spacy>=2.0.0',
+    'pandas>=1.0.0'
 ]
 
 setup_requires = [
