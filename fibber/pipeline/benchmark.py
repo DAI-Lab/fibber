@@ -7,6 +7,7 @@ from ..dataset.dataset_utils import get_dataset, subsample_dataset
 from ..measurement.measurement_utils import aggregate_measurements, measure_quality
 from ..resource_utils import update_detailed_result, update_overview_result
 from ..strategy.random_strategy import RandomStrategy
+from ..strategy.identical_strategy import IdenticalStrategy
 
 logger = log.setup_custom_logger(__name__)
 
@@ -27,6 +28,7 @@ parser.add_argument("--use_gpu", type=int, default=-1)
 parser.add_argument("--bert_clf_steps", type=int, default=20000)
 
 RandomStrategy.add_parser_args(parser)
+IdenticalStrategy.add_parser_args(parser)
 
 G_EXP_NAME = None
 
@@ -53,6 +55,8 @@ def paraphrase_pred_accuracy_agg_fn(use_sim, ppl_score):
 def get_strategy(FLAGS, strategy_name):
     if strategy_name == "RandomStrategy":
         return RandomStrategy(FLAGS)
+    if strategy_name == "IdenticalStrategy":
+        return IdenticalStrategy(FLAGS)
     else:
         assert 0
 
@@ -82,7 +86,7 @@ def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
         "ParaphraseAcc_sim0.90_ppl5": paraphrase_pred_accuracy_agg_fn(use_sim=0.90, ppl_score=5)
     }
     aggregated_result = aggregate_measurements(
-        "RandomStrategy", G_EXP_NAME, results, customize_metric)
+        str(paraphrase_strategy), G_EXP_NAME, results, customize_metric)
     update_detailed_result(dataset_name, aggregated_result)
 
     overview_field = ["1_model_name", "2_experiment_name",
