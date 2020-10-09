@@ -157,7 +157,7 @@ class BertClfPrediction(MeasurementBase):
     """Generate BERT prediction for paraphrase."""
 
     def __init__(self, dataset_name, trainset, testset, bert_gpu_id=-1,
-                 bert_clf_steps=20000, bert_clf_bs=16, bert_clf_lr=0.00002,
+                 bert_clf_steps=20000, bert_clf_bs=32, bert_clf_lr=0.00002,
                  bert_clf_optimizer="adamw", bert_clf_weight_decay=0.001,
                  bert_clf_period_summary=100, bert_clf_period_val=500,
                  bert_clf_period_save=5000, bert_clf_val_steps=10, **kargs):

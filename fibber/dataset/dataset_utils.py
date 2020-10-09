@@ -165,7 +165,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
         for item in tqdm.tqdm(dataset["data"]):
             y = item["label"]
             s0 = "[CLS] " + item["text0"]
-            if "s1" in item:
+            if "text1" in item:
                 s1 = "[SEP] " + item["text1"]
             else:
                 s1 = ""
