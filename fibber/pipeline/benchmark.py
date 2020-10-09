@@ -46,7 +46,7 @@ def paraphrase_pred_accuracy_agg_fn(use_sim, ppl_score):
         for item in data_record["paraphrase_measurements"]:
             if (item["BertClfPrediction"] != data_record["label"]
                 and item["GPT2GrammarQuality"] < ppl_score
-                    and item["USESemanticSimilarity"] < use_sim):
+                    and item["USESemanticSimilarity"] > use_sim):
                 return 0
         return 1
     return agg_fn
