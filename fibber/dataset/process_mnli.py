@@ -55,9 +55,11 @@ def download_and_process_mnli():
 
     process_data(os.path.join(root_dir, dataset_dir, "raw/multinli_1.0/multinli_1.0_train.jsonl"),
                  os.path.join(root_dir, dataset_dir, "train.json"))
-    process_data(os.path.join(root_dir, dataset_dir, "raw/multinli_1.0/multinli_1.0_dev_matched.jsonl"),
+    process_data(os.path.join(root_dir, dataset_dir,
+                              "raw/multinli_1.0/multinli_1.0_dev_matched.jsonl"),
                  os.path.join(root_dir, dataset_dir, "dev_matched.json"))
-    process_data(os.path.join(root_dir, dataset_dir, "raw/multinli_1.0/multinli_1.0_dev_mismatched.jsonl"),
+    process_data(os.path.join(root_dir, dataset_dir,
+                              "raw/multinli_1.0/multinli_1.0_dev_mismatched.jsonl"),
                  os.path.join(root_dir, dataset_dir, "dev_mismatched.json"))
 
 

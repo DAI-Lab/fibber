@@ -57,7 +57,7 @@ test-all: ## run tests on every Python version with tox
 .PHONY: fix-lint
 fix-lint: ## fix lint issues using autoflake, autopep8, and isort
 	find fibber tests -name '*.py' | xargs autoflake --in-place --remove-all-unused-imports --remove-unused-variables
-	autopep8 --in-place --recursive --aggressive --ignore=W503 fibber tests
+	autopep8 --in-place --recursive --aggressive fibber tests
 	isort --apply --atomic --recursive fibber tests
 
 .PHONY: coverage

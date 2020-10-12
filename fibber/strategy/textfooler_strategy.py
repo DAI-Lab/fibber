@@ -65,4 +65,3 @@ class TextFoolerStrategy(StrategyBase):
             return [att.perturbed_result.attacked_text.text]
         else:
             return [data_record[field_name]]
-        return result

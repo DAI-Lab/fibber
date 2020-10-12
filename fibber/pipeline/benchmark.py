@@ -5,7 +5,7 @@ import os
 from .. import log
 from ..dataset.dataset_utils import get_dataset, subsample_dataset
 from ..measurement.measurement_utils import (
-  MeasurementBundle, aggregate_measurements, measure_quality)
+    MeasurementBundle, aggregate_measurements, measure_quality)
 from ..resource_utils import update_detailed_result
 from ..strategy.identical_strategy import IdenticalStrategy
 from ..strategy.random_strategy import RandomStrategy
