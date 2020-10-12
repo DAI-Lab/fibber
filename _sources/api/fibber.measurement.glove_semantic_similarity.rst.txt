@@ -1,0 +1,7 @@
+fibber.measurement.glove\_semantic\_similarity module
+=====================================================
+
+.. automodule:: fibber.measurement.glove_semantic_similarity
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+fibber.pipeline.benchmark module
+================================
+
+.. automodule:: fibber.pipeline.benchmark
+   :members:
+   :undoc-members:
+   :show-inheritance:

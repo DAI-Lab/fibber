@@ -1,7 +1,0 @@
-fibber.optim\_utils module
-==========================
-
-.. automodule:: fibber.optim_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:

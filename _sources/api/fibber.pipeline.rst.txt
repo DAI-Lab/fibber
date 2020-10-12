@@ -1,0 +1,20 @@
+fibber.pipeline package
+=======================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   fibber.pipeline.benchmark
+   fibber.pipeline.download_datasets
+   fibber.pipeline.make_overview
+
+Module contents
+---------------
+
+.. automodule:: fibber.pipeline
+   :members:
+   :undoc-members:
+   :show-inheritance:

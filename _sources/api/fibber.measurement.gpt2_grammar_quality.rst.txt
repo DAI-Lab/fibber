@@ -1,0 +1,7 @@
+fibber.measurement.gpt2\_grammar\_quality module
+================================================
+
+.. automodule:: fibber.measurement.gpt2_grammar_quality
+   :members:
+   :undoc-members:
+   :show-inheritance:

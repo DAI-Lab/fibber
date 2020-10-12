@@ -1,0 +1,7 @@
+fibber.dataset.process\_imdb module
+===================================
+
+.. automodule:: fibber.dataset.process_imdb
+   :members:
+   :undoc-members:
+   :show-inheritance:

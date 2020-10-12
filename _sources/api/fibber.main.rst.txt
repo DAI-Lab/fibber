@@ -1,7 +1,0 @@
-fibber.main module
-==================
-
-.. automodule:: fibber.main
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -1,7 +1,0 @@
-fibber.evaluate.evaluation module
-=================================
-
-.. automodule:: fibber.evaluate.evaluation
-   :members:
-   :undoc-members:
-   :show-inheritance:

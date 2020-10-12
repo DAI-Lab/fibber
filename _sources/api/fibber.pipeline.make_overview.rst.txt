@@ -1,0 +1,7 @@
+fibber.pipeline.make\_overview module
+=====================================
+
+.. automodule:: fibber.pipeline.make_overview
+   :members:
+   :undoc-members:
+   :show-inheritance:

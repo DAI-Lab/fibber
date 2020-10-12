@@ -1,7 +1,0 @@
-fibber.classifier module
-========================
-
-.. automodule:: fibber.classifier
-   :members:
-   :undoc-members:
-   :show-inheritance:

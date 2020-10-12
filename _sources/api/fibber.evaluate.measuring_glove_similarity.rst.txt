@@ -1,7 +1,0 @@
-fibber.evaluate.measuring\_glove\_similarity module
-===================================================
-
-.. automodule:: fibber.evaluate.measuring_glove_similarity
-   :members:
-   :undoc-members:
-   :show-inheritance:

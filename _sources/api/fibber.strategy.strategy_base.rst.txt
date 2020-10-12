@@ -1,0 +1,7 @@
+fibber.strategy.strategy\_base module
+=====================================
+
+.. automodule:: fibber.strategy.strategy_base
+   :members:
+   :undoc-members:
+   :show-inheritance:

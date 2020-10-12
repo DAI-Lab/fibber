@@ -1,0 +1,7 @@
+fibber.download\_utils module
+=============================
+
+.. automodule:: fibber.download_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

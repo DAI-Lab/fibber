@@ -1,7 +1,0 @@
-fibber.attack.wordpiece\_emb module
-===================================
-
-.. automodule:: fibber.attack.wordpiece_emb
-   :members:
-   :undoc-members:
-   :show-inheritance:
