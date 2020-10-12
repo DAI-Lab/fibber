@@ -46,6 +46,7 @@ development_requires = [
     'autodocsumm>=0.1.10',
     'PyYaml>=5.3.1,<6',
     'argh>=0.26.2,<1',
+    'sphinx_rtd_theme>=0.4,<1',
 
     # style check
     'flake8>=3.7.7',
