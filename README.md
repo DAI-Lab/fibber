@@ -205,7 +205,7 @@ paraphrase\_field: choose from text0 and text1. Paraphrase_field indicates which
 
 Here is an example:
 
-```JSON
+```
 {
   "label_mapping": [
     "World",
@@ -268,7 +268,7 @@ The intermediate result `<output_dir>/<dataset>-<strategy>-<date>-<time>-tmp.jso
 
 An example is as follows.
 
-```JSON
+```
 {
   "label_mapping": [
     "World",
@@ -295,7 +295,7 @@ The result `<output_dir>/<dataset>-<strategy>-<date>-<time>-with-measurement.jso
 
 An example is as follows.
 
-```JSON
+```
 {
   "label_mapping": [
     "World",
@@ -309,7 +309,7 @@ An example is as follows.
     {
       "label": 1,
       "text0": "Boston won the NBA championship in 2008.",
-      "text0_paraphrases": [..., ...]
+      "text0_paraphrases": [..., ...],
       "original_text_measurements": {
         "EditingDistance": 0,
         "USESemanticSimilarity": 1.0,
