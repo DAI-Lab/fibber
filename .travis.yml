@@ -12,7 +12,9 @@ install: pip install -U tox-travis codecov
 after_success: codecov
 
 # Command to run tests
-script: tox
+script:
+  - tox
+  - make docs
 
 deploy:
 
