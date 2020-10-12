@@ -31,17 +31,24 @@ import fibber
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-    'm2r',
+    'm2r2',
+    'nbsphinx',
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.githubpages',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
-    'autodocsumm',
+    'IPython.sphinxext.ipython_console_highlighting',
+    'IPython.sphinxext.ipython_directive',
 ]
 
-autodoc_default_options = {
-    'autosummary': True,
-}
+ipython_execlines = [
+    "import pandas as pd",
+    "pd.set_option('display.width', 1000000)",
+    "pd.set_option('max_columns', 1000)",
+]
+autosummary_generate = True
+autodoc_typehints = "none"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -52,6 +59,19 @@ source_suffix = ['.rst', '.md']
 
 # The master toctree document.
 master_doc = 'index'
+
+# Jupyter Notebooks
+nbsphinx_execute = 'never'
+nbsphinx_prolog = """
+.. raw:: html
+
+    <style>
+        .nbinput .prompt,
+        .nboutput .prompt {
+            display: none;
+        }
+    </style>
+"""
 
 # General information about the project.
 project = 'fibber'
@@ -94,8 +114,8 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+html_theme = 'pydata_sphinx_theme'
+# html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Readthedocs additions
 html_context = {
@@ -109,9 +129,14 @@ html_context = {
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.  For a list of options available for each theme, see the
 # documentation.
+# html_theme_options = {
+#     'collapse_navigation': False,
+#     'display_version': False,
+# }
 html_theme_options = {
-    'collapse_navigation': False,
-    'display_version': False,
+    "github_url": "https://github.com/sdv-dev/fibber",
+    # "twitter_url": "https://twitter.com/sdv_dev",
+    "show_prev_next": True,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

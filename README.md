@@ -101,9 +101,9 @@ make install
 In this short tutorial, we will guide you through a series of steps that will help you
 getting started with **fibber**.
 
-### (1) Install Fibber
+**(1) Install Fibber**
 
-### (2) Download datasets
+**(2) Download datasets**
 
 Please use the following command to download all datasets.
 
@@ -113,7 +113,7 @@ python -m fibber.pipeline.download_datasets
 
 All datasets will be downloaded and stored at `~/.fibber/datasets`.
 
-### (3) Execute the benchmark on one dataset using one paraphrase strategy.
+**(3) Execute the benchmark on one dataset using one paraphrase strategy.**
 
 The following command will run the `random` strategy on the `ag` dataset. To use other datasets, see the [datasets](#Datasets) section.
 
@@ -160,6 +160,7 @@ For detailed tables, see [Google Sheet](https://docs.google.com/spreadsheets/d/1
 
 
 # Datasets
+
 Here is the information about datasets in fibber.
 
 | Type                       | Name                    | Size (train/test) | Classes                             |
@@ -168,13 +169,14 @@ Here is the information about datasets in fibber.
 | Sentiment classification   | [mr](http://www.cs.cornell.edu/people/pabo/movie-review-data/)           | 9k / 1k           |  Negative / Positive |
 | Sentiment classification   | [yelp](https://academictorrents.com/details/66ab083bda0c508de6c641baabb1ec17f72dc480) | 160k / 38k        | Negative / Positive                 |
 | Sentiment classification   | [imdb](https://ai.stanford.edu/~amaas/data/sentiment/)| 25k / 25k         | Negative / Positive                 |
-| Natural Language Inference | [snli](https://nlp.stanford.edu/projects/snli/) | 570k / 10k        | Entailment / Neutral / Contradict   |                                                                                                            |
+| Natural Language Inference | [snli](https://nlp.stanford.edu/projects/snli/) | 570k / 10k        | Entailment / Neutral / Contradict   |
 | Natural Language Inference | [mnli](https://cims.nyu.edu/~sbowman/multinli/)                | 433k / 10k        | Entailment / Neutral / Contradict   |
 
 Note that mnli has two configurations. Use `mnli` for matched testset, and `mnli_mis` for mismatched testset.
 
 
 ## Format
+
 Each dataset is stored in multiple JSON files. For example, the ag dataset is stored in `train.json` and `test.json`.
 
 The JSON file contains the following fields:
@@ -218,6 +220,7 @@ Here is an example:
 ```
 
 ## Download datasets
+
 We have scripts to help you easily download all datasets. We provide two options to download datasets:
 
 - **Download data preprocessed by us.** We preprocessed datasets and uploaded them to AWS. You can use the following command to download all datasets.
