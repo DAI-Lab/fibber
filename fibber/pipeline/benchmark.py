@@ -4,10 +4,12 @@ import os
 
 from .. import log
 from ..dataset.dataset_utils import get_dataset, subsample_dataset
-from ..measurement.measurement_utils import aggregate_measurements, measure_quality
-from ..resource_utils import update_detailed_result, update_overview_result
-from ..strategy.random_strategy import RandomStrategy
+from ..measurement.measurement_utils import (
+  MeasurementBundle, aggregate_measurements, measure_quality)
+from ..resource_utils import update_detailed_result
 from ..strategy.identical_strategy import IdenticalStrategy
+from ..strategy.random_strategy import RandomStrategy
+from ..strategy.textfooler_strategy import TextFoolerStrategy
 
 logger = log.setup_custom_logger(__name__)
 
@@ -54,18 +56,27 @@ def paraphrase_pred_accuracy_agg_fn(use_sim, ppl_score):
     return agg_fn
 
 
-def get_strategy(FLAGS, strategy_name):
+def get_strategy(FLAGS, strategy_name, measurement_bundle):
     if strategy_name == "RandomStrategy":
-        return RandomStrategy(FLAGS)
+        return RandomStrategy(FLAGS, measurement_bundle)
     if strategy_name == "IdenticalStrategy":
-        return IdenticalStrategy(FLAGS)
+        return IdenticalStrategy(FLAGS, measurement_bundle)
+    if strategy_name == "TextFoolerStrategy":
+        return TextFoolerStrategy(FLAGS, measurement_bundle)
     else:
         assert 0
 
 
 def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
+    logger.info("Build measurement bundle.")
+    measurement_bundle = MeasurementBundle(
+        use_bert_clf_prediction=True,
+        use_gpu_id=FLAGS.use_gpu, gpt2_gpu_id=FLAGS.gpt2_gpu,
+        bert_gpu_id=FLAGS.bert_gpu, dataset_name=dataset_name,
+        trainset=trainset, testset=testset,
+        bert_clf_steps=FLAGS.bert_clf_steps)
 
-    paraphrase_strategy = get_strategy(FLAGS, FLAGS.strategy)
+    paraphrase_strategy = get_strategy(FLAGS, FLAGS.strategy, measurement_bundle)
     paraphrase_strategy.fit(trainset)
 
     tmp_output_filename = os.path.join(
@@ -76,12 +87,10 @@ def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
 
     output_filename = os.path.join(
         FLAGS.output_dir, get_output_filename(FLAGS, suffix="-with-measurement.json"))
-    results = measure_quality(dataset_name=dataset_name, trainset=trainset, testset=testset, results=results,
-                              paraphrase_field=paraphrase_set["paraphrase_field"], output_filename=output_filename,
-                              gpt2_gpu=FLAGS.gpt2_gpu,
-                              bert_gpu=FLAGS.bert_gpu,
-                              use_gpu=FLAGS.use_gpu,
-                              bert_clf_steps=FLAGS.bert_clf_steps)
+
+    results = measure_quality(measurement_bundle, results=results,
+                              paraphrase_field=paraphrase_set["paraphrase_field"],
+                              output_filename=output_filename)
 
     customize_metric = {
         "3_ParaphraseAcc_sim0.95_ppl2": paraphrase_pred_accuracy_agg_fn(use_sim=0.95, ppl_score=2),
@@ -90,6 +99,7 @@ def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
     aggregated_result = aggregate_measurements(
         dataset_name, str(paraphrase_strategy), G_EXP_NAME, results, customize_metric)
     update_detailed_result(aggregated_result)
+
 
 if __name__ == "__main__":
     FLAGS = parser.parse_args()

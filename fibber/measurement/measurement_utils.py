@@ -34,6 +34,8 @@ class MeasurementBundle(object):
             assert isinstance(item, MeasurementBase)
 
         self._measurements = []
+        self._attack_clf = None
+
         if use_editing_distance:
             self._measurements.append(EditingDistance(**kargs))
         if use_use_semantic_simialrity:
@@ -44,6 +46,8 @@ class MeasurementBundle(object):
             self._measurements.append(GPT2GrammarQuality(**kargs))
         if use_bert_clf_prediction:
             self._measurements.append(BertClfPrediction(**kargs))
+            self._attack_clf = self._measurements[-1]
+
         self._measurements += customized_measurements
 
     def _evaluate(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
@@ -51,6 +55,10 @@ class MeasurementBundle(object):
         for measurement in self._measurements:
             ret[str(measurement)] = measurement(origin, paraphrase, data_record, paraphrase_field)
         return ret
+
+    def get_classifier_for_attack(self,):
+        assert self._attack_clf is not None
+        return self._attack_clf
 
     def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         if isinstance(origin, str):
@@ -64,15 +72,7 @@ class MeasurementBundle(object):
         return ret
 
 
-def measure_quality(dataset_name, trainset, testset, results,
-                    paraphrase_field, output_filename, gpt2_gpu,
-                    bert_gpu, use_gpu, **kargs):
-    logger.info("Build measurement bundle.")
-    measurement_bundle = MeasurementBundle(
-        use_bert_clf_prediction=True,
-        use_gpu_id=use_gpu, gpt2_gpu_id=gpt2_gpu,
-        bert_gpu_id=bert_gpu, dataset_name=dataset_name,
-        trainset=trainset, testset=testset, **kargs)
+def measure_quality(measurement_bundle, results, paraphrase_field, output_filename, **kargs):
 
     last_output_save_time = -1
     logger.info("Start measuring bundle.")
@@ -81,8 +81,8 @@ def measure_quality(dataset_name, trainset, testset, results,
 
         # Run measurements on original text
         data_record["original_text_measurements"] = measurement_bundle(
-                data_record[paraphrase_field], data_record[paraphrase_field],
-                data_record_tmp, paraphrase_field)
+            data_record[paraphrase_field], data_record[paraphrase_field],
+            data_record_tmp, paraphrase_field)
 
         # Run measurements on paraphrased text
         paraphrase_measurement_list = []

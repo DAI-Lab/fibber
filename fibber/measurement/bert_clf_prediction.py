@@ -197,13 +197,12 @@ class BertClfPrediction(MeasurementBase):
             bert_clf_val_steps=bert_clf_val_steps,
             device=self._device)
 
-    def predict(self, text0, text1):
+    def predict_raw(self, text0, text1):
         if text1 is None:
             seq = ["[CLS]"] + self._tokenizer.tokenize(text0)
             seq_tensor = torch.tensor(self._tokenizer.convert_tokens_to_ids(seq)).to(self._device)
             seq_tensor = seq_tensor[:200]
-            return int(
-                self._model(seq_tensor.unsqueeze(0))[0].argmax(dim=1)[0].detach().cpu().numpy())
+            return self._model(seq_tensor.unsqueeze(0))[0][0].detach().cpu().numpy()
         else:
             seq0 = self._tokenizer.tokenize(text0)
             seq1 = self._tokenizer.tokenize(text1)
@@ -216,8 +215,10 @@ class BertClfPrediction(MeasurementBase):
                 [0] * (l0 + 1) + [1] * l1).to(self._device).unsqueeze(0)
             seq_tensor = seq_tensor[:, :200]
             tok_type = tok_type[:, :200]
-            return int(self._model(seq_tensor, token_type_ids=tok_type
-                                   )[0].argmax(dim=1)[0].detach().cpu().numpy())
+            return self._model(seq_tensor, token_type_ids=tok_type)[0][0].detach().cpu().numpy()
+
+    def predict(self, text0, text1):
+        return int(np.argmax(self.predict_raw(text0, text1)))
 
     def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         if paraphrase_field == "text0":
