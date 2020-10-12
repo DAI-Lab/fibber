@@ -10,17 +10,16 @@
 [![Coverage Status](https://codecov.io/gh/DAI-Lab/fibber/branch/master/graph/badge.svg)](https://codecov.io/gh/DAI-Lab/fibber)
 
 
-
 # fibber
 
-Fibber is a library to evaluate different strategies to paraphrase natural language, especially how each strategy can flip the prediction of text classifiers without changing the meaning of a sentence. 
+Fibber is a library to evaluate different strategies to paraphrase natural language, especially how each strategy can flip the prediction of text classifiers without changing the meaning of a sentence.
 
 - Documentation: https://DAI-Lab.github.io/fibber
 - Homepage: https://github.com/DAI-Lab/fibber
 
 # Overview
 
-Fibber is a library to evaluate different strategies to paraphrase natural language. In this library, we have several built-in paraphrasing strategies. We also have a benchmark framework to evaluate the quality of paraphrase. In particular, we use the GPT2 language model to measure how meaningful is the paraphrased text. We use a universal sentence encoder to evaluate the semantic similarity between original and paraphrased text. We also train a BERT classifier on the original dataset, and check of paraphrased sentences can break the text classifier. 
+Fibber is a library to evaluate different strategies to paraphrase natural language. In this library, we have several built-in paraphrasing strategies. We also have a benchmark framework to evaluate the quality of paraphrase. In particular, we use the GPT2 language model to measure how meaningful is the paraphrased text. We use a universal sentence encoder to evaluate the semantic similarity between original and paraphrased text. We also train a BERT classifier on the original dataset, and check of paraphrased sentences can break the text classifier.
 
 # Install
 
@@ -65,8 +64,8 @@ This will pull and install the latest stable release from [PyPI](https://pypi.or
 
 ## Use without install
 
-If you are using this project for research purpose and want to make changes to the code, 
-you can install all requirements by 
+If you are using this project for research purpose and want to make changes to the code,
+you can install all requirements by
 
 ```bash
 git clone git@github.com:DAI-Lab/fibber.git
@@ -131,9 +130,9 @@ python -m fibber.pipeline.benchmark \
 	--bert_clf_steps 20000
 ```
 
-It first subsamples the test set to `100` examples, then generates `20` paraphrases for each example. During this process, the paraphrased sentences will be stored at `exp-ag/ag-random-<date>-<time>-tmp.json`. 
+It first subsamples the test set to `100` examples, then generates `20` paraphrases for each example. During this process, the paraphrased sentences will be stored at `exp-ag/ag-random-<date>-<time>-tmp.json`.
 
-Then the pipeline will initialize all the evaluation metrics. 
+Then the pipeline will initialize all the evaluation metrics.
 
 - We will use a `GPT2` model to evaluate if a sentence is meaningful. The `GPT2` language model will be executed on `gpt2_gpu`. You should change the argument to a proper GPU id.
 - We will use a `Universal sentence encoder (USE)` model to measure the similarity between two paraphrased sentences and the original sentence. The `USE` will be executed on `use_gpu`. You should change the argument to a proper GPU id.
@@ -172,7 +171,7 @@ Here is the information about datasets in fibber.
 | Natural Language Inference | [snli](https://nlp.stanford.edu/projects/snli/) | 570k / 10k        | Entailment / Neutral / Contradict   |                                                                                                            |
 | Natural Language Inference | [mnli](https://cims.nyu.edu/~sbowman/multinli/)                | 433k / 10k        | Entailment / Neutral / Contradict   |
 
-Note that mnli has two configurations. Use `mnli` for matched testset, and `mnli_mis` for mismatched testset. 
+Note that mnli has two configurations. Use `mnli` for matched testset, and `mnli_mis` for mismatched testset.
 
 
 ## Format
