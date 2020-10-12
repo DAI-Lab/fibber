@@ -47,6 +47,7 @@ development_requires = [
     'PyYaml>=5.3.1,<6',
     'argh>=0.26.2,<1',
     'sphinx_rtd_theme>=0.4,<1',
+    'ipython>=7,<8',
 
     # style check
     'flake8>=3.7.7',

@@ -10,7 +10,7 @@
 [![Coverage Status](https://codecov.io/gh/DAI-Lab/fibber/branch/master/graph/badge.svg)](https://codecov.io/gh/DAI-Lab/fibber)
 
 
-# fibber
+# Fibber
 
 Fibber is a library to evaluate different strategies to paraphrase natural language, especially how each strategy can flip the prediction of text classifiers without changing the meaning of a sentence.
 
@@ -233,9 +233,6 @@ After executing the command, the dataset is stored at `~/.fibber/datasets/<datas
 python3 -m fibber.pipeline download_datasets --process_raw 1
 ```
 This script will download data from the original source to `~/.fibber/datasets/<dataset_name>/raw/` folder. And process the raw data to generate the JSON files.
-
-
-
 
 
 # What's next?

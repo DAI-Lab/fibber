@@ -108,6 +108,7 @@ def update_detailed_result(aggregated_result):
     results = results.append(aggregated_result, ignore_index=True)
     results.to_csv(result_filename, index=None)
 
+
 def load_detailed_result():
     """Read detailed results from file.
 
@@ -120,6 +121,7 @@ def load_detailed_result():
         return pd.read_csv(result_filename)
     else:
         return pd.DataFrame()
+
 
 def update_overview_result(overview_result):
     """write overview result to a file.

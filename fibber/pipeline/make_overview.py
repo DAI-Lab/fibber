@@ -1,10 +1,6 @@
 import pandas as pd
-import json
 
-from ..resource_utils import load_detailed_result
-from ..resource_utils import update_overview_result
-
-
+from ..resource_utils import load_detailed_result, update_overview_result
 
 COL_FOR_NWIN = [
     ("3_ParaphraseAcc_sim0.95_ppl2", "L"),
@@ -42,11 +38,12 @@ def make_overview():
         for _, r1 in group.iterrows():
             for _, r2 in group.iterrows():
                 for column_name, direction in COL_FOR_NWIN:
-                    if ((direction == "H" and r1[column_name] > r2[column_name]) or
-                        (direction == "L" and r1[column_name] < r2[column_name])):
+                    if ((direction == "H" and r1[column_name] > r2[column_name])
+                            or (direction == "L" and r1[column_name] < r2[column_name])):
                         results[r1["1_model_name"]][column_name] += 1
 
     update_overview_result(pd.DataFrame(list(results.values())))
+
 
 if __name__ == "__main__":
     make_overview()

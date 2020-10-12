@@ -22,13 +22,14 @@ class StrategyBase(object):
     - Overwrite paraphrase_example to paraphrase one example.
     """
 
-    def __init__(self, FLAGS):
+    def __init__(self, FLAGS, measurement_bundle):
         """Initialize the strategy."""
         super(StrategyBase, self).__init__()
         # strategy config will be saved to the results.
         self._strategy_config = {
             "strategy_name": str(self)
         }
+        self._measurement_bundle = measurement_bundle
 
     def __repr__(self):
         return self.__class__.__name__
