@@ -43,6 +43,8 @@ def get_output_filename(FLAGS, prefix="", suffix=""):
 
 def paraphrase_pred_accuracy_agg_fn(use_sim, ppl_score):
     def agg_fn(data_record):
+        if data_record["original_text_measurements"]["BertClfPrediction"] != data_record["label"]:
+            return 0
         for item in data_record["paraphrase_measurements"]:
             if (item["BertClfPrediction"] != data_record["label"]
                 and item["GPT2GrammarQuality"] < ppl_score
@@ -82,20 +84,12 @@ def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
                               bert_clf_steps=FLAGS.bert_clf_steps)
 
     customize_metric = {
-        "ParaphraseAcc_sim0.95_ppl2": paraphrase_pred_accuracy_agg_fn(use_sim=0.95, ppl_score=2),
-        "ParaphraseAcc_sim0.90_ppl5": paraphrase_pred_accuracy_agg_fn(use_sim=0.90, ppl_score=5)
+        "3_ParaphraseAcc_sim0.95_ppl2": paraphrase_pred_accuracy_agg_fn(use_sim=0.95, ppl_score=2),
+        "4_ParaphraseAcc_sim0.90_ppl5": paraphrase_pred_accuracy_agg_fn(use_sim=0.90, ppl_score=5)
     }
     aggregated_result = aggregate_measurements(
-        str(paraphrase_strategy), G_EXP_NAME, results, customize_metric)
-    update_detailed_result(dataset_name, aggregated_result)
-
-    overview_field = ["1_model_name", "2_experiment_name",
-                      "GPT2GrammarQuality_mean", "USESemanticSimilarity_mean",
-                      "ParaphraseAcc_sim0.95_ppl2", "ParaphraseAcc_sim0.90_ppl5"]
-    overview_result = dict([(k, v) for (k, v) in aggregated_result.items() if k in overview_field])
-    overview_result["0_dataset"] = dataset_name
-    update_overview_result(overview_result)
-
+        dataset_name, str(paraphrase_strategy), G_EXP_NAME, results, customize_metric)
+    update_detailed_result(aggregated_result)
 
 if __name__ == "__main__":
     FLAGS = parser.parse_args()

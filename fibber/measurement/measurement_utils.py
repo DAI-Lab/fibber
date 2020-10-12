@@ -77,8 +77,15 @@ def measure_quality(dataset_name, trainset, testset, results,
     last_output_save_time = -1
     logger.info("Start measuring bundle.")
     for data_record in tqdm.tqdm(results["data"]):
-        paraphrase_measurement_list = []
         data_record_tmp = dict([(k, v) for k, v in data_record.items() if "_paraphrases" not in k])
+
+        # Run measurements on original text
+        data_record["original_text_measurements"] = measurement_bundle(
+                data_record[paraphrase_field], data_record[paraphrase_field],
+                data_record_tmp, paraphrase_field)
+
+        # Run measurements on paraphrased text
+        paraphrase_measurement_list = []
         for paraphrase in data_record[paraphrase_field + "_paraphrases"]:
             paraphrase_measurement_list.append(
                 measurement_bundle(data_record[paraphrase_field], paraphrase, data_record_tmp,
@@ -128,7 +135,7 @@ AGGREGATION_NAME_TO_FN = {
 }
 
 
-def aggregate_measurements(model_name, experiment_name, results, customize_metric):
+def aggregate_measurements(dataset_name, model_name, experiment_name, results, customize_metric):
     aggregated_result = pd.DataFrame()
     for data_record in results["data"]:
         aggregate_result_tmp = {}
@@ -154,6 +161,7 @@ def aggregate_measurements(model_name, experiment_name, results, customize_metri
 
     aggregated_result = dict(aggregated_result.mean())
     # hack column order by adding 0
+    aggregated_result["0_dataset_name"] = dataset_name
     aggregated_result["1_model_name"] = model_name
     aggregated_result["2_experiment_name"] = experiment_name
 
