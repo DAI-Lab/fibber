@@ -515,27 +515,27 @@ paraphrase_field: choose from text0 and text1. Paraphrase_field indicates which 
 </li>
 </ul>
 <p>Here is an example:</p>
-<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span>{
-  &quot;label_mapping&quot;: [
-    &quot;World&quot;,
-    &quot;Sports&quot;,
-    &quot;Business&quot;,
-    &quot;Sci/Tech&quot;
-  ],
-  &quot;cased&quot;: true,
-  &quot;paraphrase_field&quot;: &quot;text0&quot;,
-  &quot;data&quot;: [
-    {
-      &quot;label&quot;: 1,
-      &quot;text0&quot;: &quot;Boston won the NBA championship in 2008.&quot;
-    },
-    {
-      &quot;label&quot;: 3,
-      &quot;text0&quot;: &quot;Apple releases its latest cell phone.&quot;
-    },
-    ...
-  ]
-}
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;label_mapping&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;World&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Sports&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Business&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Sci/Tech&quot;</span>
+  <span class="p">],</span>
+  <span class="s2">&quot;cased&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+  <span class="s2">&quot;paraphrase_field&quot;</span><span class="p">:</span> <span class="s2">&quot;text0&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="s2">&quot;text0&quot;</span><span class="p">:</span> <span class="s2">&quot;Boston won the NBA championship in 2008.&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+      <span class="s2">&quot;text0&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple releases its latest cell phone.&quot;</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+  <span class="p">]</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -588,24 +588,24 @@ paraphrase_field: choose from text0 and text1. Paraphrase_field indicates which 
 <h3>Intermediate result<a class="headerlink" href="#intermediate-result" title="Permalink to this headline">¶</a></h3>
 <p>The intermediate result <code class="docutils literal notranslate"><span class="pre">&lt;output_dir&gt;/&lt;dataset&gt;-&lt;strategy&gt;-&lt;date&gt;-&lt;time&gt;-tmp.json</span></code> stores the paraphrased sentences. Strategies can run for a few minutes (hours) on some datasets, so we save the result every 30 seconds. The file format is similar to the dataset file. For each data record, we add a new field, <code class="docutils literal notranslate"><span class="pre">text0_paraphrases</span></code> or <code class="docutils literal notranslate"><span class="pre">text1_paraphrases</span></code> depending o the <code class="docutils literal notranslate"><span class="pre">paraphrase_field</span></code>.</p>
 <p>An example is as follows.</p>
-<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span>{
-  &quot;label_mapping&quot;: [
-    &quot;World&quot;,
-    &quot;Sports&quot;,
-    &quot;Business&quot;,
-    &quot;Sci/Tech&quot;
-  ],
-  &quot;cased&quot;: true,
-  &quot;paraphrase_field&quot;: &quot;text0&quot;,
-  &quot;data&quot;: [
-    {
-      &quot;label&quot;: 1,
-      &quot;text0&quot;: &quot;Boston won the NBA championship in 2008.&quot;,
-      &quot;text0_paraphrases&quot;: [..., ...]
-    },
-    ...
-  ]
-}
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;label_mapping&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;World&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Sports&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Business&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Sci/Tech&quot;</span>
+  <span class="p">],</span>
+  <span class="s2">&quot;cased&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+  <span class="s2">&quot;paraphrase_field&quot;</span><span class="p">:</span> <span class="s2">&quot;text0&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="s2">&quot;text0&quot;</span><span class="p">:</span> <span class="s2">&quot;Boston won the NBA championship in 2008.&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;text0_paraphrases&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+  <span class="p">]</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -613,41 +613,41 @@ paraphrase_field: choose from text0 and text1. Paraphrase_field indicates which 
 <h3>Result with measurement<a class="headerlink" href="#result-with-measurement" title="Permalink to this headline">¶</a></h3>
 <p>The result <code class="docutils literal notranslate"><span class="pre">&lt;output_dir&gt;/&lt;dataset&gt;-&lt;strategy&gt;-&lt;date&gt;-&lt;time&gt;-with-measurement.json</span></code> stores the paraphrased sentences as well as measurements. Measurements can run for a few minutes on some datasets, so we save the result every 30 seconds. The file format is similar to the intermediate file. For each data record, we add two new field, <code class="docutils literal notranslate"><span class="pre">original_text_measurements</span></code> and <code class="docutils literal notranslate"><span class="pre">paraphrase_measurements</span></code>.</p>
 <p>An example is as follows.</p>
-<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span>{
-  &quot;label_mapping&quot;: [
-    &quot;World&quot;,
-    &quot;Sports&quot;,
-    &quot;Business&quot;,
-    &quot;Sci/Tech&quot;
-  ],
-  &quot;cased&quot;: true,
-  &quot;paraphrase_field&quot;: &quot;text0&quot;,
-  &quot;data&quot;: [
-    {
-      &quot;label&quot;: 1,
-      &quot;text0&quot;: &quot;Boston won the NBA championship in 2008.&quot;,
-      &quot;text0_paraphrases&quot;: [..., ...]
-      &quot;original_text_measurements&quot;: {
-        &quot;EditingDistance&quot;: 0,
-        &quot;USESemanticSimilarity&quot;: 1.0,
-        &quot;GloVeSemanticSimilarity&quot;: 1.0,
-        &quot;GPT2GrammarQuality&quot;: 1.0,
-        &quot;BertClfPrediction&quot;: 1
-      },
-      &quot;paraphrase_measurements&quot;: [
-        {
-          &quot;EditingDistance&quot;: 7,
-          &quot;USESemanticSimilarity&quot;: 0.91,
-          &quot;GloVeSemanticSimilarity&quot;: 0.94,
-          &quot;GPT2GrammarQuality&quot;: 2.3,
-          &quot;BertClfPrediction&quot;: 1
-        },
-        ...
-      ]
-    },
-    ...
-  ]
-}
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;label_mapping&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;World&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Sports&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Business&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Sci/Tech&quot;</span>
+  <span class="p">],</span>
+  <span class="s2">&quot;cased&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+  <span class="s2">&quot;paraphrase_field&quot;</span><span class="p">:</span> <span class="s2">&quot;text0&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="s2">&quot;text0&quot;</span><span class="p">:</span> <span class="s2">&quot;Boston won the NBA championship in 2008.&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;text0_paraphrases&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+      <span class="s2">&quot;original_text_measurements&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;EditingDistance&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;USESemanticSimilarity&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s2">&quot;GloVeSemanticSimilarity&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s2">&quot;GPT2GrammarQuality&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s2">&quot;BertClfPrediction&quot;</span><span class="p">:</span> <span class="mi">1</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;paraphrase_measurements&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s2">&quot;EditingDistance&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+          <span class="s2">&quot;USESemanticSimilarity&quot;</span><span class="p">:</span> <span class="mf">0.91</span><span class="p">,</span>
+          <span class="s2">&quot;GloVeSemanticSimilarity&quot;</span><span class="p">:</span> <span class="mf">0.94</span><span class="p">,</span>
+          <span class="s2">&quot;GPT2GrammarQuality&quot;</span><span class="p">:</span> <span class="mf">2.3</span><span class="p">,</span>
+          <span class="s2">&quot;BertClfPrediction&quot;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">},</span>
+        <span class="o">...</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+  <span class="p">]</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">original_text_measurements</span></code> stores a dictionary of several metrics. It compares the original text against itself. The <code class="docutils literal notranslate"><span class="pre">paraphrase_measurements</span></code> is a list of the same length as paraphrases in this data record. Each element in this list is a dictionary showing the comparison between the original text and one paraphrased text.</p>
