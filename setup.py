@@ -20,7 +20,8 @@ install_requires = [
     'transformers>=2.4.0',
     'tqdm>=4.0.0',
     'spacy>=2.0.0',
-    'pandas>=1.0.0'
+    'pandas>=1.0.0',
+    'textattack==0.2.10',
 ]
 
 setup_requires = [
