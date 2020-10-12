@@ -15,7 +15,7 @@
 Fibber is a library to evaluate different strategies to paraphrase natural language, especially how these strategies can break text classifiers without changing the meaning of a sentence.
 
 - Documentation: [https://DAI-Lab.github.io/fibber](https://DAI-Lab.github.io/fibber)
-- GitHub: [https://DAI-Lab.github.io/fibber](https://github.com/DAI-Lab/fibber)
+- GitHub: [https://github.com/DAI-Lab/fibber](https://github.com/DAI-Lab/fibber)
 
 # Overview
 
