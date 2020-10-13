@@ -6,8 +6,7 @@ from textattack.models.wrappers.model_wrapper import ModelWrapper
 from .. import log
 from .strategy_base import StrategyBase
 
-logger = log.setup_custom_logger('textfooler')
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+logger = log.setup_custom_logger(__name__)
 
 
 def tostring(tokenizer, seq):

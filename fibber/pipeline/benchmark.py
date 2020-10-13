@@ -10,6 +10,9 @@ from ..resource_utils import update_detailed_result
 from ..strategy.identical_strategy import IdenticalStrategy
 from ..strategy.random_strategy import RandomStrategy
 from ..strategy.textfooler_strategy import TextFoolerStrategy
+from ..strategy.gibbs_sampling_strategy import GibbsSamplingStrategy
+from ..strategy.gibbs_sampling_x_strategy import GibbsSamplingXStrategy
+from ..strategy.gibbs_sampling_wpe_strategy import GibbsSamplingWPEStrategy
 
 logger = log.setup_custom_logger(__name__)
 
@@ -22,6 +25,7 @@ parser.add_argument("--num_paraphrases_per_text", type=int, default=20)
 parser.add_argument("--subsample_testset", type=int, default=1000)
 
 parser.add_argument("--strategy", type=str, default="RandomStrategy")
+parser.add_argument("--strategy_gpu_id", type=int, default=-1)
 
 # measurement args
 parser.add_argument("--gpt2_gpu", type=int, default=-1)
@@ -63,6 +67,12 @@ def get_strategy(FLAGS, strategy_name, measurement_bundle):
         return IdenticalStrategy(FLAGS, measurement_bundle)
     if strategy_name == "TextFoolerStrategy":
         return TextFoolerStrategy(FLAGS, measurement_bundle)
+    if strategy_name == "GibbsSamplingStrategy":
+        return GibbsSamplingStrategy(FLAGS, measurement_bundle)
+    if strategy_name == "GibbsSamplingXStrategy":
+        return GibbsSamplingXStrategy(FLAGS, measurement_bundle)
+    if strategy_name == "GibbsSamplingWPEStrategy":
+        return GibbsSamplingWPEStrategy(FLAGS, measurement_bundle)
     else:
         assert 0
 
@@ -70,6 +80,7 @@ def get_strategy(FLAGS, strategy_name, measurement_bundle):
 def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
     logger.info("Build measurement bundle.")
     measurement_bundle = MeasurementBundle(
+        use_glove_semantic_similarity=False,
         use_bert_clf_prediction=True,
         use_gpu_id=FLAGS.use_gpu, gpt2_gpu_id=FLAGS.gpt2_gpu,
         bert_gpu_id=FLAGS.bert_gpu, dataset_name=dataset_name,
