@@ -15,7 +15,7 @@ from ..strategy.gibbs_sampling_x_strategy import GibbsSamplingXStrategy
 from ..strategy.gibbs_sampling_wpe_strategy import GibbsSamplingWPEStrategy
 
 logger = log.setup_custom_logger(__name__)
-
+log.remove_logger_tf_handler(logger)
 
 parser = argparse.ArgumentParser()
 
@@ -25,8 +25,7 @@ parser.add_argument("--num_paraphrases_per_text", type=int, default=20)
 parser.add_argument("--subsample_testset", type=int, default=1000)
 
 parser.add_argument("--strategy", type=str, default="RandomStrategy")
-parser.add_argument("--strategy_gpu_id", type=int, default=-1)
-
+parser.add_argument("--strategy_gpu", type=int, default=-1)
 # measurement args
 parser.add_argument("--gpt2_gpu", type=int, default=-1)
 parser.add_argument("--bert_gpu", type=int, default=-1)
@@ -104,8 +103,10 @@ def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
                               output_filename=output_filename)
 
     customize_metric = {
-        "3_ParaphraseAcc_sim0.95_ppl2": paraphrase_pred_accuracy_agg_fn(use_sim=0.95, ppl_score=2),
-        "4_ParaphraseAcc_sim0.90_ppl5": paraphrase_pred_accuracy_agg_fn(use_sim=0.90, ppl_score=5)
+        "3_ParaphraseAcc_usesim0.90_ppl2":
+            paraphrase_pred_accuracy_agg_fn(use_sim=0.90, ppl_score=2),
+        "4_ParaphraseAcc_usesim0.85_ppl5":
+            paraphrase_pred_accuracy_agg_fn(use_sim=0.85, ppl_score=5)
     }
     aggregated_result = aggregate_measurements(
         dataset_name, str(paraphrase_strategy), G_EXP_NAME, results, customize_metric)
@@ -120,6 +121,7 @@ if __name__ == "__main__":
 
     log.add_filehandler(
         logger, os.path.join(FLAGS.output_dir, "log", get_output_filename(FLAGS, suffix=".log")))
+    log.remove_logger_tf_handler(logger)
 
     trainset, testset = get_dataset(FLAGS.dataset)
     paraphrase_set = subsample_dataset(testset, FLAGS.subsample_testset)

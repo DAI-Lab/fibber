@@ -3,6 +3,7 @@ import datetime
 import json
 import torch
 
+import torch
 import tqdm
 
 from .. import log
@@ -31,6 +32,12 @@ class StrategyBase(object):
             "strategy_name": str(self)
         }
         self._measurement_bundle = measurement_bundle
+        if FLAGS.strategy_gpu == -1:
+            logger.warning("%s is running on CPU." % str(self))
+            self._device = torch.device("cpu")
+        else:
+            logger.info("%s measurement is running on GPU %d.", str(self), FLAGS.strategy_gpu)
+            self._device = torch.device("cuda:%d" % FLAGS.strategy_gpu)
 
         if FLAGS.strategy_gpu_id == -1:
             logger.warning("%s is running on CPU." % str(self))

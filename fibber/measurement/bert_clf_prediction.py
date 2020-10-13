@@ -138,7 +138,7 @@ def load_or_train_bert_clf(tokenizer,
             run_evaluate(model, dataloader_val_iter,
                          bert_clf_val_steps, summary, global_step, device)
 
-        if global_step % bert_clf_period_save == 0:
+        if global_step % bert_clf_period_save == 0 or global_step == bert_clf_steps:
             model.eval()
             model.to(torch.device("cpu"))
             ckpt = os.path.join(model_dir, model_init + "-%04dk.pt" % (bert_clf_steps // 1000))
@@ -199,13 +199,13 @@ class BertClfPrediction(MeasurementBase):
 
     def predict_raw(self, text0, text1):
         if text1 is None:
-            seq = ["[CLS]"] + self._tokenizer.tokenize(text0)
+            seq = ["[CLS]"] + self._tokenizer.tokenize(text0) + ["[SEP]"]
             seq_tensor = torch.tensor(self._tokenizer.convert_tokens_to_ids(seq)).to(self._device)
             seq_tensor = seq_tensor[:200]
             return self._model(seq_tensor.unsqueeze(0))[0][0].detach().cpu().numpy()
         else:
-            seq0 = self._tokenizer.tokenize(text0)
-            seq1 = self._tokenizer.tokenize(text1)
+            seq0 = self._tokenizer.tokenize(text0) + ["[SEP]"]
+            seq1 = self._tokenizer.tokenize(text1) + ["[SEP]"]
             l0 = len(seq0)
             l1 = len(seq1)
             seq_tensor = torch.tensor(
