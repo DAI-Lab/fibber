@@ -3,8 +3,8 @@ import re
 import numpy as np
 
 from fibber import log
-from fibber.resources.resource_utils import get_glove_emb, get_stopwords
 from fibber.metrics.metric_base import MetricBase
+from fibber.resources.resource_utils import get_glove_emb, get_stopwords
 
 logger = log.setup_custom_logger('glove_semantic_similairty')
 
@@ -52,6 +52,7 @@ def compute_emb_sim(emb_table, tok_to_id, x, y):
 
 class GloVeSemanticSimilarity(MetricBase):
     """This metric computes the cosine similarity between two sentences."""
+
     def __init__(self, **kargs):
         """Initialize, load Glove embeddings."""
         super(GloVeSemanticSimilarity, self).__init__()

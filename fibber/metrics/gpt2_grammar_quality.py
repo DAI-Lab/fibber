@@ -35,6 +35,7 @@ class GPT2GrammarQuality(MetricBase):
     """This metric computes the perplexity of paraphrased text divided by the perplexity of
     original text. The perplexity is measured using GPT2 model.
     """
+
     def __init__(self, gpt2_pretrained_model="gpt2", gpt2_gpu_id=-1, **kargs):
         """Initialize GPT2 model."""
         super(GPT2GrammarQuality, self).__init__()

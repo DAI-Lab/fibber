@@ -19,14 +19,13 @@ import glob
 import json
 import os
 
-from fibber import log
+from fibber import get_root_dir, log
 from fibber.datasets import (
     preprocess_ag, preprocess_imdb, preprocess_mnli, preprocess_mr, preprocess_snli,
     preprocess_yelp)
 from fibber.datasets.dataset_utils import verify_dataset
-from fibber.download_utils import download_file
-from fibber import get_root_dir
 from fibber.datasets.downloadable_datasets import downloadable_dataset_urls
+from fibber.download_utils import download_file
 
 logger = log.setup_custom_logger(__name__)
 

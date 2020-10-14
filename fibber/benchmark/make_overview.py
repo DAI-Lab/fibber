@@ -14,6 +14,7 @@ COL_FOR_NWIN = [
 DATASET_NAME_COL = "0_dataset_name"
 STRATEGY_NAME_COL = "1_paraphrase_strategy_name"
 
+
 def make_overview():
     """Generate overview table from detailed table."""
     detailed_df = load_detailed_result()

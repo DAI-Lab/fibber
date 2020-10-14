@@ -82,5 +82,3 @@ def get_stopwords():
         stopwords = f.readlines()
     stopwords = [x.strip().lower() for x in stopwords]
     return stopwords
-
-

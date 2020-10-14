@@ -136,7 +136,7 @@ def compute_metrics(metric_bundle, results, output_filename):
         for paraphrase in data_record[paraphrase_field + "_paraphrases"]:
             paraphrase_metric_list.append(
                 metric_bundle(data_record[paraphrase_field], paraphrase, data_record_tmp,
-                                   paraphrase_field))
+                              paraphrase_field))
 
         data_record["paraphrase_metrics"] = paraphrase_metric_list
 

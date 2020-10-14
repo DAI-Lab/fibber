@@ -3,14 +3,13 @@ import datetime
 import os
 
 from fibber import log
-from fibber.datasets.dataset_utils import get_dataset, subsample_dataset
-from fibber.metrics.metric_utils import (
-    MetricBundle, aggregate_metrics, compute_metrics)
 from fibber.benchmark.benchmark_utils import update_detailed_result
+from fibber.benchmark.customized_metric_aggregation import customized_metric_aggregation_fn_dict
+from fibber.datasets.dataset_utils import get_dataset, subsample_dataset
+from fibber.metrics.metric_utils import MetricBundle, aggregate_metrics, compute_metrics
 from fibber.paraphrase_strategies.identical_strategy import IdenticalStrategy
 from fibber.paraphrase_strategies.random_strategy import RandomStrategy
 from fibber.paraphrase_strategies.textfooler_strategy import TextFoolerStrategy
-from fibber.benchmark.customized_metric_aggregation import customized_metric_aggregation_fn_dict
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)

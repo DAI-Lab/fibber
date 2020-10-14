@@ -1,13 +1,11 @@
 """This module implements the paraphrase strategy using TextFooler."""
 
 import textattack
-import torch
 from textattack.attack_recipes.textfooler_jin_2019 import TextFoolerJin2019
 from textattack.models.wrappers.model_wrapper import ModelWrapper
 
 from fibber import log
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
-
 
 logger = log.setup_custom_logger(__name__)
 
@@ -40,6 +38,7 @@ def compute_clf(clf_model, seq_tensor, tok_type):
 
 class CLFModel(ModelWrapper):
     """A classifier wrapper for textattack package."""
+
     def __init__(self, clf_metric):
         self._clf_metric = clf_metric
         self._tokenizer = clf_metric._tokenizer
@@ -75,6 +74,7 @@ class TextFoolerStrategy(StrategyBase):
 
     This strategy always returns one paraphrase for one data record, regardless of `n`.
     """
+
     def __init__(self, FLAGS, metric_bundle):
         """Initialize TextFooler."""
         super(TextFoolerStrategy, self).__init__(FLAGS, metric_bundle)

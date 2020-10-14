@@ -2,8 +2,8 @@ import json
 import os
 
 from fibber import log
-from fibber.download_utils import download_file, get_root_dir
 from fibber.datasets.downloadable_datasets import downloadable_dataset_urls
+from fibber.download_utils import download_file, get_root_dir
 
 logger = log.setup_custom_logger(__name__)
 
