@@ -147,7 +147,7 @@ The aggregated result will be stored as a row at `~/.fibber/results/detailed.csv
 We use the number of wins to compare different strategies. To generate the overview table, use the following command.
 
 ```bash
-python -m fibber.pipeline.make_overview
+python -m fibber.benchmark.make_overview
 ```
 
 The overview table will be stored at `~/.fibber/results/overview.csv`.
