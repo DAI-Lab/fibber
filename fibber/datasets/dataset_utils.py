@@ -80,7 +80,7 @@ def get_dataset(dataset_name):
     data_dir = get_root_dir()
     data_dir = os.path.join(data_dir, "datasets")
 
-    if dataset_name == "mn li" or dataset_name == "mnli_mis":
+    if dataset_name == "mnli" or dataset_name == "mnli_mis":
         train_filename = os.path.join(data_dir, "mnli/train.json")
         if dataset_name == "mnli":
             test_filename = os.path.join(data_dir, "mnli/dev_matched.json")
