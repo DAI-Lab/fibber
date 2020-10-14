@@ -103,8 +103,8 @@ def load_or_train_bert_clf(model_init,
     a saved model, load and return the model. Otherwise, train the model using the given data.
 
     Args:
-        model_init (str): pretrained model name. Choose from ["bert-base-cased", "bert-base-uncased",
-            "bert-large-cased", "bert-large-uncased"].
+        model_init (str): pretrained model name. Choose from ["bert-base-cased",
+            "bert-base-uncased", "bert-large-cased", "bert-large-uncased"].
         dataset_name (str): the name of the dataset. This is also the dir to save trained model.
         trainset (dict): a fibber dataset.
         testset (dict): a fibber dataset.
