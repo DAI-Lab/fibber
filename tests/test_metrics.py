@@ -1,8 +1,8 @@
-from fibber.measurement.editing_distance import EditingDistance
-from fibber.measurement.glove_semantic_similarity import GloVeSemanticSimilarity
-from fibber.measurement.gpt2_grammar_quality import GPT2GrammarQuality
-from fibber.measurement.measurement_utils import MeasurementBundle
-from fibber.measurement.use_semantic_similarity import USESemanticSimilarity
+from fibber.metrics.editing_distance import EditingDistance
+from fibber.metrics.glove_semantic_similarity import GloVeSemanticSimilarity
+from fibber.metrics.gpt2_grammar_quality import GPT2GrammarQuality
+from fibber.metrics.metric_utils import MetricBundle
+from fibber.metrics.use_semantic_similarity import USESemanticSimilarity
 
 
 def test_editing_distance():
@@ -59,15 +59,9 @@ def test_glove_semantic_similarity():
     assert 0.95 < glove_semantic_similarity_measure(s1, s2) < 1
 
 
-def test_measurement_bundle():
-    measurement_bundle = MeasurementBundle()
+def test_metric_bundle():
+    metric_bundle = MetricBundle()
     s1 = "Saturday is the last day in a week"
     s2 = "Sunday is the last day in a week"
-    results = measurement_bundle(s1, s2)
+    results = metric_bundle(s1, s2)
     assert len(results) == 4
-
-    s1 = ["Saturday is the last day in a week"]
-    s2 = ["Sunday is the last day in a week"]
-    results = measurement_bundle(s1, s2)
-    assert len(results) == 1
-    assert len(results[0]) == 4

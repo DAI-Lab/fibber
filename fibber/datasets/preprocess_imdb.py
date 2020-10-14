@@ -4,15 +4,16 @@ import os
 
 import tqdm
 
-from .. import log
-from ..download_utils import download_file, get_root_dir
-from ..downloadable_resources import resources
+from fibber import log
+from fibber.datasets.preprocess_utils import download_raw_and_preprocess
 
 logger = log.setup_custom_logger(__name__)
 
 
-def process_data(input_folder, output_filename):
-    logger.info("Start processing data, and save at %s.", output_filename)
+def preprocess_imdb_data(input_folder, output_filename):
+    """preprocess raw IMDB dataset folder to Fibber's JSON format."""
+
+    logger.info("Start preprocessing data, and save at %s.", output_filename)
     data = {
         "label_mapping": ["negative", "positive"],
         "cased": True,
@@ -42,20 +43,16 @@ def process_data(input_folder, output_filename):
         json.dump(data, f, indent=2)
 
 
-def download_and_process_imdb():
-    root_dir = get_root_dir()
-    dataset_dir = "datasets/imdb/"
-
-    download_file(filename=resources["imdb-raw"]["filename"],
-                  url=resources["imdb-raw"]["url"],
-                  md5_checksum=resources["imdb-raw"]["md5"],
-                  subdir=os.path.join(dataset_dir, "raw"), untar=True)
-
-    process_data(os.path.join(root_dir, dataset_dir, "raw/aclImdb/train"),
-                 os.path.join(root_dir, dataset_dir, "train.json"))
-    process_data(os.path.join(root_dir, dataset_dir, "raw/aclImdb/test"),
-                 os.path.join(root_dir, dataset_dir, "test.json"))
+def download_and_preprocess_imdb():
+    """Download and preprocess IMDB sentiment classification dataset. """
+    download_raw_and_preprocess(
+        dataset_name="imdb",
+        download_list=["imdb-raw"],
+        preprocess_fn=preprocess_imdb_data,
+        preprocess_input_output_list=[
+            ("raw/aclImdb/train", "train.json"),
+            ("raw/aclImdb/test", "test.json")])
 
 
 if __name__ == "__main__":
-    download_and_process_imdb()
+    download_and_preprocess_imdb()

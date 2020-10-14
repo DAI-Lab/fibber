@@ -76,8 +76,8 @@ pip install --requirement requirement.txt
 Then you can use fibber by
 
 ```base
-python -m fibber.pipeline.download_datasets
-python -m fibber.pipeline.benchmark
+python -m fibber.datasets.download_datasets
+python -m fibber.benchmark.benchmark
 ```
 
 In this case, any changes you made on the code will take effect immediately.
@@ -108,7 +108,7 @@ getting started with **fibber**.
 Please use the following command to download all datasets.
 
 ```bash
-python -m fibber.pipeline.download_datasets
+python -m fibber.datasets.download_datasets
 ```
 
 All datasets will be downloaded and stored at `~/.fibber/datasets`.
@@ -118,7 +118,7 @@ All datasets will be downloaded and stored at `~/.fibber/datasets`.
 The following command will run the `random` strategy on the `ag` dataset. To use other datasets, see the [datasets](#Datasets) section.
 
 ```bash
-python -m fibber.pipeline.benchmark \
+python -m fibber.benchmark.benchmark \
 	--dataset ag \
 	--strategy RandomStrategy \
 	--output_dir exp-ag \
@@ -138,13 +138,13 @@ Then the pipeline will initialize all the evaluation metrics.
 - We will use a `Universal sentence encoder (USE)` model to measure the similarity between two paraphrased sentences and the original sentence. The `USE` will be executed on `use_gpu`. You should change the argument to a proper GPU id.
 - We will use a `BERT` model to predict the classification label for paraphrases. The `BERT` will be executed on `bert_gpu`. You should change the argument to a proper GPU id. **Note that the BERT classifier will be trained for the first time you execute the pipeline. Then the trained model will be saved at `~/.fibber/bert_clf/<dataset_name>/`. Because of the training, it will use more GPU memory than GPT2 and USE. So assign BERT to a separate GPU if you have multiple GPUs.**
 
-After the execution, the evaluation metric for each of the paraphrases will be stored at `exp-ag/ag-RandomStrategy-<date>-<time>-with-measurement.json`.
+After the execution, the evaluation metric for each of the paraphrases will be stored at `exp-ag/ag-RandomStrategy-<date>-<time>-with-metrics.json`.
 
 The aggregated result will be stored as a row at `~/.fibber/results/detailed.csv`.
 
 **(4) Generate overview result.**
 
-We use the number of wins to compare different strategies. To generate the overview table, use the following command. 
+We use the number of wins to compare different strategies. To generate the overview table, use the following command.
 
 ```bash
 python -m fibber.pipeline.make_overview
@@ -152,7 +152,7 @@ python -m fibber.pipeline.make_overview
 
 The overview table will be stored at `~/.fibber/results/overview.csv`.
 
-Before running this command, please verify `~/.fibber/results/detailed.csv`. Each strategy must not have more than one executions on one dataset. Otherwise, the script will raise assertion errors. 
+Before running this command, please verify `~/.fibber/results/detailed.csv`. Each strategy must not have more than one executions on one dataset. Otherwise, the script will raise assertion errors.
 
 
 # Benchmark result
@@ -235,12 +235,12 @@ We have scripts to help you easily download all datasets. We provide two options
 
 - **Download data preprocessed by us.** We preprocessed datasets and uploaded them to AWS. You can use the following command to download all datasets.
 ```
-python3 -m fibber.pipeline download_datasets
+python3 -m fibber.datasets.download_datasets
 ```
 After executing the command, the dataset is stored at `~/.fibber/datasets/<dataset_name>/*.json`. For example, the ag dataset is stored in `~/.fibber/datasets/ag/`. And there will be two sets `train.json` and `test.json` in the folder.
 - **Download and process data from the original source.** You can also download the original dataset version and process it locally.
 ```
-python3 -m fibber.pipeline download_datasets --process_raw 1
+python3 -m fibber.datasets.download_datasets --process_raw 1
 ```
 This script will download data from the original source to `~/.fibber/datasets/<dataset_name>/raw/` folder. And process the raw data to generate the JSON files.
 
@@ -248,8 +248,8 @@ This script will download data from the original source to `~/.fibber/datasets/<
 
 In this version, we implement three strategies
 
-- IdenticalStrategy: 
-	- The identical strategy outputs the original text as its paraphrase. 
+- IdenticalStrategy:
+	- The identical strategy outputs the original text as its paraphrase.
 	- This strategy generates exactly 1 paraphrase for each original text regardless of `--num_paraphrases_per_text` flag.
 - RandomStrategy:
 	- The random strategy outputs the random shuffle of words in the original text.
@@ -289,9 +289,9 @@ An example is as follows.
 }
 ```
 
-### Result with measurement
+### Result with metrics
 
-The result `<output_dir>/<dataset>-<strategy>-<date>-<time>-with-measurement.json` stores the paraphrased sentences as well as measurements. Measurements can run for a few minutes on some datasets, so we save the result every 30 seconds. The file format is similar to the intermediate file. For each data record, we add two new field, `original_text_measurements` and `paraphrase_measurements`. 
+The result `<output_dir>/<dataset>-<strategy>-<date>-<time>-with-metrics.json` stores the paraphrased sentences as well as metrics. Compute metrics may need a few minutes on some datasets, so we save the result every 30 seconds. The file format is similar to the intermediate file. For each data record, we add two new field, `original_text_metrics` and `paraphrase_metrics`.
 
 An example is as follows.
 
@@ -310,21 +310,21 @@ An example is as follows.
       "label": 1,
       "text0": "Boston won the NBA championship in 2008.",
       "text0_paraphrases": [..., ...],
-      "original_text_measurements": {
+      "original_text_metrics": {
         "EditingDistance": 0,
         "USESemanticSimilarity": 1.0,
         "GloVeSemanticSimilarity": 1.0,
         "GPT2GrammarQuality": 1.0,
         "BertClfPrediction": 1
       },
-      "paraphrase_measurements": [
+      "paraphrase_metrics": [
         {
           "EditingDistance": 7,
           "USESemanticSimilarity": 0.91,
           "GloVeSemanticSimilarity": 0.94,
           "GPT2GrammarQuality": 2.3,
           "BertClfPrediction": 1
-        }, 
+        },
         ...
       ]
     },
@@ -333,7 +333,7 @@ An example is as follows.
 }
 ```
 
-The `original_text_measurements` stores a dictionary of several metrics. It compares the original text against itself. The `paraphrase_measurements` is a list of the same length as paraphrases in this data record. Each element in this list is a dictionary showing the comparison between the original text and one paraphrased text.
+The `original_text_metrics` stores a dictionary of several metrics. It compares the original text against itself. The `paraphrase_metrics` is a list of the same length as paraphrases in this data record. Each element in this list is a dictionary showing the comparison between the original text and one paraphrased text.
 
 
 

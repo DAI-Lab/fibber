@@ -3,19 +3,21 @@ import torch
 import torch.nn.functional as F
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
-from .. import log
-from .measurement_base import MeasurementBase
+from fibber import log
+from fibber.metrics.metric_base import MetricBase
 
 logger = log.setup_custom_logger(__name__)
 
 
 def make_input_output_pair(tokenizer, x):
+    """Tokenize the text, then construct input and output for GPT2."""
     toks = tokenizer.encode(x, add_special_tokens=True)
     toks = toks[:200]
     return [tokenizer.bos_token_id] + toks[:-1], toks
 
 
 def make_batch(toks_list):
+    """Convert multiple text to a batch tensor."""
     n = len(toks_list)
     max_len = max([len(x) for x in toks_list])
 
@@ -29,23 +31,27 @@ def make_batch(toks_list):
     return ids, mask
 
 
-class GPT2GrammarQuality(MeasurementBase):
-
+class GPT2GrammarQuality(MetricBase):
+    """This metric computes the perplexity of paraphrased text divided by the perplexity of
+    original text. The perplexity is measured using GPT2 model.
+    """
     def __init__(self, gpt2_pretrained_model="gpt2", gpt2_gpu_id=-1, **kargs):
+        """Initialize GPT2 model."""
         super(GPT2GrammarQuality, self).__init__()
 
         logger.info("load gpt2 model.")
         self._tokenizer = GPT2Tokenizer.from_pretrained(gpt2_pretrained_model)
         if gpt2_gpu_id == -1:
-            logger.warning("GPT2 measurement is running on CPU.")
+            logger.warning("GPT2 metric is running on CPU.")
             self._device = torch.device("cpu")
         else:
-            logger.info("GPT2 measurement is running on GPU %d.", gpt2_gpu_id)
+            logger.info("GPT2 metric is running on GPU %d.", gpt2_gpu_id)
             self._device = torch.device("cuda:%d" % gpt2_gpu_id)
 
         self._model = GPT2LMHeadModel.from_pretrained(gpt2_pretrained_model).to(self._device)
 
     def _get_ppl(self, origin, paraphrase):
+        """Compute the perplexity ratio ppl(paraphrase) / ppl(origin)."""
         origin_input, origin_output = make_input_output_pair(self._tokenizer, origin)
         paraphrase_input, paraphrase_output = make_input_output_pair(self._tokenizer, paraphrase)
 
@@ -65,5 +71,13 @@ class GPT2GrammarQuality(MeasurementBase):
         return ppl
 
     def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+        """Compute the perplexity ratio.
+
+        Args:
+            origin (str): original text.
+            paraphrase (str): paraphrased text.
+            data_record: ignored.
+            paraphrase_field: ignored.
+        """
         ppl = self._get_ppl(origin, paraphrase)
         return float(ppl[1] / ppl[0])

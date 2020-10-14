@@ -1,10 +1,10 @@
 import numpy as np
 
-from .strategy_base import StrategyBase
+from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
 
 class RandomStrategy(StrategyBase):
-    """A baseline strategy. Randomly shuffle words in a sentence to generate paraphrases."""
+    """Randomly shuffle words in a sentence to generate paraphrases."""
 
     def paraphrase_example(self, data_record, field_name, n):
         text = data_record[field_name]

@@ -1,21 +1,20 @@
 import json
 import os
 
-from .. import log
-from ..download_utils import download_file, get_root_dir
-from ..downloadable_resources import resources
+from fibber import log
+from fibber.download_utils import download_file, get_root_dir
+from fibber.datasets.downloadable_datasets import downloadable_dataset_urls
 
 logger = log.setup_custom_logger(__name__)
 
 
-def download_and_process_mr():
+def download_and_preprocess_mr():
+    """preprocess raw movie review dataset to Fibber's JSON format."""
     root_dir = get_root_dir()
     dataset_dir = "datasets/mr/"
 
-    download_file(filename=resources["mr-raw"]["filename"],
-                  url=resources["mr-raw"]["url"],
-                  md5_checksum=resources["mr-raw"]["md5"],
-                  subdir=os.path.join(dataset_dir, "raw"), untar=True)
+    download_file(subdir=os.path.join(dataset_dir, "raw"),
+                  **downloadable_dataset_urls["mr-raw"])
 
     logger.info("Start processing data.")
 
@@ -73,4 +72,4 @@ def download_and_process_mr():
 
 
 if __name__ == "__main__":
-    download_and_process_mr()
+    download_and_preprocess_mr()

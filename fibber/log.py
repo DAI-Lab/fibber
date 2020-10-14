@@ -5,6 +5,7 @@ G_FORMATTER = logging.Formatter(
 
 
 def setup_custom_logger(name, level="INFO"):
+    """Get a logger."""
     logger = logging.getLogger(name)
 
     handler = logging.StreamHandler()
@@ -15,12 +16,17 @@ def setup_custom_logger(name, level="INFO"):
     return logger
 
 
-def add_filehandler(logger, filename):
+def add_file_handler(logger, filename):
+    """Add file handler to a logger."""
     file_handler = logging.FileHandler(filename)
     file_handler.setFormatter(G_FORMATTER)
     logger.root.addHandler(file_handler)
 
 
 def remove_logger_tf_handler(logger):
+    """Remove all handlers except file handler.
+
+    This function can clean up the mess caused by tensorflow_hub.
+    """
     logger.root.handlers = [item for item in logger.root.handlers
                             if isinstance(item, logging.FileHandler)]

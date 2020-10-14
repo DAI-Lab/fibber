@@ -2,17 +2,34 @@ import re
 
 import numpy as np
 
-from .measurement_base import MeasurementBase
+from fibber.metrics.metric_base import MetricBase
 
 
-class EditingDistance(MeasurementBase):
+class EditingDistance(MetricBase):
     """This class measures the editing distance between two sentences."""
 
     def __init__(self, editing_distance_ignore_punctuation=True, **kargs):
+        """Initialize.
+
+        Args:
+            editing_distance_ignore_punctuation (bool): whether to ignore punctuation when
+                computing editing distance.
+        """
         super(EditingDistance, self).__init__()
         self._no_puctuation = editing_distance_ignore_punctuation
 
     def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+        """compute editing distance between original and parapharse.
+
+        Args:
+            origin (str): original text.
+            paraphrase (str): paraphrased text.
+            data_record: ignored.
+            paraphrase_field: ignored.
+
+        Returns:
+            (int): the editing distance.
+        """
         if self._no_puctuation:
             origin = re.sub(r"[^a-zA-Z0-9]", " ", origin)
             paraphrase = re.sub(r"[^a-zA-Z0-9]", " ", paraphrase)

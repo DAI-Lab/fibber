@@ -1,3 +1,52 @@
+"""This module provides utility functions and classes to handle fibber's datasets.
+
+(1) To load a dataset, use `get_dataset` function. For example, to load AG's news dataset, run
+
+```
+trainset, testset =  get_dataset("ag")
+```
+
+The trainset and testset are both dictionaries. The dictionary looks like
+
+```
+{
+  "label_mapping": [
+    "World",
+    "Sports",
+    "Business",
+    "Sci/Tech"
+  ],
+  "cased": true,
+  "paraphrase_field": "text0",
+  "data": [
+    {
+      "label": 1,
+      "text0": "Boston won the NBA championship in 2008."
+    },
+    {
+      "label": 3,
+      "text0": "Apple releases its latest cell phone."
+    },
+    ...
+  ]
+}
+```
+
+(2) To sub-sample 100 examples from training set, run
+
+```
+subsampled_dataset = subsample_dataset(trainset, 100)
+```
+
+(3) To convert a dataset dictionary to a torch IterableDataset for BERT model, run
+
+```
+iterable_dataset = DatasetForBert(trainset, "bert-base-cased", batch_size=32);
+```
+
+For more details, see https://dai-lab.github.io/fibber/
+"""
+
 import copy
 import hashlib
 import json
@@ -8,25 +57,30 @@ import torch
 import tqdm
 from transformers import BertTokenizer
 
-from .. import log
-from ..download_utils import get_root_dir
+from fibber import log
+from fibber.download_utils import get_root_dir
 
 logger = log.setup_custom_logger(__name__)
 
 
 def get_dataset(dataset_name):
-    """Get datasets.
+    """Load dataset from fibber root directory.
+
+    Users should make sure the data is downloaded to the `datasets` folder in fibber root
+    dir (default: ~/.fibber/datasets). Otherwise, assertion error is raised.
 
     Args:
-        dataset_name: the name of the dataset.
+        dataset_name (str): the name of the dataset. See https://dai-lab.github.io/fibber/ for a
+            full list of built-in datasets.
 
     Returns:
-        the training set and test set as a dictionary.
+        (dict, dict): the function returns a tuple of two dict, representing the training set and
+            test set respectively.
     """
     data_dir = get_root_dir()
     data_dir = os.path.join(data_dir, "datasets")
 
-    if dataset_name == "mnli" or dataset_name == "mnli_mis":
+    if dataset_name == "mn li" or dataset_name == "mnli_mis":
         train_filename = os.path.join(data_dir, "mnli/train.json")
         if dataset_name == "mnli":
             test_filename = os.path.join(data_dir, "mnli/dev_matched.json")
@@ -39,7 +93,7 @@ def get_dataset(dataset_name):
 
     if not os.path.exists(train_filename) or not os.path.exists(test_filename):
         logger.error("%s dataset not found.", dataset_name)
-        assert 0, ("Please use `python3 -m fibber.pipeline.download_datasets` "
+        assert 0, ("Please use `python3 -m fibber.benchmark.download_datasets` "
                    "to download datasets.")
 
     with open(train_filename) as f:
@@ -54,23 +108,29 @@ def get_dataset(dataset_name):
 
 
 def text_md5(x):
+    """Computes and returns the md5 hash of `x`."""
     m = hashlib.md5()
     m.update(x.encode('utf8'))
     return m.hexdigest()
 
 
 def subsample_dataset(dataset, n):
-    """Subsample n data from the dataset to n.
+    """Sub-sample a dataset to `n` examples.
 
-    Sample (n // k) examples from each category. Within each category, we pick examples with the
-    lowest md5 hash value.
+    Data is selected evenly and randomly from each category. Data in each category is sorted by
+    its md5 hash value. The top `(n // k)` examples from each category are included in the
+    sub-sampled dataset, where `k` is the number of categories.
+
+    If `n` is not divisible by `k`, one more data is sampled from the first `(n % k)` categories.
+
+    If the dataset has less than `n` examples, a copy of the original dataset will be returned.
 
     Args:
-        dataset: a dataset dictionary.
-        n: the size of the subsampled dataset.
+        dataset (dict): a dataset dictionary.
+        n (int): the size of the sub-sampled dataset.
 
     Returns:
-        a subsampled dataset as a dictionary.
+        (dict): a sub-sampled dataset as a dictionary.
     """
     if n > len(dataset["data"]):
         return copy.deepcopy(dataset)
@@ -87,41 +147,41 @@ def subsample_dataset(dataset, n):
 
         bins[label].append((idx, text_md5(text)))
 
-    datalist = []
+    data_list = []
     for i in range(len(bins)):
         bins[i] = sorted(bins[i], key=lambda x: x[1])
         m = n // len(bins) + (1 if i < n % len(bins) else 0)
         for j in range(m):
-            datalist.append(copy.deepcopy(dataset["data"][bins[i][j][0]]))
+            data_list.append(copy.deepcopy(dataset["data"][bins[i][j][0]]))
 
-    subset["data"] = datalist
+    subset["data"] = data_list
 
     return subset
 
 
-def verify_dataset(data):
+def verify_dataset(dataset):
     """Verify if the dataset dictionary contains necessary fields.
 
-    Args:
-        data: a dataset dictionary.
-    raises:
-        assertion error when there are missing or incorrect fields.
-    """
-    assert "label_mapping" in data
-    assert "cased" in data
-    assert "paraphrase_field" in data
-    assert data["paraphrase_field"] in ["text0", "text1"]
+    Assertion error is raised if there are missing or incorrect fields.
 
-    num_labels = len(data["label_mapping"])
+    Args:
+        dataset (dict): a dataset dictionary.
+    """
+    assert "label_mapping" in dataset
+    assert "cased" in dataset
+    assert "paraphrase_field" in dataset
+    assert dataset["paraphrase_field"] in ["text0", "text1"]
+
+    num_labels = len(dataset["label_mapping"])
     counter = [0] * num_labels
 
-    for data_record in tqdm.tqdm(data["data"]):
+    for data_record in tqdm.tqdm(dataset["data"]):
         assert "label" in data_record
         label = data_record["label"]
         assert 0 <= label < num_labels
         counter[label] += 1
         assert "text0" in data_record
-        assert data["paraphrase_field"] in data_record
+        assert dataset["paraphrase_field"] in data_record
 
     for item in counter:
         assert item > 0, "empty class"
