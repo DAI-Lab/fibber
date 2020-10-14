@@ -1,0 +1,7 @@
+fibber.datasets.preprocess\_mnli module
+=======================================
+
+.. automodule:: fibber.datasets.preprocess_mnli
+   :members:
+   :undoc-members:
+   :show-inheritance:

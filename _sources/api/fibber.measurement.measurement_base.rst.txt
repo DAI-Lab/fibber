@@ -1,7 +1,0 @@
-fibber.measurement.measurement\_base module
-===========================================
-
-.. automodule:: fibber.measurement.measurement_base
-   :members:
-   :undoc-members:
-   :show-inheritance:

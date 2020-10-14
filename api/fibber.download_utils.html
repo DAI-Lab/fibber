@@ -39,8 +39,8 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.downloadable_resources module" href="fibber.downloadable_resources.html" />
-    <link rel="prev" title="fibber.strategy.textfooler_strategy module" href="fibber.strategy.textfooler_strategy.html" />
+    <link rel="next" title="fibber.log module" href="fibber.log.html" />
+    <link rel="prev" title="fibber.resources.resource_utils module" href="fibber.resources.resource_utils.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
   </head>
@@ -193,20 +193,46 @@
                 
   <div class="section" id="module-fibber.download_utils">
 <span id="fibber-download-utils-module"></span><h1>fibber.download_utils module<a class="headerlink" href="#module-fibber.download_utils" title="Permalink to this headline">¶</a></h1>
+<p>This module contains utility functions to download files to the root dir <cite>~/.fibber</cite>.</p>
 <dl class="py function">
 <dt id="fibber.download_utils.check_file_md5">
 <code class="sig-prename descclassname">fibber.download_utils.</code><code class="sig-name descname">check_file_md5</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">md5</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/download_utils.html#check_file_md5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.download_utils.check_file_md5" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Check if the md5 of a given file is correct.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – a filename.</p></li>
+<li><p><strong>md5</strong> (<em>str</em>) – expected md5 hash value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Return True if md5 matches</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(bool)</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="fibber.download_utils.download_file">
-<code class="sig-prename descclassname">fibber.download_utils.</code><code class="sig-name descname">download_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">md5_checksum</span></em>, <em class="sig-param"><span class="n">subdir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">untar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">unzip</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/download_utils.html#download_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.download_utils.download_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="fibber.download_utils.get_root_dir">
-<code class="sig-prename descclassname">fibber.download_utils.</code><code class="sig-name descname">get_root_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/download_utils.html#get_root_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.download_utils.get_root_dir" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-prename descclassname">fibber.download_utils.</code><code class="sig-name descname">download_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">md5</span></em>, <em class="sig-param"><span class="n">subdir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">untar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">unzip</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/download_utils.html#download_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.download_utils.download_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download file from a given url.</p>
+<p>This downloads a file to <cite>&lt;fibber_root_dir&gt;/subdir</cite>. If the file already exists and the md5
+matches, using the existing file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – filename as a string.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – the url to download the file.</p></li>
+<li><p><strong>md5</strong> (<em>str</em>) – the md5 checksum of the file.</p></li>
+<li><p><strong>subdir</strong> (<em>str</em>) – the subdir to save the file. Dir will be created if not exists.</p></li>
+<li><p><strong>untar</strong> (<em>bool</em>) – whether to untar the file.</p></li>
+<li><p><strong>unzip</strong> (<em>bool</em>) – whether to unzip the file.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 
@@ -216,8 +242,8 @@
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="fibber.strategy.textfooler_strategy.html" title="previous page">fibber.strategy.textfooler_strategy module</a>
-    <a class='right-next' id="next-link" href="fibber.downloadable_resources.html" title="next page">fibber.downloadable_resources module</a>
+    <a class='left-prev' id="prev-link" href="fibber.resources.resource_utils.html" title="previous page">fibber.resources.resource_utils module</a>
+    <a class='right-next' id="next-link" href="fibber.log.html" title="next page">fibber.log module</a>
 
               </div>
               

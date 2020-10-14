@@ -7,10 +7,11 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   fibber.dataset
-   fibber.measurement
-   fibber.pipeline
-   fibber.strategy
+   fibber.benchmark
+   fibber.datasets
+   fibber.metrics
+   fibber.paraphrase_strategies
+   fibber.resources
 
 Submodules
 ----------
@@ -19,9 +20,7 @@ Submodules
    :maxdepth: 4
 
    fibber.download_utils
-   fibber.downloadable_resources
    fibber.log
-   fibber.resource_utils
 
 Module contents
 ---------------

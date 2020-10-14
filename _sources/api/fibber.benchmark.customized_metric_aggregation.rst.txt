@@ -1,0 +1,7 @@
+fibber.benchmark.customized\_metric\_aggregation module
+=======================================================
+
+.. automodule:: fibber.benchmark.customized_metric_aggregation
+   :members:
+   :undoc-members:
+   :show-inheritance:

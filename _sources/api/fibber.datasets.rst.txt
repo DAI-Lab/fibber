@@ -1,0 +1,27 @@
+fibber.datasets package
+=======================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   fibber.datasets.dataset_utils
+   fibber.datasets.download_datasets
+   fibber.datasets.downloadable_datasets
+   fibber.datasets.preprocess_ag
+   fibber.datasets.preprocess_imdb
+   fibber.datasets.preprocess_mnli
+   fibber.datasets.preprocess_mr
+   fibber.datasets.preprocess_snli
+   fibber.datasets.preprocess_utils
+   fibber.datasets.preprocess_yelp
+
+Module contents
+---------------
+
+.. automodule:: fibber.datasets
+   :members:
+   :undoc-members:
+   :show-inheritance:

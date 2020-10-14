@@ -1,0 +1,19 @@
+fibber.resources package
+========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   fibber.resources.downloadable_resources
+   fibber.resources.resource_utils
+
+Module contents
+---------------
+
+.. automodule:: fibber.resources
+   :members:
+   :undoc-members:
+   :show-inheritance:

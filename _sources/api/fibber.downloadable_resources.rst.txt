@@ -1,7 +1,0 @@
-fibber.downloadable\_resources module
-=====================================
-
-.. automodule:: fibber.downloadable_resources
-   :members:
-   :undoc-members:
-   :show-inheritance:

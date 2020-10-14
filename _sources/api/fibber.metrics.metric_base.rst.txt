@@ -1,0 +1,7 @@
+fibber.metrics.metric\_base module
+==================================
+
+.. automodule:: fibber.metrics.metric_base
+   :members:
+   :undoc-members:
+   :show-inheritance:

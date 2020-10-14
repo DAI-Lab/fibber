@@ -1,0 +1,24 @@
+fibber.metrics package
+======================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   fibber.metrics.bert_clf_prediction
+   fibber.metrics.editing_distance
+   fibber.metrics.glove_semantic_similarity
+   fibber.metrics.gpt2_grammar_quality
+   fibber.metrics.metric_base
+   fibber.metrics.metric_utils
+   fibber.metrics.use_semantic_similarity
+
+Module contents
+---------------
+
+.. automodule:: fibber.metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:

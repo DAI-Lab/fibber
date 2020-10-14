@@ -1,0 +1,7 @@
+fibber.paraphrase\_strategies.random\_strategy module
+=====================================================
+
+.. automodule:: fibber.paraphrase_strategies.random_strategy
+   :members:
+   :undoc-members:
+   :show-inheritance:

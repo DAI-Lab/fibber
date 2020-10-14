@@ -1,0 +1,20 @@
+fibber.paraphrase\_strategies package
+=====================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   fibber.paraphrase_strategies.identical_strategy
+   fibber.paraphrase_strategies.random_strategy
+   fibber.paraphrase_strategies.strategy_base
+
+Module contents
+---------------
+
+.. automodule:: fibber.paraphrase_strategies
+   :members:
+   :undoc-members:
+   :show-inheritance:

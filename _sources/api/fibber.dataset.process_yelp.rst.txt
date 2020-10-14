@@ -1,7 +1,0 @@
-fibber.dataset.process\_yelp module
-===================================
-
-.. automodule:: fibber.dataset.process_yelp
-   :members:
-   :undoc-members:
-   :show-inheritance:

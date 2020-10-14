@@ -1,0 +1,7 @@
+fibber.resources.resource\_utils module
+=======================================
+
+.. automodule:: fibber.resources.resource_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

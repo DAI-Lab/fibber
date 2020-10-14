@@ -1,7 +1,0 @@
-fibber.dataset.process\_mr module
-=================================
-
-.. automodule:: fibber.dataset.process_mr
-   :members:
-   :undoc-members:
-   :show-inheritance:

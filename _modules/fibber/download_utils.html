@@ -188,25 +188,33 @@
               <div>
                 
   <h1>Source code for fibber.download_utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">hashlib</span>
+<span></span><span class="sd">&quot;&quot;&quot;This module contains utility functions to download files to the root dir `~/.fibber`.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">hashlib</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">tarfile</span>
 <span class="kn">import</span> <span class="nn">zipfile</span>
 
 <span class="kn">from</span> <span class="nn">tensorflow.keras.utils</span> <span class="kn">import</span> <span class="n">get_file</span> <span class="k">as</span> <span class="n">tf_get_file</span>
 
+<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">get_root_dir</span>
+
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">log</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="get_root_dir"><a class="viewcode-back" href="../../api/fibber.download_utils.html#fibber.download_utils.get_root_dir">[docs]</a><span class="k">def</span> <span class="nf">get_root_dir</span><span class="p">():</span>
-    <span class="n">root_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">),</span> <span class="s2">&quot;.fibber&quot;</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">root_dir</span></div>
-
-
 <div class="viewcode-block" id="check_file_md5"><a class="viewcode-back" href="../../api/fibber.download_utils.html#fibber.download_utils.check_file_md5">[docs]</a><span class="k">def</span> <span class="nf">check_file_md5</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">md5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check if the md5 of a given file is correct.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): a filename.</span>
+<span class="sd">        md5 (str): expected md5 hash value.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (bool): Return True if md5 matches</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
     <span class="n">hash_md5</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">()</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4096</span><span class="p">),</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
@@ -214,7 +222,20 @@
     <span class="k">return</span> <span class="n">hash_md5</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span> <span class="o">==</span> <span class="n">md5</span></div>
 
 
-<div class="viewcode-block" id="download_file"><a class="viewcode-back" href="../../api/fibber.download_utils.html#fibber.download_utils.download_file">[docs]</a><span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">md5_checksum</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">untar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unzip</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="download_file"><a class="viewcode-back" href="../../api/fibber.download_utils.html#fibber.download_utils.download_file">[docs]</a><span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">md5</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">untar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unzip</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Download file from a given url.</span>
+
+<span class="sd">    This downloads a file to `&lt;fibber_root_dir&gt;/subdir`. If the file already exists and the md5</span>
+<span class="sd">    matches, using the existing file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): filename as a string.</span>
+<span class="sd">        url (str): the url to download the file.</span>
+<span class="sd">        md5 (str): the md5 checksum of the file.</span>
+<span class="sd">        subdir (str): the subdir to save the file. Dir will be created if not exists.</span>
+<span class="sd">        untar (bool): whether to untar the file.</span>
+<span class="sd">        unzip (bool): whether to unzip the file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">target_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">subdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">target_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">subdir</span><span class="p">)</span>
@@ -222,7 +243,7 @@
     <span class="n">target_file_absolute_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">target_file_absolute_path</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="n">check_file_md5</span><span class="p">(</span><span class="n">target_file_absolute_path</span><span class="p">,</span> <span class="n">md5_checksum</span><span class="p">)):</span>
+            <span class="ow">and</span> <span class="n">check_file_md5</span><span class="p">(</span><span class="n">target_file_absolute_path</span><span class="p">,</span> <span class="n">md5</span><span class="p">)):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Load </span><span class="si">%s</span><span class="s2"> from cache. md5 checksum is correct.&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">untar</span><span class="p">:</span>
             <span class="n">my_tar</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">target_file_absolute_path</span><span class="p">)</span>
@@ -235,7 +256,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Download </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">)</span>
         <span class="n">tf_get_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">cache_subdir</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-                    <span class="n">file_hash</span><span class="o">=</span><span class="n">md5_checksum</span><span class="p">,</span> <span class="n">extract</span><span class="o">=</span><span class="n">untar</span> <span class="ow">or</span> <span class="n">unzip</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">target_dir</span><span class="p">)</span></div>
+                    <span class="n">file_hash</span><span class="o">=</span><span class="n">md5</span><span class="p">,</span> <span class="n">extract</span><span class="o">=</span><span class="n">untar</span> <span class="ow">or</span> <span class="n">unzip</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">target_dir</span><span class="p">)</span></div>
 </pre></div>
 
               </div>

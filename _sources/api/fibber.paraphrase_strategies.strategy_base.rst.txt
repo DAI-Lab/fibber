@@ -1,0 +1,7 @@
+fibber.paraphrase\_strategies.strategy\_base module
+===================================================
+
+.. automodule:: fibber.paraphrase_strategies.strategy_base
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,7 +1,0 @@
-fibber.strategy.identical\_strategy module
-==========================================
-
-.. automodule:: fibber.strategy.identical_strategy
-   :members:
-   :undoc-members:
-   :show-inheritance:

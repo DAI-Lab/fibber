@@ -39,8 +39,8 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.resource_utils module" href="fibber.resource_utils.html" />
-    <link rel="prev" title="fibber.downloadable_resources module" href="fibber.downloadable_resources.html" />
+    <link rel="next" title="Contributing" href="../contributing.html" />
+    <link rel="prev" title="fibber.download_utils module" href="fibber.download_utils.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
   </head>
@@ -194,14 +194,23 @@
   <div class="section" id="module-fibber.log">
 <span id="fibber-log-module"></span><h1>fibber.log module<a class="headerlink" href="#module-fibber.log" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="fibber.log.add_filehandler">
-<code class="sig-prename descclassname">fibber.log.</code><code class="sig-name descname">add_filehandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logger</span></em>, <em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/log.html#add_filehandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.log.add_filehandler" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="fibber.log.add_file_handler">
+<code class="sig-prename descclassname">fibber.log.</code><code class="sig-name descname">add_file_handler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logger</span></em>, <em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/log.html#add_file_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.log.add_file_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add file handler to a logger.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="fibber.log.remove_logger_tf_handler">
+<code class="sig-prename descclassname">fibber.log.</code><code class="sig-name descname">remove_logger_tf_handler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logger</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/log.html#remove_logger_tf_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.log.remove_logger_tf_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all handlers except file handler.</p>
+<p>This function can clean up the mess caused by tensorflow_hub.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="fibber.log.setup_custom_logger">
 <code class="sig-prename descclassname">fibber.log.</code><code class="sig-name descname">setup_custom_logger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">level</span><span class="o">=</span><span class="default_value">'INFO'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/log.html#setup_custom_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.log.setup_custom_logger" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get a logger.</p>
+</dd></dl>
 
 </div>
 
@@ -211,8 +220,8 @@
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="fibber.downloadable_resources.html" title="previous page">fibber.downloadable_resources module</a>
-    <a class='right-next' id="next-link" href="fibber.resource_utils.html" title="next page">fibber.resource_utils module</a>
+    <a class='left-prev' id="prev-link" href="fibber.download_utils.html" title="previous page">fibber.download_utils module</a>
+    <a class='right-next' id="next-link" href="../contributing.html" title="next page">Contributing</a>
 
               </div>
               

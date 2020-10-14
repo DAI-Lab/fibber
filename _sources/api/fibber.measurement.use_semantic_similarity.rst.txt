@@ -1,7 +1,0 @@
-fibber.measurement.use\_semantic\_similarity module
-===================================================
-
-.. automodule:: fibber.measurement.use_semantic_similarity
-   :members:
-   :undoc-members:
-   :show-inheritance:

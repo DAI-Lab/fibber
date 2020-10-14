@@ -1,7 +1,0 @@
-fibber.pipeline.download\_datasets module
-=========================================
-
-.. automodule:: fibber.pipeline.download_datasets
-   :members:
-   :undoc-members:
-   :show-inheritance:

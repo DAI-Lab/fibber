@@ -1,7 +1,0 @@
-fibber.strategy.random\_strategy module
-=======================================
-
-.. automodule:: fibber.strategy.random_strategy
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -1,7 +1,0 @@
-fibber.measurement.editing\_distance module
-===========================================
-
-.. automodule:: fibber.measurement.editing_distance
-   :members:
-   :undoc-members:
-   :show-inheritance:

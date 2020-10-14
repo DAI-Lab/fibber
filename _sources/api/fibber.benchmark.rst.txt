@@ -1,0 +1,21 @@
+fibber.benchmark package
+========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   fibber.benchmark.benchmark
+   fibber.benchmark.benchmark_utils
+   fibber.benchmark.customized_metric_aggregation
+   fibber.benchmark.make_overview
+
+Module contents
+---------------
+
+.. automodule:: fibber.benchmark
+   :members:
+   :undoc-members:
+   :show-inheritance:
