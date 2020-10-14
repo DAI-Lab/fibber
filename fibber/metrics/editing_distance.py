@@ -1,3 +1,7 @@
+"""This metric outputs the word-level editing distance between original text and paraphrased
+text.
+"""
+
 import re
 
 import numpy as np

@@ -9,7 +9,6 @@ from fibber.datasets.dataset_utils import get_dataset, subsample_dataset
 from fibber.metrics.metric_utils import MetricBundle, aggregate_metrics, compute_metrics
 from fibber.paraphrase_strategies.identical_strategy import IdenticalStrategy
 from fibber.paraphrase_strategies.random_strategy import RandomStrategy
-from fibber.paraphrase_strategies.textfooler_strategy import TextFoolerStrategy
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
@@ -31,7 +30,6 @@ parser.add_argument("--bert_clf_steps", type=int, default=20000)
 
 RandomStrategy.add_parser_args(parser)
 IdenticalStrategy.add_parser_args(parser)
-TextFoolerStrategy.add_parser_args(parser)
 
 G_EXP_NAME = None
 
@@ -57,8 +55,6 @@ def get_strategy(FLAGS, strategy_name, metric_bundle):
         return RandomStrategy(FLAGS, metric_bundle)
     if strategy_name == "IdenticalStrategy":
         return IdenticalStrategy(FLAGS, metric_bundle)
-    if strategy_name == "TextFoolerStrategy":
-        return TextFoolerStrategy(FLAGS, metric_bundle)
     else:
         assert 0
 

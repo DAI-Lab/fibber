@@ -1,3 +1,9 @@
+"""This metric computes the perplexity ratio ppl(paraphrase) / ppl(original text).
+
+The perplexity is estimated using GPT2 model. This metric can reveal the meaningfulness of a
+sentence.
+"""
+
 import numpy as np
 import torch
 import torch.nn.functional as F

@@ -1,3 +1,6 @@
+"""This metric computes the cosine similarity between two sentences. The sentence embedding is
+the sum of GloVe word embeddings."""
+
 import re
 
 import numpy as np

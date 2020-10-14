@@ -118,6 +118,9 @@ def compute_metrics(metric_bundle, results, output_filename):
         metric_bundle (object): a MetricBundle object.
         results (dict): A fibber dataset with paraphrases.
         output_filename (str): A json filename to store results and metrics.
+
+    Returns:
+        (dict): the results dict with `original_text_metrics` and `paraphrase_metrics` added.
     """
     last_output_save_time = -1
     logger.info("Start measuring.")
@@ -167,6 +170,7 @@ def aggregate_metrics(dataset_name, paraphrase_strategy_name, experiment_name, r
             should take one data_record, and returns a float.
 
     Returns:
+        (dict): the aggregated metrics.
     """
     aggregated_result = pd.DataFrame()
     for data_record in results["data"]:

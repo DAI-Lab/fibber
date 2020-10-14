@@ -1,3 +1,5 @@
+"""This metric computes the cosine similarity between two sentences. The sentence embedding is
+the universal sentence encoder."""
 import os
 
 import numpy as np
