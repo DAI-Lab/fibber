@@ -10,6 +10,7 @@ from fibber.metrics.bert_clf_prediction import BertClfPrediction
 from fibber.metrics.editing_distance import EditingDistance
 from fibber.metrics.glove_semantic_similarity import GloVeSemanticSimilarity
 from fibber.metrics.gpt2_grammar_quality import GPT2GrammarQuality
+from fibber.metrics.metric_base import MetricBase  # flake8: noqa
 from fibber.metrics.use_semantic_similarity import USESemanticSimilarity
 
 logger = log.setup_custom_logger(__name__)
