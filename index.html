@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fibber &#8212; fibber 0.1.0.dev0 documentation</title>
+    <title>Fibber &#8212; fibber 0.0.1.dev0 documentation</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -406,31 +406,25 @@ getting started with <strong>fibber</strong>.</p>
 <col style="width: 20%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p>model name</p></th>
-<th class="head"><p>Paraphrased Text Accuracy (USE_sim &gt; 0.95, GPT2_score&lt;2</p></th>
-<th class="head"><p>Paraphrased Text Accuracy (USE_sim &gt; 0.90, GPT2_score&lt;5</p></th>
-<th class="head"><p>USESemanticSimilarity mean</p></th>
-<th class="head"><p>GPT2GrammarQuality mean</p></th>
+<tr class="row-odd"><th class="head"><p>1_paraphrase_strategy_name</p></th>
+<th class="head"><p>USESemanticSimilarity_mean</p></th>
+<th class="head"><p>GPT2GrammarQuality_mean</p></th>
+<th class="head"><p>3_ParaphraseAcc_usesim0.90_ppl2</p></th>
+<th class="head"><p>4_ParaphraseAcc_usesim0.85_ppl5</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>IdenticalStrategy</p></td>
+<td><p>7</p></td>
+<td><p>7</p></td>
 <td><p>0</p></td>
 <td><p>0</p></td>
-<td><p>14</p></td>
-<td><p>14</p></td>
 </tr>
 <tr class="row-odd"><td><p>RandomStrategy</p></td>
-<td><p>1</p></td>
-<td><p>5</p></td>
-<td><p>2</p></td>
 <td><p>0</p></td>
-</tr>
-<tr class="row-even"><td><p>TextFoolerStrategy</p></td>
-<td><p>14</p></td>
-<td><p>14</p></td>
+<td><p>0</p></td>
 <td><p>5</p></td>
-<td><p>7</p></td>
+<td><p>6</p></td>
 </tr>
 </tbody>
 </table>
@@ -572,12 +566,6 @@ paraphrase_field: choose from text0 and text1. Paraphrase_field indicates which 
 <li><p>RandomStrategy:</p>
 <ul>
 <li><p>The random strategy outputs the random shuffle of words in the original text.</p></li>
-</ul>
-</li>
-<li><p>TextFoolerStrategy:</p>
-<ul>
-<li><p>The TextFooler strategy uses TextFooler to attack the text classifier, if the attack succeeds, outputs the adversarial text, otherwise outputs the original text.</p></li>
-<li><p>This strategy generates exactly 1 paraphrase for each original text regardless of <code class="docutils literal notranslate"><span class="pre">--num_paraphrases_per_text</span></code> flag.</p></li>
 </ul>
 </li>
 </ul>
