@@ -159,11 +159,10 @@ Before running this command, please verify `~/.fibber/results/detailed.csv`. Eac
 
 The following table shows the benchmarking result. (Here we show the number of wins.)
 
-| model name       | Paraphrased Text Accuracy (USE\_sim > 0.95, GPT2\_score<2 | Paraphrased Text Accuracy (USE\_sim > 0.90, GPT2\_score<5 | USESemanticSimilarity mean | GPT2GrammarQuality mean |
-|--------------------|------------------------------|------------------------------|----------------------------|-------------------------|
-| IdenticalStrategy  | 0                            | 0                            | 14                         | 14                      |
-| RandomStrategy     | 1                            | 5                            | 2                          | 0                       |
-| TextFoolerStrategy | 14                           | 14                           | 5                          | 7                       |
+|   1_paraphrase_strategy_name  |   USESemanticSimilarity_mean  |   GPT2GrammarQuality_mean  |   3_ParaphraseAcc_usesim0.90_ppl2  |   4_ParaphraseAcc_usesim0.85_ppl5  |
+|-------------------------------|-------------------------------|----------------------------|------------------------------------|------------------------------------|
+|   IdenticalStrategy           |   7                           |   7                        |   0                                |   0                                |
+|   RandomStrategy              |   0                           |   0                        |   5                                |   6                                |
 
 For detailed tables, see [Google Sheet](https://docs.google.com/spreadsheets/d/1B_5RiMfndNVhxZLX5ykMqt5SCjpy3MxOovBi_RL41Fw/edit?usp=sharing).
 
@@ -253,9 +252,6 @@ In this version, we implement three strategies
 	- This strategy generates exactly 1 paraphrase for each original text regardless of `--num_paraphrases_per_text` flag.
 - RandomStrategy:
 	- The random strategy outputs the random shuffle of words in the original text.
-- TextFoolerStrategy:
-	- The TextFooler strategy uses TextFooler to attack the text classifier, if the attack succeeds, outputs the adversarial text, otherwise outputs the original text.
-	- This strategy generates exactly 1 paraphrase for each original text regardless of `--num_paraphrases_per_text` flag.
 
 
 ## Output format
