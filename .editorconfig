@@ -11,7 +11,8 @@ charset = utf-8
 end_of_line = lf
 
 [*.py]
-max_line_length = 80
+max_line_length = 99
+indent_size = 4
 
 [*.bat]
 indent_style = tab

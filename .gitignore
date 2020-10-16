@@ -2,6 +2,7 @@ data/
 exp-*/
 .remote-sync.json
 *.sh
+.idea/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
