@@ -2,6 +2,7 @@ import os
 
 import numpy as np
 import tqdm
+import nltk
 
 from fibber import log
 from fibber.download_utils import download_file, get_root_dir
@@ -23,6 +24,7 @@ def load_glove_model(glove_file, dim):
             "id2tok": a list of strings.
             "tok2id": a dictionary that maps word (string) to its id.
     """
+    nltk.download("punkt")
     glove_file_lines = open(glove_file, 'r').readlines()
 
     emb_table = np.zeros((len(glove_file_lines), dim), dtype='float32')
