@@ -1,9 +1,9 @@
 """This metric computes the cosine similarity between two sentences. The sentence embedding is
 the sum of GloVe word embeddings."""
 
-import re
 
 import numpy as np
+from nltk import word_tokenize
 
 from fibber import log
 from fibber.metrics.metric_base import MetricBase
@@ -23,9 +23,7 @@ def compute_emb(emb_table, tok_to_id, x):
     Returns:
         (np.array): the sum of word embedding.
     """
-    x = re.sub(r"[^a-zA-Z0-9]", " ", x)
-
-    toks = x.split()
+    toks = word_tokenize(x)
     embs = []
     for item in toks:
         if item.lower() in tok_to_id:
