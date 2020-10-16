@@ -1,8 +1,8 @@
 import os
 
+import nltk
 import numpy as np
 import tqdm
-import nltk
 
 from fibber import log
 from fibber.download_utils import download_file, get_root_dir
