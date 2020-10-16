@@ -78,9 +78,9 @@ def get_stopwords():
     """
     data_dir = get_root_dir()
     data_dir = os.path.join(data_dir, "common")
-    download_file(filename=resources["default-stopwords"]["filename"],
-                  url=resources["default-stopwords"]["url"],
-                  md5_checksum=resources["default-stopwords"]["md5"],
+    download_file(filename=resources["new-stopwords"]["filename"],
+                  url=resources["new-stopwords"]["url"],
+                  md5_checksum=resources["new-stopwords"]["md5"],
                   subdir=os.path.join(data_dir), untar=False)
 
     with open(os.path.join(data_dir, "stopwords.txt")) as f:

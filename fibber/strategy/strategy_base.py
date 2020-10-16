@@ -2,6 +2,7 @@ import copy
 import datetime
 import json
 import torch
+import re
 
 import torch
 import tqdm
@@ -10,6 +11,18 @@ from .. import log
 
 logger = log.setup_custom_logger(__name__)
 
+
+POST_PROCESSING_PATTERN = [
+    (r"\s?'\s?t\s", "'t "),
+    (r"\s?'\s?s\s", "'s "),
+    (r"\s?'\s?ve\s", "'ve "),
+    (r"\s?'\s?ll\s", "'ll "),
+]
+
+def post_process_text(text):
+    for pattern in POST_PROCESSING_PATTERN:
+        text = re.sub(pattern[0], pattern[1], text)
+    return text
 
 class StrategyBase(object):
     """The base class for all paraphrase strategies.
@@ -38,13 +51,6 @@ class StrategyBase(object):
         else:
             logger.info("%s measurement is running on GPU %d.", str(self), FLAGS.strategy_gpu)
             self._device = torch.device("cuda:%d" % FLAGS.strategy_gpu)
-
-        if FLAGS.strategy_gpu_id == -1:
-            logger.warning("%s is running on CPU." % str(self))
-            self._device = torch.device("cpu")
-        else:
-            logger.info("%s measurement is running on GPU %d.", str(self), FLAGS.strategy_gpu_id)
-            self._device = torch.device("cuda:%d" % FLAGS.strategy_gpu_id)
 
     def __repr__(self):
         return self.__class__.__name__

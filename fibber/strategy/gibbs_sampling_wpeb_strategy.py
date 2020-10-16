@@ -37,11 +37,11 @@ def generate_step(logits, temperature=None, top_k=0):
         idx = dist.sample().squeeze(-1)
     return idx
 
-class GibbsSamplingWPEStrategy(StrategyBase):
+class GibbsSamplingWPEBStrategy(StrategyBase):
 
     def __init__(self, FLAGS, measurement_bundle):
         """Initialize the strategy."""
-        super(GibbsSamplingWPEStrategy, self).__init__(FLAGS, measurement_bundle)
+        super(GibbsSamplingWPEBStrategy, self).__init__(FLAGS, measurement_bundle)
 
         self._batch_size = 20
         self._top_k = 100
@@ -96,7 +96,11 @@ class GibbsSamplingWPEStrategy(StrategyBase):
             dis = F.cosine_similarity(candidate_emb, target_emb[:, None, :], dim=2)
             dis = (self._wpe_eps - dis).clamp_(min=0)
             logpdf = -self._wpe_smooth * dis
-            logpdf_joint = out[:, kk] + logpdf
+
+            if ii >= self._burnin:
+                logpdf_joint = out[:, kk] + logpdf
+            else:
+                logpdf_joint = out[:, kk]
 
             top_k = self._top_k if (ii >= self._burnin) else 0
 

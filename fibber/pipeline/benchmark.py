@@ -13,6 +13,9 @@ from ..strategy.textfooler_strategy import TextFoolerStrategy
 from ..strategy.gibbs_sampling_strategy import GibbsSamplingStrategy
 from ..strategy.gibbs_sampling_x_strategy import GibbsSamplingXStrategy
 from ..strategy.gibbs_sampling_wpe_strategy import GibbsSamplingWPEStrategy
+from ..strategy.gibbs_sampling_wpeb_strategy import GibbsSamplingWPEBStrategy
+from ..strategy.gibbs_sampling_wpec_strategy import GibbsSamplingWPECStrategy
+
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
@@ -72,6 +75,10 @@ def get_strategy(FLAGS, strategy_name, measurement_bundle):
         return GibbsSamplingXStrategy(FLAGS, measurement_bundle)
     if strategy_name == "GibbsSamplingWPEStrategy":
         return GibbsSamplingWPEStrategy(FLAGS, measurement_bundle)
+    if strategy_name == "GibbsSamplingWPEBStrategy":
+        return GibbsSamplingWPEBStrategy(FLAGS, measurement_bundle)
+    if strategy_name == "GibbsSamplingWPECStrategy":
+        return GibbsSamplingWPECStrategy(FLAGS, measurement_bundle)
     else:
         assert 0
 

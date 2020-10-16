@@ -50,5 +50,10 @@ resources = {
         "filename": "stopwords.txt",
         "url": "https://fibber-data.s3.amazonaws.com/stopwords.txt",
         "md5": "daa3fc5e7b540439c8ff9afc5dcbed99"
+    },
+    "new-stopwords": {
+        "filename": "stopwords.txt",
+        "url": "https://fibber-data.s3.amazonaws.com/stopwords_v1.txt",
+        "md5": "6d3c778d216390063f424112087e5c10"
     }
 }

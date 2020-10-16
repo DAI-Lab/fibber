@@ -1,6 +1,7 @@
 import re
 
 import numpy as np
+from nltk import word_tokenize
 
 from .. import log
 from ..resource_utils import get_glove_emb, get_stopwords
@@ -10,9 +11,7 @@ logger = log.setup_custom_logger('glove_semantic_similairty')
 
 
 def compute_emb(emb_table, id_to_tok, tok_to_id, x):
-    x = re.sub(r"[^a-zA-Z0-9]", " ", x)
-
-    toks = x.split()
+    toks = word_tokenize(x)
     embs = []
     for item in toks:
         if item.lower() in tok_to_id:
