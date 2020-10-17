@@ -191,14 +191,16 @@
 <span></span><span class="sd">&quot;&quot;&quot;This module defines customized metric aggregation functions.&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="paraphrase_pred_accuracy_agg_fn"><a class="viewcode-back" href="../../../api/fibber.benchmark.customized_metric_aggregation.html#fibber.benchmark.customized_metric_aggregation.paraphrase_pred_accuracy_agg_fn">[docs]</a><span class="k">def</span> <span class="nf">paraphrase_pred_accuracy_agg_fn</span><span class="p">(</span><span class="n">use_sim</span><span class="p">,</span> <span class="n">ppl_score</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This function makes a metric aggregation function.</span>
+<div class="viewcode-block" id="paraphrase_classification_accuracy_agg_fn"><a class="viewcode-back" href="../../../api/fibber.benchmark.customized_metric_aggregation.html#fibber.benchmark.customized_metric_aggregation.paraphrase_classification_accuracy_agg_fn">[docs]</a><span class="k">def</span> <span class="nf">paraphrase_classification_accuracy_agg_fn</span><span class="p">(</span><span class="n">use_sim</span><span class="p">,</span> <span class="n">ppl_score</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function makes a aggregation function for BERT classification metric.</span>
 
-<span class="sd">    The aggregation function computes the classifier&#39;s accuracy on paraphrased text.</span>
+<span class="sd">    The aggregation function outputs the after attack accuracy of the BERT classifier.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        use_sim (float): the threshold for USESemanticSimilarity metric.</span>
-<span class="sd">        ppl_score (float): the threshold for GPT2GrammarQuality metric.</span>
+<span class="sd">        use_sim (float): the threshold for ``USESemanticSimilarity`` metric. The adversarial</span>
+<span class="sd">            example should have the USE similarity higher than this threshold.</span>
+<span class="sd">        ppl_score (float): the threshold for ``GPT2GrammarQuality`` metric. The adversarial example</span>
+<span class="sd">            should have the perplexity ratio measured by GPT2 lower than this threshold.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">agg_fn</span><span class="p">(</span><span class="n">data_record</span><span class="p">):</span>
@@ -214,16 +216,16 @@
 
 
 <span class="n">customized_metric_aggregation_fn_dict</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;3_ParaphraseAcc_usesim0.90_ppl2&quot;</span><span class="p">:</span>
-        <span class="n">paraphrase_pred_accuracy_agg_fn</span><span class="p">(</span><span class="n">use_sim</span><span class="o">=</span><span class="mf">0.90</span><span class="p">,</span> <span class="n">ppl_score</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
-    <span class="s2">&quot;4_ParaphraseAcc_usesim0.85_ppl5&quot;</span><span class="p">:</span>
-        <span class="n">paraphrase_pred_accuracy_agg_fn</span><span class="p">(</span><span class="n">use_sim</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">ppl_score</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="s2">&quot;3_ParaphraseAcc_use0.90_ppl2&quot;</span><span class="p">:</span>
+        <span class="n">paraphrase_classification_accuracy_agg_fn</span><span class="p">(</span><span class="n">use_sim</span><span class="o">=</span><span class="mf">0.90</span><span class="p">,</span> <span class="n">ppl_score</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+    <span class="s2">&quot;4_ParaphraseAcc_use0.85_ppl5&quot;</span><span class="p">:</span>
+        <span class="n">paraphrase_classification_accuracy_agg_fn</span><span class="p">(</span><span class="n">use_sim</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">ppl_score</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="p">}</span>
 
 
-<span class="n">customized_metric_for_nwin</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="s2">&quot;3_ParaphraseAcc_usesim0.90_ppl2&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;4_ParaphraseAcc_usesim0.85_ppl5&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">)</span>
+<span class="n">customized_metric_for_nun_wins</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;3_ParaphraseAcc_use0.90_ppl2&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;4_ParaphraseAcc_use0.85_ppl5&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">)</span>
 <span class="p">]</span>
 </pre></div>
 

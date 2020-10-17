@@ -215,12 +215,12 @@
 <span class="n">DEFAULT_AGGREGATION</span> <span class="o">=</span> <span class="p">[</span><span class="n">MEAN_AGG</span><span class="p">,</span> <span class="n">STD_AGG</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="mean_aggregation_fn"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.metric_utils.mean_aggregation_fn">[docs]</a><span class="k">def</span> <span class="nf">mean_aggregation_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="mean_aggregation_fn"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.mean_aggregation_fn">[docs]</a><span class="k">def</span> <span class="nf">mean_aggregation_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute mean of a list.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="std_aggregation_fn"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.metric_utils.std_aggregation_fn">[docs]</a><span class="k">def</span> <span class="nf">std_aggregation_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="std_aggregation_fn"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.std_aggregation_fn">[docs]</a><span class="k">def</span> <span class="nf">std_aggregation_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute std of a list.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
 
@@ -231,7 +231,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="MetricBundle"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.metric_utils.MetricBundle">[docs]</a><span class="k">class</span> <span class="nc">MetricBundle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="MetricBundle"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle">[docs]</a><span class="k">class</span> <span class="nc">MetricBundle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;MetricBundle can help easily initialize and compute multiple metrics.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -279,12 +279,12 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span> <span class="o">+=</span> <span class="n">customized_metrics</span>
 
-<div class="viewcode-block" id="MetricBundle.get_classifier_for_attack"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.metric_utils.MetricBundle.get_classifier_for_attack">[docs]</a>    <span class="k">def</span> <span class="nf">get_classifier_for_attack</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
-        <span class="sd">&quot;&quot;&quot;Return the Bert classifier metric.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="MetricBundle.get_classifier_for_attack"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle.get_classifier_for_attack">[docs]</a>    <span class="k">def</span> <span class="nf">get_classifier_for_attack</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+        <span class="sd">&quot;&quot;&quot;Return the BERT classifier metric.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attack_clf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attack_clf</span></div>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="MetricBundle.measure_example"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle.measure_example">[docs]</a>    <span class="k">def</span> <span class="nf">measure_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compute the results of all metrics in the bundle for one pair of text.</span>
 
 <span class="sd">        Args:</span>
@@ -298,11 +298,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="p">:</span>
-            <span class="n">ret</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">metric</span><span class="p">)]</span> <span class="o">=</span> <span class="n">metric</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ret</span></div>
+            <span class="n">ret</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">metric</span><span class="p">)]</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">measure_example</span><span class="p">(</span>
+                <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div></div>
 
 
-<div class="viewcode-block" id="compute_metrics"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.metric_utils.compute_metrics">[docs]</a><span class="k">def</span> <span class="nf">compute_metrics</span><span class="p">(</span><span class="n">metric_bundle</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">):</span>
+<div class="viewcode-block" id="compute_metrics"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.compute_metrics">[docs]</a><span class="k">def</span> <span class="nf">compute_metrics</span><span class="p">(</span><span class="n">metric_bundle</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the all metrics for results on a dataset.</span>
 
 <span class="sd">    Args:</span>
@@ -321,7 +322,7 @@
         <span class="n">data_record_tmp</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data_record</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="s2">&quot;_paraphrases&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">k</span><span class="p">])</span>
 
         <span class="c1"># Run metrics on original text</span>
-        <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;original_text_metrics&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric_bundle</span><span class="p">(</span>
+        <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;original_text_metrics&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric_bundle</span><span class="o">.</span><span class="n">measure_example</span><span class="p">(</span>
             <span class="n">data_record</span><span class="p">[</span><span class="n">paraphrase_field</span><span class="p">],</span> <span class="n">data_record</span><span class="p">[</span><span class="n">paraphrase_field</span><span class="p">],</span>
             <span class="n">data_record_tmp</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">)</span>
 
@@ -329,8 +330,8 @@
         <span class="n">paraphrase_metric_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">paraphrase</span> <span class="ow">in</span> <span class="n">data_record</span><span class="p">[</span><span class="n">paraphrase_field</span> <span class="o">+</span> <span class="s2">&quot;_paraphrases&quot;</span><span class="p">]:</span>
             <span class="n">paraphrase_metric_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">metric_bundle</span><span class="p">(</span><span class="n">data_record</span><span class="p">[</span><span class="n">paraphrase_field</span><span class="p">],</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record_tmp</span><span class="p">,</span>
-                              <span class="n">paraphrase_field</span><span class="p">))</span>
+                <span class="n">metric_bundle</span><span class="o">.</span><span class="n">measure_example</span><span class="p">(</span>
+                    <span class="n">data_record</span><span class="p">[</span><span class="n">paraphrase_field</span><span class="p">],</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record_tmp</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">))</span>
 
         <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;paraphrase_metrics&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">paraphrase_metric_list</span>
 
@@ -346,9 +347,9 @@
     <span class="k">return</span> <span class="n">results</span></div>
 
 
-<div class="viewcode-block" id="aggregate_metrics"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.metric_utils.aggregate_metrics">[docs]</a><span class="k">def</span> <span class="nf">aggregate_metrics</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">paraphrase_strategy_name</span><span class="p">,</span> <span class="n">experiment_name</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span>
+<div class="viewcode-block" id="aggregate_metrics"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.aggregate_metrics">[docs]</a><span class="k">def</span> <span class="nf">aggregate_metrics</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">paraphrase_strategy_name</span><span class="p">,</span> <span class="n">experiment_name</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span>
                       <span class="n">customize_aggregation_fn_dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Aggregate paraphrase metrics on a dataset to a summary and store in a dictionary.</span>
+    <span class="sd">&quot;&quot;&quot;Aggregate paraphrase metrics on a dataset to a summary and store in a dict.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset_name (str): the name of the dataset.</span>
@@ -356,7 +357,7 @@
 <span class="sd">        experiment_name (str): the name of the experiment.</span>
 <span class="sd">        results (dict): the fibber dataset with paraphrases and metrics. The return value of</span>
 <span class="sd">            `compute_metrics`.</span>
-<span class="sd">        customize_aggregation_fn_dict (dict): A dict of customized aggregations. The dictionary is</span>
+<span class="sd">        customize_aggregation_fn_dict (dict): A dict of customized aggregations. The dict is</span>
 <span class="sd">            a mapping from aggregation name to aggregation function. The aggregation function</span>
 <span class="sd">            should take one data_record, and returns a float.</span>
 

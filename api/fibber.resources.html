@@ -157,6 +157,60 @@
         
         
           
+            
+                <li class="">
+                    <a href="fibber.benchmark.html">fibber.benchmark package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.datasets.html">fibber.datasets package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.metrics.html">fibber.metrics package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.paraphrase_strategies.html">fibber.paraphrase_strategies package</a>
+                </li>
+            
+          
+            
+  
+                <li class="active">
+                    <a href="">fibber.resources package</a>
+                    <ul>
+                    
+                        <li class="">
+                            <a href="fibber.resources.downloadable_resources.html">fibber.resources.downloadable_resources module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.resources.resource_utils.html">fibber.resources.resource_utils module</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.download_utils.html">fibber.download_utils module</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.log.html">fibber.log module</a>
+                </li>
+            
+          
         
         
         
@@ -215,6 +269,42 @@
 </div>
 <div class="section" id="module-fibber.resources">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fibber.resources" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="fibber.resources.get_glove_emb">
+<code class="sig-prename descclassname">fibber.resources.</code><code class="sig-name descname">get_glove_emb</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/resources/resource_utils.html#get_glove_emb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.resources.get_glove_emb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download default pretrained glove embeddings and return a dict.</p>
+<p>We use the 300-dimensional model trained on Wikipedia 2014 + Gigaword 5.
+See <a class="reference external" href="https://nlp.stanford.edu/projects/glove/">https://nlp.stanford.edu/projects/glove/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>a dict of GloVe word embedding model.</dt><dd><p>”emb_table”: a numpy array of size(N, 300)
+“id2tok”: a list of strings.
+“tok2id”: a dict that maps word (string) to its id.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="fibber.resources.get_stopwords">
+<code class="sig-prename descclassname">fibber.resources.</code><code class="sig-name descname">get_stopwords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/resources/resource_utils.html#get_stopwords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.resources.get_stopwords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download default stopword words.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a list of strings.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>([str])</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 </div>
 

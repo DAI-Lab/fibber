@@ -199,19 +199,18 @@
 <span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
 <span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">BertForSequenceClassification</span><span class="p">,</span> <span class="n">BertTokenizer</span>
 
-<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">fibber.datasets.dataset_utils</span> <span class="kn">import</span> <span class="n">DatasetForBert</span>
-<span class="kn">from</span> <span class="nn">fibber.download_utils</span> <span class="kn">import</span> <span class="n">get_root_dir</span>
+<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">get_root_dir</span><span class="p">,</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">fibber.datasets</span> <span class="kn">import</span> <span class="n">DatasetForBert</span>
 <span class="kn">from</span> <span class="nn">fibber.metrics.metric_base</span> <span class="kn">import</span> <span class="n">MetricBase</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="get_optimizer"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.bert_clf_prediction.get_optimizer">[docs]</a><span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<div class="viewcode-block" id="get_optimizer"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.get_optimizer">[docs]</a><span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create an optimizer and schedule of learning rate for parameters.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        optimizer_name (str): choose from &quot;adam&quot;, &quot;sgd&quot;, and &quot;adamw&quot;.</span>
+<span class="sd">        optimizer_name (str): choose from ``[&quot;adam&quot;, &quot;sgd&quot;, &quot;adamw&quot;]``.</span>
 <span class="sd">        lr (float): learning rate.</span>
 <span class="sd">        decay (float): weight decay.</span>
 <span class="sd">        train_step (int): number of training steps.</span>
@@ -236,16 +235,16 @@
     <span class="k">return</span> <span class="n">opt</span><span class="p">,</span> <span class="n">sche</span></div>
 
 
-<div class="viewcode-block" id="run_evaluate"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.bert_clf_prediction.run_evaluate">[docs]</a><span class="k">def</span> <span class="nf">run_evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataloader_iter</span><span class="p">,</span> <span class="n">eval_steps</span><span class="p">,</span> <span class="n">summary</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Evaluate a model and add error rate and validation loss to tensorboard.</span>
+<div class="viewcode-block" id="run_evaluate"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.run_evaluate">[docs]</a><span class="k">def</span> <span class="nf">run_evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataloader_iter</span><span class="p">,</span> <span class="n">eval_steps</span><span class="p">,</span> <span class="n">summary</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Evaluate a model and add error rate and validation loss to Tensorboard.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (object): a bert classification model.</span>
-<span class="sd">        dataloader_iter (iterator): an iterator of a torch.IterableDataset.</span>
+<span class="sd">        model (transformers.BertForSequenceClassification): a BERT classification model.</span>
+<span class="sd">        dataloader_iter (torch.IterableDataset): an iterator of a torch.IterableDataset.</span>
 <span class="sd">        eval_steps (int): number of training steps.</span>
-<span class="sd">        summary (object): a tensorboard SummaryWriter object.</span>
+<span class="sd">        summary (torch.utils.tensorboard.SummaryWriter): a Tensorboard SummaryWriter object.</span>
 <span class="sd">        global_step (int): current training steps.</span>
-<span class="sd">        device (object): the device where the model in running on.</span>
+<span class="sd">        device (torch.Device): the device where the model in running on.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
 
@@ -273,7 +272,7 @@
     <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="load_or_train_bert_clf"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.bert_clf_prediction.load_or_train_bert_clf">[docs]</a><span class="k">def</span> <span class="nf">load_or_train_bert_clf</span><span class="p">(</span><span class="n">model_init</span><span class="p">,</span>
+<div class="viewcode-block" id="load_or_train_bert_clf"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.load_or_train_bert_clf">[docs]</a><span class="k">def</span> <span class="nf">load_or_train_bert_clf</span><span class="p">(</span><span class="n">model_init</span><span class="p">,</span>
                            <span class="n">dataset_name</span><span class="p">,</span>
                            <span class="n">trainset</span><span class="p">,</span>
                            <span class="n">testset</span><span class="p">,</span>
@@ -287,14 +286,14 @@
                            <span class="n">bert_clf_period_save</span><span class="p">,</span>
                            <span class="n">bert_clf_val_steps</span><span class="p">,</span>
                            <span class="n">device</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Train Bert classification model on a dataset.</span>
+    <span class="sd">&quot;&quot;&quot;Train BERT classification model on a dataset.</span>
 
-<span class="sd">    The trained model will be stored at `&lt;fibber_root_dir&gt;/bert_clf/&lt;dataset_name&gt;/`. If there&#39;s</span>
+<span class="sd">    The trained model will be stored at ``&lt;fibber_root_dir&gt;/bert_clf/&lt;dataset_name&gt;/``. If there&#39;s</span>
 <span class="sd">    a saved model, load and return the model. Otherwise, train the model using the given data.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model_init (str): pretrained model name. Choose from [&quot;bert-base-cased&quot;,</span>
-<span class="sd">            &quot;bert-base-uncased&quot;, &quot;bert-large-cased&quot;, &quot;bert-large-uncased&quot;].</span>
+<span class="sd">        model_init (str): pretrained model name. Choose from ``[&quot;bert-base-cased&quot;,</span>
+<span class="sd">            &quot;bert-base-uncased&quot;, &quot;bert-large-cased&quot;, &quot;bert-large-uncased&quot;]``.</span>
 <span class="sd">        dataset_name (str): the name of the dataset. This is also the dir to save trained model.</span>
 <span class="sd">        trainset (dict): a fibber dataset.</span>
 <span class="sd">        testset (dict): a fibber dataset.</span>
@@ -302,23 +301,23 @@
 <span class="sd">        bert_clf_bs (int): the batch size.</span>
 <span class="sd">        bert_clf_lr (float): the learning rate.</span>
 <span class="sd">        bert_clf_optimizer (str): the optimizer name.</span>
-<span class="sd">        bert_clf_weight_decay (float):</span>
+<span class="sd">        bert_clf_weight_decay (float): the weight decay.</span>
 <span class="sd">        bert_clf_period_summary (int): the period in steps to write training summary.</span>
 <span class="sd">        bert_clf_period_val (int): the period in steps to run validation and write validation</span>
 <span class="sd">            summary.</span>
 <span class="sd">        bert_clf_period_save (int): the period in steps to save current model.</span>
 <span class="sd">        bert_clf_val_steps (int): number of batched in each validation.</span>
-<span class="sd">        device (object): the device to run the model.</span>
+<span class="sd">        device (torch.Device): the device to run the model.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (object): a torch Bert model.</span>
+<span class="sd">        (transformers.BertForSequenceClassification): a torch BERT model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">model_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_root_dir</span><span class="p">(),</span> <span class="s2">&quot;bert_clf&quot;</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="p">)</span>
     <span class="n">ckpt_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">model_init</span> <span class="o">+</span> <span class="s2">&quot;-</span><span class="si">%04d</span><span class="s2">k.pt&quot;</span> <span class="o">%</span>
                              <span class="p">(</span><span class="n">bert_clf_steps</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Load bert classifier from </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">ckpt_path</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Load BERT classifier from </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">ckpt_path</span><span class="p">)</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">)</span>
         <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
@@ -383,7 +382,7 @@
             <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">))</span>
             <span class="n">ckpt</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">model_init</span> <span class="o">+</span> <span class="s2">&quot;-</span><span class="si">%04d</span><span class="s2">k.pt&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">bert_clf_steps</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ckpt</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Bert classifier saved at </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">ckpt</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;BERT classifier saved at </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">ckpt</span><span class="p">)</span>
             <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
             <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
 
@@ -393,12 +392,28 @@
     <span class="k">return</span> <span class="n">model</span></div>
 
 
-<div class="viewcode-block" id="BertClfPrediction"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.bert_clf_prediction.BertClfPrediction">[docs]</a><span class="k">class</span> <span class="nc">BertClfPrediction</span><span class="p">(</span><span class="n">MetricBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Output BERT classifier prediction on paraphrases.</span>
+<div class="viewcode-block" id="BertClfPrediction"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction">[docs]</a><span class="k">class</span> <span class="nc">BertClfPrediction</span><span class="p">(</span><span class="n">MetricBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;BERT classifier prediction on paraphrases.</span>
 
-<span class="sd">    This metric is special, it does not compare the original and paraphrased sentence. Instead,</span>
-<span class="sd">    it outputs the classifier prediction on paraphrases. So we should not compute mean or std on</span>
-<span class="sd">    this metric.</span>
+<span class="sd">    This metric is special, it does not compare the original and paraphrased sentence.</span>
+<span class="sd">    Instead, it outputs the classifier prediction on paraphrases. So we should not compute</span>
+<span class="sd">    mean or std on this metric.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset_name (str): the name of the dataset.</span>
+<span class="sd">        trainset (dict): a fibber dataset.</span>
+<span class="sd">        testset (dict): a fibber dataset.</span>
+<span class="sd">        bert_gpu_id (int): the gpu id for BERT model. Set -1 to use CPU.</span>
+<span class="sd">        bert_clf_steps (int): steps to train a classifier.</span>
+<span class="sd">        bert_clf_bs (int): the batch size.</span>
+<span class="sd">        bert_clf_lr (float): the learning rate.</span>
+<span class="sd">        bert_clf_optimizer (str): the optimizer name.</span>
+<span class="sd">        bert_clf_weight_decay (float): the weight decay in the optimizer.</span>
+<span class="sd">        bert_clf_period_summary (int): the period in steps to write training summary.</span>
+<span class="sd">        bert_clf_period_val (int): the period in steps to run validation and write validation</span>
+<span class="sd">            summary.</span>
+<span class="sd">        bert_clf_period_save (int): the period in steps to save current model.</span>
+<span class="sd">        bert_clf_val_steps (int): number of batched in each validation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">trainset</span><span class="p">,</span> <span class="n">testset</span><span class="p">,</span> <span class="n">bert_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
@@ -406,41 +421,24 @@
                  <span class="n">bert_clf_optimizer</span><span class="o">=</span><span class="s2">&quot;adamw&quot;</span><span class="p">,</span> <span class="n">bert_clf_weight_decay</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
                  <span class="n">bert_clf_period_summary</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">bert_clf_period_val</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
                  <span class="n">bert_clf_period_save</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">bert_clf_val_steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize. Train or load classification model.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            dataset_name (str): the name of the dataset.</span>
-<span class="sd">            trainset (dict): a fibber dataset.</span>
-<span class="sd">            testset (dict): a fibber dataset.</span>
-<span class="sd">            bert_gpu_id (int): the gpu id for Bert model. Set -1 to use CPU.</span>
-<span class="sd">            bert_clf_steps (int): steps to train a classifier.</span>
-<span class="sd">            bert_clf_bs (int): the batch size.</span>
-<span class="sd">            bert_clf_lr (float): the learning rate.</span>
-<span class="sd">            bert_clf_optimizer (str): the optimizer name.</span>
-<span class="sd">            bert_clf_weight_decay (float):</span>
-<span class="sd">            bert_clf_period_summary (int): the period in steps to write training summary.</span>
-<span class="sd">            bert_clf_period_val (int): the period in steps to run validation and write validation</span>
-<span class="sd">                summary.</span>
-<span class="sd">            bert_clf_period_save (int): the period in steps to save current model.</span>
-<span class="sd">            bert_clf_val_steps (int): number of batched in each validation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">BertClfPrediction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">trainset</span><span class="p">[</span><span class="s2">&quot;cased&quot;</span><span class="p">]:</span>
             <span class="n">model_init</span> <span class="o">=</span> <span class="s2">&quot;bert-base-cased&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Use cased model in Bert classifier prediction metric.&quot;</span><span class="p">)</span>
+                <span class="s2">&quot;Use cased model in BERT classifier prediction metric.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">model_init</span> <span class="o">=</span> <span class="s2">&quot;bert-base-uncased&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Use uncased model in Bert classifier prediction metric.&quot;</span><span class="p">)</span>
+                <span class="s2">&quot;Use uncased model in BERT classifier prediction metric.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">BertTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_init</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">bert_gpu_id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Bert metric is running on CPU.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;BERT metric is running on CPU.&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Bert metric is running on GPU </span><span class="si">%d</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">bert_gpu_id</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;BERT metric is running on GPU </span><span class="si">%d</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">bert_gpu_id</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">bert_gpu_id</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">load_or_train_bert_clf</span><span class="p">(</span>
@@ -459,8 +457,8 @@
             <span class="n">bert_clf_val_steps</span><span class="o">=</span><span class="n">bert_clf_val_steps</span><span class="p">,</span>
             <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BertClfPrediction.predict_raw"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.bert_clf_prediction.BertClfPrediction.predict_raw">[docs]</a>    <span class="k">def</span> <span class="nf">predict_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text0</span><span class="p">,</span> <span class="n">text1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get unnormalized log probability of the Bert prediction.</span>
+<div class="viewcode-block" id="BertClfPrediction.predict_raw"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.predict_raw">[docs]</a>    <span class="k">def</span> <span class="nf">predict_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text0</span><span class="p">,</span> <span class="n">text1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get unnormalized log probability of the BERT prediction.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            text0 (str):</span>
@@ -471,7 +469,7 @@
 <span class="sd">                On NLI datasets, text1 contains the hypothesis.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (np.array): a numpy array of the unnormalized log probability.</span>
+<span class="sd">            (np.array): a numpy array of the unnormalized log probability over on each category.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">text1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">seq</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;[CLS]&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">text0</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;[SEP]&quot;</span><span class="p">]</span>
@@ -492,8 +490,8 @@
             <span class="n">tok_type</span> <span class="o">=</span> <span class="n">tok_type</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">200</span><span class="p">]</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span><span class="n">seq_tensor</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="o">=</span><span class="n">tok_type</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="BertClfPrediction.predict"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.bert_clf_prediction.BertClfPrediction.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text0</span><span class="p">,</span> <span class="n">text1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get the prediction of the Bert prediction.</span>
+<div class="viewcode-block" id="BertClfPrediction.predict"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text0</span><span class="p">,</span> <span class="n">text1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the prediction of the BERT prediction.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            text0 (str):</span>
@@ -509,12 +507,12 @@
 
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_raw</span><span class="p">(</span><span class="n">text0</span><span class="p">,</span> <span class="n">text1</span><span class="p">)))</span></div>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="BertClfPrediction.measure_example"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.measure_example">[docs]</a>    <span class="k">def</span> <span class="nf">measure_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">paraphrase_field</span> <span class="o">==</span> <span class="s2">&quot;text0&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">paraphrase</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">paraphrase_field</span> <span class="o">==</span> <span class="s2">&quot;text1&quot;</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;text0&quot;</span><span class="p">],</span> <span class="n">paraphrase</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;text0&quot;</span><span class="p">],</span> <span class="n">paraphrase</span><span class="p">)</span></div></div>
 </pre></div>
 
               </div>

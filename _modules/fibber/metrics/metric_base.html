@@ -188,12 +188,12 @@
               <div>
                 
   <h1>Source code for fibber.metrics.metric_base</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="MetricBase"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase">[docs]</a><span></span><span class="k">class</span> <span class="nc">MetricBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="MetricBase"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_base.html#fibber.metrics.MetricBase">[docs]</a><span></span><span class="k">class</span> <span class="nc">MetricBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for Metrics.</span>
 
 <span class="sd">    All metrics should be derived from this class.</span>
 
-<span class="sd">    To implement a new metric, you should at least overwrite the `__call__` method.</span>
+<span class="sd">    To implement a new metric, you should at least overwrite the `measure_example` method.</span>
 
 <span class="sd">    The simplest metric can be directly computed from a pair of text, in this case, the metric</span>
 <span class="sd">    can use the `origin` and `paraphrase` args directly.</span>
@@ -208,8 +208,8 @@
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+<div class="viewcode-block" id="MetricBase.measure_example"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_base.html#fibber.metrics.MetricBase.measure_example">[docs]</a>    <span class="k">def</span> <span class="nf">measure_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
 </pre></div>
 
               </div>

@@ -157,6 +157,68 @@
         
         
           
+            
+  
+                <li class="active">
+                    <a href="fibber.benchmark.html">fibber.benchmark package</a>
+                    <ul>
+                    
+                        <li class="active">
+                            <a href="">fibber.benchmark.benchmark module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.benchmark.benchmark_utils.html">fibber.benchmark.benchmark_utils module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.benchmark.customized_metric_aggregation.html">fibber.benchmark.customized_metric_aggregation module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.benchmark.make_overview.html">fibber.benchmark.make_overview module</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.datasets.html">fibber.datasets package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.metrics.html">fibber.metrics package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.paraphrase_strategies.html">fibber.paraphrase_strategies package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.resources.html">fibber.resources package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.download_utils.html">fibber.download_utils module</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.log.html">fibber.log module</a>
+                </li>
+            
+          
         
         
         
@@ -195,12 +257,12 @@
 <span id="fibber-benchmark-benchmark-module"></span><h1>fibber.benchmark.benchmark module<a class="headerlink" href="#module-fibber.benchmark.benchmark" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="fibber.benchmark.benchmark.benchmark">
-<code class="sig-prename descclassname">fibber.benchmark.benchmark.</code><code class="sig-name descname">benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">FLAGS</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">trainset</span></em>, <em class="sig-param"><span class="n">testset</span></em>, <em class="sig-param"><span class="n">paraphrase_set</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#benchmark"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.benchmark.benchmark" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fibber.benchmark.benchmark.</code><code class="sig-name descname">benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">trainset</span></em>, <em class="sig-param"><span class="n">testset</span></em>, <em class="sig-param"><span class="n">paraphrase_set</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#benchmark"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.benchmark.benchmark" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run benchmark on the given dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>FLAGS</strong> (<em>object</em>) – args from the argparser.</p></li>
+<li><p><strong>arg_dict</strong> (<em>dict</em>) – all args from the commandline.</p></li>
 <li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
 <li><p><strong>trainset</strong> (<em>dict</em>) – a fibber dataset.</p></li>
 <li><p><strong>testset</strong> (<em>dict</em>) – a fibber dataset.</p></li>
@@ -212,18 +274,23 @@
 
 <dl class="py function">
 <dt id="fibber.benchmark.benchmark.get_output_filename">
-<code class="sig-prename descclassname">fibber.benchmark.benchmark.</code><code class="sig-name descname">get_output_filename</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">FLAGS</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#get_output_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.benchmark.get_output_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a string like <cite>&lt;prefix&gt;-&lt;experiment_name&gt;-&lt;suffix&gt;</cite>.</p>
-<p>This function is used to construct filenames for an experiment. This function ensures that
-all filenames for the same experiment has the same experiment name.</p>
-<p>The experiment name is &lt;dataset_name&gt;-&lt;paraphrase_strategy_name&gt;-&lt;date&gt;-&lt;time&gt;.</p>
+<code class="sig-prename descclassname">fibber.benchmark.benchmark.</code><code class="sig-name descname">get_output_filename</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#get_output_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.benchmark.get_output_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string like <code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;-&lt;experiment_name&gt;-&lt;suffix&gt;</span></code>.</p>
+<p>This function is used to construct file names for an experiment. This function ensures that
+all file names for the same experiment has the same experiment name.</p>
+<p>The experiment name is <code class="docutils literal notranslate"><span class="pre">&lt;dataset_name&gt;-&lt;paraphrase_strategy_name&gt;-&lt;date&gt;-&lt;time&gt;</span></code>.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="fibber.benchmark.benchmark.get_strategy">
-<code class="sig-prename descclassname">fibber.benchmark.benchmark.</code><code class="sig-name descname">get_strategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">FLAGS</span></em>, <em class="sig-param"><span class="n">strategy_name</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#get_strategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.benchmark.get_strategy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fibber.benchmark.benchmark.</code><code class="sig-name descname">get_strategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">strategy_name</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#get_strategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.benchmark.get_strategy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take the strategy name and construct a strategy object.</p>
 </dd></dl>
+
+<dl class="py function">
+<dt id="fibber.benchmark.benchmark.main">
+<code class="sig-prename descclassname">fibber.benchmark.benchmark.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.benchmark.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 

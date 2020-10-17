@@ -157,6 +157,68 @@
         
         
           
+            
+  
+                <li class="active">
+                    <a href="fibber.benchmark.html">fibber.benchmark package</a>
+                    <ul>
+                    
+                        <li class="">
+                            <a href="fibber.benchmark.benchmark.html">fibber.benchmark.benchmark module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.benchmark.benchmark_utils.html">fibber.benchmark.benchmark_utils module</a>
+                        </li>
+                    
+                        <li class="active">
+                            <a href="">fibber.benchmark.customized_metric_aggregation module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.benchmark.make_overview.html">fibber.benchmark.make_overview module</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.datasets.html">fibber.datasets package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.metrics.html">fibber.metrics package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.paraphrase_strategies.html">fibber.paraphrase_strategies package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.resources.html">fibber.resources package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.download_utils.html">fibber.download_utils module</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.log.html">fibber.log module</a>
+                </li>
+            
+          
         
         
         
@@ -195,15 +257,17 @@
 <span id="fibber-benchmark-customized-metric-aggregation-module"></span><h1>fibber.benchmark.customized_metric_aggregation module<a class="headerlink" href="#module-fibber.benchmark.customized_metric_aggregation" title="Permalink to this headline">¶</a></h1>
 <p>This module defines customized metric aggregation functions.</p>
 <dl class="py function">
-<dt id="fibber.benchmark.customized_metric_aggregation.paraphrase_pred_accuracy_agg_fn">
-<code class="sig-prename descclassname">fibber.benchmark.customized_metric_aggregation.</code><code class="sig-name descname">paraphrase_pred_accuracy_agg_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">use_sim</span></em>, <em class="sig-param"><span class="n">ppl_score</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/customized_metric_aggregation.html#paraphrase_pred_accuracy_agg_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.customized_metric_aggregation.paraphrase_pred_accuracy_agg_fn" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function makes a metric aggregation function.</p>
-<p>The aggregation function computes the classifier’s accuracy on paraphrased text.</p>
+<dt id="fibber.benchmark.customized_metric_aggregation.paraphrase_classification_accuracy_agg_fn">
+<code class="sig-prename descclassname">fibber.benchmark.customized_metric_aggregation.</code><code class="sig-name descname">paraphrase_classification_accuracy_agg_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">use_sim</span></em>, <em class="sig-param"><span class="n">ppl_score</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/customized_metric_aggregation.html#paraphrase_classification_accuracy_agg_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.customized_metric_aggregation.paraphrase_classification_accuracy_agg_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function makes a aggregation function for BERT classification metric.</p>
+<p>The aggregation function outputs the after attack accuracy of the BERT classifier.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>use_sim</strong> (<em>float</em>) – the threshold for USESemanticSimilarity metric.</p></li>
-<li><p><strong>ppl_score</strong> (<em>float</em>) – the threshold for GPT2GrammarQuality metric.</p></li>
+<li><p><strong>use_sim</strong> (<em>float</em>) – the threshold for <code class="docutils literal notranslate"><span class="pre">USESemanticSimilarity</span></code> metric. The adversarial
+example should have the USE similarity higher than this threshold.</p></li>
+<li><p><strong>ppl_score</strong> (<em>float</em>) – the threshold for <code class="docutils literal notranslate"><span class="pre">GPT2GrammarQuality</span></code> metric. The adversarial example
+should have the perplexity ratio measured by GPT2 lower than this threshold.</p></li>
 </ul>
 </dd>
 </dl>

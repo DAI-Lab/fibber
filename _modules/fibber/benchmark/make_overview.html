@@ -191,15 +191,15 @@
 <span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">fibber.benchmark.benchmark_utils</span> <span class="kn">import</span> <span class="n">load_detailed_result</span><span class="p">,</span> <span class="n">update_overview_result</span>
-<span class="kn">from</span> <span class="nn">fibber.benchmark.customized_metric_aggregation</span> <span class="kn">import</span> <span class="n">customized_metric_for_nwin</span>
+<span class="kn">from</span> <span class="nn">fibber.benchmark.customized_metric_aggregation</span> <span class="kn">import</span> <span class="n">customized_metric_for_nun_wins</span>
 
 <span class="c1"># Columns where the number of wins should be computed.</span>
 <span class="c1"># &quot;L&quot; means lower is better.</span>
 <span class="c1"># &quot;H&quot; means higher is better.</span>
-<span class="n">COL_FOR_NWIN</span> <span class="o">=</span> <span class="p">[</span>
+<span class="n">COL_FOR_NUM_WINS</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="s2">&quot;USESemanticSimilarity_mean&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">&quot;GPT2GrammarQuality_mean&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">)</span>
-<span class="p">]</span> <span class="o">+</span> <span class="n">customized_metric_for_nwin</span>
+<span class="p">]</span> <span class="o">+</span> <span class="n">customized_metric_for_nun_wins</span>
 
 <span class="n">DATASET_NAME_COL</span> <span class="o">=</span> <span class="s2">&quot;0_dataset_name&quot;</span>
 <span class="n">STRATEGY_NAME_COL</span> <span class="o">=</span> <span class="s2">&quot;1_paraphrase_strategy_name&quot;</span>
@@ -219,10 +219,10 @@
     <span class="k">for</span> <span class="n">rid</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">detailed_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="n">STRATEGY_NAME_COL</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
             <span class="n">model_name</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="n">STRATEGY_NAME_COL</span><span class="p">]</span>
-            <span class="n">tmp</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
             <span class="n">tmp</span><span class="p">[</span><span class="n">STRATEGY_NAME_COL</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="n">STRATEGY_NAME_COL</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">col_name</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">COL_FOR_NWIN</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col_name</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">COL_FOR_NUM_WINS</span><span class="p">:</span>
                 <span class="n">tmp</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="n">results</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
@@ -230,7 +230,7 @@
     <span class="k">for</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">detailed_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">DATASET_NAME_COL</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r1</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r2</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-                <span class="k">for</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">COL_FOR_NWIN</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">COL_FOR_NUM_WINS</span><span class="p">:</span>
                     <span class="k">if</span> <span class="p">((</span><span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;H&quot;</span> <span class="ow">and</span> <span class="n">r1</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">r2</span><span class="p">[</span><span class="n">column_name</span><span class="p">])</span>
                             <span class="ow">or</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;L&quot;</span> <span class="ow">and</span> <span class="n">r1</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">r2</span><span class="p">[</span><span class="n">column_name</span><span class="p">])):</span>
                         <span class="n">results</span><span class="p">[</span><span class="n">r1</span><span class="p">[</span><span class="n">STRATEGY_NAME_COL</span><span class="p">]][</span><span class="n">column_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>

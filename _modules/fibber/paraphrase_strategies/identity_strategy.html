@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.identical_strategy &#8212; fibber 0.0.1.dev0 documentation</title>
+    <title>fibber.paraphrase_strategies.identity_strategy &#8212; fibber 0.0.1.dev0 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -187,14 +187,14 @@
               
               <div>
                 
-  <h1>Source code for fibber.paraphrase_strategies.identical_strategy</h1><div class="highlight"><pre>
+  <h1>Source code for fibber.paraphrase_strategies.identity_strategy</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies.strategy_base</span> <span class="kn">import</span> <span class="n">StrategyBase</span>
 
 
-<div class="viewcode-block" id="IdenticalStrategy"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.identical_strategy.html#fibber.paraphrase_strategies.identical_strategy.IdenticalStrategy">[docs]</a><span class="k">class</span> <span class="nc">IdenticalStrategy</span><span class="p">(</span><span class="n">StrategyBase</span><span class="p">):</span>
+<div class="viewcode-block" id="IdentityStrategy"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.identity_strategy.html#fibber.paraphrase_strategies.IdentityStrategy">[docs]</a><span class="k">class</span> <span class="nc">IdentityStrategy</span><span class="p">(</span><span class="n">StrategyBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A baseline paraphrase strategy. Just return the original sentence.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="IdenticalStrategy.paraphrase_example"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.identical_strategy.html#fibber.paraphrase_strategies.identical_strategy.IdenticalStrategy.paraphrase_example">[docs]</a>    <span class="k">def</span> <span class="nf">paraphrase_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="IdentityStrategy.paraphrase_example"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.identity_strategy.html#fibber.paraphrase_strategies.IdentityStrategy.paraphrase_example">[docs]</a>    <span class="k">def</span> <span class="nf">paraphrase_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">data_record</span><span class="p">[</span><span class="n">field_name</span><span class="p">]]</span></div></div>
 </pre></div>
 

@@ -157,6 +157,80 @@
         
         
           
+            
+                <li class="">
+                    <a href="fibber.benchmark.html">fibber.benchmark package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.datasets.html">fibber.datasets package</a>
+                </li>
+            
+          
+            
+  
+                <li class="active">
+                    <a href="fibber.metrics.html">fibber.metrics package</a>
+                    <ul>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.bert_clf_prediction.html">fibber.metrics.bert_clf_prediction module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.editing_distance.html">fibber.metrics.editing_distance module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.glove_semantic_similarity.html">fibber.metrics.glove_semantic_similarity module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.gpt2_grammar_quality.html">fibber.metrics.gpt2_grammar_quality module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.metric_base.html">fibber.metrics.metric_base module</a>
+                        </li>
+                    
+                        <li class="active">
+                            <a href="">fibber.metrics.metric_utils module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.use_semantic_similarity.html">fibber.metrics.use_semantic_similarity module</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.paraphrase_strategies.html">fibber.paraphrase_strategies package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.resources.html">fibber.resources package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.download_utils.html">fibber.download_utils module</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.log.html">fibber.log module</a>
+                </li>
+            
+          
         
         
         
@@ -198,10 +272,49 @@
 <em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.metric_utils.</code><code class="sig-name descname">MetricBundle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">use_editing_distance</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_use_semantic_similarity</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_glove_semantic_similarity</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_gpt2_grammar_quality</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_bert_clf_prediction</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">customized_metrics</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>MetricBundle can help easily initialize and compute multiple metrics.</p>
+<p>Initialize various metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>use_editing_distance</strong> (<em>bool</em>) – whether to use editing distance in the bundle.</p></li>
+<li><p><strong>use_use_semantic_similarity</strong> (<em>bool</em>) – whether to use Universal sentence encoder to
+compute sentence similarity</p></li>
+<li><p><strong>use_glove_semantic_similarity</strong> (<em>bool</em>) – whether to use Glove embeddings to compute
+sentence similarity.</p></li>
+<li><p><strong>use_gpt2_grammar_quality</strong> (<em>bool</em>) – whether to use GPT2 to compute sentence quality.</p></li>
+<li><p><strong>use_bert_clf_prediction</strong> (<em>bool</em>) – whether to include BERT classifier prediction in
+metrics.</p></li>
+<li><p><strong>customized_metrics</strong> (<em>list</em>) – a list of customized metrics.</p></li>
+<li><p><strong>kargs</strong> – arguments for metrics. kargs will be passed to all metrics.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="fibber.metrics.metric_utils.MetricBundle.get_classifier_for_attack">
 <code class="sig-name descname">get_classifier_for_attack</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_classifier_for_attack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.get_classifier_for_attack" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the Bert classifier metric.</p>
+<dd><p>Return the BERT classifier metric.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.measure_example">
+<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.measure_example" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the results of all metrics in the bundle for one pair of text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>origin</strong> (<em>str</em>) – original text.</p></li>
+<li><p><strong>paraphrase</strong> (<em>str</em>) – paraphrased text.</p></li>
+<li><p><strong>data_record</strong> (<em>str</em>) – the data record.</p></li>
+<li><p><strong>paraphrase_field</strong> (<em>str</em>) – choose from “text0”, “text1”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(dict)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -209,7 +322,7 @@
 <dl class="py function">
 <dt id="fibber.metrics.metric_utils.aggregate_metrics">
 <code class="sig-prename descclassname">fibber.metrics.metric_utils.</code><code class="sig-name descname">aggregate_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">paraphrase_strategy_name</span></em>, <em class="sig-param"><span class="n">experiment_name</span></em>, <em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">customize_aggregation_fn_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#aggregate_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.aggregate_metrics" title="Permalink to this definition">¶</a></dt>
-<dd><p>Aggregate paraphrase metrics on a dataset to a summary and store in a dictionary.</p>
+<dd><p>Aggregate paraphrase metrics on a dataset to a summary and store in a dict.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -218,7 +331,7 @@
 <li><p><strong>experiment_name</strong> (<em>str</em>) – the name of the experiment.</p></li>
 <li><p><strong>results</strong> (<em>dict</em>) – the fibber dataset with paraphrases and metrics. The return value of
 <cite>compute_metrics</cite>.</p></li>
-<li><p><strong>customize_aggregation_fn_dict</strong> (<em>dict</em>) – A dict of customized aggregations. The dictionary is
+<li><p><strong>customize_aggregation_fn_dict</strong> (<em>dict</em>) – A dict of customized aggregations. The dict is
 a mapping from aggregation name to aggregation function. The aggregation function
 should take one data_record, and returns a float.</p></li>
 </ul>

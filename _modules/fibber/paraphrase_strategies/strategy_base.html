@@ -200,102 +200,122 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="StrategyBase"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase">[docs]</a><span class="k">class</span> <span class="nc">StrategyBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="StrategyBase"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.StrategyBase">[docs]</a><span class="k">class</span> <span class="nc">StrategyBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The base class for all paraphrase strategies.</span>
 
-<span class="sd">    All strategies should be derived from this class.</span>
-
-<span class="sd">    The simplest way to write a strategy is to overwrite the `paraphrase_example` function. This</span>
+<span class="sd">    The simplest way to write a strategy is to overwrite the ``paraphrase_example`` function. This</span>
 <span class="sd">    function takes one data records, and returns multiple paraphrases of a given field.</span>
 
-<span class="sd">    Some strategy may have hyper-parameters. Overwrite `add_parser_args` to add args to CLI. All</span>
-<span class="sd">    args from the command line are passed as an arg to `__init__`. So you should also overwrite</span>
-<span class="sd">    the `__init__`.</span>
-
-<span class="sd">    If `__init__` is overwritten, remember to call `super().__init__(FLAGS, metric_bundle)` at the</span>
-<span class="sd">    beginning of your `__init__`. This will initialize `self._strategy_config` and</span>
-<span class="sd">    `self._metric_bundle`.</span>
-
-<span class="sd">        `self._strategy_config` is a dict. You can store hyper-parameters in this dict. This dict</span>
-<span class="sd">        will be saved to the result file.</span>
-
-<span class="sd">        `self._metric_bundle` is the MetricBundle, you can use it to compute different metrics for</span>
-<span class="sd">        any pairs of original and paraphrased text.</span>
-
-<span class="sd">        `self._device` is a torch Device object. You can use `--strategy_gpu` to select a gpu for</span>
-<span class="sd">        strategies. If you are using pytorch, please use this Device for computation.</span>
-
 <span class="sd">    For more advanced use cases, you can overwrite the `paraphrase` function.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">FLAGS</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">):</span>
+<span class="sd">    Some strategy may have hyper-parameters. Add hyper parameters into the class attribute</span>
+<span class="sd">    ``__hyperparameters__``.</span>
+
+<span class="sd">    Hyperparameters defined in ``__hyperparameters__`` can be added to the command line arg parser</span>
+<span class="sd">    by ``add_parser_args(parser)``. The value of the hyperparameters will be added to</span>
+<span class="sd">    ``self._strategy_config``.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        __abbr__ (str): a unique string as an abbreviation for the strategy.</span>
+<span class="sd">        __hyper_parameters__ (list): A list of tuples that defines the hyperparameters for the</span>
+<span class="sd">            strategy. Each tuple is ``(name, type, default, help)``. For example::</span>
+
+<span class="sd">                __hyperparameters = [ (&quot;p1&quot;, int, -1, &quot;the first hyper parameter&quot;), ...]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__abbr__</span> <span class="o">=</span> <span class="s2">&quot;base&quot;</span>
+    <span class="n">__hyperparameters__</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize the paraphrase_strategies.</span>
 
-<span class="sd">        This function initialize the `self._strategy_config`, `self._metric_bundle` and</span>
-<span class="sd">        `self._device`.</span>
+<span class="sd">        This function initialize the ``self._strategy_config``, ``self._metric_bundle``,</span>
+<span class="sd">        ``self._device``.</span>
 
-<span class="sd">        If your strategy has hyper parameters, add them as args, and get those hyper parameters</span>
-<span class="sd">        from FLAGS.</span>
+<span class="sd">        **You should not overwrite this function.**</span>
+
+<span class="sd">        * self._strategy_config (dict): a dictionary that stores the strategy name and all</span>
+<span class="sd">          hyperparameter values. The dict is also saved to the results.</span>
+<span class="sd">        * self._metric_bundle (MetricBundle): the metrics that will be used to evaluate</span>
+<span class="sd">          paraphrases. Strategies can compute metrics during paraphrasing.</span>
+<span class="sd">        * self._device (torch.Device): any computation that requires a GPU accelerator should</span>
+<span class="sd">          use this device.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            FLAGS: args from argparser.</span>
+<span class="sd">            arg_dict: all_args_load_from .</span>
 <span class="sd">            metric_bundle: a MetricBundle object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">StrategyBase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
         <span class="c1"># paraphrase_strategies config will be saved to the results.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;strategy_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">p_name</span><span class="p">,</span> <span class="n">p_type</span><span class="p">,</span> <span class="n">p_default</span><span class="p">,</span> <span class="n">p_help</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hyperparameters__</span><span class="p">:</span>
+            <span class="n">arg_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__abbr__</span><span class="p">,</span> <span class="n">p_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">arg_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">arg_dict</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2"> not found in args.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__abbr__</span><span class="p">,</span> <span class="n">p_name</span><span class="p">)</span>
+                <span class="n">p_value</span> <span class="o">=</span> <span class="n">p_default</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">p_value</span> <span class="o">=</span> <span class="n">arg_dict</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span>
+
+            <span class="k">assert</span> <span class="n">p_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="n">p_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_value</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span> <span class="o">=</span> <span class="n">metric_bundle</span>
-        <span class="k">if</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">strategy_gpu</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;strategy_gpu_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is running on CPU.&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> metric is running on GPU </span><span class="si">%d</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">strategy_gpu</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">strategy_gpu</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> metric is running on GPU </span><span class="si">%d</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;strategy_gpu_id&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;strategy_gpu_id&quot;</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 
-<div class="viewcode-block" id="StrategyBase.add_parser_args"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase.add_parser_args">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="StrategyBase.add_parser_args"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.StrategyBase.add_parser_args">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_parser_args</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parser</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;create commandline args.</span>
-
-<span class="sd">        If your strategy has hyper-parameters, add them as args to the argparser.</span>
+        <span class="sd">&quot;&quot;&quot;create commandline args for all hyperparameters in `__hyperparameters__`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            parser: an arg parser.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> does not have any args to set from command line.&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> has </span><span class="si">%d</span><span class="s2"> args to set from command line.&quot;</span><span class="p">,</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__hyperparameters__</span><span class="p">))</span>
 
-<div class="viewcode-block" id="StrategyBase.fit"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainset</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fit the paraphraser on a training set.</span>
+        <span class="k">for</span> <span class="n">p_name</span><span class="p">,</span> <span class="n">p_type</span><span class="p">,</span> <span class="n">p_default</span><span class="p">,</span> <span class="n">p_help</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__hyperparameters__</span><span class="p">:</span>
+            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__abbr__</span><span class="p">,</span> <span class="n">p_name</span><span class="p">),</span> <span class="nb">type</span><span class="o">=</span><span class="n">p_type</span><span class="p">,</span>
+                                <span class="n">default</span><span class="o">=</span><span class="n">p_default</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">p_help</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StrategyBase.fit"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.StrategyBase.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fit the paraphrase strategy on a training set.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            trainset (dict): a fibber dataset.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No tarining is used in this straget.&quot;</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Training is needed for this strategy. Did nothing.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="StrategyBase.paraphrase_example"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase.paraphrase_example">[docs]</a>    <span class="k">def</span> <span class="nf">paraphrase_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="StrategyBase.paraphrase_example"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.StrategyBase.paraphrase_example">[docs]</a>    <span class="k">def</span> <span class="nf">paraphrase_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Paraphrase one data record.</span>
 
-<span class="sd">        This function should be overwritten by subclasses.</span>
+<span class="sd">        This function should be overwritten by subclasses. When overwriting this class, you can</span>
+<span class="sd">        use ``self._strategy_config``, ``self._metric_bundle`` and ``self._device``.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data_record (dict): a dictionary storing one data of a dataset.</span>
+<span class="sd">            data_record (dict): a dict storing one data of a dataset.</span>
 <span class="sd">            field_name (str): the field needed to be paraphrased.</span>
 <span class="sd">            n (int): number of paraphrases.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            ([str]): A list contain at most n strings.</span>
+<span class="sd">            ([str,]): A list contain at most n strings.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="StrategyBase.paraphrase"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase.paraphrase">[docs]</a>    <span class="k">def</span> <span class="nf">paraphrase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paraphrase_set</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tmp_output_filename</span><span class="p">):</span>
+<div class="viewcode-block" id="StrategyBase.paraphrase_dataset"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.StrategyBase.paraphrase_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">paraphrase_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paraphrase_set</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tmp_output_filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Paraphrase one dataset.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            paraphrase_set (dict): a dictionary storing one data of a dataset.</span>
+<span class="sd">            paraphrase_set (dict): a dict storing one data of a dataset.</span>
 <span class="sd">            n (int): number of paraphrases.</span>
 <span class="sd">            tmp_output_filename (str): the output json filename to save results during running.</span>
 

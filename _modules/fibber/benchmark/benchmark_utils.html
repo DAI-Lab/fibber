@@ -200,7 +200,7 @@
 <span class="sd">    does not exist.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        aggregated_result (dict): the aggregated result as a dictionary.</span>
+<span class="sd">        aggregated_result (dict): the aggregated result as a dict.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_root_dir</span><span class="p">(),</span> <span class="s2">&quot;results&quot;</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">result_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -211,14 +211,15 @@
         <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
 
     <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aggregated_result</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">results</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">result_filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+    <span class="n">results</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">result_filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="load_detailed_result"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark_utils.html#fibber.benchmark.benchmark_utils.load_detailed_result">[docs]</a><span class="k">def</span> <span class="nf">load_detailed_result</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Read detailed results from file.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (DataFrame): Return an empty DataFrame if file does not exist.</span>
+<span class="sd">        (pandas.DataFrame): the detailed result table. Returns an empty DataFrame if file does not</span>
+<span class="sd">        exist.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_root_dir</span><span class="p">(),</span> <span class="s2">&quot;results&quot;</span><span class="p">)</span>
     <span class="n">result_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result_dir</span><span class="p">,</span> <span class="s2">&quot;detail.csv&quot;</span><span class="p">)</span>
@@ -232,7 +233,7 @@
     <span class="sd">&quot;&quot;&quot;write overview result to file.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        overview_result (DataFrame): the overview result.</span>
+<span class="sd">        overview_result (pandas.DataFrame): the overview result.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_root_dir</span><span class="p">(),</span> <span class="s2">&quot;results&quot;</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">result_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

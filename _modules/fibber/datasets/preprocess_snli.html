@@ -199,7 +199,7 @@
 
 
 <div class="viewcode-block" id="preprocess_snli_data"><a class="viewcode-back" href="../../../api/fibber.datasets.preprocess_snli.html#fibber.datasets.preprocess_snli.preprocess_snli_data">[docs]</a><span class="k">def</span> <span class="nf">preprocess_snli_data</span><span class="p">(</span><span class="n">input_filename</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;preprocess snli dataset to Fibber&#39;s JSON format.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;preprocess SNLI dataset to Fibber&#39;s JSON format.&quot;&quot;&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Start preprocessing data, and save at </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>

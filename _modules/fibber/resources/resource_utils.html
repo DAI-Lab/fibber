@@ -201,7 +201,7 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="load_glove_model"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.resource_utils.load_glove_model">[docs]</a><span class="k">def</span> <span class="nf">load_glove_model</span><span class="p">(</span><span class="n">glove_file</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+<div class="viewcode-block" id="load_glove_model"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.load_glove_model">[docs]</a><span class="k">def</span> <span class="nf">load_glove_model</span><span class="p">(</span><span class="n">glove_file</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Load glove embeddings from txt file.</span>
 
 <span class="sd">    Args:</span>
@@ -209,10 +209,10 @@
 <span class="sd">        dim: the dimension of the embedding.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        a dictionary:</span>
+<span class="sd">        a dict:</span>
 <span class="sd">            &quot;emb_table&quot;: a numpy array of size(N, 300)</span>
 <span class="sd">            &quot;id2tok&quot;: a list of strings.</span>
-<span class="sd">            &quot;tok2id&quot;: a dictionary that maps word (string) to its id.</span>
+<span class="sd">            &quot;tok2id&quot;: a dict that maps word (string) to its id.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s2">&quot;punkt&quot;</span><span class="p">)</span>
     <span class="n">glove_file_lines</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">glove_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
@@ -238,17 +238,17 @@
     <span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="get_glove_emb"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.resource_utils.get_glove_emb">[docs]</a><span class="k">def</span> <span class="nf">get_glove_emb</span><span class="p">():</span>
+<div class="viewcode-block" id="get_glove_emb"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_glove_emb">[docs]</a><span class="k">def</span> <span class="nf">get_glove_emb</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Download default pretrained glove embeddings and return a dict.</span>
 
 <span class="sd">    We use the 300-dimensional model trained on Wikipedia 2014 + Gigaword 5.</span>
 <span class="sd">    See https://nlp.stanford.edu/projects/glove/</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (dict): a dictionary of GloVe word embedding model.</span>
+<span class="sd">        (dict): a dict of GloVe word embedding model.</span>
 <span class="sd">            &quot;emb_table&quot;: a numpy array of size(N, 300)</span>
 <span class="sd">            &quot;id2tok&quot;: a list of strings.</span>
-<span class="sd">            &quot;tok2id&quot;: a dictionary that maps word (string) to its id.</span>
+<span class="sd">            &quot;tok2id&quot;: a dict that maps word (string) to its id.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
     <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;common&quot;</span><span class="p">)</span>
@@ -259,7 +259,7 @@
     <span class="k">return</span> <span class="n">load_glove_model</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;glove.6B.300d.txt&quot;</span><span class="p">),</span> <span class="mi">300</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_stopwords"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.resource_utils.get_stopwords">[docs]</a><span class="k">def</span> <span class="nf">get_stopwords</span><span class="p">():</span>
+<div class="viewcode-block" id="get_stopwords"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_stopwords">[docs]</a><span class="k">def</span> <span class="nf">get_stopwords</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Download default stopword words.</span>
 
 <span class="sd">    Returns:</span>

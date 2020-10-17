@@ -157,6 +157,92 @@
         
         
           
+            
+                <li class="">
+                    <a href="fibber.benchmark.html">fibber.benchmark package</a>
+                </li>
+            
+          
+            
+  
+                <li class="active">
+                    <a href="fibber.datasets.html">fibber.datasets package</a>
+                    <ul>
+                    
+                        <li class="active">
+                            <a href="">fibber.datasets.dataset_utils module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.datasets.download_datasets.html">fibber.datasets.download_datasets module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.datasets.downloadable_datasets.html">fibber.datasets.downloadable_datasets module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.datasets.preprocess_ag.html">fibber.datasets.preprocess_ag module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.datasets.preprocess_imdb.html">fibber.datasets.preprocess_imdb module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.datasets.preprocess_mnli.html">fibber.datasets.preprocess_mnli module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.datasets.preprocess_mr.html">fibber.datasets.preprocess_mr module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.datasets.preprocess_snli.html">fibber.datasets.preprocess_snli module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.datasets.preprocess_utils.html">fibber.datasets.preprocess_utils module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.datasets.preprocess_yelp.html">fibber.datasets.preprocess_yelp module</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.metrics.html">fibber.metrics package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.paraphrase_strategies.html">fibber.paraphrase_strategies package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.resources.html">fibber.resources package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.download_utils.html">fibber.download_utils module</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.log.html">fibber.log module</a>
+                </li>
+            
+          
         
         
         
@@ -174,16 +260,9 @@
           
           <div class="d-none d-xl-block col-xl-2 bd-toc">
               
-<div class="tocsection onthispage pt-5 pb-3">
-    <i class="fas fa-list"></i> On this page
-</div>
 
 <nav id="bd-toc-nav">
     <ul class="nav section-nav flex-column">
-    
-        <li class="nav-item toc-entry toc-h2">
-            <a href="#id3" class="nav-link">}</a>
-        </li>
     
     </ul>
 </nav>
@@ -201,81 +280,118 @@
   <div class="section" id="module-fibber.datasets.dataset_utils">
 <span id="fibber-datasets-dataset-utils-module"></span><h1>fibber.datasets.dataset_utils module<a class="headerlink" href="#module-fibber.datasets.dataset_utils" title="Permalink to this headline">¶</a></h1>
 <p>This module provides utility functions and classes to handle fibber’s datasets.</p>
-<ol class="arabic simple">
-<li><p>To load a dataset, use <cite>get_dataset</cite> function. For example, to load AG’s news dataset, run</p></li>
-</ol>
-<p><code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">trainset,</span> <span class="pre">testset</span> <span class="pre">=</span>&#160; <span class="pre">get_dataset(&quot;ag&quot;)</span>
-<span class="pre">`</span></code></p>
-<p>The trainset and testset are both dictionaries. The dictionary looks like</p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a>`
-{</p>
-<blockquote>
-<div><dl class="simple">
-<dt>“label_mapping”: [</dt><dd><p>“World”,
-“Sports”,
-“Business”,
-“Sci/Tech”</p>
-</dd>
-</dl>
-<p>],
-“cased”: true,
-“paraphrase_field”: “text0”,
-“data”: [</p>
-<blockquote>
-<div><dl class="simple">
-<dt>{</dt><dd><p>“label”: 1,
-“text0”: “Boston won the NBA championship in 2008.”</p>
-</dd>
-</dl>
-<p>},
-{</p>
-<blockquote>
-<div><p>“label”: 3,
-“text0”: “Apple releases its latest cell phone.”</p>
-</div></blockquote>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<div class="section" id="id3">
-<h2>}<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<ol class="arabic simple" start="2">
-<li><p>To sub-sample 100 examples from training set, run</p></li>
-</ol>
-<p><code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">subsampled_dataset</span> <span class="pre">=</span> <span class="pre">subsample_dataset(trainset,</span> <span class="pre">100)</span>
-<span class="pre">`</span></code></p>
-<ol class="arabic simple" start="3">
-<li><p>To convert a dataset dictionary to a torch IterableDataset for BERT model, run</p></li>
-</ol>
-<p><code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">iterable_dataset</span> <span class="pre">=</span> <span class="pre">DatasetForBert(trainset,</span> <span class="pre">&quot;bert-base-cased&quot;,</span> <span class="pre">batch_size=32);</span>
-<span class="pre">`</span></code></p>
-<p>For more details, see <a class="reference external" href="https://dai-lab.github.io/fibber/">https://dai-lab.github.io/fibber/</a></p>
+<ul>
+<li><p>To load a dataset, use <cite>get_dataset</cite> function. For example, to load AG’s news dataset, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trainset</span><span class="p">,</span> <span class="n">testset</span> <span class="o">=</span>  <span class="n">get_dataset</span><span class="p">(</span><span class="s2">&quot;ag&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>The trainset and testset are both dicts. The dict looks like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;label_mapping&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;World&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Sports&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Business&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Sci/Tech&quot;</span>
+  <span class="p">],</span>
+  <span class="s2">&quot;cased&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+  <span class="s2">&quot;paraphrase_field&quot;</span><span class="p">:</span> <span class="s2">&quot;text0&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="s2">&quot;text0&quot;</span><span class="p">:</span> <span class="s2">&quot;Boston won the NBA championship in 2008.&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+      <span class="s2">&quot;text0&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple releases its latest cell phone.&quot;</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>To sub-sample 100 examples from training set, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">subsampled_dataset</span> <span class="o">=</span> <span class="n">subsample_dataset</span><span class="p">(</span><span class="n">trainset</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>To convert a dataset dict to a <code class="docutils literal notranslate"><span class="pre">torch.IterableDataset</span></code> for BERT model, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">iterable_dataset</span> <span class="o">=</span> <span class="n">DatasetForBert</span><span class="p">(</span><span class="n">trainset</span><span class="p">,</span> <span class="s2">&quot;bert-base-cased&quot;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>For more details, see <code class="docutils literal notranslate"><span class="pre">https://dai-lab.github.io/fibber/</span></code></p>
 <dl class="py class">
 <dt id="fibber.datasets.dataset_utils.DatasetForBert">
 <em class="property">class </em><code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">DatasetForBert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">model_init</span></em>, <em class="sig-param"><span class="n">batch_size</span></em>, <em class="sig-param"><span class="n">exclude</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">masked_lm</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">masked_lm_ratio</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#DatasetForBert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.DatasetForBert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.IterableDataset</span></code></p>
-<p>Bert dataset wrapper for dataset dictionary.</p>
+<p>Create a <code class="docutils literal notranslate"><span class="pre">torch.IterableDataset</span></code> for a BERT model.</p>
+<p>The module is an iterator that yields infinite batches from the dataset. To construct a
+batch, we randomly sample a few examples with similar length. Then we pad all selected
+examples to the same length <code class="docutils literal notranslate"><span class="pre">L</span></code>. Then we construct a tuple of 4 or 5 tensors. All
+tensors are on CPU.</p>
+<p>Each example starts with <code class="docutils literal notranslate"><span class="pre">[CLS]</span></code>, and ends with <code class="docutils literal notranslate"><span class="pre">[SEP]</span></code>. If there are two parts in
+the input, the two parts are separated by <code class="docutils literal notranslate"><span class="pre">[SEP]</span></code>.</p>
+<p>__iter__(self):</p>
+<dl class="field-list simple">
+<dt class="field-odd">Yields</dt>
+<dd class="field-odd"><p>A tuple of tensors.</p>
+<ul class="simple">
+<li><p>The first tensor is an int tensor of size <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">L)</span></code>, representing
+word ids. Each row of this tensor correspond to one example in the dataset.
+If <code class="docutils literal notranslate"><span class="pre">masked_lm</span> <span class="pre">==</span> <span class="pre">True</span></code>, the tensor stores the masked text.</p></li>
+<li><p>The second tensor is an int tensor of size <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">L)</span></code>, representing
+the text length. Each entry is 1 if the corresponding position is text, and it
+is 0 if the position is padding.</p></li>
+<li><p>The third tensor is an int tensor of size <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">L)</span></code>, representing the
+token type. The token type is 0 if current position is in the first part of the
+input text. And it is 1 if current position is in the second part of the input.
+For padding positions, token type is 0.</p></li>
+<li><p>The forth tensor an int tensor of size <code class="docutils literal notranslate"><span class="pre">(batch_size,)</span></code>, representing the
+classification label.</p></li>
+<li><p>(optional) If <code class="docutils literal notranslate"><span class="pre">masked_lm</span> <span class="pre">==</span> <span class="pre">True</span></code>, the fifth tensor is a tensor of size
+<code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">L)</span></code>. Each entry in this tensor is either -100 if the position is
+not masked, or the correct word if the position is masked. Note that, a masked
+position is not always a <code class="docutils literal notranslate"><span class="pre">[MASK]</span></code> token in the first tensor. With 80%
+probability, it is a <code class="docutils literal notranslate"><span class="pre">[MASK]</span></code>. With 10% probability, it is the original word.
+And with 10% probability, it is a random word.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initialize.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<em>dict</em>) – a dataset dict.</p></li>
+<li><p><strong>model_init</strong> (<em>str</em>) – the pre-trained model name. select from <code class="docutils literal notranslate"><span class="pre">['bert-base-cased',</span>
+<span class="pre">'bert-base-uncased',</span> <span class="pre">'bert-large-cased',</span> <span class="pre">and</span> <span class="pre">'bert-large-uncased']</span></code>.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – the batch size in each step.</p></li>
+<li><p><strong>exclude</strong> (<em>int</em>) – exclude one category from the data.
+Use -1 (default) to include all categories.</p></li>
+<li><p><strong>masked_lm</strong> (<em>bool</em>) – whether to randomly replace words with mask tokens.</p></li>
+<li><p><strong>masked_lm_ratio</strong> (<em>float</em>) – the ratio of random masks. Ignored when masked_lm is False.</p></li>
+<li><p><strong>seed</strong> – random seed.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="fibber.datasets.dataset_utils.get_dataset">
 <code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">get_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#get_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.get_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load dataset from fibber root directory.</p>
-<p>Users should make sure the data is downloaded to the <cite>datasets</cite> folder in fibber root
-dir (default: ~/.fibber/datasets). Otherwise, assertion error is raised.</p>
+<p>Users should make sure the data is downloaded to the <code class="docutils literal notranslate"><span class="pre">datasets</span></code> folder in fibber root
+dir (default: <code class="docutils literal notranslate"><span class="pre">~/.fibber/datasets</span></code>). Otherwise, assertion error is raised.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset. See <a class="reference external" href="https://dai-lab.github.io/fibber/">https://dai-lab.github.io/fibber/</a> for a
-full list of built-in datasets.</p>
+<dd class="field-odd"><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset. See <code class="docutils literal notranslate"><span class="pre">https://dai-lab.github.io/fibber/</span></code>
+for a full list of built-in datasets.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>the function returns a tuple of two dict, representing the training set and</dt><dd><p>test set respectively.</p>
-</dd>
-</dl>
-</p>
+<dd class="field-even"><p>the function returns a tuple of two dict, representing the training set and
+test set respectively.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>(dict, dict)</p>
@@ -288,19 +404,20 @@ full list of built-in datasets.</p>
 <code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">subsample_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#subsample_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.subsample_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sub-sample a dataset to <cite>n</cite> examples.</p>
 <p>Data is selected evenly and randomly from each category. Data in each category is sorted by
-its md5 hash value. The top <cite>(n // k)</cite> examples from each category are included in the
-sub-sampled dataset, where <cite>k</cite> is the number of categories.</p>
-<p>If <cite>n</cite> is not divisible by <cite>k</cite>, one more data is sampled from the first <cite>(n % k)</cite> categories.</p>
-<p>If the dataset has less than <cite>n</cite> examples, a copy of the original dataset will be returned.</p>
+its md5 hash value. The top <code class="docutils literal notranslate"><span class="pre">(n</span> <span class="pre">//</span> <span class="pre">k)</span></code> examples from each category are included in the
+sub-sampled dataset, where <code class="docutils literal notranslate"><span class="pre">k</span></code> is the number of categories.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">n</span></code> is not divisible by <code class="docutils literal notranslate"><span class="pre">k</span></code>, one more data is sampled from the first <code class="docutils literal notranslate"><span class="pre">(n</span> <span class="pre">%</span> <span class="pre">k)</span></code>
+categories.</p>
+<p>If the dataset has less than <code class="docutils literal notranslate"><span class="pre">n</span></code> examples, a copy of the original dataset will be returned.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataset</strong> (<em>dict</em>) – a dataset dictionary.</p></li>
+<li><p><strong>dataset</strong> (<em>dict</em>) – a dataset dict.</p></li>
 <li><p><strong>n</strong> (<em>int</em>) – the size of the sub-sampled dataset.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a sub-sampled dataset as a dictionary.</p>
+<dd class="field-even"><p>a sub-sampled dataset as a dict.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>(dict)</p>
@@ -311,22 +428,21 @@ sub-sampled dataset, where <cite>k</cite> is the number of categories.</p>
 <dl class="py function">
 <dt id="fibber.datasets.dataset_utils.text_md5">
 <code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">text_md5</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#text_md5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.text_md5" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes and returns the md5 hash of <cite>x</cite>.</p>
+<dd><p>Computes and returns the md5 hash of a str.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="fibber.datasets.dataset_utils.verify_dataset">
 <code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">verify_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#verify_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.verify_dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Verify if the dataset dictionary contains necessary fields.</p>
+<dd><p>Verify if the dataset dict contains necessary fields.</p>
 <p>Assertion error is raised if there are missing or incorrect fields.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>dataset</strong> (<em>dict</em>) – a dataset dictionary.</p>
+<dd class="field-odd"><p><strong>dataset</strong> (<em>dict</em>) – a dataset dict.</p>
 </dd>
 </dl>
 </dd></dl>
 
-</div>
 </div>
 
 

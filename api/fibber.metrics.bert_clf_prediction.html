@@ -157,6 +157,80 @@
         
         
           
+            
+                <li class="">
+                    <a href="fibber.benchmark.html">fibber.benchmark package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.datasets.html">fibber.datasets package</a>
+                </li>
+            
+          
+            
+  
+                <li class="active">
+                    <a href="fibber.metrics.html">fibber.metrics package</a>
+                    <ul>
+                    
+                        <li class="active">
+                            <a href="">fibber.metrics.bert_clf_prediction module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.editing_distance.html">fibber.metrics.editing_distance module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.glove_semantic_similarity.html">fibber.metrics.glove_semantic_similarity module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.gpt2_grammar_quality.html">fibber.metrics.gpt2_grammar_quality module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.metric_base.html">fibber.metrics.metric_base module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.metric_utils.html">fibber.metrics.metric_utils module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.use_semantic_similarity.html">fibber.metrics.use_semantic_similarity module</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.paraphrase_strategies.html">fibber.paraphrase_strategies package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.resources.html">fibber.resources package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.download_utils.html">fibber.download_utils module</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.log.html">fibber.log module</a>
+                </li>
+            
+          
         
         
         
@@ -198,14 +272,39 @@
 <dt id="fibber.metrics.bert_clf_prediction.BertClfPrediction">
 <em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.bert_clf_prediction.</code><code class="sig-name descname">BertClfPrediction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">trainset</span></em>, <em class="sig-param"><span class="n">testset</span></em>, <em class="sig-param"><span class="n">bert_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">bert_clf_steps</span><span class="o">=</span><span class="default_value">20000</span></em>, <em class="sig-param"><span class="n">bert_clf_bs</span><span class="o">=</span><span class="default_value">32</span></em>, <em class="sig-param"><span class="n">bert_clf_lr</span><span class="o">=</span><span class="default_value">2e-05</span></em>, <em class="sig-param"><span class="n">bert_clf_optimizer</span><span class="o">=</span><span class="default_value">'adamw'</span></em>, <em class="sig-param"><span class="n">bert_clf_weight_decay</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">bert_clf_period_summary</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">bert_clf_period_val</span><span class="o">=</span><span class="default_value">500</span></em>, <em class="sig-param"><span class="n">bert_clf_period_save</span><span class="o">=</span><span class="default_value">5000</span></em>, <em class="sig-param"><span class="n">bert_clf_val_steps</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_clf_prediction.html#BertClfPrediction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.bert_clf_prediction.BertClfPrediction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase" title="fibber.metrics.metric_base.MetricBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.metric_base.MetricBase</span></code></a></p>
-<p>Output BERT classifier prediction on paraphrases.</p>
-<p>This metric is special, it does not compare the original and paraphrased sentence. Instead,
-it outputs the classifier prediction on paraphrases. So we should not compute mean or std on
-this metric.</p>
+<p>BERT classifier prediction on paraphrases.</p>
+<p>This metric is special, it does not compare the original and paraphrased sentence.
+Instead, it outputs the classifier prediction on paraphrases. So we should not compute
+mean or std on this metric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
+<li><p><strong>trainset</strong> (<em>dict</em>) – a fibber dataset.</p></li>
+<li><p><strong>testset</strong> (<em>dict</em>) – a fibber dataset.</p></li>
+<li><p><strong>bert_gpu_id</strong> (<em>int</em>) – the gpu id for BERT model. Set -1 to use CPU.</p></li>
+<li><p><strong>bert_clf_steps</strong> (<em>int</em>) – steps to train a classifier.</p></li>
+<li><p><strong>bert_clf_bs</strong> (<em>int</em>) – the batch size.</p></li>
+<li><p><strong>bert_clf_lr</strong> (<em>float</em>) – the learning rate.</p></li>
+<li><p><strong>bert_clf_optimizer</strong> (<em>str</em>) – the optimizer name.</p></li>
+<li><p><strong>bert_clf_weight_decay</strong> (<em>float</em>) – the weight decay in the optimizer.</p></li>
+<li><p><strong>bert_clf_period_summary</strong> (<em>int</em>) – the period in steps to write training summary.</p></li>
+<li><p><strong>bert_clf_period_val</strong> (<em>int</em>) – the period in steps to run validation and write validation
+summary.</p></li>
+<li><p><strong>bert_clf_period_save</strong> (<em>int</em>) – the period in steps to save current model.</p></li>
+<li><p><strong>bert_clf_val_steps</strong> (<em>int</em>) – number of batched in each validation.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="fibber.metrics.bert_clf_prediction.BertClfPrediction.measure_example">
+<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_clf_prediction.html#BertClfPrediction.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.bert_clf_prediction.BertClfPrediction.measure_example" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt id="fibber.metrics.bert_clf_prediction.BertClfPrediction.predict">
 <code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text0</span></em>, <em class="sig-param"><span class="n">text1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_clf_prediction.html#BertClfPrediction.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.bert_clf_prediction.BertClfPrediction.predict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the prediction of the Bert prediction.</p>
+<dd><p>Get the prediction of the BERT prediction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -227,7 +326,7 @@ On NLI datasets, text1 contains the hypothesis.</p></li>
 <dl class="py method">
 <dt id="fibber.metrics.bert_clf_prediction.BertClfPrediction.predict_raw">
 <code class="sig-name descname">predict_raw</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text0</span></em>, <em class="sig-param"><span class="n">text1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_clf_prediction.html#BertClfPrediction.predict_raw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.bert_clf_prediction.BertClfPrediction.predict_raw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get unnormalized log probability of the Bert prediction.</p>
+<dd><p>Get unnormalized log probability of the BERT prediction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -238,7 +337,7 @@ On NLI datasets, text1 contains the hypothesis.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a numpy array of the unnormalized log probability.</p>
+<dd class="field-even"><p>a numpy array of the unnormalized log probability over on each category.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>(np.array)</p>
@@ -255,7 +354,7 @@ On NLI datasets, text1 contains the hypothesis.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>optimizer_name</strong> (<em>str</em>) – choose from “adam”, “sgd”, and “adamw”.</p></li>
+<li><p><strong>optimizer_name</strong> (<em>str</em>) – choose from <code class="docutils literal notranslate"><span class="pre">[&quot;adam&quot;,</span> <span class="pre">&quot;sgd&quot;,</span> <span class="pre">&quot;adamw&quot;]</span></code>.</p></li>
 <li><p><strong>lr</strong> (<em>float</em>) – learning rate.</p></li>
 <li><p><strong>decay</strong> (<em>float</em>) – weight decay.</p></li>
 <li><p><strong>train_step</strong> (<em>int</em>) – number of training steps.</p></li>
@@ -272,14 +371,14 @@ On NLI datasets, text1 contains the hypothesis.</p></li>
 <dl class="py function">
 <dt id="fibber.metrics.bert_clf_prediction.load_or_train_bert_clf">
 <code class="sig-prename descclassname">fibber.metrics.bert_clf_prediction.</code><code class="sig-name descname">load_or_train_bert_clf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model_init</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">trainset</span></em>, <em class="sig-param"><span class="n">testset</span></em>, <em class="sig-param"><span class="n">bert_clf_steps</span></em>, <em class="sig-param"><span class="n">bert_clf_bs</span></em>, <em class="sig-param"><span class="n">bert_clf_lr</span></em>, <em class="sig-param"><span class="n">bert_clf_optimizer</span></em>, <em class="sig-param"><span class="n">bert_clf_weight_decay</span></em>, <em class="sig-param"><span class="n">bert_clf_period_summary</span></em>, <em class="sig-param"><span class="n">bert_clf_period_val</span></em>, <em class="sig-param"><span class="n">bert_clf_period_save</span></em>, <em class="sig-param"><span class="n">bert_clf_val_steps</span></em>, <em class="sig-param"><span class="n">device</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_clf_prediction.html#load_or_train_bert_clf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.bert_clf_prediction.load_or_train_bert_clf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Train Bert classification model on a dataset.</p>
-<p>The trained model will be stored at <cite>&lt;fibber_root_dir&gt;/bert_clf/&lt;dataset_name&gt;/</cite>. If there’s
+<dd><p>Train BERT classification model on a dataset.</p>
+<p>The trained model will be stored at <code class="docutils literal notranslate"><span class="pre">&lt;fibber_root_dir&gt;/bert_clf/&lt;dataset_name&gt;/</span></code>. If there’s
 a saved model, load and return the model. Otherwise, train the model using the given data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model_init</strong> (<em>str</em>) – pretrained model name. Choose from [“bert-base-cased”,
-“bert-base-uncased”, “bert-large-cased”, “bert-large-uncased”].</p></li>
+<li><p><strong>model_init</strong> (<em>str</em>) – pretrained model name. Choose from <code class="docutils literal notranslate"><span class="pre">[&quot;bert-base-cased&quot;,</span>
+<span class="pre">&quot;bert-base-uncased&quot;,</span> <span class="pre">&quot;bert-large-cased&quot;,</span> <span class="pre">&quot;bert-large-uncased&quot;]</span></code>.</p></li>
 <li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset. This is also the dir to save trained model.</p></li>
 <li><p><strong>trainset</strong> (<em>dict</em>) – a fibber dataset.</p></li>
 <li><p><strong>testset</strong> (<em>dict</em>) – a fibber dataset.</p></li>
@@ -287,20 +386,20 @@ a saved model, load and return the model. Otherwise, train the model using the g
 <li><p><strong>bert_clf_bs</strong> (<em>int</em>) – the batch size.</p></li>
 <li><p><strong>bert_clf_lr</strong> (<em>float</em>) – the learning rate.</p></li>
 <li><p><strong>bert_clf_optimizer</strong> (<em>str</em>) – the optimizer name.</p></li>
-<li><p><strong>bert_clf_weight_decay</strong> (<em>float</em>) – </p></li>
+<li><p><strong>bert_clf_weight_decay</strong> (<em>float</em>) – the weight decay.</p></li>
 <li><p><strong>bert_clf_period_summary</strong> (<em>int</em>) – the period in steps to write training summary.</p></li>
 <li><p><strong>bert_clf_period_val</strong> (<em>int</em>) – the period in steps to run validation and write validation
 summary.</p></li>
 <li><p><strong>bert_clf_period_save</strong> (<em>int</em>) – the period in steps to save current model.</p></li>
 <li><p><strong>bert_clf_val_steps</strong> (<em>int</em>) – number of batched in each validation.</p></li>
-<li><p><strong>device</strong> (<em>object</em>) – the device to run the model.</p></li>
+<li><p><strong>device</strong> (<em>torch.Device</em>) – the device to run the model.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a torch Bert model.</p>
+<dd class="field-even"><p>a torch BERT model.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(object)</p>
+<dd class="field-odd"><p>(transformers.BertForSequenceClassification)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -308,16 +407,16 @@ summary.</p></li>
 <dl class="py function">
 <dt id="fibber.metrics.bert_clf_prediction.run_evaluate">
 <code class="sig-prename descclassname">fibber.metrics.bert_clf_prediction.</code><code class="sig-name descname">run_evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">dataloader_iter</span></em>, <em class="sig-param"><span class="n">eval_steps</span></em>, <em class="sig-param"><span class="n">summary</span></em>, <em class="sig-param"><span class="n">global_step</span></em>, <em class="sig-param"><span class="n">device</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_clf_prediction.html#run_evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.bert_clf_prediction.run_evaluate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate a model and add error rate and validation loss to tensorboard.</p>
+<dd><p>Evaluate a model and add error rate and validation loss to Tensorboard.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>object</em>) – a bert classification model.</p></li>
-<li><p><strong>dataloader_iter</strong> (<em>iterator</em>) – an iterator of a torch.IterableDataset.</p></li>
+<li><p><strong>model</strong> (<em>transformers.BertForSequenceClassification</em>) – a BERT classification model.</p></li>
+<li><p><strong>dataloader_iter</strong> (<em>torch.IterableDataset</em>) – an iterator of a torch.IterableDataset.</p></li>
 <li><p><strong>eval_steps</strong> (<em>int</em>) – number of training steps.</p></li>
-<li><p><strong>summary</strong> (<em>object</em>) – a tensorboard SummaryWriter object.</p></li>
+<li><p><strong>summary</strong> (<em>torch.utils.tensorboard.SummaryWriter</em>) – a Tensorboard SummaryWriter object.</p></li>
 <li><p><strong>global_step</strong> (<em>int</em>) – current training steps.</p></li>
-<li><p><strong>device</strong> (<em>object</em>) – the device where the model in running on.</p></li>
+<li><p><strong>device</strong> (<em>torch.Device</em>) – the device where the model in running on.</p></li>
 </ul>
 </dd>
 </dl>

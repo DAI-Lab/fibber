@@ -205,7 +205,7 @@
 
 
 <div class="viewcode-block" id="preprocess_yelp_data"><a class="viewcode-back" href="../../../api/fibber.datasets.preprocess_yelp.html#fibber.datasets.preprocess_yelp.preprocess_yelp_data">[docs]</a><span class="k">def</span> <span class="nf">preprocess_yelp_data</span><span class="p">(</span><span class="n">input_filename</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;preprocess yelp dataset to Fibber&#39;s JSON format.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;preprocess Yelp dataset to Fibber&#39;s JSON format.&quot;&quot;&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Start preprocessing data, and save at </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">)</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">input_filename</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>

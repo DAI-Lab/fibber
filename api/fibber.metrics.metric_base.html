@@ -157,6 +157,80 @@
         
         
           
+            
+                <li class="">
+                    <a href="fibber.benchmark.html">fibber.benchmark package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.datasets.html">fibber.datasets package</a>
+                </li>
+            
+          
+            
+  
+                <li class="active">
+                    <a href="fibber.metrics.html">fibber.metrics package</a>
+                    <ul>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.bert_clf_prediction.html">fibber.metrics.bert_clf_prediction module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.editing_distance.html">fibber.metrics.editing_distance module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.glove_semantic_similarity.html">fibber.metrics.glove_semantic_similarity module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.gpt2_grammar_quality.html">fibber.metrics.gpt2_grammar_quality module</a>
+                        </li>
+                    
+                        <li class="active">
+                            <a href="">fibber.metrics.metric_base module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.metric_utils.html">fibber.metrics.metric_utils module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.use_semantic_similarity.html">fibber.metrics.use_semantic_similarity module</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.paraphrase_strategies.html">fibber.paraphrase_strategies package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.resources.html">fibber.resources package</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.download_utils.html">fibber.download_utils module</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="fibber.log.html">fibber.log module</a>
+                </li>
+            
+          
         
         
         
@@ -199,11 +273,16 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base class for Metrics.</p>
 <p>All metrics should be derived from this class.</p>
-<p>To implement a new metric, you should at least overwrite the <cite>__call__</cite> method.</p>
+<p>To implement a new metric, you should at least overwrite the <cite>measure_example</cite> method.</p>
 <p>The simplest metric can be directly computed from a pair of text, in this case, the metric
 can use the <cite>origin</cite> and <cite>paraphrase</cite> args directly.</p>
 <p>Other metrics need more information from the data record. For example, <cite>text0</cite>, <cite>text1</cite>, or
 <cite>label</cite>. Thus the <cite>data_record</cite> and <cite>paraphrase_field</cite> are also provided as args.</p>
+<dl class="py method">
+<dt id="fibber.metrics.metric_base.MetricBase.measure_example">
+<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_base.html#MetricBase.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_base.MetricBase.measure_example" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>

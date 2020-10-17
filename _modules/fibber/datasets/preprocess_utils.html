@@ -203,10 +203,10 @@
 <span class="sd">    Args:</span>
 <span class="sd">        dataset_name (str): the name of the dataset.</span>
 <span class="sd">        download_list ([str]): a list of strings indicating which file to download. Each</span>
-<span class="sd">            element in this list should corresponds to a one key in `downloadable_dataset_urls`.</span>
+<span class="sd">            element in this list should corresponds to a one key in ``downloadable_dataset_urls``.</span>
 <span class="sd">        preprocess_fn (fn): a function to preprocess the dataset.</span>
-<span class="sd">        preprocess_input_output_list ([(str, str)]): A list of tuples. Each tuple indicate a pair</span>
-<span class="sd">            of input and output file or path name.</span>
+<span class="sd">        preprocess_input_output_list ([(str, str), ...]): A list of tuples. Each tuple indicate a</span>
+<span class="sd">            pair of input and output file or path name.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">root_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
     <span class="n">dataset_dir</span> <span class="o">=</span> <span class="s2">&quot;datasets/&quot;</span> <span class="o">+</span> <span class="n">dataset_name</span>

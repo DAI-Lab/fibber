@@ -414,7 +414,7 @@ getting started with <strong>fibber</strong>.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>IdenticalStrategy</p></td>
+<tr class="row-even"><td><p>IdentityStrategy</p></td>
 <td><p>7</p></td>
 <td><p>7</p></td>
 <td><p>0</p></td>
@@ -557,9 +557,9 @@ paraphrase_field: choose from text0 and text1. Paraphrase_field indicates which 
 <h2>Supported strategies<a class="headerlink" href="#supported-strategies" title="Permalink to this headline">¶</a></h2>
 <p>In this version, we implement three strategies</p>
 <ul class="simple">
-<li><p>IdenticalStrategy:</p>
+<li><p>IdentityStrategy:</p>
 <ul>
-<li><p>The identical strategy outputs the original text as its paraphrase.</p></li>
+<li><p>The identity strategy outputs the original text as its paraphrase.</p></li>
 <li><p>This strategy generates exactly 1 paraphrase for each original text regardless of <code class="docutils literal notranslate"><span class="pre">--num_paraphrases_per_text</span></code> flag.</p></li>
 </ul>
 </li>
@@ -639,7 +639,7 @@ paraphrase_field: choose from text0 and text1. Paraphrase_field indicates which 
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">original_text_metrics</span></code> stores a dictionary of several metrics. It compares the original text against itself. The <code class="docutils literal notranslate"><span class="pre">paraphrase_metrics</span></code> is a list of the same length as paraphrases in this data record. Each element in this list is a dictionary showing the comparison between the original text and one paraphrased text.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">original_text_metrics</span></code> stores a dict of several metrics. It compares the original text against itself. The <code class="docutils literal notranslate"><span class="pre">paraphrase_metrics</span></code> is a list of the same length as paraphrases in this data record. Each element in this list is a dict showing the comparison between the original text and one paraphrased text.</p>
 </div>
 </div>
 </div>

@@ -7,7 +7,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   fibber.paraphrase_strategies.identical_strategy
+   fibber.paraphrase_strategies.identity_strategy
    fibber.paraphrase_strategies.random_strategy
    fibber.paraphrase_strategies.strategy_base
 
