@@ -11,6 +11,7 @@
     :hidden:
     :titlesonly:
 
+    benchmark
     API Reference <api/fibber>
     contributing
     authors

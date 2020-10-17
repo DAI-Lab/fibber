@@ -108,7 +108,7 @@ getting started with **fibber**.
 ```python
 from fibber.datasets import get_demo_dataset
 
-trainset, testset = get_demo_dataset()	
+trainset, testset = get_demo_dataset()
 ```
 
 **(3) Create a Fibber object.**
@@ -122,13 +122,13 @@ arg_dict = {
     "strategy_gpu_id": 0,
 }
 
-fibber = Fibber(arg_dict, dataset_name="demo", strategy_name="RandomStrategy", 
+fibber = Fibber(arg_dict, dataset_name="demo", strategy_name="RandomStrategy",
                 trainset=trainset, testset=testset)
 ```
 
 **(4) Randomly sample a sentence from the test set, and paraphrase it.**
 
-The following command can randomly paraphrase the sentence into 5 different ways. 
+The following command can randomly paraphrase the sentence into 5 different ways.
 
 ```python
 fibber.paraphrase_a_random_sentence(n=5)
@@ -146,7 +146,7 @@ The output is a tuple of (str, list, list).
   'movie as slides macho action . soon themselves the downhill as assert conventions',
   'the soon assert as movie themselves macho conventions as downhill . action slides',
   'downhill movie conventions slides the assert themselves action macho as as . soon'],
-  
+
 # Evaluation metrics of these 5 paraphrases.
  [{'EditingDistance': 8,
    'USESemanticSimilarity': 0.8859144449234009,

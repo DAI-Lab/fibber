@@ -135,8 +135,7 @@ html_context = {
 #     'display_version': False,
 # }
 html_theme_options = {
-    "github_url": "https://github.com/sdv-dev/fibber",
-    # "twitter_url": "https://twitter.com/sdv_dev",
+    "github_url": "https://github.com/dai-lab/fibber",
     "show_prev_next": True,
 }
 
