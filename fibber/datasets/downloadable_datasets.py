@@ -56,5 +56,12 @@ downloadable_dataset_urls = {
         "md5": "614bcf6f287a826cb0ee64796741b52d",
         "untar": True,
         "unzip": False,
+    },
+    "mr-demo": {
+        "filename": "mr-demo.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/mr-demo.tgz",
+        "md5": "8ee6b6eda12a7c1282cb903c713085c5",
+        "untar": True,
+        "unzip": False,
     }
 }

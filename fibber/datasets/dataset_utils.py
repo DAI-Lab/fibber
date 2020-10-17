@@ -49,8 +49,9 @@ import torch
 import tqdm
 from transformers import BertTokenizer
 
-from fibber import log
-from fibber.download_utils import get_root_dir
+from fibber import get_root_dir, log
+from fibber.datasets.downloadable_datasets import downloadable_dataset_urls
+from fibber.download_utils import download_file
 
 logger = log.setup_custom_logger(__name__)
 
@@ -96,6 +97,28 @@ def get_dataset(dataset_name):
 
     logger.info("%s training set has %d records.", dataset_name, len(trainset["data"]))
     logger.info("%s test set has %d records.", dataset_name, len(testset["data"]))
+    return trainset, testset
+
+
+def get_demo_dataset():
+    """download demo dataset.
+
+    Returns:
+        (dict, dict): trainset and testset.
+    """
+    download_file(subdir="", **downloadable_dataset_urls["mr-demo"])
+
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "mr-demo")
+
+    with open(os.path.join(data_dir, "train.json")) as f:
+        trainset = json.load(f)
+    with open(os.path.join(data_dir, "test.json")) as f:
+        testset = json.load(f)
+
+    logger.info("Demo training set has %d records.", len(trainset["data"]))
+    logger.info("Demo test set has %d records.", len(testset["data"]))
+
     return trainset, testset
 
 
