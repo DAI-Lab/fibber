@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.datasets.preprocess_utils module &#8212; fibber 0.0.1.dev0 documentation</title>
+    <title>fibber.fibber module &#8212; fibber 0.0.1.dev0 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -39,8 +39,8 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.datasets.preprocess_yelp module" href="fibber.datasets.preprocess_yelp.html" />
-    <link rel="prev" title="fibber.datasets.preprocess_snli module" href="fibber.datasets.preprocess_snli.html" />
+    <link rel="next" title="fibber.log module" href="fibber.log.html" />
+    <link rel="prev" title="fibber.download_utils module" href="fibber.download_utils.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
   </head>
@@ -158,52 +158,8 @@
             
           
             
-  
-                <li class="active">
+                <li class="">
                     <a href="fibber.datasets.html">fibber.datasets package</a>
-                    <ul>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.dataset_utils.html">fibber.datasets.dataset_utils module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.download_datasets.html">fibber.datasets.download_datasets module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.downloadable_datasets.html">fibber.datasets.downloadable_datasets module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_ag.html">fibber.datasets.preprocess_ag module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_imdb.html">fibber.datasets.preprocess_imdb module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_mnli.html">fibber.datasets.preprocess_mnli module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_mr.html">fibber.datasets.preprocess_mr module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_snli.html">fibber.datasets.preprocess_snli module</a>
-                        </li>
-                    
-                        <li class="active">
-                            <a href="">fibber.datasets.preprocess_utils module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_yelp.html">fibber.datasets.preprocess_yelp module</a>
-                        </li>
-                    
-                    </ul>
                 </li>
             
           
@@ -232,8 +188,8 @@
             
           
             
-                <li class="">
-                    <a href="fibber.fibber.html">fibber.fibber module</a>
+                <li class="active">
+                    <a href="">fibber.fibber module</a>
                 </li>
             
           
@@ -277,24 +233,69 @@
               
               <div>
                 
-  <div class="section" id="module-fibber.datasets.preprocess_utils">
-<span id="fibber-datasets-preprocess-utils-module"></span><h1>fibber.datasets.preprocess_utils module<a class="headerlink" href="#module-fibber.datasets.preprocess_utils" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt id="fibber.datasets.preprocess_utils.download_raw_and_preprocess">
-<code class="sig-prename descclassname">fibber.datasets.preprocess_utils.</code><code class="sig-name descname">download_raw_and_preprocess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">download_list</span></em>, <em class="sig-param"><span class="n">preprocess_fn</span></em>, <em class="sig-param"><span class="n">preprocess_input_output_list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/preprocess_utils.html#download_raw_and_preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.preprocess_utils.download_raw_and_preprocess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Download and preprocess raw data into fibber’s format.</p>
+  <div class="section" id="module-fibber.fibber">
+<span id="fibber-fibber-module"></span><h1>fibber.fibber module<a class="headerlink" href="#module-fibber.fibber" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="fibber.fibber.Fibber">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.fibber.</code><code class="sig-name descname">Fibber</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_name</span></em>, <em class="sig-param"><span class="n">trainset</span></em>, <em class="sig-param"><span class="n">testset</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/fibber.html#Fibber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.fibber.Fibber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Fibber is a unified interface for paraphrase strategies.</p>
+<p>Initialize</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>arg_dict</strong> (<em>dict</em>) – a dict of hyper parameters for the MetricBundle and strategy.</p></li>
 <li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
-<li><p><strong>download_list</strong> (<em>[</em><em>str</em><em>]</em>) – a list of strings indicating which file to download. Each
-element in this list should corresponds to a one key in <code class="docutils literal notranslate"><span class="pre">downloadable_dataset_urls</span></code>.</p></li>
-<li><p><strong>preprocess_fn</strong> (<em>fn</em>) – a function to preprocess the dataset.</p></li>
-<li><p><strong>preprocess_input_output_list</strong> (<em>[</em><em>(</em><em>str</em><em>, </em><em>str</em><em>)</em><em>, </em><em>..</em><em>]</em>) – A list of tuples. Each tuple indicate a
-pair of input and output file or path name.</p></li>
+<li><p><strong>strategy_name</strong> (<em>str</em>) – the strategy name.</p></li>
+<li><p><strong>trainset</strong> (<em>str</em>) – fibber dataset.</p></li>
+<li><p><strong>testset</strong> (<em>str</em>) – fibber testset.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt id="fibber.fibber.Fibber.paraphrase">
+<code class="sig-name descname">paraphrase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span><span class="o">=</span><span class="default_value">'text0'</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">20</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/fibber.html#Fibber.paraphrase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.fibber.Fibber.paraphrase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paraphrase a given data record.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_record</strong> (<em>dict</em>) – data record to be paraphrased.</p></li>
+<li><p><strong>field_name</strong> (<em>str</em>) – select from <code class="docutils literal notranslate"><span class="pre">[&quot;text0&quot;,</span> <span class="pre">&quot;text1&quot;]</span></code></p></li>
+<li><p><strong>n</strong> (<em>int</em>) – number of paraphrases.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>a list of str as paraphrased sentences.</p></li>
+<li><p>a list of dict as corresponding metrics.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.fibber.Fibber.paraphrase_a_random_sentence">
+<code class="sig-name descname">paraphrase_a_random_sentence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">from_testset</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/fibber.html#Fibber.paraphrase_a_random_sentence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.fibber.Fibber.paraphrase_a_random_sentence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly pick one data, then paraphrase it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – number of paraphrases.</p></li>
+<li><p><strong>from_testset</strong> (<em>bool</em>) – if true, select data from test set, otherwise from training set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>a str as the original text.</p></li>
+<li><p>a list of str as the paraphrased text.</p></li>
+<li><p>a list of dict as corresponding metrics.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -305,8 +306,8 @@ pair of input and output file or path name.</p></li>
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="fibber.datasets.preprocess_snli.html" title="previous page">fibber.datasets.preprocess_snli module</a>
-    <a class='right-next' id="next-link" href="fibber.datasets.preprocess_yelp.html" title="next page">fibber.datasets.preprocess_yelp module</a>
+    <a class='left-prev' id="prev-link" href="fibber.download_utils.html" title="previous page">fibber.download_utils module</a>
+    <a class='right-next' id="next-link" href="fibber.log.html" title="next page">fibber.log module</a>
 
               </div>
               

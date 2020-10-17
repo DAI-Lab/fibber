@@ -85,10 +85,6 @@
         </li>
         
         <li class="nav-item ">
-            <a class="nav-link" href=""></a>
-        </li>
-        
-        <li class="nav-item ">
             <a class="nav-link" href="../../../api/fibber.html">API Reference</a>
         </li>
         
@@ -159,8 +155,6 @@
         
         
         
-        
-        
       </ul>
   
   </nav>
@@ -195,6 +189,8 @@
 
 <div class="viewcode-block" id="RandomStrategy"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.random_strategy.html#fibber.paraphrase_strategies.RandomStrategy">[docs]</a><span class="k">class</span> <span class="nc">RandomStrategy</span><span class="p">(</span><span class="n">StrategyBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Randomly shuffle words in a sentence to generate paraphrases.&quot;&quot;&quot;</span>
+
+    <span class="n">__abbr__</span> <span class="o">=</span> <span class="s2">&quot;rand&quot;</span>
 
 <div class="viewcode-block" id="RandomStrategy.paraphrase_example"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.random_strategy.html#fibber.paraphrase_strategies.RandomStrategy.paraphrase_example">[docs]</a>    <span class="k">def</span> <span class="nf">paraphrase_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">data_record</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
