@@ -22,6 +22,7 @@ install_requires = [
     'spacy>=2.0.0',
     'pandas>=1.0.0',
     'textattack==0.2.10',
+    'nltk>=3.0'
 ]
 
 setup_requires = [

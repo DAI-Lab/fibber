@@ -13,99 +13,119 @@ logger = log.setup_custom_logger(__name__)
 class StrategyBase(object):
     """The base class for all paraphrase strategies.
 
-    All strategies should be derived from this class.
-
-    The simplest way to write a strategy is to overwrite the `paraphrase_example` function. This
+    The simplest way to write a strategy is to overwrite the ``paraphrase_example`` function. This
     function takes one data records, and returns multiple paraphrases of a given field.
 
-    Some strategy may have hyper-parameters. Overwrite `add_parser_args` to add args to CLI. All
-    args from the command line are passed as an arg to `__init__`. So you should also overwrite
-    the `__init__`.
-
-    If `__init__` is overwritten, remember to call `super().__init__(FLAGS, metric_bundle)` at the
-    beginning of your `__init__`. This will initialize `self._strategy_config` and
-    `self._metric_bundle`.
-
-        `self._strategy_config` is a dict. You can store hyper-parameters in this dict. This dict
-        will be saved to the result file.
-
-        `self._metric_bundle` is the MetricBundle, you can use it to compute different metrics for
-        any pairs of original and paraphrased text.
-
-        `self._device` is a torch Device object. You can use `--strategy_gpu` to select a gpu for
-        strategies. If you are using pytorch, please use this Device for computation.
-
     For more advanced use cases, you can overwrite the `paraphrase` function.
-    """
 
-    def __init__(self, FLAGS, metric_bundle):
+    Some strategy may have hyper-parameters. Add hyper parameters into the class attribute
+    ``__hyperparameters__``.
+
+    Hyperparameters defined in ``__hyperparameters__`` can be added to the command line arg parser
+    by ``add_parser_args(parser)``. The value of the hyperparameters will be added to
+    ``self._strategy_config``.
+
+    Attributes:
+        __abbr__ (str): a unique string as an abbreviation for the strategy.
+        __hyper_parameters__ (list): A list of tuples that defines the hyperparameters for the
+            strategy. Each tuple is ``(name, type, default, help)``. For example::
+
+                __hyperparameters = [ ("p1", int, -1, "the first hyper parameter"), ...]
+    """
+    __abbr__ = "base"
+    __hyperparameters__ = []
+
+    def __init__(self, arg_dict, metric_bundle):
         """Initialize the paraphrase_strategies.
 
-        This function initialize the `self._strategy_config`, `self._metric_bundle` and
-        `self._device`.
+        This function initialize the ``self._strategy_config``, ``self._metric_bundle``,
+        ``self._device``.
 
-        If your strategy has hyper parameters, add them as args, and get those hyper parameters
-        from FLAGS.
+        **You should not overwrite this function.**
+
+        * self._strategy_config (dict): a dictionary that stores the strategy name and all
+          hyperparameter values. The dict is also saved to the results.
+        * self._metric_bundle (MetricBundle): the metrics that will be used to evaluate
+          paraphrases. Strategies can compute metrics during paraphrasing.
+        * self._device (torch.Device): any computation that requires a GPU accelerator should
+          use this device.
 
         Args:
-            FLAGS: args from argparser.
+            arg_dict: all_args_load_from .
             metric_bundle: a MetricBundle object.
         """
         super(StrategyBase, self).__init__()
+
         # paraphrase_strategies config will be saved to the results.
         self._strategy_config = {
             "strategy_name": str(self)
         }
+
+        for p_name, p_type, p_default, p_help in self.__hyperparameters__:
+            arg_name = "%s_%s" % (self.__abbr__, p_name)
+            if arg_name not in arg_dict:
+                logger.warning("%s_%s not found in args.", self.__abbr__, p_name)
+                p_value = p_default
+            else:
+                p_value = arg_dict[arg_name]
+
+            assert p_name not in self._strategy_config
+            self._strategy_config[p_name] = p_value
+
         self._metric_bundle = metric_bundle
-        if FLAGS.strategy_gpu == -1:
+        if arg_dict["strategy_gpu_id"] == -1:
             logger.warning("%s is running on CPU." % str(self))
             self._device = torch.device("cpu")
         else:
-            logger.info("%s metric is running on GPU %d.", str(self), FLAGS.strategy_gpu)
-            self._device = torch.device("cuda:%d" % FLAGS.strategy_gpu)
+            logger.info("%s metric is running on GPU %d.", str(self), arg_dict["strategy_gpu_id"])
+            self._device = torch.device("cuda:%d" % arg_dict["strategy_gpu_id"])
 
     def __repr__(self):
         return self.__class__.__name__
 
     @classmethod
     def add_parser_args(cls, parser):
-        """create commandline args.
-
-        If your strategy has hyper-parameters, add them as args to the argparser.
+        """create commandline args for all hyperparameters in `__hyperparameters__`.
 
         Args:
             parser: an arg parser.
         """
-        logger.info("%s does not have any args to set from command line.", cls.__name__)
+        logger.info("%s has %d args to set from command line.",
+                    cls.__name__, len(cls.__hyperparameters__))
+
+        for p_name, p_type, p_default, p_help in cls.__hyperparameters__:
+            parser.add_argument("--%s_%s" % (cls.__abbr__, p_name), type=p_type,
+                                default=p_default, help=p_help)
 
     def fit(self, trainset):
-        """Fit the paraphraser on a training set.
+        """Fit the paraphrase strategy on a training set.
 
         Args:
             trainset (dict): a fibber dataset.
         """
-        logger.info("No tarining is used in this straget.")
+        logger.info("Training is needed for this strategy. Did nothing.")
 
     def paraphrase_example(self, data_record, field_name, n):
         """Paraphrase one data record.
 
-        This function should be overwritten by subclasses.
+        This function should be overwritten by subclasses. When overwriting this class, you can
+        use ``self._strategy_config``, ``self._metric_bundle`` and ``self._device``.
 
         Args:
-            data_record (dict): a dictionary storing one data of a dataset.
+            data_record (dict): a dict storing one data of a dataset.
             field_name (str): the field needed to be paraphrased.
             n (int): number of paraphrases.
 
         Returns:
-            ([str]): A list contain at most n strings.
+            ([str,]): A list contain at most n strings.
         """
         raise NotImplementedError()
 
-    def paraphrase(self, paraphrase_set, n, tmp_output_filename):
+    def paraphrase_dataset(self, paraphrase_set, n, tmp_output_filename):
         """Paraphrase one dataset.
 
         Args:
-            paraphrase_set (dict): a dictionary storing one data of a dataset.
+            paraphrase_set (dict): a dict storing one data of a dataset.
             n (int): number of paraphrases.
             tmp_output_filename (str): the output json filename to save results during running.
 

@@ -52,7 +52,7 @@ class USESemanticSimilarity(MetricBase):
         self.model = hub.load(module_url)
         log.remove_logger_tf_handler(logger)   # tensorflow_hub mess up the python logging
 
-    def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the cosine similarity between the embedding of original text and paraphrased
         text.
 

@@ -47,6 +47,7 @@ ipython_execlines = [
     "pd.set_option('display.width', 1000000)",
     "pd.set_option('max_columns', 1000)",
 ]
+autoclass_content = 'both'
 autosummary_generate = True
 autodoc_typehints = "none"
 

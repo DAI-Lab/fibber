@@ -19,10 +19,10 @@ def load_glove_model(glove_file, dim):
         dim: the dimension of the embedding.
 
     Returns:
-        a dictionary:
+        a dict:
             "emb_table": a numpy array of size(N, 300)
             "id2tok": a list of strings.
-            "tok2id": a dictionary that maps word (string) to its id.
+            "tok2id": a dict that maps word (string) to its id.
     """
     nltk.download("punkt")
     glove_file_lines = open(glove_file, 'r').readlines()
@@ -55,10 +55,10 @@ def get_glove_emb():
     See https://nlp.stanford.edu/projects/glove/
 
     Returns:
-        (dict): a dictionary of GloVe word embedding model.
+        (dict): a dict of GloVe word embedding model.
             "emb_table": a numpy array of size(N, 300)
             "id2tok": a list of strings.
-            "tok2id": a dictionary that maps word (string) to its id.
+            "tok2id": a dict that maps word (string) to its id.
     """
     data_dir = get_root_dir()
     data_dir = os.path.join(data_dir, "common")

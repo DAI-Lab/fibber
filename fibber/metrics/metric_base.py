@@ -3,7 +3,7 @@ class MetricBase(object):
 
     All metrics should be derived from this class.
 
-    To implement a new metric, you should at least overwrite the `__call__` method.
+    To implement a new metric, you should at least overwrite the `measure_example` method.
 
     The simplest metric can be directly computed from a pair of text, in this case, the metric
     can use the `origin` and `paraphrase` args directly.
@@ -18,5 +18,5 @@ class MetricBase(object):
     def __repr__(self):
         return self.__class__.__name__
 
-    def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         raise NotImplementedError()

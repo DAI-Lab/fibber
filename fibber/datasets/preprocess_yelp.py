@@ -15,7 +15,7 @@ REPLACE_TOKS = [
 
 
 def preprocess_yelp_data(input_filename, output_filename):
-    """preprocess yelp dataset to Fibber's JSON format."""
+    """preprocess Yelp dataset to Fibber's JSON format."""
     logger.info("Start preprocessing data, and save at %s.", output_filename)
 
     df = pd.read_csv(input_filename, header=None)

@@ -90,11 +90,11 @@ class MetricBundle(object):
         self._metrics += customized_metrics
 
     def get_classifier_for_attack(self,):
-        """Return the Bert classifier metric."""
+        """Return the BERT classifier metric."""
         assert self._attack_clf is not None
         return self._attack_clf
 
-    def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the results of all metrics in the bundle for one pair of text.
 
         Args:
@@ -108,7 +108,8 @@ class MetricBundle(object):
         """
         ret = {}
         for metric in self._metrics:
-            ret[str(metric)] = metric(origin, paraphrase, data_record, paraphrase_field)
+            ret[str(metric)] = metric.measure_example(
+                origin, paraphrase, data_record, paraphrase_field)
         return ret
 
 
@@ -131,7 +132,7 @@ def compute_metrics(metric_bundle, results, output_filename):
         data_record_tmp = dict([(k, v) for k, v in data_record.items() if "_paraphrases" not in k])
 
         # Run metrics on original text
-        data_record["original_text_metrics"] = metric_bundle(
+        data_record["original_text_metrics"] = metric_bundle.measure_example(
             data_record[paraphrase_field], data_record[paraphrase_field],
             data_record_tmp, paraphrase_field)
 
@@ -139,8 +140,8 @@ def compute_metrics(metric_bundle, results, output_filename):
         paraphrase_metric_list = []
         for paraphrase in data_record[paraphrase_field + "_paraphrases"]:
             paraphrase_metric_list.append(
-                metric_bundle(data_record[paraphrase_field], paraphrase, data_record_tmp,
-                              paraphrase_field))
+                metric_bundle.measure_example(
+                    data_record[paraphrase_field], paraphrase, data_record_tmp, paraphrase_field))
 
         data_record["paraphrase_metrics"] = paraphrase_metric_list
 
@@ -158,7 +159,7 @@ def compute_metrics(metric_bundle, results, output_filename):
 
 def aggregate_metrics(dataset_name, paraphrase_strategy_name, experiment_name, results,
                       customize_aggregation_fn_dict):
-    """Aggregate paraphrase metrics on a dataset to a summary and store in a dictionary.
+    """Aggregate paraphrase metrics on a dataset to a summary and store in a dict.
 
     Args:
         dataset_name (str): the name of the dataset.
@@ -166,7 +167,7 @@ def aggregate_metrics(dataset_name, paraphrase_strategy_name, experiment_name, r
         experiment_name (str): the name of the experiment.
         results (dict): the fibber dataset with paraphrases and metrics. The return value of
             `compute_metrics`.
-        customize_aggregation_fn_dict (dict): A dict of customized aggregations. The dictionary is
+        customize_aggregation_fn_dict (dict): A dict of customized aggregations. The dict is
             a mapping from aggregation name to aggregation function. The aggregation function
             should take one data_record, and returns a float.
 

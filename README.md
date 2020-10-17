@@ -161,7 +161,7 @@ The following table shows the benchmarking result. (Here we show the number of w
 
 |   1_paraphrase_strategy_name  |   USESemanticSimilarity_mean  |   GPT2GrammarQuality_mean  |   3_ParaphraseAcc_usesim0.90_ppl2  |   4_ParaphraseAcc_usesim0.85_ppl5  |
 |-------------------------------|-------------------------------|----------------------------|------------------------------------|------------------------------------|
-|   IdenticalStrategy           |   7                           |   7                        |   0                                |   0                                |
+|   IdentityStrategy           |   7                           |   7                        |   0                                |   0                                |
 |   RandomStrategy              |   0                           |   0                        |   5                                |   6                                |
 
 For detailed tables, see [Google Sheet](https://docs.google.com/spreadsheets/d/1B_5RiMfndNVhxZLX5ykMqt5SCjpy3MxOovBi_RL41Fw/edit?usp=sharing).
@@ -247,8 +247,8 @@ This script will download data from the original source to `~/.fibber/datasets/<
 
 In this version, we implement three strategies
 
-- IdenticalStrategy:
-	- The identical strategy outputs the original text as its paraphrase.
+- IdentityStrategy:
+	- The identity strategy outputs the original text as its paraphrase.
 	- This strategy generates exactly 1 paraphrase for each original text regardless of `--num_paraphrases_per_text` flag.
 - RandomStrategy:
 	- The random strategy outputs the random shuffle of words in the original text.
@@ -329,7 +329,7 @@ An example is as follows.
 }
 ```
 
-The `original_text_metrics` stores a dictionary of several metrics. It compares the original text against itself. The `paraphrase_metrics` is a list of the same length as paraphrases in this data record. Each element in this list is a dictionary showing the comparison between the original text and one paraphrased text.
+The `original_text_metrics` stores a dict of several metrics. It compares the original text against itself. The `paraphrase_metrics` is a list of the same length as paraphrases in this data record. Each element in this list is a dict showing the comparison between the original text and one paraphrased text.
 
 
 

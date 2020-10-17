@@ -77,7 +77,7 @@ class GPT2GrammarQuality(MetricBase):
         ppl = ppl.detach().cpu().numpy()
         return ppl
 
-    def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the perplexity ratio.
 
         Args:

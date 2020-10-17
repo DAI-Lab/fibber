@@ -7,7 +7,7 @@ from nltk import word_tokenize
 
 from fibber import log
 from fibber.metrics.metric_base import MetricBase
-from fibber.resources.resource_utils import get_glove_emb, get_stopwords
+from fibber.resources import get_glove_emb, get_stopwords
 
 logger = log.setup_custom_logger('glove_semantic_similairty')
 
@@ -67,7 +67,7 @@ class GloVeSemanticSimilarity(MetricBase):
             if word in self._glove["tok2id"]:
                 self._glove["emb_table"][self._glove["tok2id"][word], :] = 0
 
-    def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the Glove cosine similarity between two sentences.
 
         Args:

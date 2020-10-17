@@ -9,9 +9,8 @@ import transformers
 from torch.utils.tensorboard import SummaryWriter
 from transformers import BertForSequenceClassification, BertTokenizer
 
-from fibber import log
-from fibber.datasets.dataset_utils import DatasetForBert
-from fibber.download_utils import get_root_dir
+from fibber import get_root_dir, log
+from fibber.datasets import DatasetForBert
 from fibber.metrics.metric_base import MetricBase
 
 logger = log.setup_custom_logger(__name__)
@@ -21,7 +20,7 @@ def get_optimizer(optimizer_name, lr, decay, train_step, params, warmup=1000):
     """Create an optimizer and schedule of learning rate for parameters.
 
     Args:
-        optimizer_name (str): choose from "adam", "sgd", and "adamw".
+        optimizer_name (str): choose from ``["adam", "sgd", "adamw"]``.
         lr (float): learning rate.
         decay (float): weight decay.
         train_step (int): number of training steps.
@@ -47,15 +46,15 @@ def get_optimizer(optimizer_name, lr, decay, train_step, params, warmup=1000):
 
 
 def run_evaluate(model, dataloader_iter, eval_steps, summary, global_step, device):
-    """Evaluate a model and add error rate and validation loss to tensorboard.
+    """Evaluate a model and add error rate and validation loss to Tensorboard.
 
     Args:
-        model (object): a bert classification model.
-        dataloader_iter (iterator): an iterator of a torch.IterableDataset.
+        model (transformers.BertForSequenceClassification): a BERT classification model.
+        dataloader_iter (torch.IterableDataset): an iterator of a torch.IterableDataset.
         eval_steps (int): number of training steps.
-        summary (object): a tensorboard SummaryWriter object.
+        summary (torch.utils.tensorboard.SummaryWriter): a Tensorboard SummaryWriter object.
         global_step (int): current training steps.
-        device (object): the device where the model in running on.
+        device (torch.Device): the device where the model in running on.
     """
     model.eval()
 
@@ -97,14 +96,14 @@ def load_or_train_bert_clf(model_init,
                            bert_clf_period_save,
                            bert_clf_val_steps,
                            device):
-    """Train Bert classification model on a dataset.
+    """Train BERT classification model on a dataset.
 
-    The trained model will be stored at `<fibber_root_dir>/bert_clf/<dataset_name>/`. If there's
+    The trained model will be stored at ``<fibber_root_dir>/bert_clf/<dataset_name>/``. If there's
     a saved model, load and return the model. Otherwise, train the model using the given data.
 
     Args:
-        model_init (str): pretrained model name. Choose from ["bert-base-cased",
-            "bert-base-uncased", "bert-large-cased", "bert-large-uncased"].
+        model_init (str): pretrained model name. Choose from ``["bert-base-cased",
+            "bert-base-uncased", "bert-large-cased", "bert-large-uncased"]``.
         dataset_name (str): the name of the dataset. This is also the dir to save trained model.
         trainset (dict): a fibber dataset.
         testset (dict): a fibber dataset.
@@ -112,23 +111,23 @@ def load_or_train_bert_clf(model_init,
         bert_clf_bs (int): the batch size.
         bert_clf_lr (float): the learning rate.
         bert_clf_optimizer (str): the optimizer name.
-        bert_clf_weight_decay (float):
+        bert_clf_weight_decay (float): the weight decay.
         bert_clf_period_summary (int): the period in steps to write training summary.
         bert_clf_period_val (int): the period in steps to run validation and write validation
             summary.
         bert_clf_period_save (int): the period in steps to save current model.
         bert_clf_val_steps (int): number of batched in each validation.
-        device (object): the device to run the model.
+        device (torch.Device): the device to run the model.
 
     Returns:
-        (object): a torch Bert model.
+        (transformers.BertForSequenceClassification): a torch BERT model.
     """
     model_dir = os.path.join(get_root_dir(), "bert_clf", dataset_name, )
     ckpt_path = os.path.join(model_dir, model_init + "-%04dk.pt" %
                              (bert_clf_steps // 1000))
 
     if os.path.exists(ckpt_path):
-        logger.info("Load bert classifier from %s.", ckpt_path)
+        logger.info("Load BERT classifier from %s.", ckpt_path)
         model = torch.load(ckpt_path)
         model.eval()
         model.to(device)
@@ -193,7 +192,7 @@ def load_or_train_bert_clf(model_init,
             model.to(torch.device("cpu"))
             ckpt = os.path.join(model_dir, model_init + "-%04dk.pt" % (bert_clf_steps // 1000))
             torch.save(model, ckpt)
-            logger.info("Bert classifier saved at %s.", ckpt)
+            logger.info("BERT classifier saved at %s.", ckpt)
             model.to(device)
             model.train()
 
@@ -204,11 +203,27 @@ def load_or_train_bert_clf(model_init,
 
 
 class BertClfPrediction(MetricBase):
-    """Output BERT classifier prediction on paraphrases.
+    """BERT classifier prediction on paraphrases.
 
-    This metric is special, it does not compare the original and paraphrased sentence. Instead,
-    it outputs the classifier prediction on paraphrases. So we should not compute mean or std on
-    this metric.
+    This metric is special, it does not compare the original and paraphrased sentence.
+    Instead, it outputs the classifier prediction on paraphrases. So we should not compute
+    mean or std on this metric.
+
+    Args:
+        dataset_name (str): the name of the dataset.
+        trainset (dict): a fibber dataset.
+        testset (dict): a fibber dataset.
+        bert_gpu_id (int): the gpu id for BERT model. Set -1 to use CPU.
+        bert_clf_steps (int): steps to train a classifier.
+        bert_clf_bs (int): the batch size.
+        bert_clf_lr (float): the learning rate.
+        bert_clf_optimizer (str): the optimizer name.
+        bert_clf_weight_decay (float): the weight decay in the optimizer.
+        bert_clf_period_summary (int): the period in steps to write training summary.
+        bert_clf_period_val (int): the period in steps to run validation and write validation
+            summary.
+        bert_clf_period_save (int): the period in steps to save current model.
+        bert_clf_val_steps (int): number of batched in each validation.
     """
 
     def __init__(self, dataset_name, trainset, testset, bert_gpu_id=-1,
@@ -216,41 +231,24 @@ class BertClfPrediction(MetricBase):
                  bert_clf_optimizer="adamw", bert_clf_weight_decay=0.001,
                  bert_clf_period_summary=100, bert_clf_period_val=500,
                  bert_clf_period_save=5000, bert_clf_val_steps=10, **kargs):
-        """Initialize. Train or load classification model.
 
-        Args:
-            dataset_name (str): the name of the dataset.
-            trainset (dict): a fibber dataset.
-            testset (dict): a fibber dataset.
-            bert_gpu_id (int): the gpu id for Bert model. Set -1 to use CPU.
-            bert_clf_steps (int): steps to train a classifier.
-            bert_clf_bs (int): the batch size.
-            bert_clf_lr (float): the learning rate.
-            bert_clf_optimizer (str): the optimizer name.
-            bert_clf_weight_decay (float):
-            bert_clf_period_summary (int): the period in steps to write training summary.
-            bert_clf_period_val (int): the period in steps to run validation and write validation
-                summary.
-            bert_clf_period_save (int): the period in steps to save current model.
-            bert_clf_val_steps (int): number of batched in each validation.
-        """
         super(BertClfPrediction, self).__init__()
 
         if trainset["cased"]:
             model_init = "bert-base-cased"
             logger.info(
-                "Use cased model in Bert classifier prediction metric.")
+                "Use cased model in BERT classifier prediction metric.")
         else:
             model_init = "bert-base-uncased"
             logger.info(
-                "Use uncased model in Bert classifier prediction metric.")
+                "Use uncased model in BERT classifier prediction metric.")
 
         self._tokenizer = BertTokenizer.from_pretrained(model_init)
         if bert_gpu_id == -1:
-            logger.warning("Bert metric is running on CPU.")
+            logger.warning("BERT metric is running on CPU.")
             self._device = torch.device("cpu")
         else:
-            logger.info("Bert metric is running on GPU %d.", bert_gpu_id)
+            logger.info("BERT metric is running on GPU %d.", bert_gpu_id)
             self._device = torch.device("cuda:%d" % bert_gpu_id)
 
         self._model = load_or_train_bert_clf(
@@ -270,7 +268,7 @@ class BertClfPrediction(MetricBase):
             device=self._device)
 
     def predict_raw(self, text0, text1):
-        """Get unnormalized log probability of the Bert prediction.
+        """Get unnormalized log probability of the BERT prediction.
 
         Args:
             text0 (str):
@@ -281,7 +279,7 @@ class BertClfPrediction(MetricBase):
                 On NLI datasets, text1 contains the hypothesis.
 
         Returns:
-            (np.array): a numpy array of the unnormalized log probability.
+            (np.array): a numpy array of the unnormalized log probability over on each category.
         """
         if text1 is None:
             seq = ["[CLS]"] + self._tokenizer.tokenize(text0) + ["[SEP]"]
@@ -303,7 +301,7 @@ class BertClfPrediction(MetricBase):
             return self._model(seq_tensor, token_type_ids=tok_type)[0][0].detach().cpu().numpy()
 
     def predict(self, text0, text1):
-        """Get the prediction of the Bert prediction.
+        """Get the prediction of the BERT prediction.
 
         Args:
             text0 (str):
@@ -319,7 +317,7 @@ class BertClfPrediction(MetricBase):
 
         return int(np.argmax(self.predict_raw(text0, text1)))
 
-    def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         if paraphrase_field == "text0":
             return self.predict(paraphrase, None)
         else:

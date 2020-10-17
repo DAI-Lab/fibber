@@ -10,7 +10,7 @@ def update_detailed_result(aggregated_result):
     does not exist.
 
     Args:
-        aggregated_result (dict): the aggregated result as a dictionary.
+        aggregated_result (dict): the aggregated result as a dict.
     """
     result_dir = os.path.join(get_root_dir(), "results")
     os.makedirs(result_dir, exist_ok=True)
@@ -21,14 +21,15 @@ def update_detailed_result(aggregated_result):
         results = pd.DataFrame()
 
     results = results.append(aggregated_result, ignore_index=True)
-    results.to_csv(result_filename, index=None)
+    results.to_csv(result_filename, index=False)
 
 
 def load_detailed_result():
     """Read detailed results from file.
 
     Returns:
-        (DataFrame): Return an empty DataFrame if file does not exist.
+        (pandas.DataFrame): the detailed result table. Returns an empty DataFrame if file does not
+        exist.
     """
     result_dir = os.path.join(get_root_dir(), "results")
     result_filename = os.path.join(result_dir, "detail.csv")
@@ -42,7 +43,7 @@ def update_overview_result(overview_result):
     """write overview result to file.
 
     Args:
-        overview_result (DataFrame): the overview result.
+        overview_result (pandas.DataFrame): the overview result.
     """
     result_dir = os.path.join(get_root_dir(), "results")
     os.makedirs(result_dir, exist_ok=True)
