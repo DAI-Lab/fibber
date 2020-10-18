@@ -122,7 +122,7 @@ def compute_metrics(metric_bundle, results, output_filename):
         output_filename (str): A json filename to store results and metrics.
 
     Returns:
-        (dict): the results dict with `original_text_metrics` and `paraphrase_metrics` added.
+        (dict): the results dict with ``original_text_metrics`` and ``paraphrase_metrics`` added.
     """
     last_output_save_time = -1
     logger.info("Start measuring.")
@@ -166,7 +166,7 @@ def aggregate_metrics(dataset_name, paraphrase_strategy_name, experiment_name, r
         paraphrase_strategy_name (str): the name of the paraphrase strategy.
         experiment_name (str): the name of the experiment.
         results (dict): the fibber dataset with paraphrases and metrics. The return value of
-            `compute_metrics`.
+            ``compute_metrics``.
         customize_aggregation_fn_dict (dict): A dict of customized aggregations. The dict is
             a mapping from aggregation name to aggregation function. The aggregation function
             should take one data_record, and returns a float.

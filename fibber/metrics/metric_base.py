@@ -3,13 +3,13 @@ class MetricBase(object):
 
     All metrics should be derived from this class.
 
-    To implement a new metric, you should at least overwrite the `measure_example` method.
+    To implement a new metric, you should at least overwrite the ``measure_example`` method.
 
     The simplest metric can be directly computed from a pair of text, in this case, the metric
-    can use the `origin` and `paraphrase` args directly.
+    can use the ``origin`` and ``paraphrase`` args directly.
 
-    Other metrics need more information from the data record. For example, `text0`, `text1`, or
-    `label`. Thus the `data_record` and `paraphrase_field` are also provided as args.
+    Other metrics need more information from the data record. For example, ``text0``, ``text1``, or
+    ``label``. Thus the ``data_record`` and ``paraphrase_field`` are also provided as args.
     """
 
     def __init__(self, **kargs):
