@@ -13,10 +13,10 @@ def download_raw_and_preprocess(dataset_name,
     Args:
         dataset_name (str): the name of the dataset.
         download_list ([str]): a list of strings indicating which file to download. Each
-            element in this list should corresponds to a one key in `downloadable_dataset_urls`.
+            element in this list should corresponds to a one key in ``downloadable_dataset_urls``.
         preprocess_fn (fn): a function to preprocess the dataset.
-        preprocess_input_output_list ([(str, str)]): A list of tuples. Each tuple indicate a pair
-            of input and output file or path name.
+        preprocess_input_output_list ([(str, str), ...]): A list of tuples. Each tuple indicate a
+            pair of input and output file or path name.
     """
     root_dir = get_root_dir()
     dataset_dir = "datasets/" + dataset_name

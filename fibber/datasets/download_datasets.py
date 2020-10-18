@@ -1,16 +1,12 @@
 """This module downloads fibber datasets.
 
-To download preprocessed datasets (Recommended), run
+To download preprocessed datasets (Recommended), run::
 
-```
-python -m fibber.datasets.download_datasets
-```
+    python -m fibber.datasets.download_datasets
 
-To download datasets from their original sources, and preprocess them locally
+To download datasets from their original sources, and preprocess them locally::
 
-```
-python -m fibber.datasets.download_datasets --process_raw 1
-```
+    python -m fibber.datasets.download_datasets --process_raw 1
 """
 
 

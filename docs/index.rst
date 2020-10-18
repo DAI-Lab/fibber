@@ -1,19 +1,22 @@
 .. include:: readme.rst
 
 .. toctree::
-   :hidden:
-   :maxdepth: 2
+    :hidden:
+    :maxdepth: 2
 
-   Overview <readme>
+    Overview <readme>
 
 .. toctree::
-   :caption: Resources
-   :hidden:
+    :maxdepth: 3
+    :hidden:
+    :titlesonly:
 
-   API Reference <api/fibber>
-   contributing
-   authors
-   history
+    benchmark
+    API Reference <api/fibber>
+    contributing
+    authors
+    history
+
 
 Indices and tables
 ==================

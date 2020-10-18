@@ -9,7 +9,7 @@ logger = log.setup_custom_logger(__name__)
 
 
 def preprocess_snli_data(input_filename, output_filename):
-    """preprocess snli dataset to Fibber's JSON format."""
+    """preprocess SNLI dataset to Fibber's JSON format."""
     logger.info("Start preprocessing data, and save at %s.", output_filename)
     with open(input_filename) as f:
         df = f.readlines()

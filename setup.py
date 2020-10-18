@@ -22,6 +22,7 @@ install_requires = [
     'spacy>=2.0.0',
     'pandas>=1.0.0',
     'textattack==0.2.10',
+    'nltk>=3.0'
 ]
 
 setup_requires = [
@@ -76,7 +77,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -95,11 +95,11 @@ setup(
     keywords='fibber fibber fibber',
     name='fibber',
     packages=find_packages(include=['fibber', 'fibber.*']),
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     setup_requires=setup_requires,
     test_suite='tests',
     tests_require=tests_require,
     url='https://github.com/DAI-Lab/fibber',
-    version='0.1.0.dev0',
+    version='0.0.2.dev0',
     zip_safe=False,
 )
