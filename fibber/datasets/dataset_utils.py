@@ -1,6 +1,6 @@
 """This module provides utility functions and classes to handle fibber's datasets.
 
-* To load a dataset, use `get_dataset` function. For example, to load AG's news dataset, run::
+* To load a dataset, use ``get_dataset`` function. For example, to load AG's news dataset, run::
 
     trainset, testset =  get_dataset("ag")
 

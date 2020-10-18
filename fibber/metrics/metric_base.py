@@ -3,17 +3,17 @@ class MetricBase(object):
 
     All metrics should be derived from this class.
 
-    To implement a new metric, you should at least overwrite the `measure_example` method.
+    To implement a new metric, you should at least overwrite the ``measure_example`` method.
 
     The simplest metric can be directly computed from a pair of text, in this case, the metric
-    can use the `origin` and `paraphrase` args directly.
+    can use the ``origin`` and ``paraphrase`` args directly.
 
-    Other metrics need more information from the data record. For example, `text0`, `text1`, or
-    ``label``. Thus the `data_record` and `paraphrase_field` are also provided as args.
+    Other metrics need more information from the data record. For example, ``text0``, ``text1``,
+    or ``label``. Thus the ``data_record`` and ``paraphrase_field`` are also provided as args.
 
     Some metrics may run more efficiently on a batch of data. In this case, you should overwrite
-    the ``measure_batch`` function. If you don't overwrite batch_call, it will compute the metric of
-    paraphrases one by one.
+    the ``measure_batch`` function. If you don't overwrite batch_call, it will compute the metric
+    of paraphrases one by one.
     """
 
     def __init__(self, **kargs):

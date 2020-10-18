@@ -30,7 +30,7 @@ class StrategyBase(object):
     The simplest way to write a strategy is to overwrite the ``paraphrase_example`` function. This
     function takes one data records, and returns multiple paraphrases of a given field.
 
-    For more advanced use cases, you can overwrite the `paraphrase` function.
+    For more advanced use cases, you can overwrite the ``paraphrase`` function.
 
     Some strategy may have hyper-parameters. Add hyper parameters into the class attribute
     ``__hyperparameters__``.
@@ -99,7 +99,7 @@ class StrategyBase(object):
 
     @classmethod
     def add_parser_args(cls, parser):
-        """create commandline args for all hyperparameters in `__hyperparameters__`.
+        """create commandline args for all hyperparameters in ``__hyperparameters__``.
 
         Args:
             parser: an arg parser.
