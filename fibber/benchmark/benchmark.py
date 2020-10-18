@@ -71,7 +71,6 @@ def benchmark(arg_dict, dataset_name, trainset, testset, paraphrase_set):
     logger.info("Build metric bundle.")
 
     metric_bundle = MetricBundle(
-        # use_glove_semantic_similarity=False,
         use_bert_clf_prediction=True,
         use_gpu_id=arg_dict["use_gpu_id"], gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
         bert_gpu_id=arg_dict["bert_gpu_id"], dataset_name=dataset_name,
