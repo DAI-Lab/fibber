@@ -10,6 +10,10 @@ class MetricBase(object):
 
     Other metrics need more information from the data record. For example, `text0`, `text1`, or
     `label`. Thus the `data_record` and `paraphrase_field` are also provided as args.
+
+    Some metrics may run more efficiently on a batch of data. In this case, you should overwrite
+    the batch_call function. If you don't overwrite batch_call, it will compute the metric of
+    paraphrases one by one.
     """
 
     def __init__(self, **kargs):
@@ -17,6 +21,23 @@ class MetricBase(object):
 
     def __repr__(self):
         return self.__class__.__name__
+
+    def batch_call(self, origin, paraphrases, data_record=None, paraphrase_field="text0"):
+        """Measure the metric on a batch of paraphrases.
+
+        Args:
+            origin (str): the original text.
+            paraphrases (list): a set of paraphrases.
+            data_record (dict): the corresponding data record of original text.
+            paraphrase_field (str): the field name to paraphrase.
+
+        Returns:
+            (list): a list containing the metric for each paraphrase.
+        """
+        ret = []
+        for paraphrase in paraphrases:
+            ret.append(self(origin, paraphrase, data_record, paraphrase_field))
+        return ret
 
     def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         raise NotImplementedError()

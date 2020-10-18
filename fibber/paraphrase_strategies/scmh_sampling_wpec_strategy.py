@@ -7,15 +7,18 @@ from torch.nn import functional as F
 from transformers import BertForMaskedLM, BertTokenizer
 
 from fibber import log
-from fibber.paraphrase_strategies.strategy_base import StrategyBase
+from fibber.paraphrase_strategies.strategy_base import StrategyBase, post_process_text
 from fibber.paraphrase_strategies.wordpiece_emb import get_wordpiece_emb
 
 logger = log.setup_custom_logger(__name__)
 
 
+P_SMOOTHING = 100
+
 def tostring(tokenizer, seq):
-    return tokenizer.convert_tokens_to_string(
-        tokenizer.convert_ids_to_tokens(seq))
+    return post_process_text(
+        tokenizer.convert_tokens_to_string(
+            tokenizer.convert_ids_to_tokens(seq)))
 
 
 def generate_step(logits, temperature=None, top_k=0):
@@ -39,11 +42,62 @@ def generate_step(logits, temperature=None, top_k=0):
     return idx
 
 
-class GibbsSamplingWPECStrategy(StrategyBase):
+
+def accept_or_reject(tokenizer, origin, batch_tensor, pos, previous_idxs,
+                     candidate_idxs, logpdf, use_metric):
+    """Accept or reject the candidate word using the Metropolis hastings critera.
+
+    Args:
+        tokenizer (object): a bert tokenizer.
+        origin (str): original text.
+        batch_tensor (object): a 2-D int tensor of size `batch_size * L`.
+        pos (int): the position to replace. The value of `batch_tensor[:, pos]` is not used.
+        previous_idxs (object): a 1-D int tensor of size `batch_size`.
+        candidate_idxs (object): a 1-D int tensor of size `batch_size`.
+        logpdf (object): a 2-D float tensor of size `batch_size*vocab_size`.
+        use_metric (object): a universal sentence encoder metric object.
+
+    Returns:
+        (object): a 1-D int array of size `batch_size`.
+    """
+    batch_tensor = batch_tensor.detach().cpu().numpy()
+    previous_idxs = previous_idxs.detach().cpu().numpy()
+    candidate_idxs = candidate_idxs.detach().cpu().numpy()
+    logpdf = logpdf.detach().cpu().numpy()
+
+    batch_tensor[:, pos] = previous_idxs
+    sentences = [tostring(tokenizer, x) for x in batch_tensor]
+    use_semantic_similarity = use_metric.batch_call(origin, sentences)
+    unnormalized_log_p_previous = -P_SMOOTHING * np.maximum(
+        0.9 - np.asarray(use_semantic_similarity), 0)
+
+    batch_tensor[:, pos] = candidate_idxs
+    sentences = [tostring(tokenizer, x) for x in batch_tensor]
+    use_semantic_similarity = use_metric.batch_call(origin, sentences)
+    unnormalized_log_p_candidate = -P_SMOOTHING * np.maximum(
+        0.9 - np.asarray(use_semantic_similarity), 0)
+
+    # print(unnormalized_log_p_candidate - unnormalized_log_p_previous)
+    # print(logpdf[np.arange(len(previous_idxs)), previous_idxs])
+    # print(logpdf[np.arange(len(candidate_idxs)), candidate_idxs])
+
+    log_alpha = np.exp(unnormalized_log_p_candidate - unnormalized_log_p_previous
+                        + logpdf[np.arange(len(previous_idxs)), previous_idxs]
+                        - logpdf[np.arange(len(candidate_idxs)), candidate_idxs])
+
+    # print(log_alpha)
+    accept = np.asarray(np.random.rand(len(log_alpha)) < log_alpha, dtype="int32")
+    # print(accept)
+    idxs = candidate_idxs * accept + previous_idxs * (1 - accept)
+    # print(idxs)
+    # assert 0
+    return idxs
+
+class SCMHSamplingWPECStrategy(StrategyBase):
 
     def __init__(self, FLAGS, metric_bundle):
         """Initialize the strategy."""
-        super(GibbsSamplingWPECStrategy, self).__init__(FLAGS, metric_bundle)
+        super(SCMHSamplingWPECStrategy, self).__init__(FLAGS, metric_bundle)
 
         self._batch_size = 20
         self._top_k = 100
@@ -56,6 +110,8 @@ class GibbsSamplingWPECStrategy(StrategyBase):
 
         self._output_dir = FLAGS.output_dir
         self._dataset_name = FLAGS.dataset
+
+        self._use_metric = metric_bundle.get_metric("USESemanticSimilarity")
 
     def fit(self, trainset):
         if trainset["cased"]:
@@ -89,6 +145,7 @@ class GibbsSamplingWPECStrategy(StrategyBase):
 
         for ii in range(self._max_iter):
             kk = np.random.randint(1, len(seq) - 1)
+            previous_idxs = batch_tensor[:, kk].clone()
             batch_tensor[:, kk] = self._tokenizer.mask_token_id
 
             out = self._bert_lm(batch_tensor)[0]
@@ -106,9 +163,13 @@ class GibbsSamplingWPECStrategy(StrategyBase):
 
             top_k = self._top_k if (ii >= self._burnin) else 0
 
-            idxs = generate_step(logpdf_joint, top_k=top_k, temperature=self._temperature)
+            candidate_idxs = generate_step(logpdf_joint, top_k=top_k,
+                                            temperature=self._temperature)
 
-            batch_tensor[:, kk] = idxs
+            idxs_prime = accept_or_reject(
+                self._tokenizer, seed, batch_tensor, kk, previous_idxs, candidate_idxs,
+                logpdf_joint, self._use_metric)
+            batch_tensor[:, kk] = torch.tensor(idxs_prime).to(self._device)
 
         batch_tensor = batch_tensor.detach().cpu().numpy()
 

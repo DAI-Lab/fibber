@@ -14,6 +14,8 @@ from fibber.paraphrase_strategies.gibbs_sampling_wpec_strategy import GibbsSampl
 from fibber.paraphrase_strategies.gibbs_sampling_x_strategy import GibbsSamplingXStrategy
 from fibber.paraphrase_strategies.identical_strategy import IdenticalStrategy
 from fibber.paraphrase_strategies.random_strategy import RandomStrategy
+from fibber.paraphrase_strategies.scmh_sampling_wpec_strategy import SCMHSamplingWPECStrategy
+from fibber.paraphrase_strategies.reject_sampling_wpec_strategy import RejectSamplingWPECStrategy
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
@@ -59,17 +61,21 @@ def get_strategy(FLAGS, strategy_name, metric_bundle):
     if strategy_name == "RandomStrategy":
         return RandomStrategy(FLAGS, metric_bundle)
     if strategy_name == "IdenticalStrategy":
-        return IdenticalStrategy(FLAGS, measurement_bundle)
+        return IdenticalStrategy(FLAGS, metric_bundle)
     if strategy_name == "GibbsSamplingStrategy":
-        return GibbsSamplingStrategy(FLAGS, measurement_bundle)
+        return GibbsSamplingStrategy(FLAGS, metric_bundle)
     if strategy_name == "GibbsSamplingXStrategy":
-        return GibbsSamplingXStrategy(FLAGS, measurement_bundle)
+        return GibbsSamplingXStrategy(FLAGS, metric_bundle)
     if strategy_name == "GibbsSamplingWPEStrategy":
-        return GibbsSamplingWPEStrategy(FLAGS, measurement_bundle)
+        return GibbsSamplingWPEStrategy(FLAGS, metric_bundle)
     if strategy_name == "GibbsSamplingWPEBStrategy":
-        return GibbsSamplingWPEBStrategy(FLAGS, measurement_bundle)
+        return GibbsSamplingWPEBStrategy(FLAGS, metric_bundle)
     if strategy_name == "GibbsSamplingWPECStrategy":
-        return GibbsSamplingWPECStrategy(FLAGS, measurement_bundle)
+        return GibbsSamplingWPECStrategy(FLAGS, metric_bundle)
+    if strategy_name == "SCMHSamplingWPECStrategy":
+        return SCMHSamplingWPECStrategy(FLAGS, metric_bundle)
+    if strategy_name == "RejectSamplingWPECStrategy":
+        return RejectSamplingWPECStrategy(FLAGS, metric_bundle)
     else:
         assert 0
 
@@ -86,6 +92,7 @@ def benchmark(FLAGS, dataset_name, trainset, testset, paraphrase_set):
     """
     logger.info("Build metric bundle.")
     metric_bundle = MetricBundle(
+        # use_glove_semantic_similarity=False,
         use_bert_clf_prediction=True,
         use_gpu_id=FLAGS.use_gpu, gpt2_gpu_id=FLAGS.gpt2_gpu,
         bert_gpu_id=FLAGS.bert_gpu, dataset_name=dataset_name,

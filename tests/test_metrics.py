@@ -29,11 +29,21 @@ def test_use_semantic_similarity():
     use_semantic_similarity_measure = USESemanticSimilarity()
     s1 = "Sunday is the first day in a week."
     s2 = "Obama was the president of the United State."
-    assert use_semantic_similarity_measure(s1, s2) < 0.5
+    metric1 = use_semantic_similarity_measure(s1, s2)
+    assert metric1 < 0.5
 
-    s1 = "Saturday is the last day in a week"
-    s2 = "Sunday is the last day in a week"
-    assert use_semantic_similarity_measure(s1, s2) > 0.6
+    s1 = "Sunday is the first day in a week"
+    s2 = "Saturday is the last day in a week"
+    metric2 = use_semantic_similarity_measure(s1, s2)
+    assert metric2 > 0.6
+
+    s1 = "Sunday is the first day in a week"
+    s2 = ["Obama was the president of the United State.",
+          "Saturday is the last day in a week"]
+    metric3 = use_semantic_similarity_measure.batch_call(s1, s2)
+    assert len(metric3) == 2
+    assert abs(metric3[0] - metric1) < 1e-4
+    assert abs(metric3[1] - metric2) < 1e-4
 
 
 def test_gpt2_grammar_quality():

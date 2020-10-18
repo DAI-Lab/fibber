@@ -41,9 +41,9 @@ def generate_step(logits, temperature=None, top_k=0):
 
 class GibbsSamplingWPEBStrategy(StrategyBase):
 
-    def __init__(self, FLAGS, measurement_bundle):
+    def __init__(self, FLAGS, metric_bundle):
         """Initialize the strategy."""
-        super(GibbsSamplingWPEBStrategy, self).__init__(FLAGS, measurement_bundle)
+        super(GibbsSamplingWPEBStrategy, self).__init__(FLAGS, metric_bundle)
 
         self._batch_size = 20
         self._top_k = 100

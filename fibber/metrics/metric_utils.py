@@ -72,27 +72,47 @@ class MetricBundle(object):
         for item in customized_metrics:
             assert isinstance(item, MetricBase)
 
-        self._metrics = []
-        self._attack_clf = None
+        self._metrics = {}
 
         if use_editing_distance:
-            self._metrics.append(EditingDistance(**kargs))
+            metric = EditingDistance(**kargs)
+            self._metrics[str(metric)] = metric
         if use_use_semantic_similarity:
-            self._metrics.append(USESemanticSimilarity(**kargs))
+            metric = USESemanticSimilarity(**kargs)
+            self._metrics[str(metric)] = metric
         if use_glove_semantic_similarity:
-            self._metrics.append(GloVeSemanticSimilarity(**kargs))
+            metric = GloVeSemanticSimilarity(**kargs)
+            self._metrics[str(metric)] = metric
         if use_gpt2_grammar_quality:
-            self._metrics.append(GPT2GrammarQuality(**kargs))
+            metric = GPT2GrammarQuality(**kargs)
+            self._metrics[str(metric)] = metric
         if use_bert_clf_prediction:
-            self._metrics.append(BertClfPrediction(**kargs))
-            self._attack_clf = self._metrics[-1]
+            metric = BertClfPrediction(**kargs)
+            self._metrics[str(metric)] = metric
 
-        self._metrics += customized_metrics
+        for metric in customized_metrics:
+            assert str(metric) not in self._metrics, "Duplicate metric name."
+            self._metrics[str(metric)] = metric
 
-    def get_classifier_for_attack(self,):
-        """Return the Bert classifier metric."""
-        assert self._attack_clf is not None
-        return self._attack_clf
+    def get_metric(self, metric_name):
+        """Returns a metric in the bundle using the metric name.
+
+        Metric name is the class name of a metric.
+
+        Raises assertion error if metric is not found.
+
+        Args:
+            metric_name: the name of the matric.
+        Returns:
+            (object): a metric object.
+        """
+        assert metric_name in self._metrics
+        return self._metrics[metric_name]
+
+
+    def get_classifier_for_attack(self):
+        """Returns the classifier for attack."""
+        return self.get_metric("BertClfPrediction")
 
     def __call__(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the results of all metrics in the bundle for one pair of text.
@@ -107,8 +127,8 @@ class MetricBundle(object):
             (dict):
         """
         ret = {}
-        for metric in self._metrics:
-            ret[str(metric)] = metric(origin, paraphrase, data_record, paraphrase_field)
+        for name, metric in self._metrics.items():
+            ret[name] = metric(origin, paraphrase, data_record, paraphrase_field)
         return ret
 
 

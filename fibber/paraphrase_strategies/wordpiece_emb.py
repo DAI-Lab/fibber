@@ -3,11 +3,12 @@ import os
 import numpy as np
 import torch
 import tqdm
+from nltk import word_tokenize
 from torch import nn
 from transformers import BertTokenizer
 
-from .. import log
-from ..resource_utils import get_glove_emb, get_stopwords
+from fibber import log
+from fibber.resources.resource_utils import get_glove_emb, get_stopwords
 
 logger = log.setup_custom_logger(__name__)
 
@@ -31,8 +32,7 @@ class WordPieceDataset(torch.utils.data.Dataset):
             if "text1" in item:
                 text += " " + item["text1"]
 
-            text_toks = self._tokenizer.convert_tokens_to_string(
-                self._tokenizer.tokenize(text)).split()
+            text_toks = word_tokenize(text)
             data += [x for x in text_toks if x.lower() in self._glove["tok2id"]]
         self._data = data
 
