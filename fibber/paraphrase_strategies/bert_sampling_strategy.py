@@ -117,6 +117,8 @@ def similarity_accept_criteria(tokenizer, origin, batch_tensor, pos, previous_id
     batch_tensor = batch_tensor.detach().cpu().numpy()
     previous_idxs = previous_idxs.detach().cpu().numpy()
     candidate_idxs = candidate_idxs.detach().cpu().numpy()
+    if weight == 0:
+        return candidate_idxs
 
     unnormalized_log_p = estimate_p(
         tokenizer, origin, batch_tensor, pos, candidate_idxs,
@@ -127,6 +129,46 @@ def similarity_accept_criteria(tokenizer, origin, batch_tensor, pos, previous_id
     idxs = candidate_idxs * accept + previous_idxs * (1 - accept)
     return idxs
 
+def relative_similarity_accept_criteria(tokenizer, origin, batch_tensor, pos, previous_idxs, candidate_idxs,
+                               use_metric, use_threshold, use_smoothing, weight, **kargs):
+    """Accept or reject candidate word using the similarity as criteria.
+
+    Args:
+        tokenizer (transformers.BertTokenizer): a bert tokenizer.
+        origin (str): original text.
+        batch_tensor (torch.Tensor): tensor of a batch of text with size ``(batch_size, L)``.
+        pos (int): the position to replace. Note that ``batch_tensor[:, pos]`` is not used.
+        previous_idxs (torch.Tensor): word ids before current step of sampling with
+            size ``(batch_size,)``.
+        candidate_idxs (torch.Tensor): proposed word ids in this sampling step with
+            size ``(batch_size,)``.
+        use_metric (USESemanticSimilarity): a universal sentence encoder metric object.
+        use_threshold (float): the universal sentence encoder similarity threshold.
+        use_smoothing (float): the smoothing parameter for the criteria.
+
+    Returns:
+        (np.array): a 1-D int array of size `batch_size`. Each entry ``i`` is either
+            ``previous_idxs[i]`` if rejected, or ``candidate_idxs[i]`` if accepted.
+    """
+    batch_tensor = batch_tensor.detach().cpu().numpy()
+    previous_idxs = previous_idxs.detach().cpu().numpy()
+    candidate_idxs = candidate_idxs.detach().cpu().numpy()
+    if weight == 0:
+        return candidate_idxs
+    unnormalized_log_p_candidate = estimate_p(
+        tokenizer, origin, batch_tensor, pos, candidate_idxs,
+        use_metric, use_threshold, weight * use_smoothing)
+
+    unnormalized_log_p_previous = estimate_p(
+        tokenizer, origin, batch_tensor, pos, previous_idxs,
+        use_metric, use_threshold, weight * use_smoothing)
+
+    alpha = np.exp(np.asarray(unnormalized_log_p_candidate < use_threshold, dtype="float32")
+            * np.asarray(unnormalized_log_p_candidate < unnormalized_log_p_previous, dtype="float32")
+            * unnormalized_log_p_candidate)
+    accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
+    idxs = candidate_idxs * accept + previous_idxs * (1 - accept)
+    return idxs
 
 
 def scmh_accept_criteria(tokenizer, origin, batch_tensor, pos, previous_idxs,
@@ -204,7 +246,7 @@ class BertSamplingStrategy(StrategyBase):
         ("burnin_add_schedule", str, "linear", ("the schedule decides how much additional "
             "constraint is added. options are linear, 0, 1.")),
         ("accept_criteria", str, "all", ("select an accept criteria for candidate words from "
-            "all, similarity, scmh.")),
+            "all, similarity, relative_similarity, scmh.")),
         ("additional_constraint", str, "none", ("select an additional constraint for candidate "
             "words from none, allow_list, wpe")),
         ("burnin_criteria_schedule", str, "1", ("the schedule decides how strict the criteria is "
@@ -247,6 +289,8 @@ class BertSamplingStrategy(StrategyBase):
             self._accept_fn = all_accept_criteria
         elif self._strategy_config["accept_criteria"] == "similarity":
             self._accept_fn = similarity_accept_criteria
+        elif self._strategy_config["accept_criteria"] == "relative_similarity":
+            self._accept_fn = relative_similarity_accept_criteria
         elif self._strategy_config["accept_criteria"] == "scmh":
             self._accept_fn = scmh_accept_criteria
         else:
