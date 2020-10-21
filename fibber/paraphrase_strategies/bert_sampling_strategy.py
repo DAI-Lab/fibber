@@ -10,7 +10,7 @@ from transformers import BertForMaskedLM, BertTokenizer
 from fibber import log
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.paraphrase_strategies.wordpiece_emb import get_wordpiece_emb
-
+from fibber.paraphrase_strategies.text_parser import TextParser
 logger = log.setup_custom_logger(__name__)
 
 POST_PROCESSING_PATTERN = [
@@ -250,7 +250,9 @@ class BertSamplingStrategy(StrategyBase):
         ("additional_constraint", str, "none", ("select an additional constraint for candidate "
             "words from none, allow_list, wpe")),
         ("burnin_criteria_schedule", str, "1", ("the schedule decides how strict the criteria is "
-            "used. options are linear, 0, 1."))
+            "used. options are linear, 0, 1.")),
+        ("seed_option", str, "origin", ("the option for seed sentences in generation. "
+            "choose from origin, auto."))
     ]
 
     def __repr__(self):
@@ -305,19 +307,33 @@ class BertSamplingStrategy(StrategyBase):
         else:
             assert 0
 
+        # load text parser
+        self._text_parser = TextParser()
+
 
     def _parallel_sequential_generation(self, seed, batch_size):
-        seq = ["[CLS]"] + self._tokenizer.tokenize(seed) + ["[SEP]"]
-
-        batch_tensor = torch.tensor(
-            [self._tokenizer.convert_tokens_to_ids(seq)] * batch_size).to(self._device)
+        if self._strategy_config["seed_option"] == "origin":
+            seq = ["[CLS]"] + self._tokenizer.tokenize(seed) + ["[SEP]"]
+            batch_tensor = torch.tensor(
+                [self._tokenizer.convert_tokens_to_ids(seq)] * batch_size).to(self._device)
+            tensor_len = len(seq)
+        elif self._strategy_config["seed_option"] == "auto":
+            seeds = self._text_parser.phrase_level_shuffle(seed, batch_size)
+            seq = [self._tokenizer.tokenize(x) for x in seeds]
+            tensor_len = max([len(x) for x in seq])
+            seq = [["[CLS]"] + x + ["[MASK]"] * (tensor_len - len(x)) + ["[SEP]"] for x in seq]
+            tensor_len += 2
+            batch_tensor = torch.tensor(
+                [self._tokenizer.convert_tokens_to_ids(x) for x in seq]).to(self._device)
+        else:
+            assert 0
 
         target_emb = self._word_embs(batch_tensor[:, 1:-1]).sum(dim=1)
 
         allow_list = F.one_hot(batch_tensor[0][1:-1], len(self._tokenizer.vocab)).sum(dim=0)
 
         for ii in range(self._strategy_config["sampling_steps"]):
-            kk = np.random.randint(1, len(seq) - 1)
+            kk = np.random.randint(1, tensor_len - 1)
             previous_idxs = batch_tensor[:, kk].clone()
             batch_tensor[:, kk] = self._tokenizer.mask_token_id
 
