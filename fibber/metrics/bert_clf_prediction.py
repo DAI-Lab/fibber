@@ -8,6 +8,7 @@ import tqdm
 import transformers
 from torch.utils.tensorboard import SummaryWriter
 from transformers import BertForSequenceClassification, BertTokenizer
+import torch.nn.functional as F
 
 from fibber import get_root_dir, log
 from fibber.datasets import DatasetForBert
@@ -285,7 +286,8 @@ class BertClfPrediction(MetricBase):
             seq = ["[CLS]"] + self._tokenizer.tokenize(text0) + ["[SEP]"]
             seq_tensor = torch.tensor(self._tokenizer.convert_tokens_to_ids(seq)).to(self._device)
             seq_tensor = seq_tensor[:200]
-            return self._model(seq_tensor.unsqueeze(0))[0][0].detach().cpu().numpy()
+            return F.log_softmax(self._model(seq_tensor.unsqueeze(0))[0],
+                                 dim=-1)[0].detach().cpu().numpy()
         else:
             seq0 = self._tokenizer.tokenize(text0) + ["[SEP]"]
             seq1 = self._tokenizer.tokenize(text1) + ["[SEP]"]
@@ -298,7 +300,26 @@ class BertClfPrediction(MetricBase):
                 [0] * (l0 + 1) + [1] * l1).to(self._device).unsqueeze(0)
             seq_tensor = seq_tensor[:, :200]
             tok_type = tok_type[:, :200]
-            return self._model(seq_tensor, token_type_ids=tok_type)[0][0].detach().cpu().numpy()
+            return F.log_softmax(self._model(seq_tensor, token_type_ids=tok_type)[0],
+                                 dim=-1)[0].detach().cpu().numpy()
+
+
+    def predict_raw_batch(self, text0, text1):
+        if text1 is None:
+            seq = [["[CLS]"] + self._tokenizer.tokenize(x)[:200] + ["[SEP]"] for x in text0]
+            seq_len = [len(x) for x in seq]
+            max_len = max(seq_len)
+            seq = [x + ["[SEQ]"] * (max_len - y) for x, y in zip(seq, seq_len)]
+
+            mask = [[1] * x + [0] * (max_len - x) for x in seq_len]
+
+            seq_tensor = torch.tensor(
+                [self._tokenizer.convert_tokens_to_ids(x) for x in seq]).to(self._device)
+            mask_tensor = torch.tensor(mask).to(self._device)
+
+            return F.log_softmax(self._model(seq_tensor, mask_tensor)[0], dim=1).detach().cpu().numpy()
+        else:
+            assert 0
 
     def predict(self, text0, text1):
         """Get the prediction of the BERT prediction.

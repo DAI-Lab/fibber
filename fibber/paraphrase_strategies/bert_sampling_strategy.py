@@ -11,6 +11,7 @@ from fibber import log
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.paraphrase_strategies.wordpiece_emb import get_wordpiece_emb
 from fibber.paraphrase_strategies.text_parser import TextParser
+from fibber.paraphrase_strategies.lm import get_lm
 logger = log.setup_custom_logger(__name__)
 
 POST_PROCESSING_PATTERN = [
@@ -170,6 +171,80 @@ def relative_similarity_accept_criteria(tokenizer, origin, batch_tensor, pos, pr
     idxs = candidate_idxs * accept + previous_idxs * (1 - accept)
     return idxs
 
+def relative_similarity_and_clf_accept_criteria(
+    tokenizer, origin, batch_tensor, pos, previous_idxs, candidate_idxs,
+    use_metric, use_threshold, use_smoothing, weight, clf_metric, label, clf_weight, **kargs):
+    """Accept or reject candidate word using the similarity as criteria.
+
+    Args:
+        tokenizer (transformers.BertTokenizer): a bert tokenizer.
+        origin (str): original text.
+        batch_tensor (torch.Tensor): tensor of a batch of text with size ``(batch_size, L)``.
+        pos (int): the position to replace. Note that ``batch_tensor[:, pos]`` is not used.
+        previous_idxs (torch.Tensor): word ids before current step of sampling with
+            size ``(batch_size,)``.
+        candidate_idxs (torch.Tensor): proposed word ids in this sampling step with
+            size ``(batch_size,)``.
+        use_metric (USESemanticSimilarity): a universal sentence encoder metric object.
+        use_threshold (float): the universal sentence encoder similarity threshold.
+        use_smoothing (float): the smoothing parameter for the criteria.
+
+    Returns:
+        (np.array): a 1-D int array of size `batch_size`. Each entry ``i`` is either
+            ``previous_idxs[i]`` if rejected, or ``candidate_idxs[i]`` if accepted.
+    """
+    batch_tensor = batch_tensor.detach().cpu().numpy()
+    previous_idxs = previous_idxs.detach().cpu().numpy()
+    candidate_idxs = candidate_idxs.detach().cpu().numpy()
+    if weight == 0:
+        return candidate_idxs
+
+    unnormalized_log_p_candidate = estimate_p(
+        tokenizer, origin, batch_tensor, pos, candidate_idxs,
+        use_metric, use_threshold, weight * use_smoothing)
+
+    batch_tensor[:, pos] = candidate_idxs
+    clf_pred_candidate = F.log_softmax(clf_metric._model(torch.tensor(batch_tensor).to(clf_metric._device))[0], dim=-1).detach().cpu().numpy()
+
+    unnormalized_log_p_previous = estimate_p(
+        tokenizer, origin, batch_tensor, pos, previous_idxs,
+        use_metric, use_threshold, weight * use_smoothing)
+
+    batch_tensor[:, pos] = previous_idxs
+    clf_pred_previous = F.log_softmax(clf_metric._model(torch.tensor(batch_tensor).to(clf_metric._device))[0], dim=-1).detach().cpu().numpy()
+
+    # log_alpha_1 = (np.asarray(unnormalized_log_p_candidate < use_threshold, dtype="float32")
+    #     * np.asarray(unnormalized_log_p_candidate < unnormalized_log_p_previous, dtype="float32")
+    #     * unnormalized_log_p_candidate)
+    # log_alpha_2 = clf_weight * np.max(clf_pred_previous[:, label] - clf_pred_candidate[:, label], 0)
+
+
+    # def log_p_other(x):
+    #     return np.exp(-x - 1) + x
+    #
+    # log_alpha_1 = unnormalized_log_p_candidate - unnormalized_log_p_previous
+    # log_alpha_2 = clf_weight * (log_p_other(clf_pred_candidate[:, label]) - log_p_other(clf_pred_previous[:, label]))
+
+
+    def score(x):
+        correct_pred = x[:, label]
+        x[:, label] = -1e8
+        next_max = np.max(x, axis=1)
+        return next_max
+
+    log_alpha_1 = (np.asarray(unnormalized_log_p_candidate < use_threshold, dtype="float32")
+        * np.asarray(unnormalized_log_p_candidate < unnormalized_log_p_previous, dtype="float32")
+        * unnormalized_log_p_candidate)
+    log_alpha_2 = clf_weight * (score(clf_pred_candidate) - score(clf_pred_previous))
+
+    # print("alpha_1", log_alpha_1)
+    # print("alpha_2", log_alpha_2)
+    alpha = np.exp(log_alpha_1 + log_alpha_2)
+
+    accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
+    idxs = candidate_idxs * accept + previous_idxs * (1 - accept)
+    return idxs
+
 
 def scmh_accept_criteria(tokenizer, origin, batch_tensor, pos, previous_idxs,
                          candidate_idxs, logits, temperature, use_metric,
@@ -252,7 +327,14 @@ class BertSamplingStrategy(StrategyBase):
         ("burnin_criteria_schedule", str, "1", ("the schedule decides how strict the criteria is "
             "used. options are linear, 0, 1.")),
         ("seed_option", str, "origin", ("the option for seed sentences in generation. "
-            "choose from origin, auto."))
+            "choose from origin, auto.")),
+        ("split_sentence", str, "0", "split paragraph to sentence."),
+        ("sentence_len_threshold", int, 10, ("if split paragraph, sentence shorter than threshold "
+            "is not paraphrased.")),
+        ("stanza_port", int, 9000, "stanza port"),
+        ("lm_option", str, "pretrain", "choose from pretrain, finetune, adv."),
+        ("lm_steps", int, 5000, "lm training steps."),
+        ("clf_weight", float, 10, "weight for the clf score in the criteria.")
     ]
 
     def __repr__(self):
@@ -264,18 +346,40 @@ class BertSamplingStrategy(StrategyBase):
     def fit(self, trainset):
         # load BERT language model.
         logger.info("Load bert language model for BertSamplingStrategy.")
+
         if trainset["cased"]:
             model_init = "bert-base-cased"
         else:
             model_init = "bert-base-uncased"
-        self._bert_lm = BertForMaskedLM.from_pretrained(model_init).to(self._device)
         self._tokenizer = BertTokenizer.from_pretrained(model_init)
-        self._bert_lm.eval()
-        for item in self._bert_lm.parameters():
-            item.requires_grad = False
+
+        if self._strategy_config["lm_option"] == "pretrain":
+            self._bert_lm = BertForMaskedLM.from_pretrained(model_init).to(self._device)
+            self._bert_lm.eval()
+            for item in self._bert_lm.parameters():
+                item.requires_grad = False
+        elif self._strategy_config["lm_option"] == "finetune":
+            self._bert_lm = get_lm(
+                self._output_dir, trainset, -1, self._device, self._strategy_config["lm_steps"])
+            self._bert_lm.eval()
+            self._bert_lm.to(self._device)
+            for item in self._bert_lm.parameters():
+                item.requires_grad = False
+        elif self._strategy_config["lm_option"] == "adv":
+            self._bert_lms = []
+            for i in range(len(trainset["label_mapping"])):
+                lm = get_lm(
+                    self._output_dir, trainset, i, self._device, self._strategy_config["lm_steps"])
+                lm.eval()
+                for item in lm.parameters():
+                    item.requires_grad = False
+                self._bert_lms.append(lm)
+        else:
+            assert 0
 
         # find the use metric
         self._use_metric = self._metric_bundle.get_metric("USESemanticSimilarity")
+        self._clf_metric = self._metric_bundle.get_metric("BertClfPrediction")
 
         # load word piece embeddings.
         wpe = get_wordpiece_emb(self._output_dir, self._dataset_name, trainset, self._device)
@@ -293,6 +397,8 @@ class BertSamplingStrategy(StrategyBase):
             self._accept_fn = similarity_accept_criteria
         elif self._strategy_config["accept_criteria"] == "relative_similarity":
             self._accept_fn = relative_similarity_accept_criteria
+        elif self._strategy_config["accept_criteria"] == "relative_similarity_and_clf":
+            self._accept_fn = relative_similarity_and_clf_accept_criteria
         elif self._strategy_config["accept_criteria"] == "scmh":
             self._accept_fn = scmh_accept_criteria
         else:
@@ -308,10 +414,10 @@ class BertSamplingStrategy(StrategyBase):
             assert 0
 
         # load text parser
-        self._text_parser = TextParser()
+        self._text_parser = TextParser(self._strategy_config["stanza_port"])
 
 
-    def _parallel_sequential_generation(self, seed, batch_size):
+    def _parallel_sequential_generation(self, seed, batch_size, field_name, data_record):
         if self._strategy_config["seed_option"] == "origin":
             seq = ["[CLS]"] + self._tokenizer.tokenize(seed) + ["[SEP]"]
             batch_tensor = torch.tensor(
@@ -393,7 +499,11 @@ class BertSamplingStrategy(StrategyBase):
                 use_metric=self._use_metric,
                 use_threshold=self._strategy_config["use_threshold"],
                 use_smoothing=self._strategy_config["use_smoothing"],
-                weight=accept_weight)
+                weight=accept_weight,
+                ## with clf:
+                clf_metric=self._clf_metric,
+                label=data_record["label"],
+                clf_weight=self._strategy_config["clf_weight"])
 
             batch_tensor[:, kk] = torch.tensor(final_idxs).to(self._device)
 
@@ -403,6 +513,11 @@ class BertSamplingStrategy(StrategyBase):
     def paraphrase_example(self, data_record, field_name, n):
         assert field_name == "text0"
 
+        if self._strategy_config["lm_option"] == "adv":
+            self._bert_lm = self._bert_lms[data_record["label"]]
+            self._bert_lm.to(self._device)
+
+        clipped_text = " ".join(data_record[field_name].split()[:200])
         batch_size = self._strategy_config["batch_size"]
 
         sentences = []
@@ -412,9 +527,33 @@ class BertSamplingStrategy(StrategyBase):
             last_batch_size = batch_size
 
         for id in range(n_batches):
-            batch = self._parallel_sequential_generation(
-                data_record[field_name], batch_size if id != n_batches - 1 else last_batch_size)
-            sentences += batch
+            if self._strategy_config["split_sentence"] == "0":
+                batch = self._parallel_sequential_generation(
+                    clipped_text,
+                    batch_size if id != n_batches - 1 else last_batch_size,
+                    field_name, data_record)
+                sentences += batch
+            else:
+                assert self._strategy_config["split_sentence"] == "1"
+                splitted_text = self._text_parser.split_paragraph_to_sentences(
+                    clipped_text)
+
+                batch_res = [""] * (batch_size if id != n_batches - 1 else last_batch_size)
+                for text in splitted_text:
+                    if len(text.split()) < self._strategy_config["sentence_len_threshold"]:
+                        batch_res = [x + " " + text for x in batch_res]
+                        continue
+
+                    batch = self._parallel_sequential_generation(
+                        text, batch_size if id != n_batches - 1 else last_batch_size,
+                        field_name, data_record)
+
+                    batch_res = [x + " " + y for (x, y) in zip(batch_res, batch)]
+
+                sentences += batch_res
 
         assert len(sentences) == n
+
+        if self._strategy_config["lm_option"] == "adv":
+            self._bert_lm.to(torch.device("cpu"))
         return sentences[:n]

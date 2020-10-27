@@ -22,13 +22,15 @@ def generate_phrases_by_dfs(node, level, phrase_level, result):
 class TextParser(object):
     """TextParser uses stanford core nlp tool to parse text."""
 
-    def __init__(self):
+    def __init__(self, port=9000):
         self._core_nlp_client = CoreNLPClient(
-            annotators=['parse'], timeout=30000, memory='16G', be_quiet=True)
+            annotators=['parse'], timeout=30000, memory='16G', be_quiet=True,
+            endpoint="http://localhost:%d" % port)
 
     def _get_parse_tree(self, sentence):
         annotation = self._core_nlp_client.annotate(sentence)
-        assert len(annotation.sentence) == 1
+        if len(annotation.sentence) != 1:
+            logger.warning("_get_parse_tree should take one sentence. but %s is given." % sentence) 
         return annotation.sentence[0].parseTree
 
     def split_paragraph_to_sentences(self, paragraph):
