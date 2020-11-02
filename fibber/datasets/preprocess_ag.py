@@ -2,6 +2,7 @@ import json
 
 import pandas as pd
 import tqdm
+import re
 
 from fibber import log
 from fibber.datasets.preprocess_utils import download_raw_and_preprocess
@@ -23,7 +24,8 @@ REPLACE_TOKS = [
 ]
 
 
-def preprocess_ag_data(input_filename, output_filename):
+def preprocess_ag_data(input_filename, output_filename,
+                       include_title=True, include_author_media=True):
     """preprocess raw AG's news csv to Fibber's JSON format."""
     logger.info("Start preprocessing data, and save at %s.", output_filename)
     df = pd.read_csv(input_filename, header=None)
@@ -41,10 +43,14 @@ def preprocess_ag_data(input_filename, output_filename):
         for u, v in REPLACE_TOKS:
             title = title.replace(u, v)
             text = text.replace(u, v)
+            if not include_author_media:
+                m = re.search(r"^[^\(\)]{0,50}?(\([^\(\)]{0,20}?\))? (-|--) ", text)
+                if m is not None and len(m.group(0)) < len(text):
+                    text = text[len(m.group(0)):]
 
         datalist.append({
             "label": y,
-            "text0": title + " . " + text
+            "text0": (title + " . " + text) if include_title else text
         })
 
     data["data"] = datalist
@@ -62,6 +68,14 @@ def download_and_preprocess_ag():
             ("raw/train.csv", "train.json"),
             ("raw/test.csv", "test.json")])
 
+    download_raw_and_preprocess(
+        dataset_name="ag_no_title",
+        download_list=["ag-raw-train", "ag-raw-test"],
+        preprocess_fn=lambda inp, out:
+            preprocess_ag_data(inp, out, include_title=False, include_author_media=False),
+        preprocess_input_output_list=[
+            ("raw/train.csv", "train.json"),
+            ("raw/test.csv", "test.json")])
 
 if __name__ == "__main__":
     download_and_preprocess_ag()
