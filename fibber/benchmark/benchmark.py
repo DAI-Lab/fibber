@@ -7,7 +7,7 @@ from fibber.benchmark.benchmark_utils import update_detailed_result
 from fibber.benchmark.customized_metric_aggregation import customized_metric_aggregation_fn_dict
 from fibber.datasets import get_dataset, subsample_dataset
 from fibber.metrics import MetricBundle, aggregate_metrics, compute_metrics
-from fibber.paraphrase_strategies import IdentityStrategy, RandomStrategy, BertSamplingStrategy
+from fibber.paraphrase_strategies import IdentityStrategy, RandomStrategy, BertSamplingStrategy, TextFoolerStrategy, BertBlockSamplingStrategy
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
@@ -30,6 +30,7 @@ parser.add_argument("--bert_clf_steps", type=int, default=20000)
 RandomStrategy.add_parser_args(parser)
 IdentityStrategy.add_parser_args(parser)
 BertSamplingStrategy.add_parser_args(parser)
+BertBlockSamplingStrategy.add_parser_args(parser)
 
 G_EXP_NAME = None
 
@@ -57,8 +58,14 @@ def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
     if strategy_name == "IdentityStrategy":
         return IdentityStrategy(
             arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
+    if strategy_name == "TextFoolerStrategy":
+        return TextFoolerStrategy(
+            arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
     if strategy_name == "BertSamplingStrategy":
         return BertSamplingStrategy(
+            arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
+    if strategy_name == "BertBlockSamplingStrategy":
+        return BertBlockSamplingStrategy(
             arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
     else:
         assert 0

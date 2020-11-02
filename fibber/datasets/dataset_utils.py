@@ -86,7 +86,7 @@ def get_dataset(dataset_name):
 
     if not os.path.exists(train_filename) or not os.path.exists(test_filename):
         logger.error("%s dataset not found.", dataset_name)
-        assert 0, ("Please use `python3 -m fibber.benchmark.download_datasets` "
+        assert 0, ("Please use `python3 -m fibber.datasets.download_datasets` "
                    "to download datasets.")
 
     with open(train_filename) as f:

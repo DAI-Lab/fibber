@@ -12,7 +12,7 @@ def update_detailed_result(aggregated_result):
     Args:
         aggregated_result (dict): the aggregated result as a dict.
     """
-    result_dir = os.path.join(get_root_dir(), "results-research")
+    result_dir = os.path.join(get_root_dir(), "results-draft")
     os.makedirs(result_dir, exist_ok=True)
     result_filename = os.path.join(result_dir, "detail.csv")
     if os.path.exists(result_filename):
@@ -31,7 +31,7 @@ def load_detailed_result():
         (pandas.DataFrame): the detailed result table. Returns an empty DataFrame if file does not
         exist.
     """
-    result_dir = os.path.join(get_root_dir(), "results-research")
+    result_dir = os.path.join(get_root_dir(), "results-draft")
     result_filename = os.path.join(result_dir, "detail.csv")
     if os.path.exists(result_filename):
         return pd.read_csv(result_filename)
@@ -45,7 +45,7 @@ def update_overview_result(overview_result):
     Args:
         overview_result (pandas.DataFrame): the overview result.
     """
-    result_dir = os.path.join(get_root_dir(), "results-research")
+    result_dir = os.path.join(get_root_dir(), "results-draft")
     os.makedirs(result_dir, exist_ok=True)
     result_filename = os.path.join(result_dir, "overview.csv")
     overview_result.to_csv(result_filename, index=None)

@@ -55,6 +55,11 @@ def sample_word_from_logits(logits, temperature=1., top_k=0):
             ``softmax(logits/temperature)``.
         top_k (int): if ``k>0``, only sample from the top k most probable words.
     """
+    bs = logits.shape[0]
+    window_size = logits.shape[1]
+    vocab_size = logits.shape[2]
+
+    logits = logits.view(bs * window_size, vocab_size)
     logits = logits / temperature
 
     if top_k > 0:
@@ -64,7 +69,7 @@ def sample_word_from_logits(logits, temperature=1., top_k=0):
     else:
         dist = torch.distributions.categorical.Categorical(logits=logits)
         idx = dist.sample().squeeze(-1)
-    return idx
+    return idx.view(bs, window_size)
 
 
 def all_accept_criteria(candidate_idxs, **kargs):
@@ -72,7 +77,7 @@ def all_accept_criteria(candidate_idxs, **kargs):
     return candidate_idxs.detach().cpu().numpy()
 
 
-def estimate_p(tokenizer, origin, batch_tensor, pos, idxs, use_metric,
+def estimate_p(tokenizer, origin, batch_tensor, pos, pos_ed, idxs, use_metric,
                use_threshold, use_smoothing):
     """Estimate the unnormalized log pobability of a sentence, to be valid paraphrase.
 
@@ -89,50 +94,14 @@ def estimate_p(tokenizer, origin, batch_tensor, pos, idxs, use_metric,
     Returns:
         (np.array): a numpy array of size ``(batch_size,)``. All entries ``<=0``.
     """
-    batch_tensor[:, pos] = idxs
+    batch_tensor[:, pos:pos_ed] = idxs
     sentences = [tostring(tokenizer, x) for x in batch_tensor]
     use_semantic_similarity = use_metric.measure_batch(origin, sentences)
     return -use_smoothing * (
         np.maximum(use_threshold - np.asarray(use_semantic_similarity), 0) ** 2)
 
 
-def similarity_accept_criteria(tokenizer, origin, batch_tensor, pos, previous_idxs, candidate_idxs,
-                               use_metric, use_threshold, use_smoothing, weight, **kargs):
-    """Accept or reject candidate word using the similarity as criteria.
-
-    Args:
-        tokenizer (transformers.BertTokenizer): a bert tokenizer.
-        origin (str): original text.
-        batch_tensor (torch.Tensor): tensor of a batch of text with size ``(batch_size, L)``.
-        pos (int): the position to replace. Note that ``batch_tensor[:, pos]`` is not used.
-        previous_idxs (torch.Tensor): word ids before current step of sampling with
-            size ``(batch_size,)``.
-        candidate_idxs (torch.Tensor): proposed word ids in this sampling step with
-            size ``(batch_size,)``.
-        use_metric (USESemanticSimilarity): a universal sentence encoder metric object.
-        use_threshold (float): the universal sentence encoder similarity threshold.
-        use_smoothing (float): the smoothing parameter for the criteria.
-
-    Returns:
-        (np.array): a 1-D int array of size `batch_size`. Each entry ``i`` is either
-            ``previous_idxs[i]`` if rejected, or ``candidate_idxs[i]`` if accepted.
-    """
-    batch_tensor = batch_tensor.detach().cpu().numpy()
-    previous_idxs = previous_idxs.detach().cpu().numpy()
-    candidate_idxs = candidate_idxs.detach().cpu().numpy()
-    if weight == 0:
-        return candidate_idxs
-
-    unnormalized_log_p = estimate_p(
-        tokenizer, origin, batch_tensor, pos, candidate_idxs,
-        use_metric, use_threshold, weight * use_smoothing)
-
-    alpha = np.exp(unnormalized_log_p)
-    accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
-    idxs = candidate_idxs * accept + previous_idxs * (1 - accept)
-    return idxs
-
-def relative_similarity_accept_criteria(tokenizer, origin, batch_tensor, pos, previous_idxs, candidate_idxs,
+def relative_similarity_accept_criteria(tokenizer, origin, batch_tensor, pos, pos_ed, previous_idxs, candidate_idxs,
                                use_metric, use_threshold, use_smoothing, weight, **kargs):
     """Accept or reject candidate word using the similarity as criteria.
 
@@ -159,22 +128,22 @@ def relative_similarity_accept_criteria(tokenizer, origin, batch_tensor, pos, pr
     if weight == 0:
         return candidate_idxs
     unnormalized_log_p_candidate = estimate_p(
-        tokenizer, origin, batch_tensor, pos, candidate_idxs,
+        tokenizer, origin, batch_tensor, pos, pos_ed, candidate_idxs,
         use_metric, use_threshold, weight * use_smoothing)
 
     unnormalized_log_p_previous = estimate_p(
-        tokenizer, origin, batch_tensor, pos, previous_idxs,
+        tokenizer, origin, batch_tensor, pos, pos_ed, previous_idxs,
         use_metric, use_threshold, weight * use_smoothing)
 
     alpha = np.exp(np.asarray(unnormalized_log_p_candidate < use_threshold, dtype="float32")
             * np.asarray(unnormalized_log_p_candidate < unnormalized_log_p_previous, dtype="float32")
             * unnormalized_log_p_candidate)
     accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
-    idxs = candidate_idxs * accept + previous_idxs * (1 - accept)
+    idxs = candidate_idxs * accept.reshape(-1, 1) + previous_idxs * (1 - accept.reshape(-1, 1))
     return idxs
 
 def relative_similarity_and_clf_accept_criteria(
-    tokenizer, origin, batch_tensor, pos, previous_idxs, candidate_idxs,
+    tokenizer, origin, batch_tensor, pos, pos_ed, previous_idxs, candidate_idxs,
     use_metric, use_threshold, use_smoothing, weight, clf_metric, label, clf_weight,
     field_name, data_record, **kargs):
     """Accept or reject candidate word using the similarity as criteria.
@@ -218,30 +187,30 @@ def relative_similarity_and_clf_accept_criteria(
 
 
     unnormalized_log_p_candidate = estimate_p(
-        tokenizer, origin, batch_tensor, pos, candidate_idxs,
+        tokenizer, origin, batch_tensor, pos, pos_ed, candidate_idxs,
         use_metric, use_threshold, weight * use_smoothing)
 
-    batch_tensor[:, pos] = candidate_idxs
+    batch_tensor[:, pos:pos_ed] = candidate_idxs
     clf_pred_candidate = F.log_softmax(
         clf_metric._model(torch.tensor(batch_tensor).to(clf_metric._device),
                             token_type_ids=torch.tensor(tok_type).to(clf_metric._device)
         )[0], dim=-1).detach().cpu().numpy()
 
     unnormalized_log_p_previous = estimate_p(
-        tokenizer, origin, batch_tensor, pos, previous_idxs,
+        tokenizer, origin, batch_tensor, pos, pos_ed, previous_idxs,
         use_metric, use_threshold, weight * use_smoothing)
 
-    batch_tensor[:, pos] = previous_idxs
+    batch_tensor[:, pos:pos_ed] = previous_idxs
     clf_pred_previous = F.log_softmax(
         clf_metric._model(torch.tensor(batch_tensor).to(clf_metric._device),
             token_type_ids=torch.tensor(tok_type).to(clf_metric._device)
         )[0], dim=-1).detach().cpu().numpy()
 
     def score(x):
-        correct_pred = x[:, label]
+        correct_pred = (x[:, label]).copy()
         x[:, label] = -1e8
         next_max = np.max(x, axis=1)
-        return next_max
+        return np.minimum(next_max - correct_pred, 0)
 
     log_alpha_1 = (np.asarray(unnormalized_log_p_candidate < use_threshold, dtype="float32")
         * np.asarray(unnormalized_log_p_candidate < unnormalized_log_p_previous, dtype="float32")
@@ -251,53 +220,7 @@ def relative_similarity_and_clf_accept_criteria(
     alpha = np.exp(log_alpha_1 + log_alpha_2)
 
     accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
-    idxs = candidate_idxs * accept + previous_idxs * (1 - accept)
-    return idxs
-
-
-def scmh_accept_criteria(tokenizer, origin, batch_tensor, pos, previous_idxs,
-                         candidate_idxs, logits, temperature, use_metric,
-                         use_threshold, use_smoothing, weight, **kargs):
-    """Accept or reject the candidate word using the Metropolis hastings criteria.
-
-    Args:
-        tokenizer (transformers.BertTokenizer): a bert tokenizer.
-        origin (str): original text.
-        batch_tensor (torch.Tensor): tensor of a batch of text with size ``(batch_size, L)``.
-        pos (int): the position to replace. Note that ``batch_tensor[:, pos]`` is not used.
-        previous_idxs (torch.Tensor): word ids before current step of sampling with
-            size ``(batch_size,)``.
-        candidate_idxs (torch.Tensor): proposed word ids in this sampling step with
-            size ``(batch_size,)``.
-        logits (torch.Tensor): a 2-D float tensor of size `batch_size*vocab_size`.
-        temperature (float): the temperature of the softmax.
-        use_metric (USESemanticSimilarity): a universal sentence encoder metric object.
-        use_threshold (float): the universal sentence encoder similarity threshold.
-        use_smoothing (float): the smoothing parameter for the criteria.
-
-    Returns:
-        (np.array): a 1-D int array of size `batch_size`. Each entry ``i`` is either
-            ``previous_idxs[i]`` if rejected, or ``candidate_idxs[i]`` if accepted.
-    """
-    batch_tensor = batch_tensor.detach().cpu().numpy()
-    previous_idxs = previous_idxs.detach().cpu().numpy()
-    candidate_idxs = candidate_idxs.detach().cpu().numpy()
-    logits = (logits / temperature).detach().cpu().numpy()
-
-    unnormalized_log_p_previous = estimate_p(
-        tokenizer, origin, batch_tensor, pos, previous_idxs,
-        use_metric, use_threshold, weight * use_smoothing)
-
-    unnormalized_log_p_candidate = estimate_p(
-        tokenizer, origin, batch_tensor, pos, candidate_idxs,
-        use_metric, use_threshold, weight * use_smoothing)
-
-    alpha = np.exp(unnormalized_log_p_candidate - unnormalized_log_p_previous
-                    + logits[np.arange(len(previous_idxs)), previous_idxs]
-                    - logits[np.arange(len(candidate_idxs)), candidate_idxs])
-
-    accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
-    idxs = candidate_idxs * accept + previous_idxs * (1 - accept)
+    idxs = candidate_idxs * accept.reshape(-1, 1) + previous_idxs * (1 - accept.reshape(-1, 1))
     return idxs
 
 def none_constraint(**kargs):
@@ -306,19 +229,20 @@ def none_constraint(**kargs):
 def allow_list_constraint(allow_list, **kargs):
     return -1e6 * (1 - allow_list)
 
-def wpe_constraint(target_emb, word_embs, batch_tensor, pos,
+def wpe_constraint(target_emb, word_embs, batch_tensor, pos, pos_ed,
                     wpe_threshold, wpe_smoothing, **kargs):
     current_emb = (word_embs(batch_tensor[:, 1:-1]).sum(dim=1)
-                   - word_embs(batch_tensor[:, pos]))
+                   - word_embs(batch_tensor[:, pos:pos_ed]).sum(dim=1))
     candidate_emb = current_emb[:, None, :] + word_embs.weight.data[None, :, :]
     dis = F.cosine_similarity(candidate_emb, target_emb[:, None, :], dim=2)
-    dis = (wpe_threshold - dis).clamp_(min=0)
+    dis = (wpe_threshold - dis).clamp_(min=0).unsqueeze(1)
     return -wpe_smoothing * dis * dis
 
-class BertSamplingStrategy(StrategyBase):
-    __abbr__ = "bss"
+class BertBlockSamplingStrategy(StrategyBase):
+    __abbr__ = "bbss"
     __hyperparameters__ = [
         ("batch_size", int, 50, "the batch size in sampling."),
+        ("window_size", int, 1, "the block sampling window size."),
         ("burnin_steps", int, 250, "number of burnin steps."),
         ("sampling_steps", int, 500, "number of sampling steps (including) burnin."),
         ("top_k", int, 100, "sample from top k words after burnin. Use 0 for all words."),
@@ -450,41 +374,49 @@ class BertSamplingStrategy(StrategyBase):
 
         for ii in range(sampling_steps):
             kk = np.random.randint(1, tensor_len - 1)
-            previous_idxs = batch_tensor[:, kk].clone()
-            batch_tensor[:, kk] = self._tokenizer.mask_token_id
+            kk_ed = min(kk + self._strategy_config["window_size"], tensor_len - 1)
 
-            logits_lm = self._bert_lm(batch_tensor)[0][:, kk]
-            logits_add = self._additional_constraint_fn(
-                # for wpe constraint
-                target_emb=target_emb,
-                word_embs=self._word_embs,
-                batch_tensor=batch_tensor,
-                pos=kk,
-                wpe_threshold=self._strategy_config["wpe_threshold"],
-                wpe_smoothing=self._strategy_config["wpe_smoothing"],
-                # for naive constraint
-                allow_list=allow_list
-            )
+            previous_idxs = batch_tensor[:, kk:kk_ed].clone()
+            batch_tensor[:, kk:kk_ed] = self._tokenizer.mask_token_id
 
-            if ii < burnin_steps:
-                if self._strategy_config["burnin_add_schedule"] == "0":
-                    logits_joint = logits_lm
-                elif self._strategy_config["burnin_add_schedule"] == "1":
-                    logits_joint = logits_lm + logits_add
-                elif self._strategy_config["burnin_add_schedule"] == "linear":
-                    logits_joint = logits_lm + (
-                        ii / burnin_steps) * logits_add
+            od = np.arange(kk, kk_ed)
+            np.random.shuffle(od)
+            for t in od:
+                logits_lm = self._bert_lm(batch_tensor)[0][:, t:t+1]
+                logits_add = self._additional_constraint_fn(
+                    # for wpe constraint
+                    target_emb=target_emb,
+                    word_embs=self._word_embs,
+                    batch_tensor=batch_tensor,
+                    pos=t,
+                    pos_ed=t+1,
+                    wpe_threshold=self._strategy_config["wpe_threshold"],
+                    wpe_smoothing=self._strategy_config["wpe_smoothing"],
+                    # for naive constraint
+                    allow_list=allow_list
+                )
+
+                if ii < burnin_steps:
+                    if self._strategy_config["burnin_add_schedule"] == "0":
+                        logits_joint = logits_lm
+                    elif self._strategy_config["burnin_add_schedule"] == "1":
+                        logits_joint = logits_lm + logits_add
+                    elif self._strategy_config["burnin_add_schedule"] == "linear":
+                        logits_joint = logits_lm + (
+                            ii / burnin_steps) * logits_add
+                    else:
+                        assert 0
                 else:
-                    assert 0
-            else:
-                logits_joint = logits_lm + logits_add
+                    logits_joint = logits_lm + logits_add
 
-            top_k = self._strategy_config["top_k"] if (
-                ii >= burnin_steps) else 0
+                top_k = self._strategy_config["top_k"] if (
+                    ii >= burnin_steps) else 100
 
-            candidate_idxs = sample_word_from_logits(
-                logits_joint, top_k=top_k, temperature=self._strategy_config["temperature"])
+                candidate_idxs = sample_word_from_logits(
+                    logits_joint, top_k=top_k, temperature=self._strategy_config["temperature"])
+                batch_tensor[:, t:t+1] = candidate_idxs
 
+            candidate_idxs = batch_tensor[:, kk:kk_ed].clone()
 
             if ii < burnin_steps:
                 if self._strategy_config["burnin_criteria_schedule"] == "0":
@@ -503,6 +435,7 @@ class BertSamplingStrategy(StrategyBase):
                 origin=seed,
                 batch_tensor=batch_tensor,
                 pos=kk,
+                pos_ed=kk_ed,
                 previous_idxs=previous_idxs,
                 candidate_idxs=candidate_idxs,
                 logits=logits_joint,
@@ -517,7 +450,7 @@ class BertSamplingStrategy(StrategyBase):
                 field_name=field_name,
                 data_record=data_record)
 
-            batch_tensor[:, kk] = torch.tensor(final_idxs).to(self._device)
+            batch_tensor[:, kk:kk_ed] = torch.tensor(final_idxs).to(self._device)
 
         batch_tensor = batch_tensor.detach().cpu().numpy()
         return [tostring(self._tokenizer, x[1:-1]) for x in batch_tensor]

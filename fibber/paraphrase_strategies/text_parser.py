@@ -1,5 +1,6 @@
 from stanza.server import CoreNLPClient
 import random
+import re
 
 # get all phrases from a sentence
 def generate_phrases_by_dfs(node, level, phrase_level, result):
@@ -19,6 +20,9 @@ def generate_phrases_by_dfs(node, level, phrase_level, result):
         result.append(phrase)
     return phrase
 
+def preprocess(x):
+    return re.sub(r"([.,?:!])([^\s])", r"\1 \2", x)
+
 class TextParser(object):
     """TextParser uses stanford core nlp tool to parse text."""
 
@@ -30,10 +34,11 @@ class TextParser(object):
     def _get_parse_tree(self, sentence):
         annotation = self._core_nlp_client.annotate(sentence)
         if len(annotation.sentence) != 1:
-            logger.warning("_get_parse_tree should take one sentence. but %s is given." % sentence) 
+            logger.warning("_get_parse_tree should take one sentence. but %s is given." % sentence)
         return annotation.sentence[0].parseTree
 
     def split_paragraph_to_sentences(self, paragraph):
+        paragraph = preprocess(paragraph)
         annotation = self._core_nlp_client.annotate(paragraph)
         return [" ".join([token.word for token in sentence.token])
                 for sentence in annotation.sentence]
@@ -46,6 +51,7 @@ class TextParser(object):
         return phrases
 
     def phrase_level_shuffle(self, paragraph, n):
+        paragraph = preprocess(paragraph)
         sentences = self.split_paragraph_to_sentences(paragraph)
         bins = []
         for sentence in sentences:
