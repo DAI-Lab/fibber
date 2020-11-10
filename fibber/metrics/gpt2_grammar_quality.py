@@ -57,13 +57,14 @@ class GPT2GrammarQuality(MetricBase):
 
         self._model = GPT2LMHeadModel.from_pretrained(gpt2_pretrained_model).to(self._device)
 
-    def _get_ppl(self, origin, paraphrase):
-        """Compute the perplexity ratio ppl(paraphrase) / ppl(origin)."""
-        origin_input, origin_output = make_input_output_pair(self._tokenizer, origin)
-        paraphrase_input, paraphrase_output = make_input_output_pair(self._tokenizer, paraphrase)
+    def _get_ppl(self, sentences):
+        """Compute the perplexity of sentences."""
+        input_output = [make_input_output_pair(self._tokenizer, x) for x in sentences]
 
-        toks_input, mask = make_batch([origin_input, paraphrase_input])
-        toks_output, _ = make_batch([origin_output, paraphrase_output])
+        input, output = zip(*input_output)
+
+        toks_input, mask = make_batch(input)
+        toks_output, _ = make_batch(output)
 
         mask = torch.tensor(mask).to(self._device)
         toks_input = torch.tensor(toks_input).to(self._device)
@@ -77,6 +78,22 @@ class GPT2GrammarQuality(MetricBase):
         ppl = ppl.detach().cpu().numpy()
         return ppl
 
+    def measure_batch(self, origin, paraphrases, data_record=None, paraphrase_field="text0"):
+        """Measure the metric on a batch of paraphrases.
+
+        Args:
+            origin (str): the original text.
+            paraphrases (list): a set of paraphrases.
+            data_record (dict): the corresponding data record of original text.
+            paraphrase_field (str): the field name to paraphrase.
+
+        Returns:
+            (list): a list containing the USE similarity metric for each paraphrase.
+        """
+        ppls = self._get_ppl([origin] + paraphrases)
+
+        return list(ppls[1:]) / ppls[0]
+
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the perplexity ratio.
 
@@ -86,5 +103,5 @@ class GPT2GrammarQuality(MetricBase):
             data_record: ignored.
             paraphrase_field: ignored.
         """
-        ppl = self._get_ppl(origin, paraphrase)
+        ppl = self._get_ppl([origin, paraphrase])
         return float(ppl[1] / ppl[0])

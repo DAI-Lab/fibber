@@ -15,21 +15,37 @@ from fibber.paraphrase_strategies.lm import get_lm
 logger = log.setup_custom_logger(__name__)
 
 POST_PROCESSING_PATTERN = [
-    (r"\s?'\s?t\s", "'t "),
-    (r"\s?'\s?s\s", "'s "),
-    (r"\s?'\s?ve\s", "'ve "),
-    (r"\s?'\s?ll\s", "'ll "),
+    (r"\s+n\s", "n "),
+    (r"\s*'\s*t\s", "'t "),
+    (r"\s*'\s*s\s", "'s "),
+    (r"\s*'\s*ve\s", "'ve "),
+    (r"\s*'\s*ll\s", "'ll "),
+    (r"\s*n't\s", "n't "),
+    (r"- -", "--"),
+    (r"\s*([\.,?!])", r"\1"),
+    (r"\s+-\s+", "-"),
+]
+
+PRE_PROCESSING_PATTERN = [
+    (r"can't\s", r" cannot "),
+    (r"won't\s", r" will not "),
+    (r"n't\s", r" not "),
+    (r"'ll\s", r" will "),
+    (r"'ve\s", r" have "),
 ]
 
 AUTO_SENTENCE_LEN_THRESHOLD = 50  # 50 words
 
-def post_process_text(text):
+STATS_TOTAL = 0
+STATS_ACCEPT = 0
+
+def process_text(text, patterns):
     """Postprocessing the text using regex patterns.
 
     Args:
         text (str): the str to be post processed.
     """
-    for pattern in POST_PROCESSING_PATTERN:
+    for pattern in patterns:
         text = re.sub(pattern[0], pattern[1], text)
     return text
 
@@ -41,9 +57,9 @@ def tostring(tokenizer, seq):
         tokenizer (transformers.BertTokenizer): a BERT tokenizer.
         seq (list): a list-like sequence of word ids.
     """
-    return post_process_text(
+    return process_text(
         tokenizer.convert_tokens_to_string(
-            tokenizer.convert_ids_to_tokens(seq)))
+            tokenizer.convert_ids_to_tokens(seq)), POST_PROCESSING_PATTERN)
 
 
 def sample_word_from_logits(logits, temperature=1., top_k=0):
@@ -99,6 +115,31 @@ def estimate_p(tokenizer, origin, batch_tensor, pos, pos_ed, idxs, use_metric,
     use_semantic_similarity = use_metric.measure_batch(origin, sentences)
     return -use_smoothing * (
         np.maximum(use_threshold - np.asarray(use_semantic_similarity), 0) ** 2)
+
+def estimate_p2(tokenizer, origin, batch_tensor, pos, pos_ed, idxs, use_metric,
+               use_threshold, use_smoothing, ppl_metric, ppl_smoothing):
+    """Estimate the unnormalized log pobability of a sentence, to be valid paraphrase.
+
+    Args:
+        tokenizer (transformers.BertTokenizer): a bert tokenizer.
+        origin (str): original text.
+        batch_tensor (np.array): tensor of a batch of text with size ``(batch_size, L)``.
+        pos (int): the position to replace. Note that ``batch_tensor[:, pos]`` is not used.
+        idxs (np.array): word ids with size ``(batch_size,)``.
+        use_metric (USESemanticSimilarity): a universal sentence encoder metric object.
+        use_threshold (float): the universal sentence encoder similarity threshold.
+        use_smoothing (float): the smoothing parameter for the criteria.
+
+    Returns:
+        (np.array): a numpy array of size ``(batch_size,)``. All entries ``<=0``.
+    """
+    batch_tensor[:, pos:pos_ed] = idxs
+    sentences = [tostring(tokenizer, x) for x in batch_tensor]
+    use_semantic_similarity = use_metric.measure_batch(origin, sentences)
+    ppl_ratio = ppl_metric.measure_batch(origin, sentences)
+    return (-use_smoothing * (
+        np.maximum(use_threshold - np.asarray(use_semantic_similarity), 0) ** 2)
+        -ppl_smoothing * np.maximum(np.asarray(ppl_ratio - 1), 0) ** 2)
 
 
 def relative_similarity_accept_criteria(tokenizer, origin, batch_tensor, pos, pos_ed, previous_idxs, candidate_idxs,
@@ -175,11 +216,12 @@ def relative_similarity_and_clf_accept_criteria(
         context = [tokenizer.cls_token_id] + tokenizer.convert_tokens_to_ids(tokenizer.tokenize(data_record["text0"]))
         context = np.asarray([context] * batch_tensor.shape[0], dtype="int64")
         l1 = context.shape[1]
-        batch_tensor[0] = tokenizer.sep_token_id
+        batch_tensor[:, 0] = tokenizer.sep_token_id
         batch_tensor = np.concatenate([context, batch_tensor], axis=1)
         tok_type = np.zeros_like(batch_tensor)
         tok_type[l1+1:] = 1
         pos += l1
+        pos_ed += l1
     else:
         assert field_name == "text0"
         tok_type = np.zeros_like(batch_tensor)
@@ -222,6 +264,95 @@ def relative_similarity_and_clf_accept_criteria(
     accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
     idxs = candidate_idxs * accept.reshape(-1, 1) + previous_idxs * (1 - accept.reshape(-1, 1))
     return idxs
+
+
+def relative_similarity_and_ppl_and_clf_accept_criteria(
+    tokenizer, origin, batch_tensor, pos, pos_ed, previous_idxs, candidate_idxs,
+    use_metric, use_threshold, use_smoothing, weight, clf_metric, label, clf_weight,
+    field_name, data_record, ppl_metric, ppl_smoothing, **kargs):
+    """Accept or reject candidate word using the similarity as criteria.
+
+    Args:
+        tokenizer (transformers.BertTokenizer): a bert tokenizer.
+        origin (str): original text.
+        batch_tensor (torch.Tensor): tensor of a batch of text with size ``(batch_size, L)``.
+        pos (int): the position to replace. Note that ``batch_tensor[:, pos]`` is not used.
+        previous_idxs (torch.Tensor): word ids before current step of sampling with
+            size ``(batch_size,)``.
+        candidate_idxs (torch.Tensor): proposed word ids in this sampling step with
+            size ``(batch_size,)``.
+        use_metric (USESemanticSimilarity): a universal sentence encoder metric object.
+        use_threshold (float): the universal sentence encoder similarity threshold.
+        use_smoothing (float): the smoothing parameter for the criteria.
+
+    Returns:
+        (np.array): a 1-D int array of size `batch_size`. Each entry ``i`` is either
+            ``previous_idxs[i]`` if rejected, or ``candidate_idxs[i]`` if accepted.
+    """
+    global STATS_TOTAL
+    global STATS_ACCEPT
+    batch_tensor = batch_tensor.detach().cpu().numpy()
+    previous_idxs = previous_idxs.detach().cpu().numpy()
+    candidate_idxs = candidate_idxs.detach().cpu().numpy()
+    if weight == 0:
+        return candidate_idxs
+
+    if field_name == "text1":
+        context = [tokenizer.cls_token_id] + tokenizer.convert_tokens_to_ids(tokenizer.tokenize(data_record["text0"]))
+        context = np.asarray([context] * batch_tensor.shape[0], dtype="int64")
+        l1 = context.shape[1]
+        batch_tensor[:, 0] = tokenizer.sep_token_id
+        batch_tensor = np.concatenate([context, batch_tensor], axis=1)
+        tok_type = np.zeros_like(batch_tensor)
+        tok_type[l1+1:] = 1
+        pos += l1
+        pos_ed += l1
+    else:
+        assert field_name == "text0"
+        tok_type = np.zeros_like(batch_tensor)
+
+
+
+    unnormalized_log_p_candidate = estimate_p2(
+        tokenizer, origin, batch_tensor, pos, pos_ed, candidate_idxs,
+        use_metric, use_threshold, weight * use_smoothing, ppl_metric, weight * ppl_smoothing)
+
+    batch_tensor[:, pos:pos_ed] = candidate_idxs
+    clf_pred_candidate = F.log_softmax(
+        clf_metric._model(torch.tensor(batch_tensor).to(clf_metric._device),
+                            token_type_ids=torch.tensor(tok_type).to(clf_metric._device)
+        )[0], dim=-1).detach().cpu().numpy()
+
+    unnormalized_log_p_previous = estimate_p2(
+        tokenizer, origin, batch_tensor, pos, pos_ed, previous_idxs,
+        use_metric, use_threshold, weight * use_smoothing, ppl_metric, weight * ppl_smoothing)
+
+    batch_tensor[:, pos:pos_ed] = previous_idxs
+    clf_pred_previous = F.log_softmax(
+        clf_metric._model(torch.tensor(batch_tensor).to(clf_metric._device),
+            token_type_ids=torch.tensor(tok_type).to(clf_metric._device)
+        )[0], dim=-1).detach().cpu().numpy()
+
+    def score(x):
+        correct_pred = (x[:, label]).copy()
+        x[:, label] = -1e8
+        next_max = np.max(x, axis=1)
+        return np.minimum(next_max - correct_pred, 0)
+
+    log_alpha_1 = (np.asarray(unnormalized_log_p_candidate < use_threshold, dtype="float32")
+        * np.asarray(unnormalized_log_p_candidate < unnormalized_log_p_previous, dtype="float32")
+        * unnormalized_log_p_candidate)
+    log_alpha_2 = weight * clf_weight * (score(clf_pred_candidate) - score(clf_pred_previous))
+
+    alpha = np.exp(log_alpha_1 + log_alpha_2)
+
+    accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
+
+    STATS_TOTAL += len(accept)
+    STATS_ACCEPT += np.sum(accept)
+    idxs = candidate_idxs * accept.reshape(-1, 1) + previous_idxs * (1 - accept.reshape(-1, 1))
+    return idxs
+
 
 def none_constraint(**kargs):
     return 0
@@ -267,7 +398,8 @@ class BertBlockSamplingStrategy(StrategyBase):
         ("stanza_port", int, 9000, "stanza port"),
         ("lm_option", str, "pretrain", "choose from pretrain, finetune, adv."),
         ("lm_steps", int, 5000, "lm training steps."),
-        ("clf_weight", float, 10, "weight for the clf score in the criteria.")
+        ("clf_weight", float, 10, "weight for the clf score in the criteria."),
+        ("ppl_smoothing", float, 1, "the smoothing parameter for ppl."),
     ]
 
     def __repr__(self):
@@ -313,6 +445,7 @@ class BertBlockSamplingStrategy(StrategyBase):
         # find the use metric
         self._use_metric = self._metric_bundle.get_metric("USESemanticSimilarity")
         self._clf_metric = self._metric_bundle.get_metric("BertClfPrediction")
+        self._ppl_metric = self._metric_bundle.get_metric("GPT2GrammarQuality")
 
         # load word piece embeddings.
         wpe = get_wordpiece_emb(self._output_dir, self._dataset_name, trainset, self._device)
@@ -332,6 +465,8 @@ class BertBlockSamplingStrategy(StrategyBase):
             self._accept_fn = relative_similarity_accept_criteria
         elif self._strategy_config["accept_criteria"] == "relative_similarity_and_clf":
             self._accept_fn = relative_similarity_and_clf_accept_criteria
+        elif self._strategy_config["accept_criteria"] == "relative_similarity_and_ppl_and_clf_accept":
+            self._accept_fn = relative_similarity_and_ppl_and_clf_accept_criteria
         elif self._strategy_config["accept_criteria"] == "scmh":
             self._accept_fn = scmh_accept_criteria
         else:
@@ -448,7 +583,9 @@ class BertBlockSamplingStrategy(StrategyBase):
                 label=data_record["label"],
                 clf_weight=self._strategy_config["clf_weight"],
                 field_name=field_name,
-                data_record=data_record)
+                data_record=data_record,
+                ppl_metric=self._ppl_metric,
+                ppl_smoothing=self._strategy_config["ppl_smoothing"])
 
             batch_tensor[:, kk:kk_ed] = torch.tensor(final_idxs).to(self._device)
 
@@ -456,11 +593,15 @@ class BertBlockSamplingStrategy(StrategyBase):
         return [tostring(self._tokenizer, x[1:-1]) for x in batch_tensor]
 
     def paraphrase_example(self, data_record, field_name, n):
+        global STATS_TOTAL
+        global STATS_ACCEPT
+
         if self._strategy_config["lm_option"] == "adv":
             self._bert_lm = self._bert_lms[data_record["label"]]
             self._bert_lm.to(self._device)
 
         clipped_text = " ".join(data_record[field_name].split()[:200])
+        clipped_text = process_text(clipped_text, PRE_PROCESSING_PATTERN)
         batch_size = self._strategy_config["batch_size"]
 
         sentences = []
@@ -524,4 +665,7 @@ class BertBlockSamplingStrategy(StrategyBase):
 
         if self._strategy_config["lm_option"] == "adv":
             self._bert_lm.to(torch.device("cpu"))
+
+        if STATS_TOTAL > 0:
+            logger.info("Aggregated accept rate: %.2lf%%.", STATS_ACCEPT / STATS_TOTAL * 100)
         return sentences[:n]
