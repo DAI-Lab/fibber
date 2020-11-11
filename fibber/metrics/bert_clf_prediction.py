@@ -281,10 +281,12 @@ class BertClfPrediction(MetricBase):
             (np.array): a numpy array of the unnormalized log probability over on each category.
         """
         if context is None:
-            batch_input = self._tokenizer(text=text, padding=True, max_length=200)
+            batch_input = self._tokenizer(text=text, padding=True, max_length=200,
+            truncation=True)
         else:
             batch_input = self._tokenizer(
-                text=text, text_pair=[context] * len(text), padding=True, max_length=200)
+                text=text, text_pair=[context] * len(text), padding=True, max_length=200,
+                truncation=True)
 
         return F.log_softmax(self._model(
             input_ids=torch.tensor(batch_input["input_ids"]).to(self._device),
