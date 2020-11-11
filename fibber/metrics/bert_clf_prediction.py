@@ -4,11 +4,11 @@ import os
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 import tqdm
 import transformers
 from torch.utils.tensorboard import SummaryWriter
-from transformers import BertForSequenceClassification, BertTokenizer
-import torch.nn.functional as F
+from transformers import BertForSequenceClassification, BertTokenizerFast
 
 from fibber import get_root_dir, log
 from fibber.datasets import DatasetForBert
@@ -244,7 +244,7 @@ class BertClfPrediction(MetricBase):
             logger.info(
                 "Use uncased model in BERT classifier prediction metric.")
 
-        self._tokenizer = BertTokenizer.from_pretrained(model_init)
+        self._tokenizer = BertTokenizerFast.from_pretrained(model_init)
         if bert_gpu_id == -1:
             logger.warning("BERT metric is running on CPU.")
             self._device = torch.device("cpu")
@@ -268,79 +268,64 @@ class BertClfPrediction(MetricBase):
             bert_clf_val_steps=bert_clf_val_steps,
             device=self._device)
 
-    def predict_raw(self, text0, text1):
-        """Get unnormalized log probability of the BERT prediction.
+    def predict_dist_batch(self, text, context):
+        """Get log probability of the BERT prediction.
 
         Args:
-            text0 (str):
-                On regular classification datasets, text0 contains the text to be classified.
-                On NLI datasets, text0 contains the premise.
-            text1 (str or None):
-                On regular classification datasets, text0 is None.
-                On NLI datasets, text1 contains the hypothesis.
+            text ([str]): a list of strs to be classified.
+            context (str or None):
+                On regular classification datasets, context is None.
+                On NLI datasets, context contains the premise.
 
         Returns:
             (np.array): a numpy array of the unnormalized log probability over on each category.
         """
-        if text1 is None:
-            seq = ["[CLS]"] + self._tokenizer.tokenize(text0) + ["[SEP]"]
-            seq_tensor = torch.tensor(self._tokenizer.convert_tokens_to_ids(seq)).to(self._device)
-            seq_tensor = seq_tensor[:200]
-            return F.log_softmax(self._model(seq_tensor.unsqueeze(0))[0],
-                                 dim=-1)[0].detach().cpu().numpy()
+        if context is None:
+            batch_input = self._tokenizer(text=text, padding=True, max_length=200)
         else:
-            seq0 = self._tokenizer.tokenize(text0) + ["[SEP]"]
-            seq1 = self._tokenizer.tokenize(text1) + ["[SEP]"]
-            l0 = len(seq0)
-            l1 = len(seq1)
-            seq_tensor = torch.tensor(
-                self._tokenizer.convert_tokens_to_ids(["[CLS]"] + seq0 + seq1)
-            ).to(self._device).unsqueeze(0)
-            tok_type = torch.tensor(
-                [0] * (l0 + 1) + [1] * l1).to(self._device).unsqueeze(0)
-            seq_tensor = seq_tensor[:, :200]
-            tok_type = tok_type[:, :200]
-            return F.log_softmax(self._model(seq_tensor, token_type_ids=tok_type)[0],
-                                 dim=-1)[0].detach().cpu().numpy()
+            batch_input = self._tokenizer(
+                text=text, text_pair=[context] * len(text), padding=True, max_length=200)
 
+        return F.log_softmax(self._model(
+            input_ids=torch.tensor(batch_input["input_ids"]).to(self._device),
+            token_type_ids=torch.tensor(batch_input["token_type_ids"]).to(self._device),
+            attention_mask=torch.tensor(batch_input["attention_mask"]).to(self._device)
+        )[0], dim=1).detach().cpu().numpy()
 
-    def predict_raw_batch(self, text0, text1):
-        if text1 is None:
-            seq = [["[CLS]"] + self._tokenizer.tokenize(x)[:200] + ["[SEP]"] for x in text0]
-            seq_len = [len(x) for x in seq]
-            max_len = max(seq_len)
-            seq = [x + ["[SEQ]"] * (max_len - y) for x, y in zip(seq, seq_len)]
-
-            mask = [[1] * x + [0] * (max_len - x) for x in seq_len]
-
-            seq_tensor = torch.tensor(
-                [self._tokenizer.convert_tokens_to_ids(x) for x in seq]).to(self._device)
-            mask_tensor = torch.tensor(mask).to(self._device)
-
-            return F.log_softmax(self._model(seq_tensor, mask_tensor)[0], dim=1).detach().cpu().numpy()
-        else:
-            assert 0
-
-    def predict(self, text0, text1):
+    def predict_batch(self, text, context):
         """Get the prediction of the BERT prediction.
 
         Args:
-            text0 (str):
-                On regular classification datasets, text0 contains the text to be classified.
-                On NLI datasets, text0 contains the premise.
-            text1 (str or None):
-                On regular classification datasets, text0 is None.
-                On NLI datasets, text1 contains the hypothesis.
+            text ([str]): a list of strs to be classified.
+            context (str or None):
+                On regular classification datasets, context is None.
+                On NLI datasets, context contains the premise.
 
         Returns:
-            (int): the prediction of the classifier.
+            (np.array): the prediction of the classifier.
         """
 
-        return int(np.argmax(self.predict_raw(text0, text1)))
+        return np.argmax(self.predict_dist_batch(text=text, context=context), axis=1)
+
+    def measure_batch(self, origin, paraphrases, data_record=None, paraphrase_field="text0"):
+        """Measure the metric on a batch of paraphrases.
+
+        Args:
+            origin (str): the original text.
+            paraphrases (list): a set of paraphrases.
+            data_record (dict): the corresponding data record of original text.
+            paraphrase_field (str): the field name to paraphrase.
+
+        Returns:
+            (list): a list containing the metric for each paraphrase.
+        """
+        res = self.predict_batch(paraphrases,
+                                 data_record["text0"] if paraphrase_field == "text1" else None)
+        return [int(x) for x in res]
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         if paraphrase_field == "text0":
-            return self.predict(paraphrase, None)
+            return int(self.predict_batch([paraphrase], None)[0])
         else:
             assert paraphrase_field == "text1"
-            return self.predict(data_record["text0"], paraphrase)
+            return int(self.predict_batch([paraphrase], data_record["text0"])[0])

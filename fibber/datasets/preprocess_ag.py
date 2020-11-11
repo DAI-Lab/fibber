@@ -1,8 +1,8 @@
 import json
+import re
 
 import pandas as pd
 import tqdm
-import re
 
 from fibber import log
 from fibber.datasets.preprocess_utils import download_raw_and_preprocess
@@ -76,6 +76,7 @@ def download_and_preprocess_ag():
         preprocess_input_output_list=[
             ("raw/train.csv", "train.json"),
             ("raw/test.csv", "test.json")])
+
 
 if __name__ == "__main__":
     download_and_preprocess_ag()

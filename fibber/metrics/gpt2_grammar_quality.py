@@ -7,7 +7,7 @@ sentence.
 import numpy as np
 import torch
 import torch.nn.functional as F
-from transformers import GPT2LMHeadModel, GPT2Tokenizer
+from transformers import GPT2LMHeadModel, GPT2TokenizerFast
 
 from fibber import log
 from fibber.metrics.metric_base import MetricBase
@@ -47,7 +47,7 @@ class GPT2GrammarQuality(MetricBase):
         super(GPT2GrammarQuality, self).__init__()
 
         logger.info("load gpt2 model.")
-        self._tokenizer = GPT2Tokenizer.from_pretrained(gpt2_pretrained_model)
+        self._tokenizer = GPT2TokenizerFast.from_pretrained(gpt2_pretrained_model)
         if gpt2_gpu_id == -1:
             logger.warning("GPT2 metric is running on CPU.")
             self._device = torch.device("cpu")

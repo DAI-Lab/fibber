@@ -1,7 +1,6 @@
 import copy
 import datetime
 import json
-import re
 
 import torch
 import tqdm
@@ -9,7 +8,6 @@ import tqdm
 from fibber import log
 
 logger = log.setup_custom_logger(__name__)
-
 
 
 class StrategyBase(object):

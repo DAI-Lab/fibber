@@ -109,7 +109,6 @@ class MetricBundle(object):
         assert metric_name in self._metrics
         return self._metrics[metric_name]
 
-
     def get_classifier_for_attack(self):
         """Returns the classifier for attack."""
         return self.get_metric("BertClfPrediction")
@@ -216,7 +215,7 @@ def aggregate_metrics(dataset_name, paraphrase_strategy_name, experiment_name, r
 
         aggregated_result = aggregated_result.append(aggregate_result_tmp, ignore_index=True)
 
-    aggregated_result = dict(aggregated_result.mean())
+    aggregated_result = dict(aggregated_result.mean(skipna=True))
     # hack column order by adding 0
     aggregated_result["0_dataset_name"] = dataset_name
     aggregated_result["1_paraphrase_strategy_name"] = paraphrase_strategy_name

@@ -47,7 +47,7 @@ import os
 import numpy as np
 import torch
 import tqdm
-from transformers import BertTokenizer
+from transformers import BertTokenizerFast
 
 from fibber import get_root_dir, log
 from fibber.datasets.downloadable_datasets import downloadable_dataset_urls
@@ -259,7 +259,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
         self._data = [[] for i in range(len(self._buckets))]
 
         self._batch_size = batch_size
-        self._tokenizer = BertTokenizer.from_pretrained(model_init)
+        self._tokenizer = BertTokenizerFast.from_pretrained(model_init)
 
         self._seed = seed
         self._pad_tok_id = self._tokenizer.pad_token_id
@@ -335,7 +335,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 masked_pos[:, 0] = 0
                 lm_labels = (masked_pos * texts - 100 * (1 - masked_pos))
                 rand_t = self._rng.rand(self._batch_size, max_text_len)
-                filling = self._rng.randint(0, len(self._tokenizer),
+                filling = self._rng.randint(0, self._tokenizer.vocab_size,
                                             (self._batch_size, max_text_len))
                 filling = ((rand_t < 0.8) * self._mask_tok_id
                            + (rand_t >= 0.8) * (rand_t < 0.9) * filling

@@ -73,7 +73,6 @@ class USESemanticSimilarity(MetricBase):
         assert abs(sim[0] - 1) < 1e-4
         return list(sim)[1:]
 
-
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the cosine similarity between the embedding of original text and paraphrased
         text.

@@ -10,32 +10,6 @@ from fibber.paraphrase_strategies.strategy_base import StrategyBase
 logger = log.setup_custom_logger(__name__)
 
 
-def tostring(tokenizer, seq):
-    """Convert token ids to a string.
-
-    Args:
-        tokenizer (object): a Bert tokenizer object.
-        seq (list): a list or a numpy array of ints, representing a sequence of word ids.
-
-    Returns:
-        (str): the text represented by seq.
-    """
-    return tokenizer.convert_tokens_to_string(
-        tokenizer.convert_ids_to_tokens(seq))
-
-
-def compute_clf(clf_model, seq_tensor, tok_type):
-    """Get the prediction label of a sentence.
-
-    Args:
-        clf_model (object): a Bert classification model.
-        seq_tensor (object): a 1-D int tensor representing the text.
-        tok_type (object): a 1-D int tensor with the same length as seq_tensor.
-    """
-    return clf_model(seq_tensor.unsqueeze(0), token_type_ids=tok_type.unsqueeze(0)
-                     )[0].argmax(dim=1)[0].detach().cpu().numpy()
-
-
 class CLFModel(ModelWrapper):
     """A classifier wrapper for textattack package."""
 
@@ -45,13 +19,8 @@ class CLFModel(ModelWrapper):
         self._context = None
 
     def __call__(self, text_list):
-        res = []
-        for item in text_list:
-            if self._context is not None:
-                res.append(self._clf_metric.predict_raw(self._context, item))
-            else:
-                res.append(self._clf_metric.predict_raw(item, None))
-        return res
+        ret = self._clf_metric.predict_dist_batch(text_list, self._context)
+        return ret
 
     def set_context(self, context):
         self._context = context
@@ -74,6 +43,8 @@ class TextFoolerStrategy(StrategyBase):
 
     This strategy always returns one paraphrase for one data record, regardless of `n`.
     """
+
+    __abbr__ = "tf"
 
     def fit(self, trainset):
         self._model = CLFModel(self._metric_bundle.get_classifier_for_attack())

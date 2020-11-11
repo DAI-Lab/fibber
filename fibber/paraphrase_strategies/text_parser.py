@@ -1,8 +1,11 @@
-from stanza.server import CoreNLPClient
 import random
 import re
 
+from stanza.server import CoreNLPClient
+
 # get all phrases from a sentence
+
+
 def generate_phrases_by_dfs(node, level, phrase_level, result):
     if len(node.child) == 0:
         # if current node is leaf
@@ -20,8 +23,10 @@ def generate_phrases_by_dfs(node, level, phrase_level, result):
         result.append(phrase)
     return phrase
 
+
 def preprocess(x):
     return re.sub(r"([.,?:!])([^\s])", r"\1 \2", x)
+
 
 class TextParser(object):
     """TextParser uses stanford core nlp tool to parse text."""

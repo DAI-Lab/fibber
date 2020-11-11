@@ -18,12 +18,14 @@ def write_summary(stats, summary, global_step):
     summary.add_scalar("attack/loss_lm", np.mean(stats["lm_loss"]), global_step)
     summary.add_scalar("attack/error_lm", 1 - stats["lm_correct"] / stats["lm_total"], global_step)
 
+
 def new_stats():
     return {
         "lm_total": 0,
         "lm_correct": 0,
         "lm_loss": [],
     }
+
 
 def compute_lm_loss(lm_model, seq, mask, tok_type, lm_label, stats):
     lm_hid = lm_model.bert(seq, mask, tok_type)[0]
@@ -45,8 +47,8 @@ def compute_lm_loss(lm_model, seq, mask, tok_type, lm_label, stats):
 
 
 def get_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
-                lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
-                lm_period_summary=100, lm_period_save=5000):
+           lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
+           lm_period_summary=100, lm_period_save=5000):
     if filter == -1:
         output_dir_t = os.path.join(output_dir, "lm_all")
     else:
