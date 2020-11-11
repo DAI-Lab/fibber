@@ -48,7 +48,7 @@ class USESemanticSimilarity(MetricBase):
             logger.warning("Universal sentence encoder is using CPU.")
         else:
             logger.info("Universal sentence encoder metric is using GPU %d.", use_gpu_id)
-        module_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
+        module_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
         self.model = hub.load(module_url)
         log.remove_logger_tf_handler(logger)   # tensorflow_hub mess up the python logging
 

@@ -42,10 +42,11 @@ def editing_distance_element_fn(x):
     return editing_distance_metric.measure_example(x[0], x[1])
 
 
+pool = Pool(8)
+
 def pairwise_editing_distance_fn(data_record):
     """Compute the average pairwise editing distance metric."""
-    pool = Pool(8)
-
+    global pool
     paraphrases = None
     for k, v in data_record.items():
         if k in ["text0_paraphrases", "text1_paraphrases"]:
@@ -70,7 +71,7 @@ def get_best_adv_by_sim(data_record):
             example is found.
     """
     if data_record["original_text_metrics"]["BertClfPrediction"] != data_record["label"]:
-        return None, None
+        return None
     best_score = -1
     best_metrics = None
     for metrics in data_record["paraphrase_metrics"]:
@@ -94,7 +95,7 @@ def get_best_adv_by_ppl(data_record):
             example is found.
     """
     if data_record["original_text_metrics"]["BertClfPrediction"] != data_record["label"]:
-        return None, None
+        return None
     best_score = 1e8
     best_metrics = None
     for metrics in data_record["paraphrase_metrics"]:
@@ -139,7 +140,7 @@ customized_metric_aggregation_fn_dict = {
     "best_sim_adv_GPT2GrammarQuality":
         get_best_adv_metric_fn(get_best_adv_by_sim, "GPT2GrammarQuality"),
     "best_sim_adv_USESemanticSimilarity":
-        get_best_adv_metric_fn(get_best_adv_by_sim, "GPT2GrammarQuality"),
+        get_best_adv_metric_fn(get_best_adv_by_sim, "USESemanticSimilarity"),
     "best_sim_adv_EditingDistance":
         get_best_adv_metric_fn(get_best_adv_by_sim, "EditingDistance"),
     "best_sim_adv_GloveSemanticSimilarity":
@@ -147,7 +148,7 @@ customized_metric_aggregation_fn_dict = {
     "best_ppl_adv_GPT2GrammarQuality":
         get_best_adv_metric_fn(get_best_adv_by_ppl, "GPT2GrammarQuality"),
     "best_ppl_adv_USESemanticSimilarity":
-        get_best_adv_metric_fn(get_best_adv_by_ppl, "GPT2GrammarQuality"),
+        get_best_adv_metric_fn(get_best_adv_by_ppl, "USESemanticSimilarity"),
     "best_ppl_adv_EditingDistance":
         get_best_adv_metric_fn(get_best_adv_by_ppl, "EditingDistance"),
     "best_ppl_adv_GloveSemanticSimilarity":

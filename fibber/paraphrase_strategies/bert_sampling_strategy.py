@@ -95,7 +95,7 @@ def all_accept_criteria(candidate_ids, stats, **kargs):
     """
     stats["accept"] += len(candidate_ids)
     stats["all"] += len(candidate_ids)
-    return candidate_ids.detach().cpu().numpy(), None
+    return candidate_ids, None
 
 
 def use_criteria_score(origin, paraphrases, use_metric, use_threshold, use_weight):
@@ -144,7 +144,8 @@ def bert_criteria_score(paraphrases, context, label, bert_metric, bert_weight):
 def joint_weighted_criteria(
         tokenizer, data_record, field_name, origin, batch_tensor,
         pos_st, pos_ed, previous_ids, candidate_ids, use_metric, use_threshold, use_weight,
-        bert_metric, bert_weight, gpt2_metric, gpt2_weight, burnin_weight, stats, state, **kargs):
+        bert_metric, bert_weight, gpt2_metric, gpt2_weight, burnin_weight, stats, state,
+        device, **kargs):
     """Accept or reject candidate word using the joint weighted criteria.
 
     Args:
@@ -169,6 +170,7 @@ def joint_weighted_criteria(
         burnin_weight (float): the discount factor.
         stats (dict): a dict to keep track the accept rate.
         state (np.array): the state is criteria score from the previous iteration.
+        device (torch.Device): the device that batch_tensor is on.
     Returns:
         (np.array, np.array)
             - a 2-D int array of size ``batch_size, pos_ed - pos_st``. Each row ``i`` is
@@ -176,15 +178,12 @@ def joint_weighted_criteria(
             - a 1-D float array of criteria score.
 
     """
-    batch_tensor = batch_tensor.detach().cpu().numpy()
-    previous_ids = previous_ids.detach().cpu().numpy()
-    candidate_ids = candidate_ids.detach().cpu().numpy()
     if burnin_weight == 0:
         return candidate_ids
 
     def compute_criteria_score(fill_ids):
         batch_tensor[:, pos_st:pos_ed] = fill_ids
-        paraphrases = [tostring(tokenizer, x) for x in batch_tensor]
+        paraphrases = [tostring(tokenizer, x) for x in batch_tensor.detach().cpu().numpy()]
         return (gpt2_criteria_score(origin=origin, paraphrases=paraphrases,
                                     gpt2_metric=gpt2_metric, gpt2_weight=gpt2_weight)
                 + use_criteria_score(origin=origin, paraphrases=paraphrases, use_metric=use_metric,
@@ -207,8 +206,9 @@ def joint_weighted_criteria(
 
     stats["accept"] += np.sum(accept)
     stats["all"] += len(accept)
-    ids = candidate_ids * accept.reshape(-1, 1) + previous_ids * (1 - accept.reshape(-1, 1))
     state = candidate_criteria_score * accept + previous_criteria_score * (1 - accept)
+    accept = torch.tensor(accept).to(device)
+    ids = candidate_ids * accept.reshape(-1, 1) + previous_ids * (1 - accept.reshape(-1, 1))
     return ids, state
 
 
@@ -433,12 +433,11 @@ class BertSamplingStrategy(StrategyBase):
                 bert_metric=self._clf_metric, bert_weight=self._strategy_config["clf_weight"],
                 gpt2_metric=self._gpt2_metric, gpt2_weight=self._strategy_config["gpt2_weight"],
                 burnin_weight=decision_fn_burnin_weight, stats=self._stats,
-                state=decision_fn_state)
+                state=decision_fn_state, device=self._device)
 
-            batch_tensor[:, pos_st:pos_ed] = torch.tensor(final_ids).to(self._device)
+            batch_tensor[:, pos_st:pos_ed] = final_ids
 
-        batch_tensor = batch_tensor.detach().cpu().numpy()
-        return [tostring(self._tokenizer, x[1:-1]) for x in batch_tensor]
+        return [tostring(self._tokenizer, x[1:-1]) for x in batch_tensor.detach().cpu().numpy()]
 
     def paraphrase_example(self, data_record, field_name, n):
         if self._strategy_config["lm_option"] == "adv":

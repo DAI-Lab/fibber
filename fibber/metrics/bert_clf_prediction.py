@@ -191,7 +191,7 @@ def load_or_train_bert_clf(model_init,
         if global_step % bert_clf_period_save == 0 or global_step == bert_clf_steps:
             model.eval()
             model.to(torch.device("cpu"))
-            ckpt = os.path.join(model_dir, model_init + "-%04dk.pt" % (bert_clf_steps // 1000))
+            ckpt = os.path.join(model_dir, model_init + "-%04dk.pt" % (global_step // 1000))
             torch.save(model, ckpt)
             logger.info("BERT classifier saved at %s.", ckpt)
             model.to(device)
