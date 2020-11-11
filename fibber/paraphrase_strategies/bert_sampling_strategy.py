@@ -8,10 +8,10 @@ from torch.nn import functional as F
 from transformers import BertForMaskedLM, BertTokenizerFast
 
 from fibber import log
-from fibber.paraphrase_strategies.lm import get_lm
+from fibber.paraphrase_strategies.bert_sampling_utils_lm import get_lm
+from fibber.paraphrase_strategies.bert_sampling_utils_text_parser import TextParser
+from fibber.paraphrase_strategies.bert_sampling_utils_wpe import get_wordpiece_emb
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
-from fibber.paraphrase_strategies.text_parser import TextParser
-from fibber.paraphrase_strategies.wordpiece_emb import get_wordpiece_emb
 
 logger = log.setup_custom_logger(__name__)
 

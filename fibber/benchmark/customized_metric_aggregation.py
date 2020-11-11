@@ -44,6 +44,7 @@ def editing_distance_element_fn(x):
 
 pool = Pool(8)
 
+
 def pairwise_editing_distance_fn(data_record):
     """Compute the average pairwise editing distance metric."""
     global pool

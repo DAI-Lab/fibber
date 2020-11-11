@@ -282,7 +282,7 @@ class BertClfPrediction(MetricBase):
         """
         if context is None:
             batch_input = self._tokenizer(text=text, padding=True, max_length=200,
-            truncation=True)
+                                          truncation=True)
         else:
             batch_input = self._tokenizer(
                 text=text, text_pair=[context] * len(text), padding=True, max_length=200,
