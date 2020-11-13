@@ -158,5 +158,9 @@ customized_metric_aggregation_fn_dict = {
 
 customized_metric_for_nun_wins = [
     ("3_ParaphraseAcc_use0.90_ppl2", "L"),
-    ("4_ParaphraseAcc_use0.85_ppl5", "L")
+    ("4_ParaphraseAcc_use0.85_ppl5", "L"),
+    ("best_sim_adv_USESemanticSimilarity", "H"),
+    ("best_sim_adv_GPT2GrammarQuality", "L"),
+    ("best_ppl_adv_USESemanticSimilarity", "H"),
+    ("best_ppl_adv_GPT2GrammarQuality", "L"),
 ]

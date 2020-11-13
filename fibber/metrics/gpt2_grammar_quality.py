@@ -70,7 +70,8 @@ class GPT2GrammarQuality(MetricBase):
         toks_input = torch.tensor(toks_input).to(self._device)
         toks_output = torch.tensor(toks_output).to(self._device)
 
-        logits = self._model(toks_input, attention_mask=mask)[0]
+        with torch.no_grad():
+            logits = self._model(toks_input, attention_mask=mask)[0]
 
         logpw = torch.gather(F.log_softmax(logits, dim=-1), dim=-1,
                              index=toks_output.unsqueeze(dim=2)).squeeze(dim=2)
