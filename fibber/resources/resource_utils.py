@@ -23,7 +23,7 @@ def load_glove_model(glove_file, dim):
             "id2tok": a list of strings.
             "tok2id": a dict that maps word (string) to its id.
     """
-    glove_file_lines = open(glove_file, 'r').readlines()
+    glove_file_lines = open(glove_file, "r", encoding="utf8").readlines()
 
     emb_table = np.zeros((len(glove_file_lines), dim), dtype='float32')
     id_to_tok = []
@@ -113,11 +113,11 @@ def get_universal_sentence_encoder():
     data_dir = get_root_dir()
     data_dir = os.path.join(data_dir, "common", "tfhub_pretrained",
                             "universal-sentence-encoder-large_5")
-    if not os.path.exists(os.path.join(data_dir, "universal-sentence-encoder-large_5")):
+    if not os.path.exists(data_dir):
         download_file(subdir=os.path.join(data_dir),
                       **downloadable_resource_urls["universal-sentence-encoder"])
 
-    return os.path.join(data_dir, "universal-sentence-encoder-large_5")
+    return data_dir
 
 
 def get_corenlp():

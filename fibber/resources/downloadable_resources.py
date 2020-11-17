@@ -30,7 +30,7 @@ downloadable_resource_urls = {
     "universal-sentence-encoder": {
         "filename": "universal-sentence-encoder-large_5.tar.gz",
         "url": "https://fibber-data.s3.amazonaws.com/universal-sentence-encoder-large_5.tar.gz",
-        "md5": "398bbed6dd3ebb0752fe0735d1c418fe",
+        "md5": "1ffeec98147fd21cc2d5627ec09f0d57",
         "untar": True,
         "unzip": False,
     },
