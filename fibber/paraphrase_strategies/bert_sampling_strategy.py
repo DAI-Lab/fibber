@@ -261,8 +261,6 @@ class BertSamplingStrategy(StrategyBase):
         ("seed_option", str, "origin", ("the option for seed sentences in generation. "
                                         "choose from [origin, auto].")),
         ("split_sentence", str, "0", "split paragraph to sentence. options are [0, 1, auto]."),
-        ("sentence_len_threshold", int, 10, ("if split paragraph, sentence shorter than threshold "
-                                             "is not paraphrased.")),
         ("stanza_port", int, 9000, "stanza port"),
         ("lm_option", str, "finetune", "choose from [pretrain, finetune, adv]."),
         ("lm_steps", int, 5000, "lm training steps."),
@@ -493,15 +491,13 @@ class BertSamplingStrategy(StrategyBase):
                     sampling_steps = self._strategy_config["sampling_steps"] // len(splitted_text)
                 elif self._strategy_config["split_sentence"] == "1":
                     splitted_text = splitted_text_ori
+                    burnin_steps = self._strategy_config["burnin_steps"] // len(splitted_text)
+                    sampling_steps = self._strategy_config["sampling_steps"] // len(splitted_text)
                 else:
                     assert 0
 
                 batch_res = [""] * (batch_size if id != n_batches - 1 else last_batch_size)
                 for text in splitted_text:
-                    if len(text.split()) < self._strategy_config["sentence_len_threshold"]:
-                        batch_res = [x + " " + text for x in batch_res]
-                        continue
-
                     batch = self._parallel_sequential_generation(
                         text, batch_size if id != n_batches - 1 else last_batch_size,
                         burnin_steps,
