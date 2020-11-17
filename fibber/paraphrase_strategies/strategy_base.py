@@ -83,7 +83,7 @@ class StrategyBase(object):
             logger.warning("%s is running on CPU." % str(self))
             self._device = torch.device("cpu")
         else:
-            logger.info("%s metric is running on GPU %d.", str(self), strategy_gpu_id)
+            logger.info("%s is running on GPU %d.", str(self), strategy_gpu_id)
             self._device = torch.device("cuda:%d" % strategy_gpu_id)
 
         self._output_dir = output_dir

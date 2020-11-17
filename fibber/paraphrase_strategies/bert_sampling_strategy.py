@@ -239,34 +239,35 @@ class BertSamplingStrategy(StrategyBase):
     __abbr__ = "bs"
     __hyperparameters__ = [
         ("batch_size", int, 50, "the batch size in sampling."),
-        ("window_size", int, 1, "the block sampling window size."),
-        ("burnin_steps", int, 250, "number of burnin steps."),
-        ("sampling_steps", int, 500, "number of sampling steps (including) burnin."),
+        ("window_size", int, 3, "the block sampling window size."),
+        ("burnin_steps", int, 100, "number of burnin steps."),
+        ("sampling_steps", int, 200, "number of sampling steps (including) burnin."),
         ("top_k", int, 100, "sample from top k words after burnin. Use 0 for all words."),
         ("temperature", float, 1., "the softmax temperature for sampling."),
-        ("use_threshold", float, 0.9, "the threshold for USE similarity."),
+        ("use_threshold", float, 0.95, "the threshold for USE similarity."),
         ("use_weight", float, 1000, "the smoothing parameter for USE similarity."),
-        ("wpe_threshold", float, 0.9, "the threshold for USE similarity."),
+        ("wpe_threshold", float, 1.00, "the threshold for USE similarity."),
         ("wpe_weight", float, 10000, "the smoothing parameter for USE similarity."),
-        ("burnin_enforcing_schedule", str, "linear",
+        ("burnin_enforcing_schedule", str, "1",
             ("the schedule decides how much additional "
-             "constraint is added. options are linear, 0, 1.")),
-        ("accept_criteria", str, "all", ("select an accept criteria for candidate words from "
-                                         "all, similarity, relative_similarity, scmh.")),
-        ("enforcing_dist", str, "none", ("select an additional constraint for candidate "
-                                         "words from none, allow_list, wpe")),
+             "constraint is added. options are [linear, 0, 1].")),
+        ("accept_criteria", str, "joint_weighted_criteria", (
+            "select an accept criteria for candidate words from "
+            "[all, joint_weighted_criteria].")),
+        ("enforcing_dist", str, "wpe", ("select an additional constraint for candidate "
+                                        "words from [none, allow_list, wpe].")),
         ("burnin_criteria_schedule", str, "1", ("the schedule decides how strict the criteria is "
-                                                "used. options are linear, 0, 1.")),
+                                                "used. options are [linear, 0, 1].")),
         ("seed_option", str, "origin", ("the option for seed sentences in generation. "
-                                        "choose from origin, auto.")),
-        ("split_sentence", str, "0", "split paragraph to sentence. options are 0, 1, auto."),
+                                        "choose from [origin, auto].")),
+        ("split_sentence", str, "0", "split paragraph to sentence. options are [0, 1, auto]."),
         ("sentence_len_threshold", int, 10, ("if split paragraph, sentence shorter than threshold "
                                              "is not paraphrased.")),
         ("stanza_port", int, 9000, "stanza port"),
-        ("lm_option", str, "pretrain", "choose from pretrain, finetune, adv."),
+        ("lm_option", str, "finetune", "choose from [pretrain, finetune, adv]."),
         ("lm_steps", int, 5000, "lm training steps."),
-        ("clf_weight", float, 10, "weight for the clf score in the criteria."),
-        ("gpt2_weight", float, 1, "the smoothing parameter for gpt2."),
+        ("clf_weight", float, 1, "weight for the clf score in the criteria."),
+        ("gpt2_weight", float, 10, "the smoothing parameter for gpt2."),
     ]
 
     def __repr__(self):
