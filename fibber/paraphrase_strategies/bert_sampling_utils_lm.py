@@ -7,7 +7,7 @@ import tqdm
 from torch.utils.tensorboard import SummaryWriter
 from transformers import BertForMaskedLM
 
-from fibber import log
+from fibber import log, resources
 from fibber.datasets import DatasetForBert
 from fibber.metrics.bert_clf_prediction import get_optimizer
 
@@ -110,7 +110,7 @@ def get_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
         return torch.load(ckpt_path).eval()
 
     if filter == -1:
-        lm_model = BertForMaskedLM.from_pretrained(model_init)
+        lm_model = BertForMaskedLM.from_pretrained(resources.get_transformers(model_init))
         lm_model.train()
     else:
         lm_model = get_lm(output_dir, trainset, -1, device, lm_steps)

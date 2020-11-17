@@ -282,10 +282,11 @@ class BertSamplingStrategy(StrategyBase):
             model_init = "bert-base-cased"
         else:
             model_init = "bert-base-uncased"
-        self._tokenizer = BertTokenizerFast.from_pretrained(model_init)
+        self._tokenizer = BertTokenizerFast.from_pretrained(resources.get_transformers(model_init))
 
         if self._strategy_config["lm_option"] == "pretrain":
-            self._bert_lm = BertForMaskedLM.from_pretrained(model_init).to(self._device)
+            self._bert_lm = BertForMaskedLM.from_pretrained(
+                resources.get_transformers(model_init)).to(self._device)
             self._bert_lm.eval()
             for item in self._bert_lm.parameters():
                 item.requires_grad = False

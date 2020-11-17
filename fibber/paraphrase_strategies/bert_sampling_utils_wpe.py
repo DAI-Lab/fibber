@@ -7,7 +7,7 @@ from nltk import word_tokenize
 from torch import nn
 from transformers import BertTokenizer
 
-from fibber import log
+from fibber import log, resources
 from fibber.resources import get_glove_emb, get_stopwords
 
 logger = log.setup_custom_logger(__name__)
@@ -15,7 +15,7 @@ logger = log.setup_custom_logger(__name__)
 
 class WordPieceDataset(torch.utils.data.Dataset):
     def __init__(self, dataset, model_init):
-        self._tokenizer = BertTokenizer.from_pretrained(model_init)
+        self._tokenizer = BertTokenizer.from_pretrained(resources.get_transformers(model_init))
 
         self._glove = get_glove_emb()
         stopwords = get_stopwords()

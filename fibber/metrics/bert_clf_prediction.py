@@ -10,7 +10,7 @@ import transformers
 from torch.utils.tensorboard import SummaryWriter
 from transformers import BertForSequenceClassification, BertTokenizerFast
 
-from fibber import get_root_dir, log
+from fibber import get_root_dir, log, resources
 from fibber.datasets import DatasetForBert
 from fibber.metrics.metric_base import MetricBase
 
@@ -137,7 +137,7 @@ def load_or_train_bert_clf(model_init,
     num_labels = len(trainset["label_mapping"])
 
     model = BertForSequenceClassification.from_pretrained(
-        model_init, num_labels=num_labels).to(device)
+        resources.get_transformers(model_init), num_labels=num_labels).to(device)
     model.train()
 
     logger.info("Use %s tokenizer and classifier.", model_init)
@@ -244,7 +244,7 @@ class BertClfPrediction(MetricBase):
             logger.info(
                 "Use uncased model in BERT classifier prediction metric.")
 
-        self._tokenizer = BertTokenizerFast.from_pretrained(model_init)
+        self._tokenizer = BertTokenizerFast.from_pretrained(resources.get_transformers(model_init))
         if bert_gpu_id == -1:
             logger.warning("BERT metric is running on CPU.")
             self._device = torch.device("cpu")

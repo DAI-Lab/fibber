@@ -6,7 +6,7 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_hub as hub
 
-from fibber import log
+from fibber import log, resources
 from fibber.metrics.metric_base import MetricBase
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -48,8 +48,7 @@ class USESemanticSimilarity(MetricBase):
             logger.warning("Universal sentence encoder is using CPU.")
         else:
             logger.info("Universal sentence encoder metric is using GPU %d.", use_gpu_id)
-        module_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
-        self.model = hub.load(module_url)
+        self.model = hub.load(resources.get_universal_sentence_encoder())
         log.remove_logger_tf_handler(logger)   # tensorflow_hub mess up the python logging
 
     def measure_batch(self, origin, paraphrases, data_record=None, paraphrase_field="text0"):

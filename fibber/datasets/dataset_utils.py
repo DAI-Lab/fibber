@@ -49,7 +49,7 @@ import torch
 import tqdm
 from transformers import BertTokenizerFast
 
-from fibber import get_root_dir, log
+from fibber import get_root_dir, log, resources
 from fibber.datasets.downloadable_datasets import downloadable_dataset_urls
 from fibber.download_utils import download_file
 
@@ -259,7 +259,8 @@ class DatasetForBert(torch.utils.data.IterableDataset):
         self._data = [[] for i in range(len(self._buckets))]
 
         self._batch_size = batch_size
-        self._tokenizer = BertTokenizerFast.from_pretrained(model_init)
+        self._tokenizer = BertTokenizerFast.from_pretrained(
+            resources.get_transformers(model_init))
 
         self._seed = seed
         self._pad_tok_id = self._tokenizer.pad_token_id

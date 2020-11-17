@@ -12,5 +12,55 @@ downloadable_resource_urls = {
         "md5": "6d3c778d216390063f424112087e5c10",
         "untar": False,
         "unzip": False,
-    }
+    },
+    "nltk-punkt": {
+        "filename": "punkt.zip",
+        "url": "https://fibber-data.s3.amazonaws.com/punkt.zip",
+        "md5": "398bbed6dd3ebb0752fe0735d1c418fe",
+        "untar": False,
+        "unzip": True,
+    },
+    "nltk_stopwords": {
+        "filename": "stopwords.zip",
+        "url": "https://fibber-data.s3.amazonaws.com/nltk_stopwords.zip",
+        "md5": "884694b9055d1caee8a0ca3aa3b2c7f7",
+        "untar": False,
+        "unzip": True,
+    },
+    "universal-sentence-encoder": {
+        "filename": "universal-sentence-encoder-large_5.tar.gz",
+        "url": "https://fibber-data.s3.amazonaws.com/universal-sentence-encoder-large_5.tar.gz",
+        "md5": "398bbed6dd3ebb0752fe0735d1c418fe",
+        "untar": True,
+        "unzip": False,
+    },
+    "bert-base-cased": {
+        "filename": "bert-base-cased.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/bert-base-cased.tgz",
+        "md5": "da37aed60f86c6305bce12f3d95fced9",
+        "untar": True,
+        "unzip": False,
+    },
+    "bert-base-uncased": {
+        "filename": "bert-base-uncased.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/bert-base-uncased.tgz",
+        "md5": "78097e317b2b6b6fb4c0d760097b1818",
+        "untar": True,
+        "unzip": False,
+    },
+    "gpt2-medium": {
+        "filename": "gpt2-medium.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/gpt2-medium.tgz",
+        "md5": "7ed0519f1599f198d22fb239c6f6bf50",
+        "untar": True,
+        "unzip": False,
+    },
+    "stanford-corenlp": {
+        "filename": "stanford-corenlp-4.1.0.zip",
+        "url": "https://fibber-data.s3.amazonaws.com/stanford-corenlp-4.1.0.zip",
+        "md5": "2ee2e614eec7f913800957297139f63d",
+        "untar": False,
+        "unzip": True,
+    },
+
 }
