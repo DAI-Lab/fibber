@@ -145,7 +145,7 @@ fibber = Fibber(arg_dict, dataset_name="demo", strategy_name="BertSamplingStrate
                 trainset=trainset, testset=testset, output_dir="exp-demo")
 ```
 
-**(4) Randomly sample a sentence from the test set, and paraphrase it.**
+**(4) You can also ask fibber to paraphrase your sentence.**
 
 The following command can randomly paraphrase the sentence into 5 different ways.
 
@@ -201,11 +201,11 @@ The output is a tuple of (str, list, list).
    'BertClfPrediction': 0}]
 ```
 
-**(5) You can also ask fibber to paraphrase your sentence.**
+**(5) You can ask fibber to randomly pick a sentence from the dataset and paraphrase it.**
 
 
 ```python
-fibber.paraphrase({"text0": "This movie is fantastic"}, "text0", 5)
+fibber.paraphrase_a_random_sentence(n=5)
 ```
 
 
