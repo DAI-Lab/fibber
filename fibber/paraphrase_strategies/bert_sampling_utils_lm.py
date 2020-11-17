@@ -15,11 +15,13 @@ logger = log.setup_custom_logger(__name__)
 
 
 def write_summary(stats, summary, global_step):
+    """Save langauge model training summary."""
     summary.add_scalar("attack/loss_lm", np.mean(stats["lm_loss"]), global_step)
     summary.add_scalar("attack/error_lm", 1 - stats["lm_correct"] / stats["lm_total"], global_step)
 
 
 def new_stats():
+    """Create a new stats dict."""
     return {
         "lm_total": 0,
         "lm_correct": 0,
@@ -28,6 +30,22 @@ def new_stats():
 
 
 def compute_lm_loss(lm_model, seq, mask, tok_type, lm_label, stats):
+    """Compute masked language model training loss.
+
+    Args:
+        lm_model (transformers.BertForMaskedLM): a BERT language model.
+        seq (torch.Tensor): an int tensor of size (batch_size, length) representing the word pieces.
+        mask (torch.Tensor): an int tensor of size (batch_size, length) representing the attention
+            mask.
+        tok_type (torch.Tensor): an int tensor of size (batch_size, length) representing the
+            token type id.
+        lm_label (torch.Tensor): an int tensor of size (batch_size, length) representing the label
+            for each position. Use -100 if the loss is not computed for that position.
+        stats (dist): a dictionary storing training stats.
+
+    Returns:
+        (torch.Scalar) a scalar loss value.
+    """
     lm_hid = lm_model.bert(seq, mask, tok_type)[0]
     lm_hid = torch.masked_select(lm_hid, lm_label.gt(0).unsqueeze(2)).view(-1, lm_hid.size(2))
     logits = lm_model.cls(lm_hid)
@@ -49,6 +67,29 @@ def compute_lm_loss(lm_model, seq, mask, tok_type, lm_label, stats):
 def get_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
            lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
            lm_period_summary=100, lm_period_save=5000):
+    """Returns a finetuned BERT language model on a given dataset.
+
+    The language model will be stored at ``<output_dir>/lm_all`` if filter is -1, or
+    ``<output_dir>/lm_filter_?`` if filter is not -1.
+
+    If filter is not -1. The pretrained langauge model will first be pretrained on the while
+    dataset, then it will be finetuned on the data excluding the filter category.
+
+    Args:
+        output_dir (str): a directory to store pretrained language model.
+        trainset (DatasetForBert): the training set for finetune the language model.
+        filter (int): a category to exclude from finetuning.
+        device (torch.Device): a device to train the model.
+        lm_steps (int): finetuning steps.
+        lm_bs (int): finetuning batch size.
+        lm_opt (str): optimzer name. choose from ["sgd", "adam", "adamW"].
+        lm_lr (float): learning rate.
+        lm_decay (float): weight decay for the optimizer.
+        lm_period_summary (int): number of steps to write training summary.
+        lm_period_save (int): number of steps to save the finetuned model.
+    Returns:
+        (BertForMaskedLM): a finetuned language model.
+    """
     if filter == -1:
         output_dir_t = os.path.join(output_dir, "lm_all")
     else:

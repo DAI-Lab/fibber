@@ -54,6 +54,22 @@ class WordPieceDataset(torch.utils.data.Dataset):
 
 def get_wordpiece_emb(output_dir, dataset_name, trainset, device,
                       steps=500, bs=1000, lr=1, lr_halve_steps=100):
+    """Transfer GloVe embeddings to BERT vocabulary.
+
+    The transfered embeddings will be stored at ``<output_dir>/wordpiece_emb*``.
+
+    Args:
+        output_dir (str): a directory to store pretrained language model.
+        dataset_name (str): dataset name.
+        trainset (dict): the dataset dist.
+        device (torch.Device): a device to train the model.
+        steps (int): transfering steps.
+        bs (int): transfering batch size.
+        lr (str): transfering learning rate.
+        lr_halve_steps (int): steps to halve the learning rate.
+    Returns:
+        (np.array): a array of size (300, N) where N is the vocabulary size for a bert-base model.
+    """
     filename = output_dir + "/wordpiece_emb-%s-%04d.pt" % (
         dataset_name, steps)
     if os.path.exists(filename):

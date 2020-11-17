@@ -111,6 +111,8 @@ def use_criteria_score(origin, paraphrases, use_metric, use_threshold, use_weigh
     Returns:
         (np.array): a numpy array of size ``(batch_size,)``. All entries ``<=0``.
     """
+    if use_weight == 0:
+        return np.zeros(len(paraphrases), dtype="float32")
     use_semantic_similarity = use_metric.measure_batch(origin, paraphrases)
     return -use_weight * (
         np.maximum(use_threshold - np.asarray(use_semantic_similarity), 0) ** 2)
@@ -128,13 +130,17 @@ def gpt2_criteria_score(origin, paraphrases, gpt2_metric, gpt2_weight):
     Returns:
         (np.array): a numpy array of size ``(batch_size,)``. All entries ``<=0``.
     """
+    if gpt2_weight == 0:
+        return np.zeros(len(paraphrases), dtype="float32")
     gpt2_ppl_ratio = gpt2_metric.measure_batch(origin, paraphrases)
     return -gpt2_weight * (np.maximum(gpt2_ppl_ratio, 0) ** 2)
 
 
 def bert_criteria_score(paraphrases, context, label, bert_metric, bert_weight):
-    dist = bert_metric.predict_dist_batch(paraphrases, context)
+    if bert_weight == 0:
+        return np.zeros(len(paraphrases), dtype="float32")
 
+    dist = bert_metric.predict_dist_batch(paraphrases, context)
     correct_prob = (dist[:, label]).copy()
     dist[:, label] = -1e8
     incorrect_prob = np.max(dist, axis=1)

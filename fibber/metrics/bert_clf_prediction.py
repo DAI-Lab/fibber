@@ -285,7 +285,7 @@ class BertClfPrediction(MetricBase):
                                           truncation=True)
         else:
             batch_input = self._tokenizer(
-                text=text, text_pair=[context] * len(text), padding=True, max_length=200,
+                text=[context] * len(text), text_pair=text, padding=True, max_length=200,
                 truncation=True)
 
         with torch.no_grad():
@@ -294,7 +294,6 @@ class BertClfPrediction(MetricBase):
                 token_type_ids=torch.tensor(batch_input["token_type_ids"]).to(self._device),
                 attention_mask=torch.tensor(batch_input["attention_mask"]).to(self._device)
             )[0], dim=1).detach().cpu().numpy()
-
         return res
 
     def predict_batch(self, text, context):
