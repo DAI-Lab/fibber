@@ -1,7 +1,13 @@
 import random
 import re
+import socket
 
 from stanza.server import CoreNLPClient
+
+
+def is_port_in_use(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(('localhost', port)) == 0
 
 
 def generate_phrases_by_dfs(node, level, phrase_level, result):
@@ -36,8 +42,10 @@ class TextParser(object):
     """
 
     def __init__(self, port=9000):
+        while is_port_in_use(port):
+            port += 1
         self._core_nlp_client = CoreNLPClient(
-            annotators=['parse'], timeout=30000, memory='16G', be_quiet=True,
+            annotators=['parse'], timeout=600000, memory='16G', be_quiet=True,
             endpoint="http://localhost:%d" % port)
 
     def _get_parse_tree(self, sentence):

@@ -44,7 +44,7 @@ downloadable_resource_urls = {
     "bert-base-uncased": {
         "filename": "bert-base-uncased.tgz",
         "url": "https://fibber-data.s3.amazonaws.com/bert-base-uncased.tgz",
-        "md5": "ca60dc3b1ae371dbfa36367be3266327",
+        "md5": "0c41b10e7dd3a42cfd314e2bab315b25",
         "untar": True,
         "unzip": False,
     },

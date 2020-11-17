@@ -7,7 +7,7 @@ from torch import nn
 from torch.nn import functional as F
 from transformers import BertForMaskedLM, BertTokenizerFast
 
-from fibber import log
+from fibber import log, resources
 from fibber.paraphrase_strategies.bert_sampling_utils_lm import get_lm
 from fibber.paraphrase_strategies.bert_sampling_utils_text_parser import TextParser
 from fibber.paraphrase_strategies.bert_sampling_utils_wpe import get_wordpiece_emb
