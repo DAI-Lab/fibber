@@ -248,8 +248,9 @@ class BertSamplingStrategy(StrategyBase):
         ("use_weight", float, 1000, "the smoothing parameter for USE similarity."),
         ("wpe_threshold", float, 0.9, "the threshold for USE similarity."),
         ("wpe_weight", float, 10000, "the smoothing parameter for USE similarity."),
-        ("burnin_enforcing_schedule", str, "linear", ("the schedule decides how much additional "
-                                                      "constraint is added. options are linear, 0, 1.")),
+        ("burnin_enforcing_schedule", str, "linear",
+            ("the schedule decides how much additional "
+             "constraint is added. options are linear, 0, 1.")),
         ("accept_criteria", str, "all", ("select an accept criteria for candidate words from "
                                          "all, similarity, relative_similarity, scmh.")),
         ("enforcing_dist", str, "none", ("select an additional constraint for candidate "

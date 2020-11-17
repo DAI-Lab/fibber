@@ -34,7 +34,8 @@ def compute_lm_loss(lm_model, seq, mask, tok_type, lm_label, stats):
 
     Args:
         lm_model (transformers.BertForMaskedLM): a BERT language model.
-        seq (torch.Tensor): an int tensor of size (batch_size, length) representing the word pieces.
+        seq (torch.Tensor): an int tensor of size (batch_size, length) representing the word
+            pieces.
         mask (torch.Tensor): an int tensor of size (batch_size, length) representing the attention
             mask.
         tok_type (torch.Tensor): an int tensor of size (batch_size, length) representing the

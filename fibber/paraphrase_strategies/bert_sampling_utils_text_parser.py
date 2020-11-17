@@ -4,6 +4,10 @@ import socket
 
 from stanza.server import CoreNLPClient
 
+from fibber import log
+
+logger = log.setup_custom_logger(__name__)
+
 
 def is_port_in_use(port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
