@@ -179,10 +179,9 @@ def joint_weighted_criteria(
         device (torch.Device): the device that batch_tensor is on.
     Returns:
         (np.array, np.array)
-            - a 2-D int array of size ``batch_size, pos_ed - pos_st``. Each row ``i`` is
-            either ``previous_ids[i, :]`` if rejected, or ``candidate_ids[i, :]`` if accepted.
-            - a 1-D float array of criteria score.
-
+            a 2-D int array of size ``batch_size, pos_ed - pos_st``. Each row ``i`` is
+                either ``previous_ids[i, :]`` if rejected, or ``candidate_ids[i, :]`` if accepted.
+            a 1-D float array of criteria score.
     """
     if burnin_weight == 0:
         return candidate_ids
