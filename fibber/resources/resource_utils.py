@@ -1,6 +1,5 @@
 import os
 
-import nltk
 import numpy as np
 import tqdm
 
@@ -24,8 +23,7 @@ def load_glove_model(glove_file, dim):
             "id2tok": a list of strings.
             "tok2id": a dict that maps word (string) to its id.
     """
-    nltk.download("punkt")
-    glove_file_lines = open(glove_file, 'r').readlines()
+    glove_file_lines = open(glove_file, "r", encoding="utf8").readlines()
 
     emb_table = np.zeros((len(glove_file_lines), dim), dtype='float32')
     id_to_tok = []
@@ -48,11 +46,14 @@ def load_glove_model(glove_file, dim):
     }
 
 
-def get_glove_emb():
+def get_glove_emb(download_only=False):
     """Download default pretrained glove embeddings and return a dict.
 
     We use the 300-dimensional model trained on Wikipedia 2014 + Gigaword 5.
     See https://nlp.stanford.edu/projects/glove/
+
+    Args:
+        download_only (bool): set True to only download. (Returns None)
 
     Returns:
         (dict): a dict of GloVe word embedding model.
@@ -66,6 +67,8 @@ def get_glove_emb():
         download_file(subdir=os.path.join(data_dir),
                       **downloadable_resource_urls["default-glove-embeddings"])
 
+    if download_only:
+        return None
     return load_glove_model(os.path.join(data_dir, "glove.6B.300d.txt"), 300)
 
 
@@ -84,3 +87,63 @@ def get_stopwords():
         stopwords = f.readlines()
     stopwords = [x.strip().lower() for x in stopwords]
     return stopwords
+
+
+def get_nltk_data():
+    """Download nltk data to ``<fibber_root_dir>/nltk_data``."""
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "common", "nltk_data", "tokenizers")
+    if not os.path.exists(os.path.join(data_dir, "punkt")):
+        download_file(subdir=os.path.join(data_dir),
+                      **downloadable_resource_urls["nltk-punkt"])
+
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "common", "nltk_data", "corpora")
+    if not os.path.exists(os.path.join(data_dir, "stopwords")):
+        download_file(subdir=os.path.join(data_dir),
+                      **downloadable_resource_urls["nltk_stopwords"])
+
+
+def get_universal_sentence_encoder():
+    """Download pretrained universal sentence encoder.
+
+    Returns:
+        (str): directory of the downloaded model.
+    """
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "common", "tfhub_pretrained",
+                            "universal-sentence-encoder-large_5")
+    if not os.path.exists(data_dir):
+        download_file(subdir=os.path.join(data_dir),
+                      **downloadable_resource_urls["universal-sentence-encoder"])
+
+    return data_dir
+
+
+def get_corenlp():
+    """Download stanford corenlp package.
+    """
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "common")
+    if not os.path.exists(os.path.join(data_dir, "stanford-corenlp-4.1.0")):
+        download_file(subdir=os.path.join(data_dir),
+                      **downloadable_resource_urls["stanford-corenlp"])
+
+
+def get_transformers(name):
+    """Download pretrained transformer models.
+
+    Args:
+        name (str): the name of the pretrained models. options are ``["bert-base-cased",
+            "bert-base-uncased", "gpt2-medium"]``.
+
+    Returns:
+        (str): directory of the downloaded model.
+    """
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "common", "transformers_pretrained")
+    if not os.path.exists(os.path.join(data_dir, name)):
+        download_file(subdir=os.path.join(data_dir),
+                      **downloadable_resource_urls[name])
+
+    return os.path.join(data_dir, name)

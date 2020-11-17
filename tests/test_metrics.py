@@ -3,6 +3,9 @@ from fibber.metrics.glove_semantic_similarity import GloVeSemanticSimilarity
 from fibber.metrics.gpt2_grammar_quality import GPT2GrammarQuality
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.metrics.use_semantic_similarity import USESemanticSimilarity
+from fibber.resources import get_nltk_data
+
+get_nltk_data()
 
 
 def test_editing_distance():
@@ -29,11 +32,21 @@ def test_use_semantic_similarity():
     use_semantic_similarity_metric = USESemanticSimilarity()
     s1 = "Sunday is the first day in a week."
     s2 = "Obama was the president of the United State."
-    assert use_semantic_similarity_metric.measure_example(s1, s2) < 0.5
+    metric1 = use_semantic_similarity_metric.measure_example(s1, s2)
+    assert metric1 < 0.5
 
-    s1 = "Saturday is the last day in a week"
-    s2 = "Sunday is the last day in a week"
-    assert use_semantic_similarity_metric.measure_example(s1, s2) > 0.6
+    s1 = "Sunday is the first day in a week"
+    s2 = "Saturday is the last day in a week"
+    metric2 = use_semantic_similarity_metric.measure_example(s1, s2)
+    assert metric2 > 0.6
+
+    s1 = "Sunday is the first day in a week"
+    s2 = ["Obama was the president of the United State.",
+          "Saturday is the last day in a week"]
+    metric3 = use_semantic_similarity_metric.measure_batch(s1, s2)
+    assert len(metric3) == 2
+    assert abs(metric3[0] - metric1) < 1e-4
+    assert abs(metric3[1] - metric2) < 1e-4
 
 
 def test_gpt2_grammar_quality():

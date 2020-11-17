@@ -35,11 +35,11 @@ class StrategyBase(object):
     __abbr__ = "base"
     __hyperparameters__ = []
 
-    def __init__(self, arg_dict, metric_bundle):
+    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle):
         """Initialize the paraphrase_strategies.
 
         This function initialize the ``self._strategy_config``, ``self._metric_bundle``,
-        ``self._device``.
+        ``self._device``, ``self._output_dir``, ``self._dataset_name``.
 
         **You should not overwrite this function.**
 
@@ -49,17 +49,20 @@ class StrategyBase(object):
           paraphrases. Strategies can compute metrics during paraphrasing.
         * self._device (torch.Device): any computation that requires a GPU accelerator should
           use this device.
+        * self._output_dir (str): the dir name where the strategy can save files.
+        * self._dataset_name (str): the dataset name.
 
         Args:
-            arg_dict: all_args_load_from .
-            metric_bundle: a MetricBundle object.
+            arg_dict (dict): all args load from command line.
+            dataset_name (str): the name of the dataset.
+            strategy_gpu_id (int): the gpu id to run the strategy.
+            output_dir (str): a directory to save any models or temporary files.
+            metric_bundle (MetricBundle): a MetricBundle object.
         """
         super(StrategyBase, self).__init__()
 
         # paraphrase_strategies config will be saved to the results.
-        self._strategy_config = {
-            "strategy_name": str(self)
-        }
+        self._strategy_config = dict()
 
         for p_name, p_type, p_default, p_help in self.__hyperparameters__:
             arg_name = "%s_%s" % (self.__abbr__, p_name)
@@ -72,13 +75,19 @@ class StrategyBase(object):
             assert p_name not in self._strategy_config
             self._strategy_config[p_name] = p_value
 
+        self._strategy_config["strategy_name"] = str(self)
+
         self._metric_bundle = metric_bundle
-        if arg_dict["strategy_gpu_id"] == -1:
+
+        if strategy_gpu_id == -1:
             logger.warning("%s is running on CPU." % str(self))
             self._device = torch.device("cpu")
         else:
-            logger.info("%s metric is running on GPU %d.", str(self), arg_dict["strategy_gpu_id"])
-            self._device = torch.device("cuda:%d" % arg_dict["strategy_gpu_id"])
+            logger.info("%s is running on GPU %d.", str(self), strategy_gpu_id)
+            self._device = torch.device("cuda:%d" % strategy_gpu_id)
+
+        self._output_dir = output_dir
+        self._dataset_name = dataset_name
 
     def __repr__(self):
         return self.__class__.__name__
@@ -109,7 +118,8 @@ class StrategyBase(object):
         """Paraphrase one data record.
 
         This function should be overwritten by subclasses. When overwriting this class, you can
-        use ``self._strategy_config``, ``self._metric_bundle`` and ``self._device``.
+        use ``self._strategy_config``, ``self._metric_bundle``,  ``self._device``,
+        ``self._output_dir``, and ``self._dataset_name``
 
         Args:
             data_record (dict): a dict storing one data of a dataset.

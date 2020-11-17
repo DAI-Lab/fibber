@@ -22,7 +22,8 @@ install_requires = [
     'spacy>=2.0.0',
     'pandas>=1.0.0',
     'textattack==0.2.10',
-    'nltk>=3.0'
+    'nltk>=3.0',
+    'stanza==1.1.1'
 ]
 
 setup_requires = [
@@ -43,7 +44,7 @@ development_requires = [
     # docs
     'm2r2>=0.2.5,<0.3',
     'nbsphinx>=0.5.0,<0.7',
-    'Sphinx>=3,<4',
+    'Sphinx==3.2.1',
     'pydata-sphinx-theme',
     'autodocsumm>=0.1.10',
     'PyYaml>=5.3.1,<6',
@@ -100,6 +101,6 @@ setup(
     test_suite='tests',
     tests_require=tests_require,
     url='https://github.com/DAI-Lab/fibber',
-    version='0.0.2.dev0',
+    version='0.1.0.dev0',
     zip_safe=False,
 )

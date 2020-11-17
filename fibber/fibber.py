@@ -1,13 +1,15 @@
 import numpy as np
 
 from fibber.metrics import MetricBundle
-from fibber.paraphrase_strategies import IdentityStrategy, RandomStrategy
+from fibber.paraphrase_strategies import (
+    BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextFoolerStrategy)
 
 
 class Fibber(object):
     """Fibber is a unified interface for paraphrase strategies."""
 
-    def __init__(self, arg_dict, dataset_name, strategy_name, trainset, testset):
+    def __init__(self, arg_dict, dataset_name, strategy_name, trainset, testset,
+                 output_dir, bert_clf_steps=5000):
         """Initialize
 
         Args:
@@ -16,20 +18,32 @@ class Fibber(object):
             strategy_name (str): the strategy name.
             trainset (str): fibber dataset.
             testset (str): fibber testset.
+            output_dir (str): directory to cache the strategy.
         """
         super(Fibber, self).__init__()
 
         self._metric_bundle = MetricBundle(
-            use_bert_clf_prediction=False,
+            use_bert_clf_prediction=True,
             use_gpu_id=arg_dict["use_gpu_id"],
             gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
+            bert_gpu_id=arg_dict["bert_gpu_id"],
             dataset_name=dataset_name,
-            trainset=trainset, testset=testset)
+            trainset=trainset, testset=testset,
+            bert_clf_steps=bert_clf_steps)
 
+        strategy_gpu_id = arg_dict["strategy_gpu_id"]
+        if strategy_name == "RandomStrategy":
+            self._strategy = RandomStrategy(
+                arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
         if strategy_name == "IdentityStrategy":
-            self._strategy = IdentityStrategy(arg_dict, self._metric_bundle)
-        elif strategy_name == "RandomStrategy":
-            self._strategy = RandomStrategy(arg_dict, self._metric_bundle)
+            self._strategy = IdentityStrategy(
+                arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
+        if strategy_name == "TextFoolerStrategy":
+            self._strategy = TextFoolerStrategy(
+                arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
+        if strategy_name == "BertSamplingStrategy":
+            self._strategy = BertSamplingStrategy(
+                arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
         else:
             assert 0
 
@@ -54,7 +68,7 @@ class Fibber(object):
         for item in paraphrases:
             metrics.append(self._metric_bundle.measure_example(
                 data_record[field_name], item, data_record, field_name))
-        return paraphrases, metrics
+        return data_record[field_name], paraphrases, metrics
 
     def paraphrase_a_random_sentence(self, n=20, from_testset=True):
         """Randomly pick one data, then paraphrase it.
