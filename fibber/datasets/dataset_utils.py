@@ -260,7 +260,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
 
         self._batch_size = batch_size
         self._tokenizer = BertTokenizerFast.from_pretrained(
-            resources.get_transformers(model_init))
+            resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
 
         self._seed = seed
         self._pad_tok_id = self._tokenizer.pad_token_id

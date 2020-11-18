@@ -15,7 +15,8 @@ logger = log.setup_custom_logger(__name__)
 
 class WordPieceDataset(torch.utils.data.Dataset):
     def __init__(self, dataset, model_init):
-        self._tokenizer = BertTokenizer.from_pretrained(resources.get_transformers(model_init))
+        self._tokenizer = BertTokenizer.from_pretrained(
+            resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
 
         self._glove = get_glove_emb()
         stopwords = get_stopwords()

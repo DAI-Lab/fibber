@@ -282,7 +282,9 @@ class BertSamplingStrategy(StrategyBase):
             model_init = "bert-base-cased"
         else:
             model_init = "bert-base-uncased"
-        self._tokenizer = BertTokenizerFast.from_pretrained(resources.get_transformers(model_init))
+        self._tokenizer = BertTokenizerFast.from_pretrained(
+            resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
+        self._tokenizer.do_lower_case = True if "uncased" in model_init else False
 
         if self._strategy_config["lm_option"] == "pretrain":
             self._bert_lm = BertForMaskedLM.from_pretrained(
@@ -366,6 +368,16 @@ class BertSamplingStrategy(StrategyBase):
         else:
             assert 0
 
+        if field_name == "text1":
+            context_seq = ["[CLS]"] + self._tokenizer.tokenize(data_record["text0"])
+            context_tensor = torch.tensor(
+                [self._tokenizer.convert_tokens_to_ids(context_seq)] * batch_size
+            ).to(self._device)
+            context_len = len(context_seq)
+            batch_tensor[:, 0] = self._tokenizer.sep_token_id
+        else:
+            context_tensor = None
+
         target_emb = self._word_embs(batch_tensor[:, 1:-1]).sum(dim=1)
 
         allow_list = F.one_hot(batch_tensor[0][1:-1], self._tokenizer.vocab_size).sum(dim=0)
@@ -382,7 +394,18 @@ class BertSamplingStrategy(StrategyBase):
             sample_order = np.arange(pos_st, pos_ed)
             np.random.shuffle(sample_order)
             for pos in sample_order:
-                logits_lm = self._bert_lm(batch_tensor)[0][:, pos]
+                if field_name == "text1":
+                    batch_tensor_tmp = torch.cat([context_tensor, batch_tensor], dim=1)
+                    tok_type_tensor_tmp = torch.cat([
+                        torch.zeros_like(context_tensor),
+                        torch.ones_like(batch_tensor)], dim=1)
+                    logits_lm = self._bert_lm(
+                        batch_tensor_tmp,
+                        token_type_ids=tok_type_tensor_tmp)[0][:, context_len + pos]
+                    logits_lm[:, self._tokenizer.sep_token_id] = -1e8
+                else:
+                    logits_lm = self._bert_lm(batch_tensor)[0][:, pos]
+
                 logits_enforcing = self._enforcing_dist_fn(
                     # for wpe constraint
                     target_emb=target_emb,

@@ -244,7 +244,9 @@ class BertClfPrediction(MetricBase):
             logger.info(
                 "Use uncased model in BERT classifier prediction metric.")
 
-        self._tokenizer = BertTokenizerFast.from_pretrained(resources.get_transformers(model_init))
+        self._tokenizer = BertTokenizerFast.from_pretrained(
+            resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
+
         if bert_gpu_id == -1:
             logger.warning("BERT metric is running on CPU.")
             self._device = torch.device("cpu")
