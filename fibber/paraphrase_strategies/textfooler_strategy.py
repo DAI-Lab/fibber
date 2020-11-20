@@ -1,11 +1,29 @@
 """This module implements the paraphrase strategy using TextFooler."""
 
-import textattack
-from textattack.attack_recipes.textfooler_jin_2019 import TextFoolerJin2019
-from textattack.models.wrappers.model_wrapper import ModelWrapper
+import socket
 
 from fibber import log
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
+
+
+def is_connected():
+    try:
+        # connect to the host -- tells us if the host is actually
+        # reachable
+        socket.create_connection(("1.1.1.1", 53))
+        return True
+    except OSError:
+        pass
+    return False
+
+
+if is_connected():
+    import textattack
+    from textattack.attack_recipes.textfooler_jin_2019 import TextFoolerJin2019
+    from textattack.models.wrappers.model_wrapper import ModelWrapper
+else:
+    ModelWrapper = object
+
 
 logger = log.setup_custom_logger(__name__)
 
@@ -47,6 +65,9 @@ class TextFoolerStrategy(StrategyBase):
     __abbr__ = "tf"
 
     def fit(self, trainset):
+        if ModelWrapper is None:
+            raise RuntimeError("no internet connection.")
+
         self._model = CLFModel(self._metric_bundle.get_classifier_for_attack())
         self._textfooler = TextFoolerJin2019.build(self._model)
 
