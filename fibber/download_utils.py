@@ -1,4 +1,4 @@
-"""This module contains utility functions to download files to the root dir `~/.fibber`."""
+"""This module contains utility functions to download files to the root dir ``~/.fibber``."""
 
 import hashlib
 import os
@@ -35,7 +35,7 @@ def check_file_md5(filename, md5):
 def download_file(filename, url, md5, subdir=None, untar=False, unzip=False):
     """Download file from a given url.
 
-    This downloads a file to `<fibber_root_dir>/subdir`. If the file already exists and the md5
+    This downloads a file to ``<fibber_root_dir>/subdir``. If the file already exists and the md5
     matches, using the existing file.
 
     Args:

@@ -44,12 +44,12 @@ Afterward, you have to execute this command to activate the environment:
 conda activate fibber_env
 ```
 
-**Then you should install tensorflow and pytorch.** Please follow the instructions for [tensorflow](https://www.tensorflow.org/install) and [pytorch](https://pytorch.org). Fibber requires `tensorflow>=2.0.0` and `pytorch>=1.5.0`.
+**Then you should install tensorflow and pytorch.** Please follow the instructions for [tensorflow](https://www.tensorflow.org/install) and [pytorch](https://pytorch.org). Fibber requires `tensorflow>=2.0.0` and `pytorch>=1.5.0`. Please choose a proper version of tensorflow and pytorch according to the CUDA version on your computer.
 
 
 Remember to execute `conda activate fibber_env` every time you start a new console to work on **fibber**!
 
-
+**Install Java** Please install a Java runtime environment on your computer.
 
 ## Install from PyPI
 
@@ -103,78 +103,109 @@ getting started with **fibber**.
 
 **(1) [Install Fibber](#Install)**
 
-**(2) Get a demo dataset.**
+**(2) Get a demo dataset and resources.**
 
 ```python
 from fibber.datasets import get_demo_dataset
 
 trainset, testset = get_demo_dataset()
+
+from fibber.resources import download_all
+
+# resources are downloaded to ~/.fibber
+download_all()
 ```
+
+
 
 **(3) Create a Fibber object.**
 
 ```python
 from fibber.fibber import Fibber
 
+# args starting with "bs_" are hyperparameters for the BertSamplingStrategy.
 arg_dict = {
     "use_gpu_id": 0,
     "gpt2_gpu_id": 0,
+    "bert_gpu_id": 0,
     "strategy_gpu_id": 0,
+    "bs_block_size": 3,
+    "bs_wpe_weight": 10000,
+    "bs_use_weight": 1000,
+    "bs_gpt2_weight": 10,
+    "bs_clf_weight": 3
 }
 
-fibber = Fibber(arg_dict, dataset_name="demo", strategy_name="RandomStrategy",
-                trainset=trainset, testset=testset)
+# create a fibber object.
+# This step may take a while (about 1 hour) on RTX TITAN, and requires 20G of
+# GPU memory. If there's not enough GPU memory on your GPU, consider assign use
+# gpt2, bert, and strategy to different GPUs.
+#
+fibber = Fibber(arg_dict, dataset_name="demo", strategy_name="BertSamplingStrategy",
+                trainset=trainset, testset=testset, output_dir="exp-demo")
 ```
 
-**(4) Randomly sample a sentence from the test set, and paraphrase it.**
+**(4) You can also ask fibber to paraphrase your sentence.**
 
 The following command can randomly paraphrase the sentence into 5 different ways.
 
 ```python
-fibber.paraphrase_a_random_sentence(n=5)
+# Try sentences you like.
+# label 0 means negative, and 1 means positive.
+fibber.paraphrase(
+    {"text0": ("The Avengers is a good movie. Although it is 3 hours long, every scene has something to watch."),
+     "label": 1},
+    field_name="text0",
+    n=5)
 ```
 
 The output is a tuple of (str, list, list).
 
 ```python
 # Original Text
-'the movie slides downhill as soon as macho action conventions assert themselves .'
+'The Avengers is a good movie. Although it is 3 hours long, every scene has something to watch.'
 
 # 5 paraphrases
- ['conventions slides as as action assert macho downhill soon movie . the themselves',
-  'as . downhill action macho the themselves assert as slides conventions soon movie',
-  'movie as slides macho action . soon themselves the downhill as assert conventions',
-  'the soon assert as movie themselves macho conventions as downhill . action slides',
-  'downhill movie conventions slides the assert themselves action macho as as . soon'],
+['the avengers is a good movie. even it is 2 hours long, there is not enough to watch.',
+  'the avengers is a good movie. while it is 3 hours long, it is still very watchable.',
+  'the avengers is a good movie and although it is 2 ¹⁄₂ hours long, it is never very interesting.',
+  'avengers is not a good movie. while it is three hours long, it is still something to watch.',
+  'the avengers is a bad movie. while it is three hours long, it is still something to watch.']
 
 # Evaluation metrics of these 5 paraphrases.
- [{'EditingDistance': 8,
-   'USESemanticSimilarity': 0.8859144449234009,
-   'GloVeSemanticSimilarity': 1.0000000321979126,
-   'GPT2GrammarQuality': 23.059619903564453},
-  {'EditingDistance': 9,
-   'USESemanticSimilarity': 0.8609699010848999,
-   'GloVeSemanticSimilarity': 1.0000000321979126,
-   'GPT2GrammarQuality': 39.824188232421875},
+
   {'EditingDistance': 8,
-   'USESemanticSimilarity': 0.8530778288841248,
-   'GloVeSemanticSimilarity': 1.0000000321979126,
-   'GPT2GrammarQuality': 17.592607498168945},
+   'USESemanticSimilarity': 0.9523628950119019,
+   'GloVeSemanticSimilarity': 0.9795315341042675,
+   'GPT2GrammarQuality': 1.492070198059082,
+   'BertClfPrediction': 0},
   {'EditingDistance': 9,
-   'USESemanticSimilarity': 0.8957847356796265,
-   'GloVeSemanticSimilarity': 1.0000000321979126,
-   'GPT2GrammarQuality': 24.76700210571289},
-  {'EditingDistance': 9,
-   'USESemanticSimilarity': 0.9004875421524048,
-   'GloVeSemanticSimilarity': 1.0000000321979126,
-   'GPT2GrammarQuality': 11.36586856842041}]
+   'USESemanticSimilarity': 0.9372092485427856,
+   'GloVeSemanticSimilarity': 0.9575780832312993,
+   'GPT2GrammarQuality': 0.9813404679298401,
+   'BertClfPrediction': 1},
+  {'EditingDistance': 11,
+   'USESemanticSimilarity': 0.9265919327735901,
+   'GloVeSemanticSimilarity': 0.9710499628056698,
+   'GPT2GrammarQuality': 1.325406551361084,
+   'BertClfPrediction': 0},
+  {'EditingDistance': 7,
+   'USESemanticSimilarity': 0.8913971185684204,
+   'GloVeSemanticSimilarity': 0.9800737898362042,
+   'GPT2GrammarQuality': 1.2504483461380005,
+   'BertClfPrediction': 1},
+  {'EditingDistance': 8,
+   'USESemanticSimilarity': 0.9124080538749695,
+   'GloVeSemanticSimilarity': 0.9744155151490856,
+   'GPT2GrammarQuality': 1.1626977920532227,
+   'BertClfPrediction': 0}]
 ```
 
-**(5) You can also ask fibber to paraphrase your sentence.**
+**(5) You can ask fibber to randomly pick a sentence from the dataset and paraphrase it.**
 
 
 ```python
-fibber.paraphrase({"text0": "This movie is fantastic"}, "text0", 5)
+fibber.paraphrase_a_random_sentence(n=5)
 ```
 
 
@@ -188,7 +219,9 @@ In this version, we implement three strategies
 	- This strategy generates exactly 1 paraphrase for each original text regardless of `--num_paraphrases_per_text` flag.
 - RandomStrategy:
 	- The random strategy outputs the random shuffle of words in the original text.
-
+- TextFoolerStrategy:
+	- Implementation of [Jin et. al, 2019](https://arxiv.org/abs/1907.11932)
+- BertSamplingStrategy:
 
 
 # What's next?

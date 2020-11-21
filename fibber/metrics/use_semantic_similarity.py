@@ -6,7 +6,7 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_hub as hub
 
-from fibber import log
+from fibber import log, resources
 from fibber.metrics.metric_base import MetricBase
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -48,9 +48,29 @@ class USESemanticSimilarity(MetricBase):
             logger.warning("Universal sentence encoder is using CPU.")
         else:
             logger.info("Universal sentence encoder metric is using GPU %d.", use_gpu_id)
-        module_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
-        self.model = hub.load(module_url)
+        self.model = hub.load(resources.get_universal_sentence_encoder())
         log.remove_logger_tf_handler(logger)   # tensorflow_hub mess up the python logging
+
+    def measure_batch(self, origin, paraphrases, data_record=None, paraphrase_field="text0"):
+        """Measure the metric on a batch of paraphrases.
+
+        Args:
+            origin (str): the original text.
+            paraphrases (list): a set of paraphrases.
+            data_record (dict): the corresponding data record of original text.
+            paraphrase_field (str): the field name to paraphrase.
+
+        Returns:
+            (list): a list containing the USE similarity metric for each paraphrase.
+        """
+        origin = " ".join(origin.split()[:200])
+        paraphrases = [" ".join(x.split()[:200]) for x in paraphrases]
+        embs = self.model([origin] + paraphrases).numpy()
+
+        norm = np.linalg.norm(embs, axis=1)
+        sim = np.sum(embs[0] * embs, axis=1) / norm[0] / norm
+        assert abs(sim[0] - 1) < 1e-4
+        return list(sim)[1:]
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the cosine similarity between the embedding of original text and paraphrased

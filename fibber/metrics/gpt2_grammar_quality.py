@@ -7,9 +7,9 @@ sentence.
 import numpy as np
 import torch
 import torch.nn.functional as F
-from transformers import GPT2LMHeadModel, GPT2Tokenizer
+from transformers import GPT2LMHeadModel, GPT2TokenizerFast
 
-from fibber import log
+from fibber import log, resources
 from fibber.metrics.metric_base import MetricBase
 
 logger = log.setup_custom_logger(__name__)
@@ -42,12 +42,13 @@ class GPT2GrammarQuality(MetricBase):
     original text. The perplexity is measured using GPT2 model.
     """
 
-    def __init__(self, gpt2_pretrained_model="gpt2", gpt2_gpu_id=-1, **kargs):
+    def __init__(self, gpt2_pretrained_model="gpt2-medium", gpt2_gpu_id=-1, **kargs):
         """Initialize GPT2 model."""
         super(GPT2GrammarQuality, self).__init__()
 
         logger.info("load gpt2 model.")
-        self._tokenizer = GPT2Tokenizer.from_pretrained(gpt2_pretrained_model)
+        self._tokenizer = GPT2TokenizerFast.from_pretrained(
+            resources.get_transformers(gpt2_pretrained_model))
         if gpt2_gpu_id == -1:
             logger.warning("GPT2 metric is running on CPU.")
             self._device = torch.device("cpu")
@@ -55,27 +56,47 @@ class GPT2GrammarQuality(MetricBase):
             logger.info("GPT2 metric is running on GPU %d.", gpt2_gpu_id)
             self._device = torch.device("cuda:%d" % gpt2_gpu_id)
 
-        self._model = GPT2LMHeadModel.from_pretrained(gpt2_pretrained_model).to(self._device)
+        self._model = GPT2LMHeadModel.from_pretrained(
+            resources.get_transformers(gpt2_pretrained_model)).to(
+            self._device)
 
-    def _get_ppl(self, origin, paraphrase):
-        """Compute the perplexity ratio ppl(paraphrase) / ppl(origin)."""
-        origin_input, origin_output = make_input_output_pair(self._tokenizer, origin)
-        paraphrase_input, paraphrase_output = make_input_output_pair(self._tokenizer, paraphrase)
+    def _get_ppl(self, sentences):
+        """Compute the perplexity of sentences."""
+        input_output = [make_input_output_pair(self._tokenizer, x) for x in sentences]
 
-        toks_input, mask = make_batch([origin_input, paraphrase_input])
-        toks_output, _ = make_batch([origin_output, paraphrase_output])
+        input, output = zip(*input_output)
+
+        toks_input, mask = make_batch(input)
+        toks_output, _ = make_batch(output)
 
         mask = torch.tensor(mask).to(self._device)
         toks_input = torch.tensor(toks_input).to(self._device)
         toks_output = torch.tensor(toks_output).to(self._device)
 
-        logits = self._model(toks_input, attention_mask=mask)[0]
+        with torch.no_grad():
+            logits = self._model(toks_input, attention_mask=mask)[0]
 
         logpw = torch.gather(F.log_softmax(logits, dim=-1), dim=-1,
                              index=toks_output.unsqueeze(dim=2)).squeeze(dim=2)
         ppl = torch.exp(-(logpw * mask).sum(dim=1) / mask.sum(dim=1))
         ppl = ppl.detach().cpu().numpy()
         return ppl
+
+    def measure_batch(self, origin, paraphrases, data_record=None, paraphrase_field="text0"):
+        """Measure the metric on a batch of paraphrases.
+
+        Args:
+            origin (str): the original text.
+            paraphrases (list): a set of paraphrases.
+            data_record (dict): the corresponding data record of original text.
+            paraphrase_field (str): the field name to paraphrase.
+
+        Returns:
+            (list): a list containing the USE similarity metric for each paraphrase.
+        """
+        ppls = self._get_ppl([origin] + paraphrases)
+
+        return list(ppls[1:]) / ppls[0]
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the perplexity ratio.
@@ -86,5 +107,5 @@ class GPT2GrammarQuality(MetricBase):
             data_record: ignored.
             paraphrase_field: ignored.
         """
-        ppl = self._get_ppl(origin, paraphrase)
+        ppl = self._get_ppl([origin, paraphrase])
         return float(ppl[1] / ppl[0])

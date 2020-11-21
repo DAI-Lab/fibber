@@ -72,27 +72,46 @@ class MetricBundle(object):
         for item in customized_metrics:
             assert isinstance(item, MetricBase)
 
-        self._metrics = []
-        self._attack_clf = None
+        self._metrics = {}
 
         if use_editing_distance:
-            self._metrics.append(EditingDistance(**kargs))
+            metric = EditingDistance(**kargs)
+            self._metrics[str(metric)] = metric
         if use_use_semantic_similarity:
-            self._metrics.append(USESemanticSimilarity(**kargs))
+            metric = USESemanticSimilarity(**kargs)
+            self._metrics[str(metric)] = metric
         if use_glove_semantic_similarity:
-            self._metrics.append(GloVeSemanticSimilarity(**kargs))
+            metric = GloVeSemanticSimilarity(**kargs)
+            self._metrics[str(metric)] = metric
         if use_gpt2_grammar_quality:
-            self._metrics.append(GPT2GrammarQuality(**kargs))
+            metric = GPT2GrammarQuality(**kargs)
+            self._metrics[str(metric)] = metric
         if use_bert_clf_prediction:
-            self._metrics.append(BertClfPrediction(**kargs))
-            self._attack_clf = self._metrics[-1]
+            metric = BertClfPrediction(**kargs)
+            self._metrics[str(metric)] = metric
 
-        self._metrics += customized_metrics
+        for metric in customized_metrics:
+            assert str(metric) not in self._metrics, "Duplicate metric name."
+            self._metrics[str(metric)] = metric
 
-    def get_classifier_for_attack(self,):
-        """Return the BERT classifier metric."""
-        assert self._attack_clf is not None
-        return self._attack_clf
+    def get_metric(self, metric_name):
+        """Returns a metric in the bundle using the metric name.
+
+        Metric name is the class name of a metric.
+
+        Raises assertion error if metric is not found.
+
+        Args:
+            metric_name: the name of the matric.
+        Returns:
+            (object): a metric object.
+        """
+        assert metric_name in self._metrics
+        return self._metrics[metric_name]
+
+    def get_classifier_for_attack(self):
+        """Returns the classifier for attack."""
+        return self.get_metric("BertClfPrediction")
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the results of all metrics in the bundle for one pair of text.
@@ -107,9 +126,8 @@ class MetricBundle(object):
             (dict):
         """
         ret = {}
-        for metric in self._metrics:
-            ret[str(metric)] = metric.measure_example(
-                origin, paraphrase, data_record, paraphrase_field)
+        for name, metric in self._metrics.items():
+            ret[name] = metric.measure_example(origin, paraphrase, data_record, paraphrase_field)
         return ret
 
 
@@ -122,7 +140,7 @@ def compute_metrics(metric_bundle, results, output_filename):
         output_filename (str): A json filename to store results and metrics.
 
     Returns:
-        (dict): the results dict with `original_text_metrics` and `paraphrase_metrics` added.
+        (dict): the results dict with ``original_text_metrics`` and ``paraphrase_metrics`` added.
     """
     last_output_save_time = -1
     logger.info("Start measuring.")
@@ -166,7 +184,7 @@ def aggregate_metrics(dataset_name, paraphrase_strategy_name, experiment_name, r
         paraphrase_strategy_name (str): the name of the paraphrase strategy.
         experiment_name (str): the name of the experiment.
         results (dict): the fibber dataset with paraphrases and metrics. The return value of
-            `compute_metrics`.
+            ``compute_metrics``.
         customize_aggregation_fn_dict (dict): A dict of customized aggregations. The dict is
             a mapping from aggregation name to aggregation function. The aggregation function
             should take one data_record, and returns a float.
@@ -197,7 +215,7 @@ def aggregate_metrics(dataset_name, paraphrase_strategy_name, experiment_name, r
 
         aggregated_result = aggregated_result.append(aggregate_result_tmp, ignore_index=True)
 
-    aggregated_result = dict(aggregated_result.mean())
+    aggregated_result = dict(aggregated_result.mean(skipna=True))
     # hack column order by adding 0
     aggregated_result["0_dataset_name"] = dataset_name
     aggregated_result["1_paraphrase_strategy_name"] = paraphrase_strategy_name
