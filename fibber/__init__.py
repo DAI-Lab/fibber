@@ -17,7 +17,7 @@ def get_root_dir():
 
 
 # change cache directory
-nltk.data.path = [os.path.join(get_root_dir(), "common", "nltk_data")]
+nltk.data.path += [os.path.join(get_root_dir(), "common", "nltk_data")]
 os.environ['TRANSFORMERS_CACHE'] = os.path.join(
     get_root_dir(), "common", "transformers_pretrained")
 os.environ['TFHUB_CACHE_DIR'] = os.path.join(get_root_dir(), "common", "tfhub_pretrained")
