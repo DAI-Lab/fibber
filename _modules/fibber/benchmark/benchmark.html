@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.benchmark.benchmark &#8212; fibber 0.0.1 documentation</title>
+    <title>fibber.benchmark.benchmark &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -197,7 +197,8 @@
 <span class="kn">from</span> <span class="nn">fibber.benchmark.customized_metric_aggregation</span> <span class="kn">import</span> <span class="n">customized_metric_aggregation_fn_dict</span>
 <span class="kn">from</span> <span class="nn">fibber.datasets</span> <span class="kn">import</span> <span class="n">get_dataset</span><span class="p">,</span> <span class="n">subsample_dataset</span>
 <span class="kn">from</span> <span class="nn">fibber.metrics</span> <span class="kn">import</span> <span class="n">MetricBundle</span><span class="p">,</span> <span class="n">aggregate_metrics</span><span class="p">,</span> <span class="n">compute_metrics</span>
-<span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies</span> <span class="kn">import</span> <span class="n">IdentityStrategy</span><span class="p">,</span> <span class="n">RandomStrategy</span>
+<span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BertSamplingStrategy</span><span class="p">,</span> <span class="n">IdentityStrategy</span><span class="p">,</span> <span class="n">RandomStrategy</span><span class="p">,</span> <span class="n">TextFoolerStrategy</span><span class="p">)</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">log</span><span class="o">.</span><span class="n">remove_logger_tf_handler</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
@@ -219,6 +220,8 @@
 
 <span class="n">RandomStrategy</span><span class="o">.</span><span class="n">add_parser_args</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
 <span class="n">IdentityStrategy</span><span class="o">.</span><span class="n">add_parser_args</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
+<span class="n">TextFoolerStrategy</span><span class="o">.</span><span class="n">add_parser_args</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
+<span class="n">BertSamplingStrategy</span><span class="o">.</span><span class="n">add_parser_args</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
 
 <span class="n">G_EXP_NAME</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -238,12 +241,20 @@
     <span class="k">return</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">G_EXP_NAME</span> <span class="o">+</span> <span class="n">suffix</span></div>
 
 
-<div class="viewcode-block" id="get_strategy"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark.html#fibber.benchmark.benchmark.get_strategy">[docs]</a><span class="k">def</span> <span class="nf">get_strategy</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">strategy_name</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">):</span>
+<div class="viewcode-block" id="get_strategy"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark.html#fibber.benchmark.benchmark.get_strategy">[docs]</a><span class="k">def</span> <span class="nf">get_strategy</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span>
+                 <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Take the strategy name and construct a strategy object.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">strategy_name</span> <span class="o">==</span> <span class="s2">&quot;RandomStrategy&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">RandomStrategy</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">RandomStrategy</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">strategy_name</span> <span class="o">==</span> <span class="s2">&quot;IdentityStrategy&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">IdentityStrategy</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">IdentityStrategy</span><span class="p">(</span>
+            <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">strategy_name</span> <span class="o">==</span> <span class="s2">&quot;TextFoolerStrategy&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">TextFoolerStrategy</span><span class="p">(</span>
+            <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">strategy_name</span> <span class="o">==</span> <span class="s2">&quot;BertSamplingStrategy&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BertSamplingStrategy</span><span class="p">(</span>
+            <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">assert</span> <span class="mi">0</span></div>
 
@@ -267,7 +278,9 @@
         <span class="n">trainset</span><span class="o">=</span><span class="n">trainset</span><span class="p">,</span> <span class="n">testset</span><span class="o">=</span><span class="n">testset</span><span class="p">,</span>
         <span class="n">bert_clf_steps</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;bert_clf_steps&quot;</span><span class="p">])</span>
 
-    <span class="n">paraphrase_strategy</span> <span class="o">=</span> <span class="n">get_strategy</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;strategy&quot;</span><span class="p">],</span> <span class="n">metric_bundle</span><span class="p">)</span>
+    <span class="n">paraphrase_strategy</span> <span class="o">=</span> <span class="n">get_strategy</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">],</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;strategy&quot;</span><span class="p">],</span>
+                                       <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;strategy_gpu_id&quot;</span><span class="p">],</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;output_dir&quot;</span><span class="p">],</span>
+                                       <span class="n">metric_bundle</span><span class="p">)</span>
     <span class="n">paraphrase_strategy</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">trainset</span><span class="p">)</span>
 
     <span class="n">tmp_output_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>

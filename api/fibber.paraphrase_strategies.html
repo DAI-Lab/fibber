@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies package &#8212; fibber 0.0.1 documentation</title>
+    <title>fibber.paraphrase_strategies package &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -39,7 +39,7 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.paraphrase_strategies.identity_strategy module" href="fibber.paraphrase_strategies.identity_strategy.html" />
+    <link rel="next" title="fibber.paraphrase_strategies.bert_sampling_strategy module" href="fibber.paraphrase_strategies.bert_sampling_strategy.html" />
     <link rel="prev" title="fibber.metrics.use_semantic_similarity module" href="fibber.metrics.use_semantic_similarity.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -182,6 +182,22 @@
                     <ul>
                     
                         <li class="">
+                            <a href="fibber.paraphrase_strategies.bert_sampling_strategy.html">fibber.paraphrase_strategies.bert_sampling_strategy module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.paraphrase_strategies.bert_sampling_utils_lm.html">fibber.paraphrase_strategies.bert_sampling_utils_lm module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.paraphrase_strategies.bert_sampling_utils_text_parser.html">fibber.paraphrase_strategies.bert_sampling_utils_text_parser module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.paraphrase_strategies.bert_sampling_utils_wpe.html">fibber.paraphrase_strategies.bert_sampling_utils_wpe module</a>
+                        </li>
+                    
+                        <li class="">
                             <a href="fibber.paraphrase_strategies.identity_strategy.html">fibber.paraphrase_strategies.identity_strategy module</a>
                         </li>
                     
@@ -191,6 +207,10 @@
                     
                         <li class="">
                             <a href="fibber.paraphrase_strategies.strategy_base.html">fibber.paraphrase_strategies.strategy_base module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.paraphrase_strategies.textfooler_strategy.html">fibber.paraphrase_strategies.textfooler_strategy module</a>
                         </li>
                     
                     </ul>
@@ -272,22 +292,26 @@
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.bert_sampling_strategy.html">fibber.paraphrase_strategies.bert_sampling_strategy module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.bert_sampling_utils_lm.html">fibber.paraphrase_strategies.bert_sampling_utils_lm module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.bert_sampling_utils_text_parser.html">fibber.paraphrase_strategies.bert_sampling_utils_text_parser module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.bert_sampling_utils_wpe.html">fibber.paraphrase_strategies.bert_sampling_utils_wpe module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.identity_strategy.html">fibber.paraphrase_strategies.identity_strategy module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.random_strategy.html">fibber.paraphrase_strategies.random_strategy module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.strategy_base.html">fibber.paraphrase_strategies.strategy_base module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.textfooler_strategy.html">fibber.paraphrase_strategies.textfooler_strategy module</a></li>
 </ul>
 </div>
 </div>
 <div class="section" id="module-fibber.paraphrase_strategies">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fibber.paraphrase_strategies" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="fibber.paraphrase_strategies.IdentityStrategy">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.</code><code class="sig-name descname">IdentityStrategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/identity_strategy.html#IdentityStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.IdentityStrategy" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.paraphrase_strategies.BertSamplingStrategy">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.</code><code class="sig-name descname">BertSamplingStrategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span></em>, <em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/bert_sampling_strategy.html#BertSamplingStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.BertSamplingStrategy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase" title="fibber.paraphrase_strategies.strategy_base.StrategyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.paraphrase_strategies.strategy_base.StrategyBase</span></code></a></p>
-<p>A baseline paraphrase strategy. Just return the original sentence.</p>
 <p>Initialize the paraphrase_strategies.</p>
 <p>This function initialize the <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,
-<code class="docutils literal notranslate"><span class="pre">self._device</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">self._device</span></code>, <code class="docutils literal notranslate"><span class="pre">self._output_dir</span></code>, <code class="docutils literal notranslate"><span class="pre">self._dataset_name</span></code>.</p>
 <p><strong>You should not overwrite this function.</strong></p>
 <ul class="simple">
 <li><p>self._strategy_config (dict): a dictionary that stores the strategy name and all
@@ -296,12 +320,84 @@ hyperparameter values. The dict is also saved to the results.</p></li>
 paraphrases. Strategies can compute metrics during paraphrasing.</p></li>
 <li><p>self._device (torch.Device): any computation that requires a GPU accelerator should
 use this device.</p></li>
+<li><p>self._output_dir (str): the dir name where the strategy can save files.</p></li>
+<li><p>self._dataset_name (str): the dataset name.</p></li>
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arg_dict</strong> – all_args_load_from .</p></li>
-<li><p><strong>metric_bundle</strong> – a MetricBundle object.</p></li>
+<li><p><strong>arg_dict</strong> (<em>dict</em>) – all args load from command line.</p></li>
+<li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
+<li><p><strong>strategy_gpu_id</strong> (<em>int</em>) – the gpu id to run the strategy.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – a directory to save any models or temporary files.</p></li>
+<li><p><strong>metric_bundle</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.MetricBundle" title="fibber.metrics.MetricBundle"><em>MetricBundle</em></a>) – a MetricBundle object.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="fibber.paraphrase_strategies.BertSamplingStrategy.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trainset</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/bert_sampling_strategy.html#BertSamplingStrategy.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.BertSamplingStrategy.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the paraphrase strategy on a training set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>trainset</strong> (<em>dict</em>) – a fibber dataset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.paraphrase_strategies.BertSamplingStrategy.paraphrase_example">
+<code class="sig-name descname">paraphrase_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/bert_sampling_strategy.html#BertSamplingStrategy.paraphrase_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.BertSamplingStrategy.paraphrase_example" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paraphrase one data record.</p>
+<p>This function should be overwritten by subclasses. When overwriting this class, you can
+use <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,  <code class="docutils literal notranslate"><span class="pre">self._device</span></code>,
+<code class="docutils literal notranslate"><span class="pre">self._output_dir</span></code>, and <code class="docutils literal notranslate"><span class="pre">self._dataset_name</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_record</strong> (<em>dict</em>) – a dict storing one data of a dataset.</p></li>
+<li><p><strong>field_name</strong> (<em>str</em>) – the field needed to be paraphrased.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – number of paraphrases.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list contain at most n strings.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>([str,])</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="fibber.paraphrase_strategies.IdentityStrategy">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.</code><code class="sig-name descname">IdentityStrategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span></em>, <em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/identity_strategy.html#IdentityStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.IdentityStrategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase" title="fibber.paraphrase_strategies.strategy_base.StrategyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.paraphrase_strategies.strategy_base.StrategyBase</span></code></a></p>
+<p>A baseline paraphrase strategy. Just return the original sentence.</p>
+<p>Initialize the paraphrase_strategies.</p>
+<p>This function initialize the <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,
+<code class="docutils literal notranslate"><span class="pre">self._device</span></code>, <code class="docutils literal notranslate"><span class="pre">self._output_dir</span></code>, <code class="docutils literal notranslate"><span class="pre">self._dataset_name</span></code>.</p>
+<p><strong>You should not overwrite this function.</strong></p>
+<ul class="simple">
+<li><p>self._strategy_config (dict): a dictionary that stores the strategy name and all
+hyperparameter values. The dict is also saved to the results.</p></li>
+<li><p>self._metric_bundle (MetricBundle): the metrics that will be used to evaluate
+paraphrases. Strategies can compute metrics during paraphrasing.</p></li>
+<li><p>self._device (torch.Device): any computation that requires a GPU accelerator should
+use this device.</p></li>
+<li><p>self._output_dir (str): the dir name where the strategy can save files.</p></li>
+<li><p>self._dataset_name (str): the dataset name.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg_dict</strong> (<em>dict</em>) – all args load from command line.</p></li>
+<li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
+<li><p><strong>strategy_gpu_id</strong> (<em>int</em>) – the gpu id to run the strategy.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – a directory to save any models or temporary files.</p></li>
+<li><p><strong>metric_bundle</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.MetricBundle" title="fibber.metrics.MetricBundle"><em>MetricBundle</em></a>) – a MetricBundle object.</p></li>
 </ul>
 </dd>
 </dl>
@@ -310,7 +406,8 @@ use this device.</p></li>
 <code class="sig-name descname">paraphrase_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/identity_strategy.html#IdentityStrategy.paraphrase_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.IdentityStrategy.paraphrase_example" title="Permalink to this definition">¶</a></dt>
 <dd><p>Paraphrase one data record.</p>
 <p>This function should be overwritten by subclasses. When overwriting this class, you can
-use <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code> and <code class="docutils literal notranslate"><span class="pre">self._device</span></code>.</p>
+use <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,  <code class="docutils literal notranslate"><span class="pre">self._device</span></code>,
+<code class="docutils literal notranslate"><span class="pre">self._output_dir</span></code>, and <code class="docutils literal notranslate"><span class="pre">self._dataset_name</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -332,12 +429,12 @@ use <code class="docutils literal notranslate"><span class="pre">self._strategy_
 
 <dl class="py class">
 <dt id="fibber.paraphrase_strategies.RandomStrategy">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.</code><code class="sig-name descname">RandomStrategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/random_strategy.html#RandomStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.RandomStrategy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.</code><code class="sig-name descname">RandomStrategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span></em>, <em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/random_strategy.html#RandomStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.RandomStrategy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase" title="fibber.paraphrase_strategies.strategy_base.StrategyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.paraphrase_strategies.strategy_base.StrategyBase</span></code></a></p>
 <p>Randomly shuffle words in a sentence to generate paraphrases.</p>
 <p>Initialize the paraphrase_strategies.</p>
 <p>This function initialize the <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,
-<code class="docutils literal notranslate"><span class="pre">self._device</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">self._device</span></code>, <code class="docutils literal notranslate"><span class="pre">self._output_dir</span></code>, <code class="docutils literal notranslate"><span class="pre">self._dataset_name</span></code>.</p>
 <p><strong>You should not overwrite this function.</strong></p>
 <ul class="simple">
 <li><p>self._strategy_config (dict): a dictionary that stores the strategy name and all
@@ -346,12 +443,17 @@ hyperparameter values. The dict is also saved to the results.</p></li>
 paraphrases. Strategies can compute metrics during paraphrasing.</p></li>
 <li><p>self._device (torch.Device): any computation that requires a GPU accelerator should
 use this device.</p></li>
+<li><p>self._output_dir (str): the dir name where the strategy can save files.</p></li>
+<li><p>self._dataset_name (str): the dataset name.</p></li>
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arg_dict</strong> – all_args_load_from .</p></li>
-<li><p><strong>metric_bundle</strong> – a MetricBundle object.</p></li>
+<li><p><strong>arg_dict</strong> (<em>dict</em>) – all args load from command line.</p></li>
+<li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
+<li><p><strong>strategy_gpu_id</strong> (<em>int</em>) – the gpu id to run the strategy.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – a directory to save any models or temporary files.</p></li>
+<li><p><strong>metric_bundle</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.MetricBundle" title="fibber.metrics.MetricBundle"><em>MetricBundle</em></a>) – a MetricBundle object.</p></li>
 </ul>
 </dd>
 </dl>
@@ -360,7 +462,8 @@ use this device.</p></li>
 <code class="sig-name descname">paraphrase_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/random_strategy.html#RandomStrategy.paraphrase_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.RandomStrategy.paraphrase_example" title="Permalink to this definition">¶</a></dt>
 <dd><p>Paraphrase one data record.</p>
 <p>This function should be overwritten by subclasses. When overwriting this class, you can
-use <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code> and <code class="docutils literal notranslate"><span class="pre">self._device</span></code>.</p>
+use <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,  <code class="docutils literal notranslate"><span class="pre">self._device</span></code>,
+<code class="docutils literal notranslate"><span class="pre">self._output_dir</span></code>, and <code class="docutils literal notranslate"><span class="pre">self._dataset_name</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -382,12 +485,12 @@ use <code class="docutils literal notranslate"><span class="pre">self._strategy_
 
 <dl class="py class">
 <dt id="fibber.paraphrase_strategies.StrategyBase">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.</code><code class="sig-name descname">StrategyBase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/strategy_base.html#StrategyBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.StrategyBase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.</code><code class="sig-name descname">StrategyBase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span></em>, <em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/strategy_base.html#StrategyBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.StrategyBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>The base class for all paraphrase strategies.</p>
 <p>The simplest way to write a strategy is to overwrite the <code class="docutils literal notranslate"><span class="pre">paraphrase_example</span></code> function. This
 function takes one data records, and returns multiple paraphrases of a given field.</p>
-<p>For more advanced use cases, you can overwrite the <cite>paraphrase</cite> function.</p>
+<p>For more advanced use cases, you can overwrite the <code class="docutils literal notranslate"><span class="pre">paraphrase</span></code> function.</p>
 <p>Some strategy may have hyper-parameters. Add hyper parameters into the class attribute
 <code class="docutils literal notranslate"><span class="pre">__hyperparameters__</span></code>.</p>
 <p>Hyperparameters defined in <code class="docutils literal notranslate"><span class="pre">__hyperparameters__</span></code> can be added to the command line arg parser
@@ -421,7 +524,7 @@ strategy. Each tuple is <code class="docutils literal notranslate"><span class="
 
 <p>Initialize the paraphrase_strategies.</p>
 <p>This function initialize the <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,
-<code class="docutils literal notranslate"><span class="pre">self._device</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">self._device</span></code>, <code class="docutils literal notranslate"><span class="pre">self._output_dir</span></code>, <code class="docutils literal notranslate"><span class="pre">self._dataset_name</span></code>.</p>
 <p><strong>You should not overwrite this function.</strong></p>
 <ul class="simple">
 <li><p>self._strategy_config (dict): a dictionary that stores the strategy name and all
@@ -430,19 +533,24 @@ hyperparameter values. The dict is also saved to the results.</p></li>
 paraphrases. Strategies can compute metrics during paraphrasing.</p></li>
 <li><p>self._device (torch.Device): any computation that requires a GPU accelerator should
 use this device.</p></li>
+<li><p>self._output_dir (str): the dir name where the strategy can save files.</p></li>
+<li><p>self._dataset_name (str): the dataset name.</p></li>
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arg_dict</strong> – all_args_load_from .</p></li>
-<li><p><strong>metric_bundle</strong> – a MetricBundle object.</p></li>
+<li><p><strong>arg_dict</strong> (<em>dict</em>) – all args load from command line.</p></li>
+<li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
+<li><p><strong>strategy_gpu_id</strong> (<em>int</em>) – the gpu id to run the strategy.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – a directory to save any models or temporary files.</p></li>
+<li><p><strong>metric_bundle</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.MetricBundle" title="fibber.metrics.MetricBundle"><em>MetricBundle</em></a>) – a MetricBundle object.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt id="fibber.paraphrase_strategies.StrategyBase.add_parser_args">
 <em class="property">classmethod </em><code class="sig-name descname">add_parser_args</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parser</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/strategy_base.html#StrategyBase.add_parser_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.StrategyBase.add_parser_args" title="Permalink to this definition">¶</a></dt>
-<dd><p>create commandline args for all hyperparameters in <cite>__hyperparameters__</cite>.</p>
+<dd><p>create commandline args for all hyperparameters in <code class="docutils literal notranslate"><span class="pre">__hyperparameters__</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>parser</strong> – an arg parser.</p>
@@ -487,7 +595,8 @@ use this device.</p></li>
 <code class="sig-name descname">paraphrase_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/strategy_base.html#StrategyBase.paraphrase_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.StrategyBase.paraphrase_example" title="Permalink to this definition">¶</a></dt>
 <dd><p>Paraphrase one data record.</p>
 <p>This function should be overwritten by subclasses. When overwriting this class, you can
-use <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code> and <code class="docutils literal notranslate"><span class="pre">self._device</span></code>.</p>
+use <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,  <code class="docutils literal notranslate"><span class="pre">self._device</span></code>,
+<code class="docutils literal notranslate"><span class="pre">self._output_dir</span></code>, and <code class="docutils literal notranslate"><span class="pre">self._dataset_name</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -507,6 +616,61 @@ use <code class="docutils literal notranslate"><span class="pre">self._strategy_
 
 </dd></dl>
 
+<dl class="py class">
+<dt id="fibber.paraphrase_strategies.TextFoolerStrategy">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.</code><code class="sig-name descname">TextFoolerStrategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span></em>, <em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/textfooler_strategy.html#TextFoolerStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.TextFoolerStrategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase" title="fibber.paraphrase_strategies.strategy_base.StrategyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.paraphrase_strategies.strategy_base.StrategyBase</span></code></a></p>
+<p>This strategy uses TextFooler to generate paraphrase.s</p>
+<dl class="simple">
+<dt>We use TextFooler to attack the classifier in metric_bundle.</dt><dd><p>If the attack succeeds, we use the adversarial sentence as a paraphrase.
+If the attack fails, we use the original sentence as a paraphrase.</p>
+</dd>
+</dl>
+<p>This strategy always returns one paraphrase for one data record, regardless of <cite>n</cite>.</p>
+<p>Initialize the paraphrase_strategies.</p>
+<p>This function initialize the <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,
+<code class="docutils literal notranslate"><span class="pre">self._device</span></code>, <code class="docutils literal notranslate"><span class="pre">self._output_dir</span></code>, <code class="docutils literal notranslate"><span class="pre">self._dataset_name</span></code>.</p>
+<p><strong>You should not overwrite this function.</strong></p>
+<ul class="simple">
+<li><p>self._strategy_config (dict): a dictionary that stores the strategy name and all
+hyperparameter values. The dict is also saved to the results.</p></li>
+<li><p>self._metric_bundle (MetricBundle): the metrics that will be used to evaluate
+paraphrases. Strategies can compute metrics during paraphrasing.</p></li>
+<li><p>self._device (torch.Device): any computation that requires a GPU accelerator should
+use this device.</p></li>
+<li><p>self._output_dir (str): the dir name where the strategy can save files.</p></li>
+<li><p>self._dataset_name (str): the dataset name.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg_dict</strong> (<em>dict</em>) – all args load from command line.</p></li>
+<li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
+<li><p><strong>strategy_gpu_id</strong> (<em>int</em>) – the gpu id to run the strategy.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – a directory to save any models or temporary files.</p></li>
+<li><p><strong>metric_bundle</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.MetricBundle" title="fibber.metrics.MetricBundle"><em>MetricBundle</em></a>) – a MetricBundle object.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="fibber.paraphrase_strategies.TextFoolerStrategy.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trainset</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/textfooler_strategy.html#TextFoolerStrategy.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.TextFoolerStrategy.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the paraphrase strategy on a training set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>trainset</strong> (<em>dict</em>) – a fibber dataset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.paraphrase_strategies.TextFoolerStrategy.paraphrase_example">
+<code class="sig-name descname">paraphrase_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/textfooler_strategy.html#TextFoolerStrategy.paraphrase_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.TextFoolerStrategy.paraphrase_example" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate paraphrased sentences.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
@@ -517,7 +681,7 @@ use <code class="docutils literal notranslate"><span class="pre">self._strategy_
               <div class='prev-next-bottom'>
                 
     <a class='left-prev' id="prev-link" href="fibber.metrics.use_semantic_similarity.html" title="previous page">fibber.metrics.use_semantic_similarity module</a>
-    <a class='right-next' id="next-link" href="fibber.paraphrase_strategies.identity_strategy.html" title="next page">fibber.paraphrase_strategies.identity_strategy module</a>
+    <a class='right-next' id="next-link" href="fibber.paraphrase_strategies.bert_sampling_strategy.html" title="next page">fibber.paraphrase_strategies.bert_sampling_strategy module</a>
 
               </div>
               

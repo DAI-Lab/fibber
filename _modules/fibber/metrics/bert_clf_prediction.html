@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.bert_clf_prediction &#8212; fibber 0.0.1 documentation</title>
+    <title>fibber.metrics.bert_clf_prediction &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -194,12 +194,13 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
 <span class="kn">import</span> <span class="nn">tqdm</span>
 <span class="kn">import</span> <span class="nn">transformers</span>
 <span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
-<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">BertForSequenceClassification</span><span class="p">,</span> <span class="n">BertTokenizer</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">BertForSequenceClassification</span><span class="p">,</span> <span class="n">BertTokenizerFast</span>
 
-<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">get_root_dir</span><span class="p">,</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">get_root_dir</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">resources</span>
 <span class="kn">from</span> <span class="nn">fibber.datasets</span> <span class="kn">import</span> <span class="n">DatasetForBert</span>
 <span class="kn">from</span> <span class="nn">fibber.metrics.metric_base</span> <span class="kn">import</span> <span class="n">MetricBase</span>
 
@@ -326,7 +327,7 @@
     <span class="n">num_labels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trainset</span><span class="p">[</span><span class="s2">&quot;label_mapping&quot;</span><span class="p">])</span>
 
     <span class="n">model</span> <span class="o">=</span> <span class="n">BertForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
-        <span class="n">model_init</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">resources</span><span class="o">.</span><span class="n">get_transformers</span><span class="p">(</span><span class="n">model_init</span><span class="p">),</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
     <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Use </span><span class="si">%s</span><span class="s2"> tokenizer and classifier.&quot;</span><span class="p">,</span> <span class="n">model_init</span><span class="p">)</span>
@@ -380,7 +381,7 @@
         <span class="k">if</span> <span class="n">global_step</span> <span class="o">%</span> <span class="n">bert_clf_period_save</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">global_step</span> <span class="o">==</span> <span class="n">bert_clf_steps</span><span class="p">:</span>
             <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
             <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">))</span>
-            <span class="n">ckpt</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">model_init</span> <span class="o">+</span> <span class="s2">&quot;-</span><span class="si">%04d</span><span class="s2">k.pt&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">bert_clf_steps</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span>
+            <span class="n">ckpt</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">model_init</span> <span class="o">+</span> <span class="s2">&quot;-</span><span class="si">%04d</span><span class="s2">k.pt&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">global_step</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ckpt</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;BERT classifier saved at </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">ckpt</span><span class="p">)</span>
             <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
@@ -433,7 +434,9 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="s2">&quot;Use uncased model in BERT classifier prediction metric.&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">BertTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_init</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">BertTokenizerFast</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+            <span class="n">resources</span><span class="o">.</span><span class="n">get_transformers</span><span class="p">(</span><span class="n">model_init</span><span class="p">),</span> <span class="n">do_lower_case</span><span class="o">=</span><span class="s2">&quot;uncased&quot;</span> <span class="ow">in</span> <span class="n">model_init</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">bert_gpu_id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;BERT metric is running on CPU.&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
@@ -457,62 +460,71 @@
             <span class="n">bert_clf_val_steps</span><span class="o">=</span><span class="n">bert_clf_val_steps</span><span class="p">,</span>
             <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BertClfPrediction.predict_raw"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.predict_raw">[docs]</a>    <span class="k">def</span> <span class="nf">predict_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text0</span><span class="p">,</span> <span class="n">text1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get unnormalized log probability of the BERT prediction.</span>
+<div class="viewcode-block" id="BertClfPrediction.predict_dist_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.predict_dist_batch">[docs]</a>    <span class="k">def</span> <span class="nf">predict_dist_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get log probability of the BERT prediction.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            text0 (str):</span>
-<span class="sd">                On regular classification datasets, text0 contains the text to be classified.</span>
-<span class="sd">                On NLI datasets, text0 contains the premise.</span>
-<span class="sd">            text1 (str or None):</span>
-<span class="sd">                On regular classification datasets, text0 is None.</span>
-<span class="sd">                On NLI datasets, text1 contains the hypothesis.</span>
+<span class="sd">            text ([str]): a list of strs to be classified.</span>
+<span class="sd">            context (str or None):</span>
+<span class="sd">                On regular classification datasets, context is None.</span>
+<span class="sd">                On NLI datasets, context contains the premise.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (np.array): a numpy array of the unnormalized log probability over on each category.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">text1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">seq</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;[CLS]&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">text0</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;[SEP]&quot;</span><span class="p">]</span>
-            <span class="n">seq_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="o">.</span><span class="n">convert_tokens_to_ids</span><span class="p">(</span><span class="n">seq</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
-            <span class="n">seq_tensor</span> <span class="o">=</span> <span class="n">seq_tensor</span><span class="p">[:</span><span class="mi">200</span><span class="p">]</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span><span class="n">seq_tensor</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">batch_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+                                          <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">seq0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">text0</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;[SEP]&quot;</span><span class="p">]</span>
-            <span class="n">seq1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">text1</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;[SEP]&quot;</span><span class="p">]</span>
-            <span class="n">l0</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq0</span><span class="p">)</span>
-            <span class="n">l1</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq1</span><span class="p">)</span>
-            <span class="n">seq_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="o">.</span><span class="n">convert_tokens_to_ids</span><span class="p">([</span><span class="s2">&quot;[CLS]&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">seq0</span> <span class="o">+</span> <span class="n">seq1</span><span class="p">)</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">tok_type</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
-                <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">l0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">l1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">seq_tensor</span> <span class="o">=</span> <span class="n">seq_tensor</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">200</span><span class="p">]</span>
-            <span class="n">tok_type</span> <span class="o">=</span> <span class="n">tok_type</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">200</span><span class="p">]</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span><span class="n">seq_tensor</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="o">=</span><span class="n">tok_type</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
+            <span class="n">batch_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="p">[</span><span class="n">context</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">text_pair</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+                <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BertClfPrediction.predict"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text0</span><span class="p">,</span> <span class="n">text1</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span>
+                <span class="n">input_ids</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">batch_input</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">),</span>
+                <span class="n">token_type_ids</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">batch_input</span><span class="p">[</span><span class="s2">&quot;token_type_ids&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">),</span>
+                <span class="n">attention_mask</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">batch_input</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="BertClfPrediction.predict_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.predict_batch">[docs]</a>    <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the prediction of the BERT prediction.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            text0 (str):</span>
-<span class="sd">                On regular classification datasets, text0 contains the text to be classified.</span>
-<span class="sd">                On NLI datasets, text0 contains the premise.</span>
-<span class="sd">            text1 (str or None):</span>
-<span class="sd">                On regular classification datasets, text0 is None.</span>
-<span class="sd">                On NLI datasets, text1 contains the hypothesis.</span>
+<span class="sd">            text ([str]): a list of strs to be classified.</span>
+<span class="sd">            context (str or None):</span>
+<span class="sd">                On regular classification datasets, context is None.</span>
+<span class="sd">                On NLI datasets, context contains the premise.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (int): the prediction of the classifier.</span>
+<span class="sd">            (np.array): the prediction of the classifier.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_raw</span><span class="p">(</span><span class="n">text0</span><span class="p">,</span> <span class="n">text1</span><span class="p">)))</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_dist_batch</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BertClfPrediction.measure_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.measure_batch">[docs]</a>    <span class="k">def</span> <span class="nf">measure_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrases</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Measure the metric on a batch of paraphrases.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            origin (str): the original text.</span>
+<span class="sd">            paraphrases (list): a set of paraphrases.</span>
+<span class="sd">            data_record (dict): the corresponding data record of original text.</span>
+<span class="sd">            paraphrase_field (str): the field name to paraphrase.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (list): a list containing the metric for each paraphrase.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">paraphrases</span><span class="p">,</span>
+                                 <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;text0&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">paraphrase_field</span> <span class="o">==</span> <span class="s2">&quot;text1&quot;</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="BertClfPrediction.measure_example"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.measure_example">[docs]</a>    <span class="k">def</span> <span class="nf">measure_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">paraphrase_field</span> <span class="o">==</span> <span class="s2">&quot;text0&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">paraphrase</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">([</span><span class="n">paraphrase</span><span class="p">],</span> <span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">paraphrase_field</span> <span class="o">==</span> <span class="s2">&quot;text1&quot;</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;text0&quot;</span><span class="p">],</span> <span class="n">paraphrase</span><span class="p">)</span></div></div>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">([</span><span class="n">paraphrase</span><span class="p">],</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;text0&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span></div></div>
 </pre></div>
 
               </div>

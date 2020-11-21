@@ -1,0 +1,7 @@
+fibber.paraphrase\_strategies.bert\_sampling\_utils\_wpe module
+===============================================================
+
+.. automodule:: fibber.paraphrase_strategies.bert_sampling_utils_wpe
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fibber &#8212; fibber 0.0.1 documentation</title>
+    <title>Fibber &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -274,8 +274,9 @@ conda create -n fibber_env <span class="nv">python</span><span class="o">=</span
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda activate fibber_env
 </pre></div>
 </div>
-<p><strong>Then you should install tensorflow and pytorch.</strong> Please follow the instructions for <a class="reference external" href="https://www.tensorflow.org/install">tensorflow</a> and <a class="reference external" href="https://pytorch.org">pytorch</a>. Fibber requires <code class="docutils literal notranslate"><span class="pre">tensorflow&gt;=2.0.0</span></code> and <code class="docutils literal notranslate"><span class="pre">pytorch&gt;=1.5.0</span></code>.</p>
+<p><strong>Then you should install tensorflow and pytorch.</strong> Please follow the instructions for <a class="reference external" href="https://www.tensorflow.org/install">tensorflow</a> and <a class="reference external" href="https://pytorch.org">pytorch</a>. Fibber requires <code class="docutils literal notranslate"><span class="pre">tensorflow&gt;=2.0.0</span></code> and <code class="docutils literal notranslate"><span class="pre">pytorch&gt;=1.5.0</span></code>. Please choose a proper version of tensorflow and pytorch according to the CUDA version on your computer.</p>
 <p>Remember to execute <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">fibber_env</span></code> every time you start a new console to work on <strong>fibber</strong>!</p>
+<p><strong>Install Java</strong> Please install a Java runtime environment on your computer.</p>
 </div>
 <div class="section" id="install-from-pypi">
 <h2>Install from PyPI<a class="headerlink" href="#install-from-pypi" title="Permalink to this headline">¶</a></h2>
@@ -319,66 +320,95 @@ make install
 <p>In this short tutorial, we will guide you through a series of steps that will help you
 getting started with <strong>fibber</strong>.</p>
 <p><a href="#id1"><span class="problematic" id="id2">**</span></a>(1) <a class="reference external" href="#Install">Install Fibber</a>**</p>
-<p><strong>(2) Get a demo dataset.</strong></p>
+<p><strong>(2) Get a demo dataset and resources.</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fibber.datasets</span> <span class="kn">import</span> <span class="n">get_demo_dataset</span>
 
 <span class="n">trainset</span><span class="p">,</span> <span class="n">testset</span> <span class="o">=</span> <span class="n">get_demo_dataset</span><span class="p">()</span>
+
+<span class="kn">from</span> <span class="nn">fibber.resources</span> <span class="kn">import</span> <span class="n">download_all</span>
+
+<span class="c1"># resources are downloaded to ~/.fibber</span>
+<span class="n">download_all</span><span class="p">()</span>
 </pre></div>
 </div>
 <p><strong>(3) Create a Fibber object.</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fibber.fibber</span> <span class="kn">import</span> <span class="n">Fibber</span>
 
+<span class="c1"># args starting with &quot;bs_&quot; are hyperparameters for the BertSamplingStrategy.</span>
 <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;use_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="s2">&quot;gpt2_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;bert_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="s2">&quot;strategy_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;bs_block_size&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;bs_wpe_weight&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
+    <span class="s2">&quot;bs_use_weight&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="s2">&quot;bs_gpt2_weight&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;bs_clf_weight&quot;</span><span class="p">:</span> <span class="mi">3</span>
 <span class="p">}</span>
 
-<span class="n">fibber</span> <span class="o">=</span> <span class="n">Fibber</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;demo&quot;</span><span class="p">,</span> <span class="n">strategy_name</span><span class="o">=</span><span class="s2">&quot;RandomStrategy&quot;</span><span class="p">,</span>
-                <span class="n">trainset</span><span class="o">=</span><span class="n">trainset</span><span class="p">,</span> <span class="n">testset</span><span class="o">=</span><span class="n">testset</span><span class="p">)</span>
+<span class="c1"># create a fibber object.</span>
+<span class="c1"># This step may take a while (about 1 hour) on RTX TITAN, and requires 20G of</span>
+<span class="c1"># GPU memory. If there&#39;s not enough GPU memory on your GPU, consider assign use</span>
+<span class="c1"># gpt2, bert, and strategy to different GPUs.</span>
+<span class="c1">#</span>
+<span class="n">fibber</span> <span class="o">=</span> <span class="n">Fibber</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;demo&quot;</span><span class="p">,</span> <span class="n">strategy_name</span><span class="o">=</span><span class="s2">&quot;BertSamplingStrategy&quot;</span><span class="p">,</span>
+                <span class="n">trainset</span><span class="o">=</span><span class="n">trainset</span><span class="p">,</span> <span class="n">testset</span><span class="o">=</span><span class="n">testset</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;exp-demo&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><strong>(4) Randomly sample a sentence from the test set, and paraphrase it.</strong></p>
+<p><strong>(4) You can also ask fibber to paraphrase your sentence.</strong></p>
 <p>The following command can randomly paraphrase the sentence into 5 different ways.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fibber</span><span class="o">.</span><span class="n">paraphrase_a_random_sentence</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Try sentences you like.</span>
+<span class="c1"># label 0 means negative, and 1 means positive.</span>
+<span class="n">fibber</span><span class="o">.</span><span class="n">paraphrase</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;text0&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;The Avengers is a good movie. Although it is 3 hours long, every scene has something to watch.&quot;</span><span class="p">),</span>
+     <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">,</span>
+    <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The output is a tuple of (str, list, list).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Original Text</span>
-<span class="s1">&#39;the movie slides downhill as soon as macho action conventions assert themselves .&#39;</span>
+<span class="s1">&#39;The Avengers is a good movie. Although it is 3 hours long, every scene has something to watch.&#39;</span>
 
 <span class="c1"># 5 paraphrases</span>
- <span class="p">[</span><span class="s1">&#39;conventions slides as as action assert macho downhill soon movie . the themselves&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;as . downhill action macho the themselves assert as slides conventions soon movie&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;movie as slides macho action . soon themselves the downhill as assert conventions&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;the soon assert as movie themselves macho conventions as downhill . action slides&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;downhill movie conventions slides the assert themselves action macho as as . soon&#39;</span><span class="p">],</span>
+<span class="p">[</span><span class="s1">&#39;the avengers is a good movie. even it is 2 hours long, there is not enough to watch.&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;the avengers is a good movie. while it is 3 hours long, it is still very watchable.&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;the avengers is a good movie and although it is 2 ¹⁄₂ hours long, it is never very interesting.&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;avengers is not a good movie. while it is three hours long, it is still something to watch.&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;the avengers is a bad movie. while it is three hours long, it is still something to watch.&#39;</span><span class="p">]</span>
 
 <span class="c1"># Evaluation metrics of these 5 paraphrases.</span>
- <span class="p">[{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.8859144449234009</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">1.0000000321979126</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">23.059619903564453</span><span class="p">},</span>
-  <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.8609699010848999</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">1.0000000321979126</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">39.824188232421875</span><span class="p">},</span>
+
   <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.8530778288841248</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">1.0000000321979126</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">17.592607498168945</span><span class="p">},</span>
+   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9523628950119019</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9795315341042675</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">1.492070198059082</span><span class="p">,</span>
+   <span class="s1">&#39;BertClfPrediction&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
   <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.8957847356796265</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">1.0000000321979126</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">24.76700210571289</span><span class="p">},</span>
-  <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9004875421524048</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">1.0000000321979126</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">11.36586856842041</span><span class="p">}]</span>
+   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9372092485427856</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9575780832312993</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">0.9813404679298401</span><span class="p">,</span>
+   <span class="s1">&#39;BertClfPrediction&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+  <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9265919327735901</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9710499628056698</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">1.325406551361084</span><span class="p">,</span>
+   <span class="s1">&#39;BertClfPrediction&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+  <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.8913971185684204</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9800737898362042</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">1.2504483461380005</span><span class="p">,</span>
+   <span class="s1">&#39;BertClfPrediction&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+  <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9124080538749695</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9744155151490856</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">1.1626977920532227</span><span class="p">,</span>
+   <span class="s1">&#39;BertClfPrediction&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}]</span>
 </pre></div>
 </div>
-<p><strong>(5) You can also ask fibber to paraphrase your sentence.</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fibber</span><span class="o">.</span><span class="n">paraphrase</span><span class="p">({</span><span class="s2">&quot;text0&quot;</span><span class="p">:</span> <span class="s2">&quot;This movie is fantastic&quot;</span><span class="p">},</span> <span class="s2">&quot;text0&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<p><strong>(5) You can ask fibber to randomly pick a sentence from the dataset and paraphrase it.</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fibber</span><span class="o">.</span><span class="n">paraphrase_a_random_sentence</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -397,6 +427,12 @@ getting started with <strong>fibber</strong>.</p>
 <li><p>The random strategy outputs the random shuffle of words in the original text.</p></li>
 </ul>
 </li>
+<li><p>TextFoolerStrategy:</p>
+<ul>
+<li><p>Implementation of <a class="reference external" href="https://arxiv.org/abs/1907.11932">Jin et. al, 2019</a></p></li>
+</ul>
+</li>
+<li><p>BertSamplingStrategy:</p></li>
 </ul>
 </div>
 <div class="section" id="what-s-next">

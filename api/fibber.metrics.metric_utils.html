@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.metric_utils module &#8212; fibber 0.0.1 documentation</title>
+    <title>fibber.metrics.metric_utils module &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -298,7 +298,26 @@ metrics.</p></li>
 <dl class="py method">
 <dt id="fibber.metrics.metric_utils.MetricBundle.get_classifier_for_attack">
 <code class="sig-name descname">get_classifier_for_attack</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_classifier_for_attack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.get_classifier_for_attack" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the BERT classifier metric.</p>
+<dd><p>Returns the classifier for attack.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.get_metric">
+<code class="sig-name descname">get_metric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metric_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.get_metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a metric in the bundle using the metric name.</p>
+<p>Metric name is the class name of a metric.</p>
+<p>Raises assertion error if metric is not found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>metric_name</strong> – the name of the matric.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a metric object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(object)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -336,7 +355,7 @@ metrics.</p></li>
 <li><p><strong>paraphrase_strategy_name</strong> (<em>str</em>) – the name of the paraphrase strategy.</p></li>
 <li><p><strong>experiment_name</strong> (<em>str</em>) – the name of the experiment.</p></li>
 <li><p><strong>results</strong> (<em>dict</em>) – the fibber dataset with paraphrases and metrics. The return value of
-<cite>compute_metrics</cite>.</p></li>
+<code class="docutils literal notranslate"><span class="pre">compute_metrics</span></code>.</p></li>
 <li><p><strong>customize_aggregation_fn_dict</strong> (<em>dict</em>) – A dict of customized aggregations. The dict is
 a mapping from aggregation name to aggregation function. The aggregation function
 should take one data_record, and returns a float.</p></li>
@@ -364,7 +383,7 @@ should take one data_record, and returns a float.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the results dict with <cite>original_text_metrics</cite> and <cite>paraphrase_metrics</cite> added.</p>
+<dd class="field-even"><p>the results dict with <code class="docutils literal notranslate"><span class="pre">original_text_metrics</span></code> and <code class="docutils literal notranslate"><span class="pre">paraphrase_metrics</span></code> added.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>(dict)</p>

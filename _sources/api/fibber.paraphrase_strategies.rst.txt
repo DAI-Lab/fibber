@@ -7,9 +7,14 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   fibber.paraphrase_strategies.bert_sampling_strategy
+   fibber.paraphrase_strategies.bert_sampling_utils_lm
+   fibber.paraphrase_strategies.bert_sampling_utils_text_parser
+   fibber.paraphrase_strategies.bert_sampling_utils_wpe
    fibber.paraphrase_strategies.identity_strategy
    fibber.paraphrase_strategies.random_strategy
    fibber.paraphrase_strategies.strategy_base
+   fibber.paraphrase_strategies.textfooler_strategy
 
 Module contents
 ---------------

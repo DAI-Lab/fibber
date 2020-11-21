@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.resources.resource_utils &#8212; fibber 0.0.1 documentation</title>
+    <title>fibber.resources.resource_utils &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -190,7 +190,6 @@
   <h1>Source code for fibber.resources.resource_utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">nltk</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">tqdm</span>
 
@@ -214,8 +213,7 @@
 <span class="sd">            &quot;id2tok&quot;: a list of strings.</span>
 <span class="sd">            &quot;tok2id&quot;: a dict that maps word (string) to its id.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s2">&quot;punkt&quot;</span><span class="p">)</span>
-    <span class="n">glove_file_lines</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">glove_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">glove_file_lines</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">glove_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
 
     <span class="n">emb_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">glove_file_lines</span><span class="p">),</span> <span class="n">dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
     <span class="n">id_to_tok</span> <span class="o">=</span> <span class="p">[]</span>
@@ -238,11 +236,14 @@
     <span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="get_glove_emb"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_glove_emb">[docs]</a><span class="k">def</span> <span class="nf">get_glove_emb</span><span class="p">():</span>
+<div class="viewcode-block" id="get_glove_emb"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_glove_emb">[docs]</a><span class="k">def</span> <span class="nf">get_glove_emb</span><span class="p">(</span><span class="n">download_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Download default pretrained glove embeddings and return a dict.</span>
 
 <span class="sd">    We use the 300-dimensional model trained on Wikipedia 2014 + Gigaword 5.</span>
 <span class="sd">    See https://nlp.stanford.edu/projects/glove/</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        download_only (bool): set True to only download. (Returns None)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (dict): a dict of GloVe word embedding model.</span>
@@ -256,6 +257,8 @@
         <span class="n">download_file</span><span class="p">(</span><span class="n">subdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">),</span>
                       <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;default-glove-embeddings&quot;</span><span class="p">])</span>
 
+    <span class="k">if</span> <span class="n">download_only</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
     <span class="k">return</span> <span class="n">load_glove_model</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;glove.6B.300d.txt&quot;</span><span class="p">),</span> <span class="mi">300</span><span class="p">)</span></div>
 
 
@@ -274,6 +277,66 @@
         <span class="n">stopwords</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
     <span class="n">stopwords</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">stopwords</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">stopwords</span></div>
+
+
+<div class="viewcode-block" id="get_nltk_data"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_nltk_data">[docs]</a><span class="k">def</span> <span class="nf">get_nltk_data</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Download nltk data to ``&lt;fibber_root_dir&gt;/nltk_data``.&quot;&quot;&quot;</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;common&quot;</span><span class="p">,</span> <span class="s2">&quot;nltk_data&quot;</span><span class="p">,</span> <span class="s2">&quot;tokenizers&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;punkt&quot;</span><span class="p">)):</span>
+        <span class="n">download_file</span><span class="p">(</span><span class="n">subdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">),</span>
+                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;nltk-punkt&quot;</span><span class="p">])</span>
+
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;common&quot;</span><span class="p">,</span> <span class="s2">&quot;nltk_data&quot;</span><span class="p">,</span> <span class="s2">&quot;corpora&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;stopwords&quot;</span><span class="p">)):</span>
+        <span class="n">download_file</span><span class="p">(</span><span class="n">subdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">),</span>
+                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;nltk_stopwords&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="get_universal_sentence_encoder"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_universal_sentence_encoder">[docs]</a><span class="k">def</span> <span class="nf">get_universal_sentence_encoder</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Download pretrained universal sentence encoder.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (str): directory of the downloaded model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;common&quot;</span><span class="p">,</span> <span class="s2">&quot;tfhub_pretrained&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;universal-sentence-encoder-large_5&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+        <span class="n">download_file</span><span class="p">(</span><span class="n">subdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">),</span>
+                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;universal-sentence-encoder&quot;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">data_dir</span></div>
+
+
+<div class="viewcode-block" id="get_corenlp"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_corenlp">[docs]</a><span class="k">def</span> <span class="nf">get_corenlp</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Download stanford corenlp package.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;common&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;stanford-corenlp-4.1.0&quot;</span><span class="p">)):</span>
+        <span class="n">download_file</span><span class="p">(</span><span class="n">subdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">),</span>
+                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;stanford-corenlp&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="get_transformers"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_transformers">[docs]</a><span class="k">def</span> <span class="nf">get_transformers</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Download pretrained transformer models.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): the name of the pretrained models. options are ``[&quot;bert-base-cased&quot;,</span>
+<span class="sd">            &quot;bert-base-uncased&quot;, &quot;gpt2-medium&quot;]``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (str): directory of the downloaded model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;common&quot;</span><span class="p">,</span> <span class="s2">&quot;transformers_pretrained&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">name</span><span class="p">)):</span>
+        <span class="n">download_file</span><span class="p">(</span><span class="n">subdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">),</span>
+                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 </pre></div>
 
               </div>

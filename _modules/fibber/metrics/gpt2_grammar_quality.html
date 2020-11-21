@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.gpt2_grammar_quality &#8212; fibber 0.0.1 documentation</title>
+    <title>fibber.metrics.gpt2_grammar_quality &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -197,9 +197,9 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
-<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">GPT2LMHeadModel</span><span class="p">,</span> <span class="n">GPT2Tokenizer</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">GPT2LMHeadModel</span><span class="p">,</span> <span class="n">GPT2TokenizerFast</span>
 
-<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">resources</span>
 <span class="kn">from</span> <span class="nn">fibber.metrics.metric_base</span> <span class="kn">import</span> <span class="n">MetricBase</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -232,12 +232,13 @@
 <span class="sd">    original text. The perplexity is measured using GPT2 model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gpt2_pretrained_model</span><span class="o">=</span><span class="s2">&quot;gpt2&quot;</span><span class="p">,</span> <span class="n">gpt2_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gpt2_pretrained_model</span><span class="o">=</span><span class="s2">&quot;gpt2-medium&quot;</span><span class="p">,</span> <span class="n">gpt2_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize GPT2 model.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GPT2GrammarQuality</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;load gpt2 model.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">GPT2Tokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">gpt2_pretrained_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">GPT2TokenizerFast</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+            <span class="n">resources</span><span class="o">.</span><span class="n">get_transformers</span><span class="p">(</span><span class="n">gpt2_pretrained_model</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">gpt2_gpu_id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;GPT2 metric is running on CPU.&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
@@ -245,27 +246,47 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;GPT2 metric is running on GPU </span><span class="si">%d</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">gpt2_gpu_id</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">gpt2_gpu_id</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">GPT2LMHeadModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">gpt2_pretrained_model</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">GPT2LMHeadModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+            <span class="n">resources</span><span class="o">.</span><span class="n">get_transformers</span><span class="p">(</span><span class="n">gpt2_pretrained_model</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_ppl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Compute the perplexity ratio ppl(paraphrase) / ppl(origin).&quot;&quot;&quot;</span>
-        <span class="n">origin_input</span><span class="p">,</span> <span class="n">origin_output</span> <span class="o">=</span> <span class="n">make_input_output_pair</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
-        <span class="n">paraphrase_input</span><span class="p">,</span> <span class="n">paraphrase_output</span> <span class="o">=</span> <span class="n">make_input_output_pair</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_get_ppl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sentences</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute the perplexity of sentences.&quot;&quot;&quot;</span>
+        <span class="n">input_output</span> <span class="o">=</span> <span class="p">[</span><span class="n">make_input_output_pair</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">]</span>
 
-        <span class="n">toks_input</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">make_batch</span><span class="p">([</span><span class="n">origin_input</span><span class="p">,</span> <span class="n">paraphrase_input</span><span class="p">])</span>
-        <span class="n">toks_output</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">make_batch</span><span class="p">([</span><span class="n">origin_output</span><span class="p">,</span> <span class="n">paraphrase_output</span><span class="p">])</span>
+        <span class="nb">input</span><span class="p">,</span> <span class="n">output</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">input_output</span><span class="p">)</span>
+
+        <span class="n">toks_input</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">make_batch</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+        <span class="n">toks_output</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">make_batch</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
 
         <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
         <span class="n">toks_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">toks_input</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
         <span class="n">toks_output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">toks_output</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
 
-        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span><span class="n">toks_input</span><span class="p">,</span> <span class="n">attention_mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span><span class="n">toks_input</span><span class="p">,</span> <span class="n">attention_mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">logpw</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
                              <span class="n">index</span><span class="o">=</span><span class="n">toks_output</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">ppl</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">logpw</span> <span class="o">*</span> <span class="n">mask</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
         <span class="n">ppl</span> <span class="o">=</span> <span class="n">ppl</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">ppl</span>
+
+<div class="viewcode-block" id="GPT2GrammarQuality.measure_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.gpt2_grammar_quality.html#fibber.metrics.GPT2GrammarQuality.measure_batch">[docs]</a>    <span class="k">def</span> <span class="nf">measure_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrases</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Measure the metric on a batch of paraphrases.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            origin (str): the original text.</span>
+<span class="sd">            paraphrases (list): a set of paraphrases.</span>
+<span class="sd">            data_record (dict): the corresponding data record of original text.</span>
+<span class="sd">            paraphrase_field (str): the field name to paraphrase.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (list): a list containing the USE similarity metric for each paraphrase.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ppls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ppl</span><span class="p">([</span><span class="n">origin</span><span class="p">]</span> <span class="o">+</span> <span class="n">paraphrases</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">ppls</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">/</span> <span class="n">ppls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="GPT2GrammarQuality.measure_example"><a class="viewcode-back" href="../../../api/fibber.metrics.gpt2_grammar_quality.html#fibber.metrics.GPT2GrammarQuality.measure_example">[docs]</a>    <span class="k">def</span> <span class="nf">measure_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compute the perplexity ratio.</span>
@@ -276,7 +297,7 @@
 <span class="sd">            data_record: ignored.</span>
 <span class="sd">            paraphrase_field: ignored.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ppl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ppl</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">)</span>
+        <span class="n">ppl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ppl</span><span class="p">([</span><span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">])</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">ppl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">ppl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div></div>
 </pre></div>
 

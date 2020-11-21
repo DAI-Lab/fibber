@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.resources package &#8212; fibber 0.0.1 documentation</title>
+    <title>fibber.resources package &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -39,8 +39,8 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.resources.downloadable_resources module" href="fibber.resources.downloadable_resources.html" />
-    <link rel="prev" title="fibber.paraphrase_strategies.strategy_base module" href="fibber.paraphrase_strategies.strategy_base.html" />
+    <link rel="next" title="fibber.resources.download_resources module" href="fibber.resources.download_resources.html" />
+    <link rel="prev" title="fibber.paraphrase_strategies.textfooler_strategy module" href="fibber.paraphrase_strategies.textfooler_strategy.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
   </head>
@@ -188,6 +188,10 @@
                     <ul>
                     
                         <li class="">
+                            <a href="fibber.resources.download_resources.html">fibber.resources.download_resources module</a>
+                        </li>
+                    
+                        <li class="">
                             <a href="fibber.resources.downloadable_resources.html">fibber.resources.downloadable_resources module</a>
                         </li>
                     
@@ -268,6 +272,7 @@
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="fibber.resources.download_resources.html">fibber.resources.download_resources module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.resources.downloadable_resources.html">fibber.resources.downloadable_resources module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.resources.resource_utils.html">fibber.resources.resource_utils module</a></li>
 </ul>
@@ -276,14 +281,28 @@
 <div class="section" id="module-fibber.resources">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fibber.resources" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
+<dt id="fibber.resources.download_all">
+<code class="sig-prename descclassname">fibber.resources.</code><code class="sig-name descname">download_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/resources/download_resources.html#download_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.resources.download_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="fibber.resources.get_corenlp">
+<code class="sig-prename descclassname">fibber.resources.</code><code class="sig-name descname">get_corenlp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/resources/resource_utils.html#get_corenlp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.resources.get_corenlp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download stanford corenlp package.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="fibber.resources.get_glove_emb">
-<code class="sig-prename descclassname">fibber.resources.</code><code class="sig-name descname">get_glove_emb</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/resources/resource_utils.html#get_glove_emb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.resources.get_glove_emb" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fibber.resources.</code><code class="sig-name descname">get_glove_emb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">download_only</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/resources/resource_utils.html#get_glove_emb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.resources.get_glove_emb" title="Permalink to this definition">¶</a></dt>
 <dd><p>Download default pretrained glove embeddings and return a dict.</p>
 <p>We use the 300-dimensional model trained on Wikipedia 2014 + Gigaword 5.
 See <a class="reference external" href="https://nlp.stanford.edu/projects/glove/">https://nlp.stanford.edu/projects/glove/</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>download_only</strong> (<em>bool</em>) – set True to only download. (Returns None)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
 <dt>a dict of GloVe word embedding model.</dt><dd><p>”emb_table”: a numpy array of size(N, 300)
 “id2tok”: a list of strings.
 “tok2id”: a dict that maps word (string) to its id.</p>
@@ -291,10 +310,16 @@ See <a class="reference external" href="https://nlp.stanford.edu/projects/glove/
 </dl>
 </p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(dict)</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(dict)</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="fibber.resources.get_nltk_data">
+<code class="sig-prename descclassname">fibber.resources.</code><code class="sig-name descname">get_nltk_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/resources/resource_utils.html#get_nltk_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.resources.get_nltk_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download nltk data to <code class="docutils literal notranslate"><span class="pre">&lt;fibber_root_dir&gt;/nltk_data</span></code>.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -311,6 +336,38 @@ See <a class="reference external" href="https://nlp.stanford.edu/projects/glove/
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt id="fibber.resources.get_transformers">
+<code class="sig-prename descclassname">fibber.resources.</code><code class="sig-name descname">get_transformers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/resources/resource_utils.html#get_transformers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.resources.get_transformers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download pretrained transformer models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – the name of the pretrained models. options are <code class="docutils literal notranslate"><span class="pre">[&quot;bert-base-cased&quot;,</span>
+<span class="pre">&quot;bert-base-uncased&quot;,</span> <span class="pre">&quot;gpt2-medium&quot;]</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>directory of the downloaded model.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="fibber.resources.get_universal_sentence_encoder">
+<code class="sig-prename descclassname">fibber.resources.</code><code class="sig-name descname">get_universal_sentence_encoder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/resources/resource_utils.html#get_universal_sentence_encoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.resources.get_universal_sentence_encoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download pretrained universal sentence encoder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>directory of the downloaded model.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(str)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 </div>
 
@@ -320,8 +377,8 @@ See <a class="reference external" href="https://nlp.stanford.edu/projects/glove/
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="fibber.paraphrase_strategies.strategy_base.html" title="previous page">fibber.paraphrase_strategies.strategy_base module</a>
-    <a class='right-next' id="next-link" href="fibber.resources.downloadable_resources.html" title="next page">fibber.resources.downloadable_resources module</a>
+    <a class='left-prev' id="prev-link" href="fibber.paraphrase_strategies.textfooler_strategy.html" title="previous page">fibber.paraphrase_strategies.textfooler_strategy module</a>
+    <a class='right-next' id="next-link" href="fibber.resources.download_resources.html" title="next page">fibber.resources.download_resources module</a>
 
               </div>
               

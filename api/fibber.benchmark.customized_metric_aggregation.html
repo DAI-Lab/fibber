@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.benchmark.customized_metric_aggregation module &#8212; fibber 0.0.1 documentation</title>
+    <title>fibber.benchmark.customized_metric_aggregation module &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -262,6 +262,82 @@
   <div class="section" id="module-fibber.benchmark.customized_metric_aggregation">
 <span id="fibber-benchmark-customized-metric-aggregation-module"></span><h1>fibber.benchmark.customized_metric_aggregation module<a class="headerlink" href="#module-fibber.benchmark.customized_metric_aggregation" title="Permalink to this headline">¶</a></h1>
 <p>This module defines customized metric aggregation functions.</p>
+<dl class="py function">
+<dt id="fibber.benchmark.customized_metric_aggregation.editing_distance_element_fn">
+<code class="sig-prename descclassname">fibber.benchmark.customized_metric_aggregation.</code><code class="sig-name descname">editing_distance_element_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/customized_metric_aggregation.html#editing_distance_element_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.customized_metric_aggregation.editing_distance_element_fn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="fibber.benchmark.customized_metric_aggregation.get_best_adv_by_ppl">
+<code class="sig-prename descclassname">fibber.benchmark.customized_metric_aggregation.</code><code class="sig-name descname">get_best_adv_by_ppl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/customized_metric_aggregation.html#get_best_adv_by_ppl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.customized_metric_aggregation.get_best_adv_by_ppl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the adversarial example with lowest perplexity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_record</strong> (<em>dict</em>) – a data record with paraphrases and metrics.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>the metrics of the best adversarial example. None if no legitimate adversarial</dt><dd><p>example is found.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="fibber.benchmark.customized_metric_aggregation.get_best_adv_by_sim">
+<code class="sig-prename descclassname">fibber.benchmark.customized_metric_aggregation.</code><code class="sig-name descname">get_best_adv_by_sim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/customized_metric_aggregation.html#get_best_adv_by_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.customized_metric_aggregation.get_best_adv_by_sim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the adversarial example with best similarity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_record</strong> (<em>dict</em>) – a data record with paraphrases and metrics.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>the metrics of the best adversarial example. None if no legitimate adversarial</dt><dd><p>example is found.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="fibber.benchmark.customized_metric_aggregation.get_best_adv_metric_fn">
+<code class="sig-prename descclassname">fibber.benchmark.customized_metric_aggregation.</code><code class="sig-name descname">get_best_adv_metric_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">get_best_adv_fn</span></em>, <em class="sig-param"><span class="n">metric_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/customized_metric_aggregation.html#get_best_adv_metric_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.customized_metric_aggregation.get_best_adv_metric_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an aggregation function that extracts the value of a specified metric for the best
+adversarial example.</p>
+<p>The aggregation function returns NaN if no legitimate adversarial example is found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>get_best_adv_fn</strong> (<em>fn</em>) – a function that returns the metric dict of the best adversarial
+example.</p></li>
+<li><p><strong>metric_name</strong> (<em>str</em>) – a metric name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an aggregation function that takes data_record as an input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(fn)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="fibber.benchmark.customized_metric_aggregation.pairwise_editing_distance_fn">
+<code class="sig-prename descclassname">fibber.benchmark.customized_metric_aggregation.</code><code class="sig-name descname">pairwise_editing_distance_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/customized_metric_aggregation.html#pairwise_editing_distance_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.customized_metric_aggregation.pairwise_editing_distance_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the average pairwise editing distance metric.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt id="fibber.benchmark.customized_metric_aggregation.paraphrase_classification_accuracy_agg_fn">
 <code class="sig-prename descclassname">fibber.benchmark.customized_metric_aggregation.</code><code class="sig-name descname">paraphrase_classification_accuracy_agg_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">use_sim</span></em>, <em class="sig-param"><span class="n">ppl_score</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/customized_metric_aggregation.html#paraphrase_classification_accuracy_agg_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.customized_metric_aggregation.paraphrase_classification_accuracy_agg_fn" title="Permalink to this definition">¶</a></dt>

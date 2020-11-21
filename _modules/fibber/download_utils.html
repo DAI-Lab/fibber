@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.download_utils &#8212; fibber 0.0.1 documentation</title>
+    <title>fibber.download_utils &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -188,7 +188,7 @@
               <div>
                 
   <h1>Source code for fibber.download_utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;This module contains utility functions to download files to the root dir `~/.fibber`.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;This module contains utility functions to download files to the root dir ``~/.fibber``.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">hashlib</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -225,7 +225,7 @@
 <div class="viewcode-block" id="download_file"><a class="viewcode-back" href="../../api/fibber.download_utils.html#fibber.download_utils.download_file">[docs]</a><span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">md5</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">untar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unzip</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Download file from a given url.</span>
 
-<span class="sd">    This downloads a file to `&lt;fibber_root_dir&gt;/subdir`. If the file already exists and the md5</span>
+<span class="sd">    This downloads a file to ``&lt;fibber_root_dir&gt;/subdir``. If the file already exists and the md5</span>
 <span class="sd">    matches, using the existing file.</span>
 
 <span class="sd">    Args:</span>

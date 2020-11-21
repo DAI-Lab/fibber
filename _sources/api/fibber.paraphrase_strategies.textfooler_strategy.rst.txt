@@ -1,0 +1,7 @@
+fibber.paraphrase\_strategies.textfooler\_strategy module
+=========================================================
+
+.. automodule:: fibber.paraphrase_strategies.textfooler_strategy
+   :members:
+   :undoc-members:
+   :show-inheritance:

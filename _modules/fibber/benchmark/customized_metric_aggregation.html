@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.benchmark.customized_metric_aggregation &#8212; fibber 0.0.1 documentation</title>
+    <title>fibber.benchmark.customized_metric_aggregation &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -190,6 +190,17 @@
   <h1>Source code for fibber.benchmark.customized_metric_aggregation</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;This module defines customized metric aggregation functions.&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">fibber.metrics.editing_distance</span> <span class="kn">import</span> <span class="n">EditingDistance</span>
+
+<span class="n">DEFAULT_USE_SIM_THRESHOLD</span> <span class="o">=</span> <span class="mf">0.85</span>
+<span class="n">DEFAULT_GPT2_PPL_THRESHOLD</span> <span class="o">=</span> <span class="mi">5</span>
+
 
 <div class="viewcode-block" id="paraphrase_classification_accuracy_agg_fn"><a class="viewcode-back" href="../../../api/fibber.benchmark.customized_metric_aggregation.html#fibber.benchmark.customized_metric_aggregation.paraphrase_classification_accuracy_agg_fn">[docs]</a><span class="k">def</span> <span class="nf">paraphrase_classification_accuracy_agg_fn</span><span class="p">(</span><span class="n">use_sim</span><span class="p">,</span> <span class="n">ppl_score</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This function makes a aggregation function for BERT classification metric.</span>
@@ -208,10 +219,106 @@
             <span class="k">return</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;paraphrase_metrics&quot;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;BertClfPrediction&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
-                <span class="ow">and</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;GPT2GrammarQuality&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">ppl_score</span>
+                    <span class="ow">and</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;GPT2GrammarQuality&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">ppl_score</span>
                     <span class="ow">and</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;USESemanticSimilarity&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">use_sim</span><span class="p">):</span>
                 <span class="k">return</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">agg_fn</span></div>
+
+
+<div class="viewcode-block" id="editing_distance_element_fn"><a class="viewcode-back" href="../../../api/fibber.benchmark.customized_metric_aggregation.html#fibber.benchmark.customized_metric_aggregation.editing_distance_element_fn">[docs]</a><span class="k">def</span> <span class="nf">editing_distance_element_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">editing_distance_metric</span> <span class="o">=</span> <span class="n">EditingDistance</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">editing_distance_metric</span><span class="o">.</span><span class="n">measure_example</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="pairwise_editing_distance_fn"><a class="viewcode-back" href="../../../api/fibber.benchmark.customized_metric_aggregation.html#fibber.benchmark.customized_metric_aggregation.pairwise_editing_distance_fn">[docs]</a><span class="k">def</span> <span class="nf">pairwise_editing_distance_fn</span><span class="p">(</span><span class="n">data_record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the average pairwise editing distance metric.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">pool</span>
+    <span class="n">paraphrases</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data_record</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;text0_paraphrases&quot;</span><span class="p">,</span> <span class="s2">&quot;text1_paraphrases&quot;</span><span class="p">]:</span>
+            <span class="n">paraphrases</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">break</span>
+
+    <span class="k">assert</span> <span class="n">paraphrases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">tuples</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">paraphrases</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="n">distance</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">editing_distance_element_fn</span><span class="p">,</span> <span class="n">tuples</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">distance</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_best_adv_by_sim"><a class="viewcode-back" href="../../../api/fibber.benchmark.customized_metric_aggregation.html#fibber.benchmark.customized_metric_aggregation.get_best_adv_by_sim">[docs]</a><span class="k">def</span> <span class="nf">get_best_adv_by_sim</span><span class="p">(</span><span class="n">data_record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find the adversarial example with best similarity.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_record (dict): a data record with paraphrases and metrics.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">         (dict): the metrics of the best adversarial example. None if no legitimate adversarial</span>
+<span class="sd">            example is found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;original_text_metrics&quot;</span><span class="p">][</span><span class="s2">&quot;BertClfPrediction&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">best_score</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">best_metrics</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">metrics</span> <span class="ow">in</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;paraphrase_metrics&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;BertClfPrediction&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+                <span class="ow">or</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;GPT2GrammarQuality&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">DEFAULT_GPT2_PPL_THRESHOLD</span>
+                <span class="ow">or</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;USESemanticSimilarity&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">DEFAULT_USE_SIM_THRESHOLD</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;USESemanticSimilarity&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">best_score</span><span class="p">:</span>
+            <span class="n">best_score</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;USESemanticSimilarity&quot;</span><span class="p">]</span>
+            <span class="n">best_metrics</span> <span class="o">=</span> <span class="n">metrics</span>
+    <span class="k">return</span> <span class="n">best_metrics</span></div>
+
+
+<div class="viewcode-block" id="get_best_adv_by_ppl"><a class="viewcode-back" href="../../../api/fibber.benchmark.customized_metric_aggregation.html#fibber.benchmark.customized_metric_aggregation.get_best_adv_by_ppl">[docs]</a><span class="k">def</span> <span class="nf">get_best_adv_by_ppl</span><span class="p">(</span><span class="n">data_record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find the adversarial example with lowest perplexity.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_record (dict): a data record with paraphrases and metrics.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">         (dict): the metrics of the best adversarial example. None if no legitimate adversarial</span>
+<span class="sd">            example is found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;original_text_metrics&quot;</span><span class="p">][</span><span class="s2">&quot;BertClfPrediction&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">best_score</span> <span class="o">=</span> <span class="mf">1e8</span>
+    <span class="n">best_metrics</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">metrics</span> <span class="ow">in</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;paraphrase_metrics&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;BertClfPrediction&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+                <span class="ow">or</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;GPT2GrammarQuality&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">DEFAULT_GPT2_PPL_THRESHOLD</span>
+                <span class="ow">or</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;USESemanticSimilarity&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">DEFAULT_USE_SIM_THRESHOLD</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;GPT2GrammarQuality&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">best_score</span><span class="p">:</span>
+            <span class="n">best_score</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;GPT2GrammarQuality&quot;</span><span class="p">]</span>
+            <span class="n">best_metrics</span> <span class="o">=</span> <span class="n">metrics</span>
+    <span class="k">return</span> <span class="n">best_metrics</span></div>
+
+
+<div class="viewcode-block" id="get_best_adv_metric_fn"><a class="viewcode-back" href="../../../api/fibber.benchmark.customized_metric_aggregation.html#fibber.benchmark.customized_metric_aggregation.get_best_adv_metric_fn">[docs]</a><span class="k">def</span> <span class="nf">get_best_adv_metric_fn</span><span class="p">(</span><span class="n">get_best_adv_fn</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns an aggregation function that extracts the value of a specified metric for the best</span>
+<span class="sd">    adversarial example.</span>
+
+<span class="sd">    The aggregation function returns NaN if no legitimate adversarial example is found.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        get_best_adv_fn (fn): a function that returns the metric dict of the best adversarial</span>
+<span class="sd">            example.</span>
+<span class="sd">        metric_name (str): a metric name.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (fn): an aggregation function that takes data_record as an input.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">agg_fn</span><span class="p">(</span><span class="n">data_record</span><span class="p">):</span>
+        <span class="n">best_metrics</span> <span class="o">=</span> <span class="n">get_best_adv_fn</span><span class="p">(</span><span class="n">data_record</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">best_metrics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">best_metrics</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
+
     <span class="k">return</span> <span class="n">agg_fn</span></div>
 
 
@@ -219,13 +326,33 @@
     <span class="s2">&quot;3_ParaphraseAcc_use0.90_ppl2&quot;</span><span class="p">:</span>
         <span class="n">paraphrase_classification_accuracy_agg_fn</span><span class="p">(</span><span class="n">use_sim</span><span class="o">=</span><span class="mf">0.90</span><span class="p">,</span> <span class="n">ppl_score</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
     <span class="s2">&quot;4_ParaphraseAcc_use0.85_ppl5&quot;</span><span class="p">:</span>
-        <span class="n">paraphrase_classification_accuracy_agg_fn</span><span class="p">(</span><span class="n">use_sim</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">ppl_score</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">paraphrase_classification_accuracy_agg_fn</span><span class="p">(</span><span class="n">use_sim</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">ppl_score</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+    <span class="s2">&quot;pairwise_edit_distance&quot;</span><span class="p">:</span> <span class="n">pairwise_editing_distance_fn</span><span class="p">,</span>
+    <span class="s2">&quot;best_sim_adv_GPT2GrammarQuality&quot;</span><span class="p">:</span>
+        <span class="n">get_best_adv_metric_fn</span><span class="p">(</span><span class="n">get_best_adv_by_sim</span><span class="p">,</span> <span class="s2">&quot;GPT2GrammarQuality&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;best_sim_adv_USESemanticSimilarity&quot;</span><span class="p">:</span>
+        <span class="n">get_best_adv_metric_fn</span><span class="p">(</span><span class="n">get_best_adv_by_sim</span><span class="p">,</span> <span class="s2">&quot;USESemanticSimilarity&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;best_sim_adv_EditingDistance&quot;</span><span class="p">:</span>
+        <span class="n">get_best_adv_metric_fn</span><span class="p">(</span><span class="n">get_best_adv_by_sim</span><span class="p">,</span> <span class="s2">&quot;EditingDistance&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;best_sim_adv_GloveSemanticSimilarity&quot;</span><span class="p">:</span>
+        <span class="n">get_best_adv_metric_fn</span><span class="p">(</span><span class="n">get_best_adv_by_sim</span><span class="p">,</span> <span class="s2">&quot;GloVeSemanticSimilarity&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;best_ppl_adv_GPT2GrammarQuality&quot;</span><span class="p">:</span>
+        <span class="n">get_best_adv_metric_fn</span><span class="p">(</span><span class="n">get_best_adv_by_ppl</span><span class="p">,</span> <span class="s2">&quot;GPT2GrammarQuality&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;best_ppl_adv_USESemanticSimilarity&quot;</span><span class="p">:</span>
+        <span class="n">get_best_adv_metric_fn</span><span class="p">(</span><span class="n">get_best_adv_by_ppl</span><span class="p">,</span> <span class="s2">&quot;USESemanticSimilarity&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;best_ppl_adv_EditingDistance&quot;</span><span class="p">:</span>
+        <span class="n">get_best_adv_metric_fn</span><span class="p">(</span><span class="n">get_best_adv_by_ppl</span><span class="p">,</span> <span class="s2">&quot;EditingDistance&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;best_ppl_adv_GloveSemanticSimilarity&quot;</span><span class="p">:</span>
+        <span class="n">get_best_adv_metric_fn</span><span class="p">(</span><span class="n">get_best_adv_by_ppl</span><span class="p">,</span> <span class="s2">&quot;GloVeSemanticSimilarity&quot;</span><span class="p">),</span>
 <span class="p">}</span>
-
 
 <span class="n">customized_metric_for_nun_wins</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="s2">&quot;3_ParaphraseAcc_use0.90_ppl2&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;4_ParaphraseAcc_use0.85_ppl5&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">)</span>
+    <span class="p">(</span><span class="s2">&quot;4_ParaphraseAcc_use0.85_ppl5&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;best_sim_adv_USESemanticSimilarity&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;best_sim_adv_GPT2GrammarQuality&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;best_ppl_adv_USESemanticSimilarity&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;best_ppl_adv_GPT2GrammarQuality&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">),</span>
 <span class="p">]</span>
 </pre></div>
 

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.datasets.dataset_utils module &#8212; fibber 0.0.1 documentation</title>
+    <title>fibber.datasets.dataset_utils module &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -287,7 +287,7 @@
 <span id="fibber-datasets-dataset-utils-module"></span><h1>fibber.datasets.dataset_utils module<a class="headerlink" href="#module-fibber.datasets.dataset_utils" title="Permalink to this headline">¶</a></h1>
 <p>This module provides utility functions and classes to handle fibber’s datasets.</p>
 <ul>
-<li><p>To load a dataset, use <cite>get_dataset</cite> function. For example, to load AG’s news dataset, run:</p>
+<li><p>To load a dataset, use <code class="docutils literal notranslate"><span class="pre">get_dataset</span></code> function. For example, to load AG’s news dataset, run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trainset</span><span class="p">,</span> <span class="n">testset</span> <span class="o">=</span>  <span class="n">get_dataset</span><span class="p">(</span><span class="s2">&quot;ag&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -331,7 +331,7 @@
 <p>For more details, see <code class="docutils literal notranslate"><span class="pre">https://dai-lab.github.io/fibber/</span></code></p>
 <dl class="py class">
 <dt id="fibber.datasets.dataset_utils.DatasetForBert">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">DatasetForBert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">model_init</span></em>, <em class="sig-param"><span class="n">batch_size</span></em>, <em class="sig-param"><span class="n">exclude</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">masked_lm</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">masked_lm_ratio</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#DatasetForBert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.DatasetForBert" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">DatasetForBert</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#DatasetForBert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.DatasetForBert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.IterableDataset</span></code></p>
 <p>Create a <code class="docutils literal notranslate"><span class="pre">torch.IterableDataset</span></code> for a BERT model.</p>
 <p>The module is an iterator that yields infinite batches from the dataset. To construct a

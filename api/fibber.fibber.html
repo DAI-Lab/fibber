@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.fibber module &#8212; fibber 0.0.1 documentation</title>
+    <title>fibber.fibber module &#8212; fibber 0.1.0 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -243,7 +243,7 @@
 <span id="fibber-fibber-module"></span><h1>fibber.fibber module<a class="headerlink" href="#module-fibber.fibber" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="fibber.fibber.Fibber">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.fibber.</code><code class="sig-name descname">Fibber</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_name</span></em>, <em class="sig-param"><span class="n">trainset</span></em>, <em class="sig-param"><span class="n">testset</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/fibber.html#Fibber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.fibber.Fibber" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">fibber.fibber.</code><code class="sig-name descname">Fibber</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_name</span></em>, <em class="sig-param"><span class="n">trainset</span></em>, <em class="sig-param"><span class="n">testset</span></em>, <em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">bert_clf_steps</span><span class="o">=</span><span class="default_value">5000</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/fibber.html#Fibber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.fibber.Fibber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Fibber is a unified interface for paraphrase strategies.</p>
 <p>Initialize</p>
@@ -255,6 +255,7 @@
 <li><p><strong>strategy_name</strong> (<em>str</em>) – the strategy name.</p></li>
 <li><p><strong>trainset</strong> (<em>str</em>) – fibber dataset.</p></li>
 <li><p><strong>testset</strong> (<em>str</em>) – fibber testset.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – directory to cache the strategy.</p></li>
 </ul>
 </dd>
 </dl>
