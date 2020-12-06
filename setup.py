@@ -21,7 +21,6 @@ install_requires = [
     'tqdm>=4.0.0',
     'spacy>=2.0.0',
     'pandas>=1.0.0',
-    'textattack==0.2.10',
     'nltk>=3.0',
     'stanza==1.1.1'
 ]
