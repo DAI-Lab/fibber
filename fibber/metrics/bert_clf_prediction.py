@@ -123,13 +123,13 @@ def load_or_train_bert_clf(model_init,
     Returns:
         (transformers.BertForSequenceClassification): a torch BERT model.
     """
-    model_dir = os.path.join(get_root_dir(), "bert_clf", dataset_name, )
-    ckpt_path = os.path.join(model_dir, model_init + "-%04dk.pt" %
+    model_dir = os.path.join(get_root_dir(), "bert_clf", dataset_name)
+    ckpt_path = os.path.join(model_dir, model_init + "-%04dk" %
                              (bert_clf_steps // 1000))
 
     if os.path.exists(ckpt_path):
         logger.info("Load BERT classifier from %s.", ckpt_path)
-        model = torch.load(ckpt_path)
+        model = BertForSequenceClassification.from_pretrained(ckpt_path)
         model.eval()
         model.to(device)
         return model
@@ -189,13 +189,9 @@ def load_or_train_bert_clf(model_init,
                          bert_clf_val_steps, summary, global_step, device)
 
         if global_step % bert_clf_period_save == 0 or global_step == bert_clf_steps:
-            model.eval()
-            model.to(torch.device("cpu"))
-            ckpt = os.path.join(model_dir, model_init + "-%04dk.pt" % (global_step // 1000))
-            torch.save(model, ckpt)
-            logger.info("BERT classifier saved at %s.", ckpt)
-            model.to(device)
-            model.train()
+            ckpt_path = os.path.join(model_dir, model_init + "-%04dk" % (global_step // 1000))
+            model.save_pretrained(ckpt_path)
+            logger.info("BERT classifier saved at %s.", ckpt_path)
 
         if global_step >= bert_clf_steps:
             break

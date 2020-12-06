@@ -4,7 +4,7 @@ import socket
 
 from stanza.server import CoreNLPClient
 
-from fibber import log
+from fibber import log, resources
 
 logger = log.setup_custom_logger(__name__)
 
@@ -46,6 +46,7 @@ class TextParser(object):
     """
 
     def __init__(self, port=9000):
+        resources.get_corenlp()
         while is_port_in_use(port):
             port += 1
         self._core_nlp_client = CoreNLPClient(
