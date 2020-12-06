@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.textfooler_strategy &#8212; fibber 0.1.0 documentation</title>
+    <title>fibber.paraphrase_strategies.textfooler_strategy &#8212; fibber 0.1.1 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -190,32 +190,20 @@
   <h1>Source code for fibber.paraphrase_strategies.textfooler_strategy</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;This module implements the paraphrase strategy using TextFooler.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">socket</span>
 
 <span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies.strategy_base</span> <span class="kn">import</span> <span class="n">StrategyBase</span>
 
+<span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<div class="viewcode-block" id="is_connected"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textfooler_strategy.html#fibber.paraphrase_strategies.is_connected">[docs]</a><span class="k">def</span> <span class="nf">is_connected</span><span class="p">():</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># connect to the host -- tells us if the host is actually</span>
-        <span class="c1"># reachable</span>
-        <span class="n">socket</span><span class="o">.</span><span class="n">create_connection</span><span class="p">((</span><span class="s2">&quot;1.1.1.1&quot;</span><span class="p">,</span> <span class="mi">53</span><span class="p">))</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-        <span class="k">pass</span>
-    <span class="k">return</span> <span class="kc">False</span></div>
-
-
-<span class="k">if</span> <span class="n">is_connected</span><span class="p">():</span>
+<span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">textattack</span>
     <span class="kn">from</span> <span class="nn">textattack.attack_recipes.textfooler_jin_2019</span> <span class="kn">import</span> <span class="n">TextFoolerJin2019</span>
     <span class="kn">from</span> <span class="nn">textattack.models.wrappers.model_wrapper</span> <span class="kn">import</span> <span class="n">ModelWrapper</span>
-<span class="k">else</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;TextAttack is not installed so TextFooler stategy can&#39;t be used. &quot;</span>
+                   <span class="s2">&quot;Install it by `pip install textattack`.&quot;</span><span class="p">)</span>
     <span class="n">ModelWrapper</span> <span class="o">=</span> <span class="nb">object</span>
-
-
-<span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="CLFModel"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textfooler_strategy.html#fibber.paraphrase_strategies.CLFModel">[docs]</a><span class="k">class</span> <span class="nc">CLFModel</span><span class="p">(</span><span class="n">ModelWrapper</span><span class="p">):</span>
