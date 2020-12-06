@@ -1,31 +1,19 @@
 """This module implements the paraphrase strategy using TextFooler."""
 
-import socket
 
 from fibber import log
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
+logger = log.setup_custom_logger(__name__)
 
-def is_connected():
-    try:
-        # connect to the host -- tells us if the host is actually
-        # reachable
-        socket.create_connection(("1.1.1.1", 53))
-        return True
-    except OSError:
-        pass
-    return False
-
-
-if is_connected():
+try:
     import textattack
     from textattack.attack_recipes.textfooler_jin_2019 import TextFoolerJin2019
     from textattack.models.wrappers.model_wrapper import ModelWrapper
-else:
+except ImportError:
+    logger.warning("TextAttack is not installed so TextFooler stategy can't be used. "
+                   "Install it by `pip install textattack`.")
     ModelWrapper = object
-
-
-logger = log.setup_custom_logger(__name__)
 
 
 class CLFModel(ModelWrapper):
