@@ -1,5 +1,10 @@
 # History
 
+## Version 0.1.1
+
+This minor release removes the dependency on `textattack` because it produces dependency conflicts.
+Users can install it manually to use attacking strategies in `textattack`.
+
 ## version 0.1.0
 
 This release is a major update to Fibber library. Advanced paraphrase algorithms are included.
