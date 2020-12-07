@@ -126,6 +126,7 @@ def load_or_train_bert_clf(model_init,
     model_dir = os.path.join(get_root_dir(), "bert_clf", dataset_name)
     ckpt_path = os.path.join(model_dir, model_init + "-%04dk" %
                              (bert_clf_steps // 1000))
+    logger.warning(ckpt_path)
 
     if os.path.exists(ckpt_path):
         logger.info("Load BERT classifier from %s.", ckpt_path)
