@@ -21,6 +21,19 @@ Fibber is a library to evaluate different strategies to paraphrase natural langu
 
 Fibber is a library to evaluate different strategies to paraphrase natural language. In this library, we have several built-in paraphrasing strategies. We also have a benchmark framework to evaluate the quality of paraphrase. In particular, we use the GPT2 language model to measure how meaningful is the paraphrased text. We use a universal sentence encoder to evaluate the semantic similarity between original and paraphrased text. We also train a BERT classifier on the original dataset, and check of paraphrased sentences can break the text classifier.
 
+# Try it now!
+
+No matter how much experience you have on natural language processing and adversarial attack, we encourage you to try
+the demo. Our demo is running on colab, **so you can try it without install!**
+
+This colab will automatically download a sentiment classifier, and all required resources. When resources are
+downloaded, you can type in your own sentences, and use Fibber to rewrite it. You can read the rewritten sentences, and
+metric evaluation of rewritten sentence. You will see some rewritten sentences have the same meaning as your input but
+get misclassified by the classifier.
+
+[**Click here to Launch Colab!**](https://colab.research.google.com/drive/1zefsU19P3HdrBUqJy7HU9b9cSaB_nBMP#scrollTo=uNcmhgzHJ3VQ)
+
+
 # Install
 
 ## Requirements
