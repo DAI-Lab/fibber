@@ -147,3 +147,27 @@ def get_transformers(name):
                       **downloadable_resource_urls[name])
 
     return os.path.join(data_dir, name)
+
+
+def get_bert_clf_demo():
+    """Download the pretrained classifier for demo dataset."""
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "bert_clf")
+    if not os.path.exists(os.path.join(data_dir, "demo")):
+        download_file(subdir=data_dir,
+                      **downloadable_resource_urls["bert-base-uncased-clf-demo"])
+
+
+def get_bert_lm_demo(path="."):
+    """Download the pretrained language model for demo dataset.
+
+    Since this data is algorithm-specific, it is downloaded to ``path`` instead of
+    ``<fibber_root_dir>``.
+    """
+    if not os.path.exists(os.path.join(path, "lm_all")):
+        download_file(abs_path=path,
+                      **downloadable_resource_urls["bert-base-uncased-lm-demo"])
+
+    if not os.path.exists(os.path.join(path, "wordpiece_emb-demo-0500.pt")):
+        download_file(abs_path=path,
+                      **downloadable_resource_urls["wpe-demo"])

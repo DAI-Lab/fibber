@@ -26,7 +26,7 @@ def config_tf_gpu(gpu_id):
         gpus = [item for item in gpus if item.name.endswith("GPU:%d" % gpu_id)]
         tf.config.set_visible_devices(gpus, device_type="GPU")
         for device in gpus:
-            tf.config.set_memory_growth(device, True)
+            tf.config.experimental.set_memory_growth(device, True)
     else:
         gpus = tf.config.experimental.list_physical_devices(device_type="GPU")
         gpus = [item for item in gpus if item.name.endswith("GPU:%d" % gpu_id)]

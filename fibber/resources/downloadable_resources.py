@@ -62,5 +62,25 @@ downloadable_resource_urls = {
         "untar": False,
         "unzip": True,
     },
-
+    "bert-base-uncased-clf-demo": {
+        "filename": "bert-base-uncased-clf-demo.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/bert-base-uncased-clf-demo.tgz",
+        "md5": "4af6ca998625bbd64d9a6d59a3af035f",
+        "untar": True,
+        "unzip": False,
+    },
+    "bert-base-uncased-lm-demo": {
+        "filename": "bert-base-uncased-lm-demo.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/bert-base-uncased-lm-demo.tgz",
+        "md5": "ff8f302c81b0aace15890842b7bb0e17",
+        "untar": True,
+        "unzip": False
+    },
+    "wpe-demo": {
+        "filename": "wpe-demo.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/wpe-demo.tgz",
+        "md5": "673fb249c2d63e334bc224c4a7f9bc89",
+        "untar": True,
+        "unzip": False
+    }
 }
