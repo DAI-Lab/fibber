@@ -32,7 +32,7 @@ def check_file_md5(filename, md5):
     return hash_md5.hexdigest() == md5
 
 
-def download_file(filename, url, md5, subdir=None, untar=False, unzip=False):
+def download_file(filename, url, md5, subdir=None, untar=False, unzip=False, abs_path=None):
     """Download file from a given url.
 
     This downloads a file to ``<fibber_root_dir>/subdir``. If the file already exists and the md5
@@ -45,10 +45,13 @@ def download_file(filename, url, md5, subdir=None, untar=False, unzip=False):
         subdir (str): the subdir to save the file. Dir will be created if not exists.
         untar (bool): whether to untar the file.
         unzip (bool): whether to unzip the file.
+        abs_path (str): a folder to download files. (ignore fibber_root_dir)
     """
     target_dir = get_root_dir()
     if subdir is not None:
         target_dir = os.path.join(target_dir, subdir)
+    if abs_path is not None:
+        target_dir = abs_path
     os.makedirs(target_dir, exist_ok=True)
     target_file_absolute_path = os.path.join(target_dir, filename)
 

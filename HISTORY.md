@@ -1,5 +1,11 @@
 # History
 
+
+## Version 0.1.2
+
+This minor release add pretrained classifiers and downloadable resources on a demo dataset, and a
+demo Colab. 
+
 ## Version 0.1.1
 
 This minor release removes the dependency on `textattack` because it produces dependency conflicts.

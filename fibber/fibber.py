@@ -90,3 +90,7 @@ class Fibber(object):
         paraphrases, metrics = self.paraphrase(data_record, field_name=field, n=n)
 
         return data_record[field], paraphrases, metrics
+
+    def get_metric_bundle(self):
+        """"Get the metric bundle."""
+        return self._metric_bundle

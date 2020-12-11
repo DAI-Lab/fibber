@@ -103,12 +103,12 @@ def get_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
     else:
         model_init = "bert-base-uncased"
 
-    ckpt_path_pattern = output_dir_t + "/checkpoint-%04dk.pt"
+    ckpt_path_pattern = output_dir_t + "/checkpoint-%04dk"
     ckpt_path = ckpt_path_pattern % (lm_steps // 1000)
 
     if os.path.exists(ckpt_path):
         logger.info("Language model <%s> exists.", ckpt_path)
-        return torch.load(ckpt_path).eval()
+        return BertForMaskedLM.from_pretrained(ckpt_path).eval()
 
     if filter == -1:
         lm_model = BertForMaskedLM.from_pretrained(resources.get_transformers(model_init))
@@ -152,7 +152,7 @@ def get_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
 
         if global_step % lm_period_save == 0 or global_step == lm_steps:
             lm_model.to(torch.device("cpu")).eval()
-            torch.save(lm_model, ckpt_path_pattern % (global_step // 1000))
+            lm_model.save_pretrained(ckpt_path_pattern % (global_step // 1000))
             lm_model.to(device)
 
         if global_step >= lm_steps:

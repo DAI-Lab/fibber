@@ -343,7 +343,11 @@ class BertSamplingStrategy(StrategyBase):
             assert 0
 
         # load text parser
-        self._text_parser = TextParser(self._strategy_config["stanza_port"])
+        if (self._strategy_config["seed_option"] != "origin"
+                or self._strategy_config["split_sentence"] != "0"):
+            self._text_parser = TextParser(self._strategy_config["stanza_port"])
+        else:
+            self._text_parser = None
 
         self._stats = {
             "all": 0,
