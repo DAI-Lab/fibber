@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.resources.resource_utils &#8212; fibber 0.1.1 documentation</title>
+    <title>fibber.resources.resource_utils &#8212; fibber 0.1.2 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -85,6 +85,10 @@
         </li>
         
         <li class="nav-item ">
+            <a class="nav-link" href=""></a>
+        </li>
+        
+        <li class="nav-item ">
             <a class="nav-link" href="../../../benchmark.html">Benchmark</a>
         </li>
         
@@ -138,6 +142,8 @@
     
   
     <ul class="nav bd-sidenav">
+        
+        
         
         
         
@@ -337,6 +343,30 @@
                       <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_bert_clf_demo"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_bert_clf_demo">[docs]</a><span class="k">def</span> <span class="nf">get_bert_clf_demo</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Download the pretrained classifier for demo dataset.&quot;&quot;&quot;</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;bert_clf&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;demo&quot;</span><span class="p">)):</span>
+        <span class="n">download_file</span><span class="p">(</span><span class="n">subdir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span>
+                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;bert-base-uncased-clf-demo&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="get_bert_lm_demo"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_bert_lm_demo">[docs]</a><span class="k">def</span> <span class="nf">get_bert_lm_demo</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Download the pretrained language model for demo dataset.</span>
+
+<span class="sd">    Since this data is algorithm-specific, it is downloaded to ``path`` instead of</span>
+<span class="sd">    ``&lt;fibber_root_dir&gt;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;lm_all&quot;</span><span class="p">)):</span>
+        <span class="n">download_file</span><span class="p">(</span><span class="n">abs_path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;bert-base-uncased-lm-demo&quot;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;wordpiece_emb-demo-0500.pt&quot;</span><span class="p">)):</span>
+        <span class="n">download_file</span><span class="p">(</span><span class="n">abs_path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;wpe-demo&quot;</span><span class="p">])</span></div>
 </pre></div>
 
               </div>

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.bert_sampling_utils_text_parser &#8212; fibber 0.1.1 documentation</title>
+    <title>fibber.paraphrase_strategies.bert_sampling_utils_text_parser &#8212; fibber 0.1.2 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -62,6 +62,10 @@
         
         <li class="nav-item ">
             <a class="nav-link" href="../../../readme.html">Fibber</a>
+        </li>
+        
+        <li class="nav-item ">
+            <a class="nav-link" href=""></a>
         </li>
         
         <li class="nav-item ">
@@ -161,6 +165,8 @@
         
         
         
+        
+        
       </ul>
   
   </nav>
@@ -194,7 +200,7 @@
 
 <span class="kn">from</span> <span class="nn">stanza.server</span> <span class="kn">import</span> <span class="n">CoreNLPClient</span>
 
-<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">resources</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -236,6 +242,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">9000</span><span class="p">):</span>
+        <span class="n">resources</span><span class="o">.</span><span class="n">get_corenlp</span><span class="p">()</span>
         <span class="k">while</span> <span class="n">is_port_in_use</span><span class="p">(</span><span class="n">port</span><span class="p">):</span>
             <span class="n">port</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_core_nlp_client</span> <span class="o">=</span> <span class="n">CoreNLPClient</span><span class="p">(</span>

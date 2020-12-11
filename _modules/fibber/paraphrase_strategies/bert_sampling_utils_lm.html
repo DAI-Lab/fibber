@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.bert_sampling_utils_lm &#8212; fibber 0.1.1 documentation</title>
+    <title>fibber.paraphrase_strategies.bert_sampling_utils_lm &#8212; fibber 0.1.2 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -85,6 +85,10 @@
         </li>
         
         <li class="nav-item ">
+            <a class="nav-link" href=""></a>
+        </li>
+        
+        <li class="nav-item ">
             <a class="nav-link" href="../../../benchmark.html">Benchmark</a>
         </li>
         
@@ -138,6 +142,8 @@
     
   
     <ul class="nav bd-sidenav">
+        
+        
         
         
         
@@ -293,12 +299,12 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">model_init</span> <span class="o">=</span> <span class="s2">&quot;bert-base-uncased&quot;</span>
 
-    <span class="n">ckpt_path_pattern</span> <span class="o">=</span> <span class="n">output_dir_t</span> <span class="o">+</span> <span class="s2">&quot;/checkpoint-</span><span class="si">%04d</span><span class="s2">k.pt&quot;</span>
+    <span class="n">ckpt_path_pattern</span> <span class="o">=</span> <span class="n">output_dir_t</span> <span class="o">+</span> <span class="s2">&quot;/checkpoint-</span><span class="si">%04d</span><span class="s2">k&quot;</span>
     <span class="n">ckpt_path</span> <span class="o">=</span> <span class="n">ckpt_path_pattern</span> <span class="o">%</span> <span class="p">(</span><span class="n">lm_steps</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Language model &lt;</span><span class="si">%s</span><span class="s2">&gt; exists.&quot;</span><span class="p">,</span> <span class="n">ckpt_path</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">BertForMaskedLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="nb">filter</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
         <span class="n">lm_model</span> <span class="o">=</span> <span class="n">BertForMaskedLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">resources</span><span class="o">.</span><span class="n">get_transformers</span><span class="p">(</span><span class="n">model_init</span><span class="p">))</span>
@@ -342,7 +348,7 @@
 
         <span class="k">if</span> <span class="n">global_step</span> <span class="o">%</span> <span class="n">lm_period_save</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">global_step</span> <span class="o">==</span> <span class="n">lm_steps</span><span class="p">:</span>
             <span class="n">lm_model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">lm_model</span><span class="p">,</span> <span class="n">ckpt_path_pattern</span> <span class="o">%</span> <span class="p">(</span><span class="n">global_step</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span>
+            <span class="n">lm_model</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="n">ckpt_path_pattern</span> <span class="o">%</span> <span class="p">(</span><span class="n">global_step</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span>
             <span class="n">lm_model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">global_step</span> <span class="o">&gt;=</span> <span class="n">lm_steps</span><span class="p">:</span>

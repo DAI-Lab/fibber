@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.resources.download_resources &#8212; fibber 0.1.1 documentation</title>
+    <title>fibber.resources.download_resources &#8212; fibber 0.1.2 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -62,6 +62,10 @@
         
         <li class="nav-item ">
             <a class="nav-link" href="../../../readme.html">Fibber</a>
+        </li>
+        
+        <li class="nav-item ">
+            <a class="nav-link" href=""></a>
         </li>
         
         <li class="nav-item ">
@@ -161,6 +165,8 @@
         
         
         
+        
+        
       </ul>
   
   </nav>
@@ -189,8 +195,8 @@
                 
   <h1>Source code for fibber.resources.download_resources</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">fibber.resources.resource_utils</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">get_corenlp</span><span class="p">,</span> <span class="n">get_glove_emb</span><span class="p">,</span> <span class="n">get_nltk_data</span><span class="p">,</span> <span class="n">get_stopwords</span><span class="p">,</span> <span class="n">get_transformers</span><span class="p">,</span>
-    <span class="n">get_universal_sentence_encoder</span><span class="p">)</span>
+    <span class="n">get_bert_clf_demo</span><span class="p">,</span> <span class="n">get_bert_lm_demo</span><span class="p">,</span> <span class="n">get_corenlp</span><span class="p">,</span> <span class="n">get_glove_emb</span><span class="p">,</span> <span class="n">get_nltk_data</span><span class="p">,</span> <span class="n">get_stopwords</span><span class="p">,</span>
+    <span class="n">get_transformers</span><span class="p">,</span> <span class="n">get_universal_sentence_encoder</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="download_all"><a class="viewcode-back" href="../../../api/fibber.resources.download_resources.html#fibber.resources.download_all">[docs]</a><span class="k">def</span> <span class="nf">download_all</span><span class="p">():</span>
@@ -202,6 +208,18 @@
     <span class="n">get_universal_sentence_encoder</span><span class="p">()</span>
     <span class="n">get_corenlp</span><span class="p">()</span>
     <span class="n">get_stopwords</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="download_resources_for_demo"><a class="viewcode-back" href="../../../api/fibber.resources.download_resources.html#fibber.resources.download_resources_for_demo">[docs]</a><span class="k">def</span> <span class="nf">download_resources_for_demo</span><span class="p">(</span><span class="n">demo_path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+    <span class="n">get_nltk_data</span><span class="p">()</span>
+    <span class="n">get_glove_emb</span><span class="p">(</span><span class="n">download_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">get_transformers</span><span class="p">(</span><span class="s2">&quot;gpt2-medium&quot;</span><span class="p">)</span>
+    <span class="n">get_transformers</span><span class="p">(</span><span class="s2">&quot;bert-base-uncased&quot;</span><span class="p">)</span>
+    <span class="n">get_universal_sentence_encoder</span><span class="p">()</span>
+    <span class="n">get_stopwords</span><span class="p">()</span>
+
+    <span class="n">get_bert_clf_demo</span><span class="p">()</span>
+    <span class="n">get_bert_lm_demo</span><span class="p">(</span><span class="n">demo_path</span><span class="p">)</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>

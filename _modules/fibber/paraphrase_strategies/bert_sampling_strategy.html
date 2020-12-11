@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.bert_sampling_strategy &#8212; fibber 0.1.1 documentation</title>
+    <title>fibber.paraphrase_strategies.bert_sampling_strategy &#8212; fibber 0.1.2 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -85,6 +85,10 @@
         </li>
         
         <li class="nav-item ">
+            <a class="nav-link" href=""></a>
+        </li>
+        
+        <li class="nav-item ">
             <a class="nav-link" href="../../../benchmark.html">Benchmark</a>
         </li>
         
@@ -138,6 +142,8 @@
     
   
     <ul class="nav bd-sidenav">
+        
+        
         
         
         
@@ -533,7 +539,11 @@
             <span class="k">assert</span> <span class="mi">0</span>
 
         <span class="c1"># load text parser</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_text_parser</span> <span class="o">=</span> <span class="n">TextParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;stanza_port&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;seed_option&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;origin&quot;</span>
+                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;split_sentence&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;0&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_text_parser</span> <span class="o">=</span> <span class="n">TextParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;stanza_port&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_text_parser</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;all&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>

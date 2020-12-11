@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.download_utils &#8212; fibber 0.1.1 documentation</title>
+    <title>fibber.download_utils &#8212; fibber 0.1.2 documentation</title>
     
   <link rel="stylesheet" href="../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -62,6 +62,10 @@
         
         <li class="nav-item ">
             <a class="nav-link" href="../../readme.html">Fibber</a>
+        </li>
+        
+        <li class="nav-item ">
+            <a class="nav-link" href=""></a>
         </li>
         
         <li class="nav-item ">
@@ -161,6 +165,8 @@
         
         
         
+        
+        
       </ul>
   
   </nav>
@@ -222,7 +228,7 @@
     <span class="k">return</span> <span class="n">hash_md5</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span> <span class="o">==</span> <span class="n">md5</span></div>
 
 
-<div class="viewcode-block" id="download_file"><a class="viewcode-back" href="../../api/fibber.download_utils.html#fibber.download_utils.download_file">[docs]</a><span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">md5</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">untar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unzip</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="download_file"><a class="viewcode-back" href="../../api/fibber.download_utils.html#fibber.download_utils.download_file">[docs]</a><span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">md5</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">untar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unzip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">abs_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Download file from a given url.</span>
 
 <span class="sd">    This downloads a file to ``&lt;fibber_root_dir&gt;/subdir``. If the file already exists and the md5</span>
@@ -235,10 +241,13 @@
 <span class="sd">        subdir (str): the subdir to save the file. Dir will be created if not exists.</span>
 <span class="sd">        untar (bool): whether to untar the file.</span>
 <span class="sd">        unzip (bool): whether to unzip the file.</span>
+<span class="sd">        abs_path (str): a folder to download files. (ignore fibber_root_dir)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">target_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">subdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">target_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">subdir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">abs_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">target_dir</span> <span class="o">=</span> <span class="n">abs_path</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">target_file_absolute_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
 

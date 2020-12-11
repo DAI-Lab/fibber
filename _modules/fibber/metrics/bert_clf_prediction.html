@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.bert_clf_prediction &#8212; fibber 0.1.1 documentation</title>
+    <title>fibber.metrics.bert_clf_prediction &#8212; fibber 0.1.2 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -85,6 +85,10 @@
         </li>
         
         <li class="nav-item ">
+            <a class="nav-link" href=""></a>
+        </li>
+        
+        <li class="nav-item ">
             <a class="nav-link" href="../../../benchmark.html">Benchmark</a>
         </li>
         
@@ -138,6 +142,8 @@
     
   
     <ul class="nav bd-sidenav">
+        
+        
         
         
         
@@ -313,13 +319,13 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        (transformers.BertForSequenceClassification): a torch BERT model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">model_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_root_dir</span><span class="p">(),</span> <span class="s2">&quot;bert_clf&quot;</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="p">)</span>
-    <span class="n">ckpt_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">model_init</span> <span class="o">+</span> <span class="s2">&quot;-</span><span class="si">%04d</span><span class="s2">k.pt&quot;</span> <span class="o">%</span>
+    <span class="n">model_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_root_dir</span><span class="p">(),</span> <span class="s2">&quot;bert_clf&quot;</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span>
+    <span class="n">ckpt_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">model_init</span> <span class="o">+</span> <span class="s2">&quot;-</span><span class="si">%04d</span><span class="s2">k&quot;</span> <span class="o">%</span>
                              <span class="p">(</span><span class="n">bert_clf_steps</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Load BERT classifier from </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">ckpt_path</span><span class="p">)</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">BertForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">)</span>
         <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span>
@@ -379,13 +385,9 @@
                          <span class="n">bert_clf_val_steps</span><span class="p">,</span> <span class="n">summary</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">global_step</span> <span class="o">%</span> <span class="n">bert_clf_period_save</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">global_step</span> <span class="o">==</span> <span class="n">bert_clf_steps</span><span class="p">:</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">))</span>
-            <span class="n">ckpt</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">model_init</span> <span class="o">+</span> <span class="s2">&quot;-</span><span class="si">%04d</span><span class="s2">k.pt&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">global_step</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ckpt</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;BERT classifier saved at </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">ckpt</span><span class="p">)</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+            <span class="n">ckpt_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">model_init</span> <span class="o">+</span> <span class="s2">&quot;-</span><span class="si">%04d</span><span class="s2">k&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">global_step</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;BERT classifier saved at </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">ckpt_path</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">global_step</span> <span class="o">&gt;=</span> <span class="n">bert_clf_steps</span><span class="p">:</span>
             <span class="k">break</span>
