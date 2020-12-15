@@ -5,7 +5,7 @@ import os
 from fibber import log
 from fibber.benchmark.benchmark_utils import update_detailed_result
 from fibber.benchmark.customized_metric_aggregation import customized_metric_aggregation_fn_dict
-from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset
+from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, verify_dataset
 from fibber.metrics import MetricBundle, aggregate_metrics, compute_metrics
 from fibber.paraphrase_strategies import (
     BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextFoolerStrategy)
@@ -65,6 +65,7 @@ class Benchmark(object):
         self._output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
         os.makedirs(os.path.join(output_dir, "log"), exist_ok=True)
+        self._dataset_name = dataset_name
 
         # setup dataset
         if dataset_name in builtin_datasets:
@@ -73,6 +74,9 @@ class Benchmark(object):
                               "set trainset and testset to None.") % dataset_name)
                 raise RuntimeError
             trainset, testset = get_dataset(dataset_name)
+        else:
+            verify_dataset(trainset)
+            verify_dataset(testset)
 
         if attack_set is None:
             attack_set = testset
@@ -112,11 +116,11 @@ class Benchmark(object):
         if isinstance(paraphrase_strategy, str):
             if paraphrase_strategy in built_in_strategies:
                 self._paraphrase_strategy = built_in_strategies[paraphrase_strategy](
-                    {}, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
+                    {}, self._dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
 
         # get experiment name
         if exp_name is None:
-            exp_name = (dataset_name + "-" + str(paraphrase_strategy) + "-"
+            exp_name = (self._dataset_name + "-" + str(paraphrase_strategy) + "-"
                         + datetime.datetime.now().strftime("%m%d-%H%M%S"))
 
         paraphrase_strategy.fit(self._trainset)
@@ -188,17 +192,17 @@ def main():
     os.makedirs(arg_dict["output_dir"], exist_ok=True)
     os.makedirs(os.path.join(arg_dict["output_dir"], "log"), exist_ok=True)
 
-    log.add_file_handler(
-        logger, os.path.join(arg_dict["output_dir"], "log",
-                             get_output_filename(arg_dict, suffix=".log")))
-    log.remove_logger_tf_handler(logger)
-
     benchmark = Benchmark(arg_dict["output_dir"], arg_dict["dataset"],
                           subsample_attack_set=arg_dict["subsample_testset"],
                           use_gpu_id=arg_dict["use_gpu_id"],
                           bert_gpu_id=arg_dict["bert_gpu_id"],
                           gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
-                          bert_clf_steps=arg_dict)
+                          bert_clf_steps=arg_dict["bert_clf_steps"])
+
+    log.add_file_handler(
+        logger, os.path.join(arg_dict["output_dir"], "log.log"))
+    log.remove_logger_tf_handler(logger)
+
     # Get paraphrase strategy
     paraphrase_strategy = get_strategy(arg_dict, arg_dict["dataset"], arg_dict["strategy"],
                                        arg_dict["strategy_gpu_id"], arg_dict["output_dir"],
