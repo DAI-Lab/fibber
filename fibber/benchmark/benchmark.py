@@ -9,6 +9,7 @@ from fibber.metrics.metric_utils import (
     DIRECTION_HIGHER_BETTER, DIRECTION_LOWER_BETTER, DIRECTION_UNKNOWN, MetricBundle)
 from fibber.paraphrase_strategies import (
     BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextFoolerStrategy)
+from fibber.metrics.attack_aggregation import add_sentence_level_adversarial_attack_metrics
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
@@ -90,13 +91,16 @@ class Benchmark(object):
 
         # setup metric bundle
         self._metric_bundle = MetricBundle(
-            enable_bert_clf_prediction=use_bert_clf,
+            enable_bert_clf_prediction=enable_bert_clf,
             use_gpu_id=use_gpu_id, gpt2_gpu_id=gpt2_gpu_id,
             bert_gpu_id=bert_gpu_id, dataset_name=dataset_name,
             trainset=self._trainset, testset=testset,
             bert_clf_steps=bert_clf_steps,
             bert_clf_bs=bert_clf_bs
         )
+
+        add_sentence_level_adversarial_attack_metrics(
+            self._metric_bundle, gpt2_ppl_threshold=5, use_sim_threshold=0.85)
 
     def run_benchmark(self,
                       paraphrase_strategy="IdentityStrategy",
@@ -154,50 +158,6 @@ class Benchmark(object):
 
     def get_metric_bundle(self):
         return self._metric_bundle
-
-    def make_overview(self):
-        """Generate overview table from detailed table."""
-        detailed_df = load_detailed_result()
-
-        # verify detailed result
-        for group_info, item in detailed_df.groupby([DATASET_NAME_COL, STRATEGY_NAME_COL]):
-            assert len(item) == 1, (
-                "Detailed results contains multiple runs for %s on %s." % (
-                    group_info[1], group_info[0]))
-
-        col_for_num_wins = []
-        for metric_name in self._metric_bundle.get_metric_names():
-            direction = self._metric_bundle.get_metric_direction(metric_name)
-            if direction != DIRECTION_UNKNOWN:
-                col_for_num_wins.append((metric_name + direction, direction))
-
-        for advanced_agg_name in self._metric_bundle.get_advanced_aggregation_fn_names():
-            direction = self._metric_bundle.get_advanced_aggregation_fn_direction(
-                advanced_agg_name)
-            if direction != DIRECTION_UNKNOWN:
-                col_for_num_wins.append((advanced_agg_name + direction, direction))
-
-        results = {}
-        for rid, item in detailed_df.iterrows():
-            if item[STRATEGY_NAME_COL] not in results:
-                model_name = item[STRATEGY_NAME_COL]
-                tmp = dict()
-
-                tmp[STRATEGY_NAME_COL] = item[STRATEGY_NAME_COL]
-                for col_name, _ in col_for_num_wins:
-                    tmp[col_name] = 0
-
-                results[model_name] = tmp
-
-        for group_name, group in detailed_df.groupby(DATASET_NAME_COL):
-            for _, r1 in group.iterrows():
-                for _, r2 in group.iterrows():
-                    for column_name, direction in col_for_num_wins:
-                        if ((direction == DIRECTION_HIGHER_BETTER and r1[column_name] > r2[column_name])
-                                or (direction == DIRECTION_LOWER_BETTER and r1[column_name] < r2[column_name])):
-                            results[r1[STRATEGY_NAME_COL]][column_name] += 1
-
-        update_overview_result(pd.DataFrame(list(results.values())))
 
 
 def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,

@@ -55,11 +55,11 @@ class MetricBundle(object):
         if enable_edit_distance:
             self.add_metric(EditDistance(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_use_semantic_similarity:
-            self.add_metric(USESemanticSimilarity(**kargs), DIRECTION_LOWER_BETTER)
+            self.add_metric(USESemanticSimilarity(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_glove_semantic_similarity:
             self.add_metric(GloVeSemanticSimilarity(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_gpt2_grammar_quality:
-            self.add_metric(GPT2GrammarQuality(**kargs), DIRECTION_HIGHER_BETTER)
+            self.add_metric(GPT2GrammarQuality(**kargs), DIRECTION_LOWER_BETTER)
         if enable_bert_clf_prediction:
             self.add_classifier(BertClfPrediction(**kargs), set_target_clf=True)
 
@@ -136,7 +136,7 @@ class MetricBundle(object):
         Args:
             classifier_name (str): the name of the requested classifier.
         """
-        return self.get_classifier(classifier_name)
+        return self._classifiers[classifier_name]
 
     def get_classifier_names(self):
         return list(self._classifiers.keys())
@@ -148,7 +148,7 @@ class MetricBundle(object):
             classifier_name (str): set a classifier as target classifier.
         """
         assert isinstance(classifier_name, str)
-        assert classifier_name not in self._classifiers
+        assert classifier_name in self._classifiers
         self._target_clf = classifier_name
 
     def get_target_classifier(self):
@@ -264,7 +264,10 @@ class MetricBundle(object):
             aggregate_result_tmp = {}
             metric_df = pd.DataFrame(data_record["paraphrase_metrics"])
             for metric_name in metric_df.columns.tolist():
+                if metric_name in self.get_classifier_names():
+                    continue
                 metric_value = metric_df[metric_name].values
+                direction = self.get_metric_direction(metric_name)
 
                 # aggregate mean
                 agg_value = np.mean(metric_value)
@@ -272,11 +275,13 @@ class MetricBundle(object):
 
                 # aggregate std
                 agg_value = np.std(metric_value)
-                aggregate_result_tmp[metric_name + "(std)"] = float(agg_value)
+                aggregate_result_tmp[metric_name + "_std"] = float(agg_value)
 
             aggregate_result_tmp["ParaphrasesPerExample"] = len(data_record["paraphrase_metrics"])
 
-            for agg_name, (agg_fn, direction) in self._advanced_aggregation_fn.items():
+            for agg_name in self.get_advanced_aggregation_fn_names():
+                agg_fn = self.get_advanced_aggregation_fn(agg_name)
+                direction = self.get_advanced_aggregation_fn_direction(agg_name)
                 aggregate_result_tmp[agg_name + direction] = agg_fn(data_record)
 
             aggregated_result = aggregated_result.append(aggregate_result_tmp, ignore_index=True)
