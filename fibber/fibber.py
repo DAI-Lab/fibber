@@ -23,7 +23,7 @@ class Fibber(object):
         super(Fibber, self).__init__()
 
         self._metric_bundle = MetricBundle(
-            use_bert_clf_prediction=True,
+            enable_bert_clf_prediction=True,
             use_gpu_id=arg_dict["use_gpu_id"],
             gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
             bert_gpu_id=arg_dict["bert_gpu_id"],

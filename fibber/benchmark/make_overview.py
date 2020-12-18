@@ -1,7 +1,7 @@
 import pandas as pd
 
 from fibber.benchmark.benchmark_utils import load_detailed_result, update_overview_result
-from fibber.benchmark.customized_metric_aggregation import customized_metric_for_nun_wins
+from fibber.metrics.attack_aggregation import customized_metric_for_nun_wins
 
 # Columns where the number of wins should be computed.
 # "L" means lower is better.
