@@ -7,7 +7,7 @@ from nltk import word_tokenize
 
 from fibber import log
 from fibber.metrics.metric_base import MetricBase
-from fibber.resources import get_glove_emb, get_stopwords, get_nltk_data
+from fibber.resources import get_glove_emb, get_nltk_data, get_stopwords
 
 logger = log.setup_custom_logger('glove_semantic_similairty')
 

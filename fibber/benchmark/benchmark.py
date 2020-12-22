@@ -3,13 +3,13 @@ import datetime
 import os
 
 from fibber import log
-from fibber.benchmark.benchmark_utils import load_detailed_result, update_detailed_result
+from fibber.benchmark.benchmark_utils import update_detailed_result
 from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, verify_dataset
-from fibber.metrics.metric_utils import (
-    DIRECTION_HIGHER_BETTER, DIRECTION_LOWER_BETTER, DIRECTION_UNKNOWN, MetricBundle)
+from fibber.metrics.attack_aggregation import add_sentence_level_adversarial_attack_metrics
+from fibber.metrics.metric_base import MetricBase
+from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
     BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextFoolerStrategy)
-from fibber.metrics.attack_aggregation import add_sentence_level_adversarial_attack_metrics
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
@@ -32,6 +32,7 @@ class Benchmark(object):
                  output_dir, dataset_name,
                  trainset=None, testset=None, attack_set=None,
                  subsample_attack_set=0,
+                 customized_clf=None,
                  enable_bert_clf=True,
                  use_gpu_id=-1,
                  gpt2_gpu_id=-1,
@@ -51,6 +52,7 @@ class Benchmark(object):
             attack_set (dict or None): the set to run adversarial attack. Use None to attack the
                 ``testset``.
             subsample_attack_set (int): subsample the attack set. 0 to use the whole attack set.
+            customized_clf (MetricBase): an classifier object.
             enable_bert_clf (bool): whether to enable bert classifier in metrics. You can disable
                 it when you are attacking your own classifier.
             use_gpu_id (int): the gpu to run universal sentence encoder to compute metrics.
@@ -65,7 +67,6 @@ class Benchmark(object):
         # make output dir
         self._output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
-        os.makedirs(os.path.join(output_dir, "log"), exist_ok=True)
         self._dataset_name = dataset_name
 
         # setup dataset
@@ -99,6 +100,10 @@ class Benchmark(object):
             bert_clf_bs=bert_clf_bs
         )
 
+        if customized_clf:
+            self._metric_bundle.add_classifier(str(customized_clf), customized_clf)
+            self._metric_bundle.set_target_classifier(str(customized_clf))
+
         add_sentence_level_adversarial_attack_metrics(
             self._metric_bundle, gpt2_ppl_threshold=5, use_sim_threshold=0.85)
 
@@ -129,7 +134,9 @@ class Benchmark(object):
         if isinstance(paraphrase_strategy, str):
             if paraphrase_strategy in built_in_strategies:
                 paraphrase_strategy = built_in_strategies[paraphrase_strategy](
-                    {}, self._dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
+                    {}, self._dataset_name, strategy_gpu_id, self._output_dir, self._metric_bundle)
+        else:
+            assert isinstance(paraphrase_strategy, MetricBase)
 
         # get experiment name
         if exp_name is None:
