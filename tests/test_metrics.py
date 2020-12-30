@@ -3,9 +3,7 @@ from fibber.metrics.glove_semantic_similarity import GloVeSemanticSimilarity
 from fibber.metrics.gpt2_grammar_quality import GPT2GrammarQuality
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.metrics.use_semantic_similarity import USESemanticSimilarity
-from fibber.resources import get_nltk_data
-
-get_nltk_data()
+import pytest
 
 
 def test_editing_distance():
@@ -28,6 +26,7 @@ def test_editing_distance():
     assert editing_distance_metric.measure_example(s1, s2) == 1
 
 
+@pytest.mark.slow
 def test_use_semantic_similarity():
     use_semantic_similarity_metric = USESemanticSimilarity()
     s1 = "Sunday is the first day in a week."
@@ -49,6 +48,7 @@ def test_use_semantic_similarity():
     assert abs(metric3[1] - metric2) < 1e-4
 
 
+@pytest.mark.slow
 def test_gpt2_grammar_quality():
     gpt2_grammar_quality_metric = GPT2GrammarQuality()
     s1 = "Saturday is the last day in a week."
@@ -60,6 +60,7 @@ def test_gpt2_grammar_quality():
     assert gpt2_grammar_quality_metric.measure_example(s1, s2) < 2
 
 
+@pytest.mark.slow
 def test_glove_semantic_similarity():
     glove_semantic_similarity_metric = GloVeSemanticSimilarity()
 
@@ -72,6 +73,7 @@ def test_glove_semantic_similarity():
     assert 0.95 < glove_semantic_similarity_metric.measure_example(s1, s2) < 1
 
 
+@pytest.mark.slow
 def test_metric_bundle():
     metric_bundle = MetricBundle()
     s1 = "Saturday is the last day in a week"
