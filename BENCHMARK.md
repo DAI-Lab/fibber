@@ -1,14 +1,34 @@
 # Benchmark
 
-## Quick Start
+Benchmark module is an important component in Fibber. It provides an easy-to-use
+API and is highly customizable. In this document, we will show
 
-In this short tutorial, we will guide you through a series of steps that will help you run benchmark on different strategies using fibber.
+- Benchmark result: we benchmark all builtin methods on builtin dataset.
+- Basic usage: how to use builtin strategies to attack BERT classifier on a builtin dataset.
+- Advance usage: how to customize strategy, classifier, and dataset.
 
-**(1) [Install Fibber](#Install)**
+## Benchmark result
 
-**(2) Download datasets**
+The following table shows the benchmarking result. (Here we show the number of wins.)
 
-Please use the following command to download all datasets.
+|   1_paraphrase_strategy_name  |   USESemanticSimilarity_mean  |   GPT2GrammarQuality_mean  |   3_ParaphraseAcc_usesim0.90_ppl2  |   4_ParaphraseAcc_usesim0.85_ppl5  |
+|-------------------------------|-------------------------------|----------------------------|------------------------------------|------------------------------------|
+|   IdentityStrategy           |   7                           |   7                        |   0                                |   0                                |
+|   RandomStrategy              |   0                           |   0                        |   5                                |   6                                |
+
+For detailed tables, see [Google Sheet](https://docs.google.com/spreadsheets/d/1B_5RiMfndNVhxZLX5ykMqt5SCjpy3MxOovBi_RL41Fw/edit?usp=sharing).
+
+
+## Basic Usage
+
+In this short tutorial, we will guide you through a series of steps that will help you run
+benchmark on builtin strategies and datasets.
+
+### Preparation
+
+**Install Fibber:** Please follow the instructions to [Install Fibber](#Install).**
+
+**Download datasets:** Please use the following command to download all datasets.
 
 ```bash
 python -m fibber.datasets.download_datasets
@@ -16,15 +36,19 @@ python -m fibber.datasets.download_datasets
 
 All datasets will be downloaded and stored at `~/.fibber/datasets`.
 
-**(3) Execute the benchmark on one dataset using one paraphrase strategy.**
+### Run benchmark as a module
 
-The following command will run the `random` strategy on the `ag` dataset. To use other datasets, see the [datasets](#Datasets) section.
+If you are trying to reproduce the performance table, running the benchmark as a module is
+recommended.
+
+The following command will run the `BertSamplingStrategy` strategy on the `mr` dataset. To use other
+datasets, see the [datasets](#Datasets) section.
 
 ```bash
 python -m fibber.benchmark.benchmark \
-	--dataset ag \
-	--strategy RandomStrategy \
-	--output_dir exp-ag \
+	--dataset mr \
+	--strategy BertSamplingStrategy \
+	--output_dir exp-mr \
 	--num_paraphrases_per_text 20 \
 	--subsample_testset 100 \
 	--gpt2_gpu 0 \
@@ -33,7 +57,9 @@ python -m fibber.benchmark.benchmark \
 	--bert_clf_steps 20000
 ```
 
-It first subsamples the test set to `100` examples, then generates `20` paraphrases for each example. During this process, the paraphrased sentences will be stored at `exp-ag/ag-RandomStrategy-<date>-<time>-tmp.json`.
+It first subsamples the test set to `100` examples, then generates `20` paraphrases for each
+example. During this process, the paraphrased sentences will be stored at
+`exp-mr/mr-BertSamplingStrategy-<date>-<time>-tmp.json`.
 
 Then the pipeline will initialize all the evaluation metrics.
 
@@ -45,7 +71,36 @@ After the execution, the evaluation metric for each of the paraphrases will be s
 
 The aggregated result will be stored as a row at `~/.fibber/results/detailed.csv`.
 
-**(4) Generate overview result.**
+### Run in a python script / jupyter notebook
+
+You may want to integrate the benchmark framework into your own python script. We also provide easy to use APIs.
+
+**Create a Benchmark object** The following code will create a fibber Benchmark object on `mr` dataset.
+
+```
+from fibber.benchmark import Benchmark
+
+benchmark = Benchmark(
+    output_dir = "exp-debug",
+    dataset_name = "mr",
+    subsample_attack_set=100,
+    use_gpu_id=0,
+    gpt2_gpu_id=0,
+    bert_gpu_id=0,
+    bert_clf_steps=1000,
+    bert_clf_bs=32
+)
+```
+
+Similarly, you can assign different components to different GPUs.
+
+**Run benchmark** Use the following code to run the benchmark using a specific strategy.  
+
+```
+benchmark.run_benchmark(paraphrase_strategy="BertSamplingStrategy")
+```
+
+### Generate overview result
 
 We use the number of wins to compare different strategies. To generate the overview table, use the following command.
 
@@ -56,6 +111,70 @@ python -m fibber.benchmark.make_overview
 The overview table will be stored at `~/.fibber/results/overview.csv`.
 
 Before running this command, please verify `~/.fibber/results/detailed.csv`. Each strategy must not have more than one executions on one dataset. Otherwise, the script will raise assertion errors.
+
+
+## Advanced Usage
+
+### Customize dataset
+
+To run a benchmark on a customized classification dataset, you should first convert a dataset into fibber's standard data format.
+
+Then construct a benchmark object using your own dataset.
+
+```
+benchmark = Benchmark(
+    output_dir = "exp-debug",
+    dataset_name = "customized_dataset",
+		trainset = your_train_set,
+		testset = your_test_set,
+		attack_set = your_attack_set,
+    subsample_attack_set=0,
+    use_gpu_id=0,
+    gpt2_gpu_id=0,
+    bert_gpu_id=0,
+    bert_clf_steps=1000,
+    bert_clf_bs=32
+)
+```
+
+### Customize classifier
+
+To customize classifier, use the `customized_clf` arg in Benchmark. For example,
+
+```
+# a naive classifier that always outputs 0.
+class CustomizedClf(MetricBase):
+	def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+		return 0
+
+benchmark = Benchmark(
+    output_dir = "exp-debug",
+    dataset_name = "mr",
+		customized_clf=CustomizedClf(),
+    subsample_attack_set=0,
+    use_gpu_id=0,
+    gpt2_gpu_id=0,
+    bert_gpu_id=0,
+    bert_clf_steps=1000,
+    bert_clf_bs=32
+)
+```
+
+### Customize strategy
+
+To customize strategy, you should create a strategy object then call the `run_benchmark` function. For example,
+we want to benchmark BertSamplingStrategy using a different set of hyper parameters.
+
+```
+strategy = BertSamplingStrategy(
+    arg_dict={"bs_clf_weight": 0},
+		dataset_name="mr",
+		strategy_gpu_id=0,
+		output_dir="exp_mr",
+		metric_bundle=benchmark.get_metric_bundle())
+
+benchmark.run_benchmark(strategy)
+```
 
 ## Datasets
 
@@ -69,6 +188,8 @@ Here is the information about datasets in fibber.
 | Sentiment classification   | [imdb](https://ai.stanford.edu/~amaas/data/sentiment/)| 25k / 25k         | Negative / Positive                 |
 | Natural Language Inference | [snli](https://nlp.stanford.edu/projects/snli/) | 570k / 10k        | Entailment / Neutral / Contradict   |
 | Natural Language Inference | [mnli](https://cims.nyu.edu/~sbowman/multinli/)                | 433k / 10k        | Entailment / Neutral / Contradict   |
+
+Note that ag has two configurations. In `ag`, we combines the title and content as input for classification. In `ag_no_title`, we use only use content as input.
 
 Note that mnli has two configurations. Use `mnli` for matched testset, and `mnli_mis` for mismatched testset.
 
@@ -131,18 +252,6 @@ After executing the command, the dataset is stored at `~/.fibber/datasets/<datas
 python3 -m fibber.datasets.download_datasets --process_raw 1
 ```
 This script will download data from the original source to `~/.fibber/datasets/<dataset_name>/raw/` folder. And process the raw data to generate the JSON files.
-
-
-## Benchmark result
-
-The following table shows the benchmarking result. (Here we show the number of wins.)
-
-|   1_paraphrase_strategy_name  |   USESemanticSimilarity_mean  |   GPT2GrammarQuality_mean  |   3_ParaphraseAcc_usesim0.90_ppl2  |   4_ParaphraseAcc_usesim0.85_ppl5  |
-|-------------------------------|-------------------------------|----------------------------|------------------------------------|------------------------------------|
-|   IdentityStrategy           |   7                           |   7                        |   0                                |   0                                |
-|   RandomStrategy              |   0                           |   0                        |   5                                |   6                                |
-
-For detailed tables, see [Google Sheet](https://docs.google.com/spreadsheets/d/1B_5RiMfndNVhxZLX5ykMqt5SCjpy3MxOovBi_RL41Fw/edit?usp=sharing).
 
 
 ## Output format

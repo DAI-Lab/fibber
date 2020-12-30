@@ -4,51 +4,167 @@ import os
 
 from fibber import log
 from fibber.benchmark.benchmark_utils import update_detailed_result
-from fibber.benchmark.customized_metric_aggregation import customized_metric_aggregation_fn_dict
-from fibber.datasets import get_dataset, subsample_dataset
-from fibber.metrics import MetricBundle, aggregate_metrics, compute_metrics
+from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, verify_dataset
+from fibber.metrics.attack_aggregation import add_sentence_level_adversarial_attack_metrics
+from fibber.metrics.metric_base import MetricBase
+from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
     BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextFoolerStrategy)
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
 
-parser = argparse.ArgumentParser()
+built_in_strategies = {
+    "RandomStrategy": RandomStrategy,
+    "IdentityStrategy": IdentityStrategy,
+    "TextFoolerStrategy": TextFoolerStrategy,
+    "BertSamplingStrategy": BertSamplingStrategy
+}
 
-parser.add_argument("--dataset", type=str, default="ag")
-parser.add_argument("--output_dir", type=str, default=None)
-parser.add_argument("--num_paraphrases_per_text", type=int, default=20)
-parser.add_argument("--subsample_testset", type=int, default=1000)
-parser.add_argument("--strategy", type=str, default="RandomStrategy")
-parser.add_argument("--strategy_gpu_id", type=int, default=-1)
-
-# metric args
-parser.add_argument("--gpt2_gpu_id", type=int, default=-1)
-parser.add_argument("--bert_gpu_id", type=int, default=-1)
-parser.add_argument("--use_gpu_id", type=int, default=-1)
-parser.add_argument("--bert_clf_steps", type=int, default=20000)
-
-RandomStrategy.add_parser_args(parser)
-IdentityStrategy.add_parser_args(parser)
-TextFoolerStrategy.add_parser_args(parser)
-BertSamplingStrategy.add_parser_args(parser)
-
-G_EXP_NAME = None
+DATASET_NAME_COL = "0_dataset_name"
+STRATEGY_NAME_COL = "1_paraphrase_strategy_name"
 
 
-def get_output_filename(arg_dict, prefix="", suffix=""):
-    """Returns a string like ``<prefix>-<experiment_name>-<suffix>``.
+class Benchmark(object):
+    """Benchmark framework for adversarial attack methods on text classification."""
 
-    This function is used to construct file names for an experiment. This function ensures that
-    all file names for the same experiment has the same experiment name.
+    def __init__(self,
+                 output_dir, dataset_name,
+                 trainset=None, testset=None, attack_set=None,
+                 subsample_attack_set=0,
+                 customized_clf=None,
+                 enable_bert_clf=True,
+                 use_gpu_id=-1,
+                 gpt2_gpu_id=-1,
+                 bert_gpu_id=-1,
+                 bert_clf_steps=20000,
+                 bert_clf_bs=32):
+        """Initialize Benchmark framework.
 
-    The experiment name is ``<dataset_name>-<paraphrase_strategy_name>-<date>-<time>``.
-    """
-    global G_EXP_NAME
-    if G_EXP_NAME is None:
-        G_EXP_NAME = (arg_dict["dataset"] + "-" + arg_dict["strategy"] + "-"
-                      + datetime.datetime.now().strftime("%m%d-%H%M%S"))
-    return prefix + G_EXP_NAME + suffix
+        Args:
+            output_dir (str): the directory to write outputs including model, sentences, metrics
+                and log.
+            dataset_name (str): the name of the dataset.
+            trainset (dict): the training set. If the ``dataset_name`` matches built-in datasets,
+                ``trainset`` should be None.
+            testset (dict): the test set. If the ``dataset_name`` matches built-in datasets,
+                ``testset`` should be None.
+            attack_set (dict or None): the set to run adversarial attack. Use None to attack the
+                ``testset``.
+            subsample_attack_set (int): subsample the attack set. 0 to use the whole attack set.
+            customized_clf (MetricBase): an classifier object.
+            enable_bert_clf (bool): whether to enable bert classifier in metrics. You can disable
+                it when you are attacking your own classifier.
+            use_gpu_id (int): the gpu to run universal sentence encoder to compute metrics.
+                -1 for CPU.
+            gpt2_gpu_id (int): the gpu to run the GPT2-medium language model to compute metrics.
+                -1 for CPU.
+            bert_gpu_id (int): the gpu to run the BERT text classifier, which is the model being
+                attacked. -1 for CPU.
+            bert_clf_steps (int): number of steps to train the BERT text classifier.
+            bert_clf_bs (int): the batch size to train the BERT classifier.
+        """
+        # make output dir
+        self._output_dir = output_dir
+        os.makedirs(output_dir, exist_ok=True)
+        self._dataset_name = dataset_name
+
+        # setup dataset
+        if dataset_name in builtin_datasets:
+            if trainset is not None or testset is not None:
+                logger.error(("dataset name %d conflict with builtin dataset. "
+                              "set trainset and testset to None.") % dataset_name)
+                raise RuntimeError
+            trainset, testset = get_dataset(dataset_name)
+        else:
+            verify_dataset(trainset)
+            verify_dataset(testset)
+
+        if attack_set is None:
+            attack_set = testset
+
+        if subsample_attack_set != 0:
+            attack_set = subsample_dataset(attack_set, subsample_attack_set)
+
+        self._trainset = trainset
+        self._testset = testset
+        self._attack_set = attack_set
+
+        # setup metric bundle
+        self._metric_bundle = MetricBundle(
+            enable_bert_clf_prediction=enable_bert_clf,
+            use_gpu_id=use_gpu_id, gpt2_gpu_id=gpt2_gpu_id,
+            bert_gpu_id=bert_gpu_id, dataset_name=dataset_name,
+            trainset=self._trainset, testset=testset,
+            bert_clf_steps=bert_clf_steps,
+            bert_clf_bs=bert_clf_bs
+        )
+
+        if customized_clf:
+            self._metric_bundle.add_classifier(str(customized_clf), customized_clf)
+            self._metric_bundle.set_target_classifier(str(customized_clf))
+
+        add_sentence_level_adversarial_attack_metrics(
+            self._metric_bundle, gpt2_ppl_threshold=5, use_sim_threshold=0.85)
+
+    def run_benchmark(self,
+                      paraphrase_strategy="IdentityStrategy",
+                      strategy_gpu_id=-1,
+                      num_paraphrases_per_text=50,
+                      exp_name=None,
+                      update_global_results=True):
+        """Run the benchmark.
+
+        Args:
+            paraphrase_strategy (str or StrategyBase): the paraphrase strategy to benchmark.
+                Either the name of a builtin strategy or a customized strategy derived from
+                StrategyBase.
+            strategy_gpu_id (int): the gpu id to run the strategy. -1 for CPU. Ignored when
+                ``paraphrase_strategy`` is an object.
+            num_paraphrases_per_text (int): number of paraphrases for each sentence.
+            exp_name (str or None): the name of current experiment. None for default name. the
+                default name is ``<dataset_name>-<strategy_name>-<date>-<time>``.
+            update_global_results (bool): whether to write results in <fibber_root_dir> or the
+                benchmark output dir.
+
+        Returns:
+            A dict of evaluation results.
+        """
+        # setup strategy
+        if isinstance(paraphrase_strategy, str):
+            if paraphrase_strategy in built_in_strategies:
+                paraphrase_strategy = built_in_strategies[paraphrase_strategy](
+                    {}, self._dataset_name, strategy_gpu_id, self._output_dir, self._metric_bundle)
+        else:
+            assert isinstance(paraphrase_strategy, MetricBase)
+
+        # get experiment name
+        if exp_name is None:
+            exp_name = (self._dataset_name + "-" + str(paraphrase_strategy) + "-"
+                        + datetime.datetime.now().strftime("%m%d-%H%M%S"))
+
+        paraphrase_strategy.fit(self._trainset)
+        tmp_output_filename = os.path.join(
+            self._output_dir, exp_name + "-tmp.json")
+        logger.info("Write paraphrase temporary results in %s.", tmp_output_filename)
+        results = paraphrase_strategy.paraphrase_dataset(
+            self._attack_set, num_paraphrases_per_text, tmp_output_filename)
+
+        output_filename = os.path.join(
+            self._output_dir, exp_name + "-with-metric.json")
+        logger.info("Write paraphrase with metrics in %s.", tmp_output_filename)
+
+        results = self._metric_bundle.measure_dataset(
+            results=results, output_filename=output_filename)
+
+        aggregated_result = self._metric_bundle.aggregate_metrics(
+            self._dataset_name, str(paraphrase_strategy), exp_name, results)
+        update_detailed_result(aggregated_result,
+                               self._output_dir if not update_global_results else None)
+        return aggregated_result
+
+    def get_metric_bundle(self):
+        return self._metric_bundle
 
 
 def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
@@ -69,62 +185,50 @@ def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
         assert 0
 
 
-def benchmark(arg_dict, dataset_name, trainset, testset, paraphrase_set):
-    """Run benchmark on the given dataset.
-
-    Args:
-        arg_dict (dict): all args from the commandline.
-        dataset_name (str): the name of the dataset.
-        trainset (dict): a fibber dataset.
-        testset (dict): a fibber dataset.
-        paraphrase_set (dict): a fibber dataset.
-    """
-    logger.info("Build metric bundle.")
-
-    metric_bundle = MetricBundle(
-        use_bert_clf_prediction=True,
-        use_gpu_id=arg_dict["use_gpu_id"], gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
-        bert_gpu_id=arg_dict["bert_gpu_id"], dataset_name=dataset_name,
-        trainset=trainset, testset=testset,
-        bert_clf_steps=arg_dict["bert_clf_steps"])
-
-    paraphrase_strategy = get_strategy(arg_dict, arg_dict["dataset"], arg_dict["strategy"],
-                                       arg_dict["strategy_gpu_id"], arg_dict["output_dir"],
-                                       metric_bundle)
-    paraphrase_strategy.fit(trainset)
-
-    tmp_output_filename = os.path.join(
-        arg_dict["output_dir"], get_output_filename(arg_dict, suffix="-tmp.json"))
-    logger.info("Write paraphrase temporary results in %s.", tmp_output_filename)
-    results = paraphrase_strategy.paraphrase_dataset(
-        paraphrase_set, arg_dict["num_paraphrases_per_text"], tmp_output_filename)
-
-    output_filename = os.path.join(
-        arg_dict["output_dir"], get_output_filename(arg_dict, suffix="-with-metric.json"))
-
-    results = compute_metrics(metric_bundle, results=results, output_filename=output_filename)
-
-    aggregated_result = aggregate_metrics(
-        dataset_name, str(paraphrase_strategy), G_EXP_NAME, results,
-        customized_metric_aggregation_fn_dict)
-    update_detailed_result(aggregated_result)
-
-
 def main():
+    parser = argparse.ArgumentParser()
+
+    # add experiment args
+    parser.add_argument("--dataset", type=str, default="ag")
+    parser.add_argument("--output_dir", type=str, default=None)
+    parser.add_argument("--num_paraphrases_per_text", type=int, default=20)
+    parser.add_argument("--subsample_testset", type=int, default=1000)
+    parser.add_argument("--strategy", type=str, default="RandomStrategy")
+    parser.add_argument("--strategy_gpu_id", type=int, default=-1)
+
+    # metric args
+    parser.add_argument("--gpt2_gpu_id", type=int, default=-1)
+    parser.add_argument("--bert_gpu_id", type=int, default=-1)
+    parser.add_argument("--use_gpu_id", type=int, default=-1)
+    parser.add_argument("--bert_clf_steps", type=int, default=20000)
+
+    # add builtin strategies' args to parser.
+    for item in built_in_strategies.values():
+        item.add_parser_args(parser)
+
     arg_dict = vars(parser.parse_args())
     assert arg_dict["output_dir"] is not None
+
     os.makedirs(arg_dict["output_dir"], exist_ok=True)
     os.makedirs(os.path.join(arg_dict["output_dir"], "log"), exist_ok=True)
 
+    benchmark = Benchmark(arg_dict["output_dir"], arg_dict["dataset"],
+                          subsample_attack_set=arg_dict["subsample_testset"],
+                          use_gpu_id=arg_dict["use_gpu_id"],
+                          bert_gpu_id=arg_dict["bert_gpu_id"],
+                          gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
+                          bert_clf_steps=arg_dict["bert_clf_steps"])
+
     log.add_file_handler(
-        logger, os.path.join(arg_dict["output_dir"], "log",
-                             get_output_filename(arg_dict, suffix=".log")))
+        logger, os.path.join(arg_dict["output_dir"], "log.log"))
     log.remove_logger_tf_handler(logger)
 
-    trainset, testset = get_dataset(arg_dict["dataset"])
-    paraphrase_set = subsample_dataset(testset, arg_dict["subsample_testset"])
-    logger.info("Subsample test set to %d.", arg_dict["subsample_testset"])
-    benchmark(arg_dict, arg_dict["dataset"], trainset, testset, paraphrase_set)
+    # Get paraphrase strategy
+    paraphrase_strategy = get_strategy(arg_dict, arg_dict["dataset"], arg_dict["strategy"],
+                                       arg_dict["strategy_gpu_id"], arg_dict["output_dir"],
+                                       benchmark.get_metric_bundle())
+
+    benchmark.run_benchmark(paraphrase_strategy=paraphrase_strategy)
 
 
 if __name__ == "__main__":
