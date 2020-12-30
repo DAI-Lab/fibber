@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.editing_distance module &#8212; fibber 0.1.2 documentation</title>
+    <title>fibber.metrics.edit_distance module &#8212; fibber 0.1.3 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -182,11 +182,15 @@
                     <ul>
                     
                         <li class="">
+                            <a href="fibber.metrics.attack_aggregation.html">fibber.metrics.attack_aggregation module</a>
+                        </li>
+                    
+                        <li class="">
                             <a href="fibber.metrics.bert_clf_prediction.html">fibber.metrics.bert_clf_prediction module</a>
                         </li>
                     
                         <li class="active">
-                            <a href="">fibber.metrics.editing_distance module</a>
+                            <a href="">fibber.metrics.edit_distance module</a>
                         </li>
                     
                         <li class="">
@@ -277,13 +281,13 @@
               
               <div>
                 
-  <div class="section" id="module-fibber.metrics.editing_distance">
-<span id="fibber-metrics-editing-distance-module"></span><h1>fibber.metrics.editing_distance module<a class="headerlink" href="#module-fibber.metrics.editing_distance" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-fibber.metrics.edit_distance">
+<span id="fibber-metrics-edit-distance-module"></span><h1>fibber.metrics.edit_distance module<a class="headerlink" href="#module-fibber.metrics.edit_distance" title="Permalink to this headline">¶</a></h1>
 <p>This metric outputs the word-level editing distance between original text and paraphrased
 text.</p>
 <dl class="py class">
-<dt id="fibber.metrics.editing_distance.EditingDistance">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.editing_distance.</code><code class="sig-name descname">EditingDistance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">editing_distance_ignore_punctuation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/editing_distance.html#EditingDistance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.editing_distance.EditingDistance" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.edit_distance.EditDistance">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.edit_distance.</code><code class="sig-name descname">EditDistance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">editing_distance_ignore_punctuation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/edit_distance.html#EditDistance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.edit_distance.EditDistance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase" title="fibber.metrics.metric_base.MetricBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.metric_base.MetricBase</span></code></a></p>
 <p>This class measures the editing distance between two sentences.</p>
 <p>Initialize.</p>
@@ -294,8 +298,8 @@ computing editing distance.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="fibber.metrics.editing_distance.EditingDistance.measure_example">
-<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/editing_distance.html#EditingDistance.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.editing_distance.EditingDistance.measure_example" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.edit_distance.EditDistance.measure_example">
+<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/edit_distance.html#EditDistance.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.edit_distance.EditDistance.measure_example" title="Permalink to this definition">¶</a></dt>
 <dd><p>compute editing distance between original and parapharse.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

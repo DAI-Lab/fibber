@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.benchmark.benchmark_utils module &#8212; fibber 0.1.2 documentation</title>
+    <title>fibber.benchmark.benchmark_utils module &#8212; fibber 0.1.3 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -39,7 +39,7 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.benchmark.customized_metric_aggregation module" href="fibber.benchmark.customized_metric_aggregation.html" />
+    <link rel="next" title="fibber.benchmark.make_overview module" href="fibber.benchmark.make_overview.html" />
     <link rel="prev" title="fibber.benchmark.benchmark module" href="fibber.benchmark.benchmark.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -178,10 +178,6 @@
                         </li>
                     
                         <li class="">
-                            <a href="fibber.benchmark.customized_metric_aggregation.html">fibber.benchmark.customized_metric_aggregation module</a>
-                        </li>
-                    
-                        <li class="">
                             <a href="fibber.benchmark.make_overview.html">fibber.benchmark.make_overview module</a>
                         </li>
                     
@@ -284,12 +280,16 @@ exist.</p>
 
 <dl class="py function">
 <dt id="fibber.benchmark.benchmark_utils.update_detailed_result">
-<code class="sig-prename descclassname">fibber.benchmark.benchmark_utils.</code><code class="sig-name descname">update_detailed_result</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">aggregated_result</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark_utils.html#update_detailed_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.benchmark_utils.update_detailed_result" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fibber.benchmark.benchmark_utils.</code><code class="sig-name descname">update_detailed_result</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">aggregated_result</span></em>, <em class="sig-param"><span class="n">result_dir</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark_utils.html#update_detailed_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.benchmark_utils.update_detailed_result" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read dataset detailed results and add a row to the file. Create a new file if the table
 does not exist.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>aggregated_result</strong> (<em>dict</em>) – the aggregated result as a dict.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aggregated_result</strong> (<em>dict</em>) – the aggregated result as a dict.</p></li>
+<li><p><strong>result_dir</strong> (<em>str</em><em> or </em><em>None</em>) – the directory to save results. If None, use
+<code class="docutils literal notranslate"><span class="pre">&lt;fibber_root_dir&gt;/results/</span></code>.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -314,7 +314,7 @@ does not exist.</p>
               <div class='prev-next-bottom'>
                 
     <a class='left-prev' id="prev-link" href="fibber.benchmark.benchmark.html" title="previous page">fibber.benchmark.benchmark module</a>
-    <a class='right-next' id="next-link" href="fibber.benchmark.customized_metric_aggregation.html" title="next page">fibber.benchmark.customized_metric_aggregation module</a>
+    <a class='right-next' id="next-link" href="fibber.benchmark.make_overview.html" title="next page">fibber.benchmark.make_overview module</a>
 
               </div>
               

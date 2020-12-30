@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.metric_utils module &#8212; fibber 0.1.2 documentation</title>
+    <title>fibber.metrics.metric_utils module &#8212; fibber 0.1.3 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -182,11 +182,15 @@
                     <ul>
                     
                         <li class="">
+                            <a href="fibber.metrics.attack_aggregation.html">fibber.metrics.attack_aggregation module</a>
+                        </li>
+                    
+                        <li class="">
                             <a href="fibber.metrics.bert_clf_prediction.html">fibber.metrics.bert_clf_prediction module</a>
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.editing_distance.html">fibber.metrics.editing_distance module</a>
+                            <a href="fibber.metrics.edit_distance.html">fibber.metrics.edit_distance module</a>
                         </li>
                     
                         <li class="">
@@ -281,31 +285,126 @@
 <span id="fibber-metrics-metric-utils-module"></span><h1>fibber.metrics.metric_utils module<a class="headerlink" href="#module-fibber.metrics.metric_utils" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="fibber.metrics.metric_utils.MetricBundle">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.metric_utils.</code><code class="sig-name descname">MetricBundle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">use_editing_distance</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_use_semantic_similarity</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_glove_semantic_similarity</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_gpt2_grammar_quality</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_bert_clf_prediction</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">customized_metrics</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.metric_utils.</code><code class="sig-name descname">MetricBundle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">enable_edit_distance</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">enable_use_semantic_similarity</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">enable_glove_semantic_similarity</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">enable_gpt2_grammar_quality</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">enable_bert_clf_prediction</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>MetricBundle can help easily initialize and compute multiple metrics.</p>
 <p>Initialize various metrics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>use_editing_distance</strong> (<em>bool</em>) – whether to use editing distance in the bundle.</p></li>
-<li><p><strong>use_use_semantic_similarity</strong> (<em>bool</em>) – whether to use Universal sentence encoder to
+<li><p><strong>enable_edit_distance</strong> (<em>bool</em>) – whether to use editing distance in the bundle.</p></li>
+<li><p><strong>enable_use_semantic_similarity</strong> (<em>bool</em>) – whether to use Universal sentence encoder to
 compute sentence similarity</p></li>
-<li><p><strong>use_glove_semantic_similarity</strong> (<em>bool</em>) – whether to use Glove embeddings to compute
+<li><p><strong>enable_glove_semantic_similarity</strong> (<em>bool</em>) – whether to use Glove embeddings to compute
 sentence similarity.</p></li>
-<li><p><strong>use_gpt2_grammar_quality</strong> (<em>bool</em>) – whether to use GPT2 to compute sentence quality.</p></li>
-<li><p><strong>use_bert_clf_prediction</strong> (<em>bool</em>) – whether to include BERT classifier prediction in
+<li><p><strong>enable_gpt2_grammar_quality</strong> (<em>bool</em>) – whether to use GPT2 to compute sentence quality.</p></li>
+<li><p><strong>enable_bert_clf_prediction</strong> (<em>bool</em>) – whether to include BERT classifier prediction in
 metrics.</p></li>
-<li><p><strong>customized_metrics</strong> (<em>list</em>) – a list of customized metrics.</p></li>
 <li><p><strong>kargs</strong> – arguments for metrics. kargs will be passed to all metrics.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="fibber.metrics.metric_utils.MetricBundle.get_classifier_for_attack">
-<code class="sig-name descname">get_classifier_for_attack</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_classifier_for_attack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.get_classifier_for_attack" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the classifier for attack.</p>
+<dt id="fibber.metrics.metric_utils.MetricBundle.add_advanced_aggregation_fn">
+<code class="sig-name descname">add_advanced_aggregation_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">aggregation_name</span></em>, <em class="sig-param"><span class="n">aggregation_fn</span></em>, <em class="sig-param"><span class="n">direction</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.add_advanced_aggregation_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.add_advanced_aggregation_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add advanced aggregation function.</p>
+<p>Some aggregation function can aggregate multiple metrics, these aggregation functions
+can be added here.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aggregation_name</strong> (<em>str</em>) – the name of the aggregation.</p></li>
+<li><p><strong>aggregation_fn</strong> (<em>fn</em>) – an aggregation function that takes <code class="docutils literal notranslate"><span class="pre">data_record</span></code> as arg.</p></li>
+<li><p><strong>direction</strong> (<em>str</em>) – chose from DIRECTION_HIGHER_BETTER, DIRECTION_LOWER_BETTER,
+and DIRECTION_UNKNOWN.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.add_classifier">
+<code class="sig-name descname">add_classifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classifier_metric</span></em>, <em class="sig-param"><span class="n">set_target_clf</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.add_classifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.add_classifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a target classifier to attack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.MetricBase" title="fibber.metrics.MetricBase"><em>MetricBase</em></a>) – Add the object to metric
+bundle then set it as the target classifier.</p></li>
+<li><p><strong>set_target_clf</strong> (<em>bool</em>) – whether to set this classifier metric as target classifier.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.add_metric">
+<code class="sig-name descname">add_metric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metric</span></em>, <em class="sig-param"><span class="n">direction</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.add_metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.add_metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a customized metric to metric bundle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.MetricBase" title="fibber.metrics.MetricBase"><em>MetricBase</em></a>) – the metric object to add.</p></li>
+<li><p><strong>direction</strong> (<em>str</em>) – choose from <code class="docutils literal notranslate"><span class="pre">DIRECTION_HIGHER_BETTER</span></code>, <code class="docutils literal notranslate"><span class="pre">DIRECTION_HIGHER_BETTER</span></code>
+and <code class="docutils literal notranslate"><span class="pre">DIRECTION_UNKNOWN</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.aggregate_metrics">
+<code class="sig-name descname">aggregate_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">paraphrase_strategy_name</span></em>, <em class="sig-param"><span class="n">experiment_name</span></em>, <em class="sig-param"><span class="n">results</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.aggregate_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.aggregate_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aggregate paraphrase metrics on a dataset to a summary and store in a dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
+<li><p><strong>paraphrase_strategy_name</strong> (<em>str</em>) – the name of the paraphrase strategy.</p></li>
+<li><p><strong>experiment_name</strong> (<em>str</em>) – the name of the experiment.</p></li>
+<li><p><strong>results</strong> (<em>dict</em>) – the fibber dataset with paraphrases and metrics. The return value of
+<code class="docutils literal notranslate"><span class="pre">compute_metrics</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the aggregated metrics.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.get_advanced_aggregation_fn">
+<code class="sig-name descname">get_advanced_aggregation_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">aggregation_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_advanced_aggregation_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.get_advanced_aggregation_fn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.get_advanced_aggregation_fn_direction">
+<code class="sig-name descname">get_advanced_aggregation_fn_direction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">aggregation_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_advanced_aggregation_fn_direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.get_advanced_aggregation_fn_direction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.get_advanced_aggregation_fn_names">
+<code class="sig-name descname">get_advanced_aggregation_fn_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_advanced_aggregation_fn_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.get_advanced_aggregation_fn_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.get_classifier">
+<code class="sig-name descname">get_classifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classifier_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_classifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.get_classifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the classifier in current metric bundle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>classifier_name</strong> (<em>str</em>) – the name of the requested classifier.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.get_classifier_names">
+<code class="sig-name descname">get_classifier_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_classifier_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.get_classifier_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="fibber.metrics.metric_utils.MetricBundle.get_metric">
@@ -327,6 +426,66 @@ metrics.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.get_metric_direction">
+<code class="sig-name descname">get_metric_direction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metric_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_metric_direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.get_metric_direction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the direction of a metric.</p>
+<p>Metric name is the class name of a metric.</p>
+<p>Raises assertion error if metric is not found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>metric_name</strong> – the name of the matric.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a metric object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(object)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.get_metric_names">
+<code class="sig-name descname">get_metric_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_metric_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.get_metric_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>“Returns all metric names in this metric bundle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.get_target_classifier">
+<code class="sig-name descname">get_target_classifier</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_target_classifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.get_target_classifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the classifier for attack.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.measure_dataset">
+<code class="sig-name descname">measure_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">output_filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.measure_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.measure_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the all metrics for results on a dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>results</strong> (<em>dict</em>) – A fibber dataset with paraphrases.</p></li>
+<li><p><strong>output_filename</strong> (<em>str</em>) – A json filename to store results and metrics.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>the results dict with <code class="docutils literal notranslate"><span class="pre">original_text_metrics</span></code> and <code class="docutils literal notranslate"><span class="pre">paraphrase_metrics</span></code></dt><dd><p>added.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="fibber.metrics.metric_utils.MetricBundle.measure_example">
 <code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.measure_example" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the results of all metrics in the bundle for one pair of text.</p>
@@ -340,7 +499,7 @@ metrics.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>a dict with metric name as key.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>(dict)</p>
@@ -348,65 +507,17 @@ metrics.</p></li>
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py function">
-<dt id="fibber.metrics.metric_utils.aggregate_metrics">
-<code class="sig-prename descclassname">fibber.metrics.metric_utils.</code><code class="sig-name descname">aggregate_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">paraphrase_strategy_name</span></em>, <em class="sig-param"><span class="n">experiment_name</span></em>, <em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">customize_aggregation_fn_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#aggregate_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.aggregate_metrics" title="Permalink to this definition">¶</a></dt>
-<dd><p>Aggregate paraphrase metrics on a dataset to a summary and store in a dict.</p>
+<dl class="py method">
+<dt id="fibber.metrics.metric_utils.MetricBundle.set_target_classifier">
+<code class="sig-name descname">set_target_classifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classifier_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.set_target_classifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.MetricBundle.set_target_classifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a target classifier to attack.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
-<li><p><strong>paraphrase_strategy_name</strong> (<em>str</em>) – the name of the paraphrase strategy.</p></li>
-<li><p><strong>experiment_name</strong> (<em>str</em>) – the name of the experiment.</p></li>
-<li><p><strong>results</strong> (<em>dict</em>) – the fibber dataset with paraphrases and metrics. The return value of
-<code class="docutils literal notranslate"><span class="pre">compute_metrics</span></code>.</p></li>
-<li><p><strong>customize_aggregation_fn_dict</strong> (<em>dict</em>) – A dict of customized aggregations. The dict is
-a mapping from aggregation name to aggregation function. The aggregation function
-should take one data_record, and returns a float.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the aggregated metrics.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(dict)</p>
+<dd class="field-odd"><p><strong>classifier_name</strong> (<em>str</em>) – set a classifier as target classifier.</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt id="fibber.metrics.metric_utils.compute_metrics">
-<code class="sig-prename descclassname">fibber.metrics.metric_utils.</code><code class="sig-name descname">compute_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metric_bundle</span></em>, <em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">output_filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#compute_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.compute_metrics" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the all metrics for results on a dataset.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_bundle</strong> (<em>object</em>) – a MetricBundle object.</p></li>
-<li><p><strong>results</strong> (<em>dict</em>) – A fibber dataset with paraphrases.</p></li>
-<li><p><strong>output_filename</strong> (<em>str</em>) – A json filename to store results and metrics.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the results dict with <code class="docutils literal notranslate"><span class="pre">original_text_metrics</span></code> and <code class="docutils literal notranslate"><span class="pre">paraphrase_metrics</span></code> added.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(dict)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="fibber.metrics.metric_utils.mean_aggregation_fn">
-<code class="sig-prename descclassname">fibber.metrics.metric_utils.</code><code class="sig-name descname">mean_aggregation_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#mean_aggregation_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.mean_aggregation_fn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute mean of a list.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="fibber.metrics.metric_utils.std_aggregation_fn">
-<code class="sig-prename descclassname">fibber.metrics.metric_utils.</code><code class="sig-name descname">std_aggregation_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#std_aggregation_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.metric_utils.std_aggregation_fn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute std of a list.</p>
 </dd></dl>
 
 </div>

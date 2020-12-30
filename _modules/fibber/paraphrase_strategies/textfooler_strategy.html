@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.textfooler_strategy &#8212; fibber 0.1.2 documentation</title>
+    <title>fibber.paraphrase_strategies.textfooler_strategy &#8212; fibber 0.1.3 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -252,7 +252,7 @@
         <span class="k">if</span> <span class="n">ModelWrapper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;no internet connection.&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">CLFModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">get_classifier_for_attack</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">CLFModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">get_target_classifier</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_textfooler</span> <span class="o">=</span> <span class="n">TextFoolerJin2019</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TextFoolerStrategy.paraphrase_example"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textfooler_strategy.html#fibber.paraphrase_strategies.TextFoolerStrategy.paraphrase_example">[docs]</a>    <span class="k">def</span> <span class="nf">paraphrase_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>

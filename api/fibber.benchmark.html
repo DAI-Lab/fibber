@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.benchmark package &#8212; fibber 0.1.2 documentation</title>
+    <title>fibber.benchmark package &#8212; fibber 0.1.3 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -178,10 +178,6 @@
                         </li>
                     
                         <li class="">
-                            <a href="fibber.benchmark.customized_metric_aggregation.html">fibber.benchmark.customized_metric_aggregation module</a>
-                        </li>
-                    
-                        <li class="">
                             <a href="fibber.benchmark.make_overview.html">fibber.benchmark.make_overview module</a>
                         </li>
                     
@@ -284,13 +280,77 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="fibber.benchmark.benchmark.html">fibber.benchmark.benchmark module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.benchmark.benchmark_utils.html">fibber.benchmark.benchmark_utils module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fibber.benchmark.customized_metric_aggregation.html">fibber.benchmark.customized_metric_aggregation module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.benchmark.make_overview.html">fibber.benchmark.make_overview module</a></li>
 </ul>
 </div>
 </div>
 <div class="section" id="module-fibber.benchmark">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fibber.benchmark" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="fibber.benchmark.Benchmark">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.benchmark.</code><code class="sig-name descname">Benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">trainset</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">testset</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">attack_set</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">subsample_attack_set</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">customized_clf</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">enable_bert_clf</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">gpt2_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">bert_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">bert_clf_steps</span><span class="o">=</span><span class="default_value">20000</span></em>, <em class="sig-param"><span class="n">bert_clf_bs</span><span class="o">=</span><span class="default_value">32</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#Benchmark"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.Benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Benchmark framework for adversarial attack methods on text classification.</p>
+<p>Initialize Benchmark framework.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_dir</strong> (<em>str</em>) – the directory to write outputs including model, sentences, metrics
+and log.</p></li>
+<li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
+<li><p><strong>trainset</strong> (<em>dict</em>) – the training set. If the <code class="docutils literal notranslate"><span class="pre">dataset_name</span></code> matches built-in datasets,
+<code class="docutils literal notranslate"><span class="pre">trainset</span></code> should be None.</p></li>
+<li><p><strong>testset</strong> (<em>dict</em>) – the test set. If the <code class="docutils literal notranslate"><span class="pre">dataset_name</span></code> matches built-in datasets,
+<code class="docutils literal notranslate"><span class="pre">testset</span></code> should be None.</p></li>
+<li><p><strong>attack_set</strong> (<em>dict</em><em> or </em><em>None</em>) – the set to run adversarial attack. Use None to attack the
+<code class="docutils literal notranslate"><span class="pre">testset</span></code>.</p></li>
+<li><p><strong>subsample_attack_set</strong> (<em>int</em>) – subsample the attack set. 0 to use the whole attack set.</p></li>
+<li><p><strong>customized_clf</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.MetricBase" title="fibber.metrics.MetricBase"><em>MetricBase</em></a>) – an classifier object.</p></li>
+<li><p><strong>enable_bert_clf</strong> (<em>bool</em>) – whether to enable bert classifier in metrics. You can disable
+it when you are attacking your own classifier.</p></li>
+<li><p><strong>use_gpu_id</strong> (<em>int</em>) – the gpu to run universal sentence encoder to compute metrics.
+-1 for CPU.</p></li>
+<li><p><strong>gpt2_gpu_id</strong> (<em>int</em>) – the gpu to run the GPT2-medium language model to compute metrics.
+-1 for CPU.</p></li>
+<li><p><strong>bert_gpu_id</strong> (<em>int</em>) – the gpu to run the BERT text classifier, which is the model being
+attacked. -1 for CPU.</p></li>
+<li><p><strong>bert_clf_steps</strong> (<em>int</em>) – number of steps to train the BERT text classifier.</p></li>
+<li><p><strong>bert_clf_bs</strong> (<em>int</em>) – the batch size to train the BERT classifier.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="fibber.benchmark.Benchmark.get_metric_bundle">
+<code class="sig-name descname">get_metric_bundle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#Benchmark.get_metric_bundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.Benchmark.get_metric_bundle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="fibber.benchmark.Benchmark.run_benchmark">
+<code class="sig-name descname">run_benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paraphrase_strategy</span><span class="o">=</span><span class="default_value">'IdentityStrategy'</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">num_paraphrases_per_text</span><span class="o">=</span><span class="default_value">50</span></em>, <em class="sig-param"><span class="n">exp_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">update_global_results</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#Benchmark.run_benchmark"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.Benchmark.run_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the benchmark.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>paraphrase_strategy</strong> (<em>str</em><em> or </em><a class="reference internal" href="fibber.paraphrase_strategies.html#fibber.paraphrase_strategies.StrategyBase" title="fibber.paraphrase_strategies.StrategyBase"><em>StrategyBase</em></a>) – the paraphrase strategy to benchmark.
+Either the name of a builtin strategy or a customized strategy derived from
+StrategyBase.</p></li>
+<li><p><strong>strategy_gpu_id</strong> (<em>int</em>) – the gpu id to run the strategy. -1 for CPU. Ignored when
+<code class="docutils literal notranslate"><span class="pre">paraphrase_strategy</span></code> is an object.</p></li>
+<li><p><strong>num_paraphrases_per_text</strong> (<em>int</em>) – number of paraphrases for each sentence.</p></li>
+<li><p><strong>exp_name</strong> (<em>str</em><em> or </em><em>None</em>) – the name of current experiment. None for default name. the
+default name is <code class="docutils literal notranslate"><span class="pre">&lt;dataset_name&gt;-&lt;strategy_name&gt;-&lt;date&gt;-&lt;time&gt;</span></code>.</p></li>
+<li><p><strong>update_global_results</strong> (<em>bool</em>) – whether to write results in &lt;fibber_root_dir&gt; or the
+benchmark output dir.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dict of evaluation results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 

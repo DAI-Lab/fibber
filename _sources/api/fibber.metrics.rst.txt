@@ -7,8 +7,9 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   fibber.metrics.attack_aggregation
    fibber.metrics.bert_clf_prediction
-   fibber.metrics.editing_distance
+   fibber.metrics.edit_distance
    fibber.metrics.glove_semantic_similarity
    fibber.metrics.gpt2_grammar_quality
    fibber.metrics.metric_base

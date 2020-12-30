@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.benchmark.benchmark_utils &#8212; fibber 0.1.2 documentation</title>
+    <title>fibber.benchmark.benchmark_utils &#8212; fibber 0.1.3 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -201,14 +201,17 @@
 <span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">get_root_dir</span>
 
 
-<div class="viewcode-block" id="update_detailed_result"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark_utils.html#fibber.benchmark.benchmark_utils.update_detailed_result">[docs]</a><span class="k">def</span> <span class="nf">update_detailed_result</span><span class="p">(</span><span class="n">aggregated_result</span><span class="p">):</span>
+<div class="viewcode-block" id="update_detailed_result"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark_utils.html#fibber.benchmark.benchmark_utils.update_detailed_result">[docs]</a><span class="k">def</span> <span class="nf">update_detailed_result</span><span class="p">(</span><span class="n">aggregated_result</span><span class="p">,</span> <span class="n">result_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read dataset detailed results and add a row to the file. Create a new file if the table</span>
 <span class="sd">    does not exist.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        aggregated_result (dict): the aggregated result as a dict.</span>
+<span class="sd">        result_dir (str or None): the directory to save results. If None, use</span>
+<span class="sd">            ``&lt;fibber_root_dir&gt;/results/``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">result_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_root_dir</span><span class="p">(),</span> <span class="s2">&quot;results&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">result_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_root_dir</span><span class="p">(),</span> <span class="s2">&quot;results&quot;</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">result_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">result_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result_dir</span><span class="p">,</span> <span class="s2">&quot;detail.csv&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">result_filename</span><span class="p">):</span>

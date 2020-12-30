@@ -1,0 +1,7 @@
+fibber.metrics.attack\_aggregation module
+=========================================
+
+.. automodule:: fibber.metrics.attack_aggregation
+   :members:
+   :undoc-members:
+   :show-inheritance:
