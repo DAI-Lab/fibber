@@ -6,8 +6,7 @@
 <!-- Uncomment these lines after releasing the package to PyPI for version and downloads badges -->
 [![PyPI Shield](https://img.shields.io/pypi/v/fibber.svg)](https://pypi.python.org/pypi/fibber)
 [![Downloads](https://pepy.tech/badge/fibber)](https://pepy.tech/project/fibber)
-![Github Action Shield](https://github.com/actions/DAI-LAB/fibber/workflows/build/badge.svg?branch=dev_1.3.0)
-
+![build](https://github.com/DAI-Lab/fibber/workflows/build/badge.svg?branch=stable)
 
 # Fibber
 
