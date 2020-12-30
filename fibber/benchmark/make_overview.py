@@ -41,8 +41,10 @@ def make_overview():
         for _, r1 in group.iterrows():
             for _, r2 in group.iterrows():
                 for column_name, direction in col_for_num_win:
-                    if ((direction == DIRECTION_HIGHER_BETTER and r1[column_name] > r2[column_name])
-                            or (direction == DIRECTION_LOWER_BETTER and r1[column_name] < r2[column_name])):
+                    if ((direction == DIRECTION_HIGHER_BETTER
+                         and r1[column_name] > r2[column_name])
+                            or (direction == DIRECTION_LOWER_BETTER
+                                and r1[column_name] < r2[column_name])):
                         results[r1[STRATEGY_NAME_COL]][column_name] += 1
 
     update_overview_result(pd.DataFrame(list(results.values())))

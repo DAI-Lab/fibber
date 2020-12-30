@@ -185,7 +185,8 @@ class MetricBundle(object):
             output_filename (str): A json filename to store results and metrics.
 
         Returns:
-            (dict): the results dict with ``original_text_metrics`` and ``paraphrase_metrics`` added.
+            (dict): the results dict with ``original_text_metrics`` and ``paraphrase_metrics``
+                added.
         """
         last_output_save_time = -1
         logger.info("Start measuring.")

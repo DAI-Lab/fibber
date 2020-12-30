@@ -17,10 +17,11 @@ def paraphrase_classification_accuracy_agg_fn_constructor(
     The aggregation function outputs the after attack accuracy of the BERT classifier.
 
     Args:
-        gpt2_ppl_threshold (float): the threshold for ``GPT2GrammarQuality`` metric. The adversarial example
-            should have the perplexity ratio measured by GPT2 lower than this threshold.
-        use_sim_threshold (float): the threshold for ``USESemanticSimilarity`` metric. The adversarial
-            example should have the USE similarity higher than this threshold.
+        gpt2_ppl_threshold (float): the threshold for ``GPT2GrammarQuality`` metric. The
+            adversarial example should have the perplexity ratio measured by GPT2 lower than
+            this threshold.
+        use_sim_threshold (float): the threshold for ``USESemanticSimilarity`` metric. The
+            adversarial example should have the USE similarity higher than this threshold.
         target_clf (str): the metric name of the target classifier.
     """
 
