@@ -6,4 +6,9 @@ __all__ = [
     "subsample_dataset",
     "verify_dataset",
     "DatasetForBert",
-    "get_demo_dataset"]
+    "get_demo_dataset",
+    "builtin_datasets"]
+
+builtin_datasets = [
+    "ag", "ag_no_title", "mr", "imdb", "yelp", "snli", "mnli", "mnli_mis"
+]

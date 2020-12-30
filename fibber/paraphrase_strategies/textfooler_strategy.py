@@ -56,7 +56,7 @@ class TextFoolerStrategy(StrategyBase):
         if ModelWrapper is None:
             raise RuntimeError("no internet connection.")
 
-        self._model = CLFModel(self._metric_bundle.get_classifier_for_attack())
+        self._model = CLFModel(self._metric_bundle.get_target_classifier())
         self._textfooler = TextFoolerJin2019.build(self._model)
 
     def paraphrase_example(self, data_record, field_name, n):

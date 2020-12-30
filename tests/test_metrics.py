@@ -1,4 +1,4 @@
-from fibber.metrics.editing_distance import EditingDistance
+from fibber.metrics.edit_distance import EditDistance
 from fibber.metrics.glove_semantic_similarity import GloVeSemanticSimilarity
 from fibber.metrics.gpt2_grammar_quality import GPT2GrammarQuality
 from fibber.metrics.metric_utils import MetricBundle
@@ -9,7 +9,7 @@ get_nltk_data()
 
 
 def test_editing_distance():
-    editing_distance_metric = EditingDistance()
+    editing_distance_metric = EditDistance()
 
     s1 = "aa bb xx dd zz xx ee"
     s2 = "aa bb xy yz dd xy ee"

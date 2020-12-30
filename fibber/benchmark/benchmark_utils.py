@@ -5,14 +5,17 @@ import pandas as pd
 from fibber import get_root_dir
 
 
-def update_detailed_result(aggregated_result):
+def update_detailed_result(aggregated_result, result_dir=None):
     """Read dataset detailed results and add a row to the file. Create a new file if the table
     does not exist.
 
     Args:
         aggregated_result (dict): the aggregated result as a dict.
+        result_dir (str or None): the directory to save results. If None, use
+            ``<fibber_root_dir>/results/``.
     """
-    result_dir = os.path.join(get_root_dir(), "results")
+    if result_dir is None:
+        result_dir = os.path.join(get_root_dir(), "results")
     os.makedirs(result_dir, exist_ok=True)
     result_filename = os.path.join(result_dir, "detail.csv")
     if os.path.exists(result_filename):
