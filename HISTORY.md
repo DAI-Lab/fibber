@@ -1,10 +1,17 @@
 # History
 
+## Version 0.1.3
+
+This release includes the following updates:
+
+- Add a benchmark class. Users can integrate fibber benchmark to other projects. The class supports customized datasets, target classifier and attacking method.
+- Migrate from Travis CI to Github Action.
+- Move adversarial-attack-related aggragation functions from benchmark module to metric module.
 
 ## Version 0.1.2
 
 This minor release add pretrained classifiers and downloadable resources on a demo dataset, and a
-demo Colab. 
+demo Colab.
 
 ## Version 0.1.1
 
