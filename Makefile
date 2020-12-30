@@ -41,8 +41,8 @@ install-test: clean-build clean-pyc ## install the package and test dependencies
 test: ## run tests quickly with the default Python
 	python -m pytest -m "not slow" tests
 
-.PHONY: testall
-testall: ## run all tests (including slow tests)
+.PHONY: test-slow
+est-slow: ## run all tests (including slow tests)
 	python -m pytest tests
 
 .PHONY: lint
@@ -140,7 +140,7 @@ ifeq ($(CHANGELOG_LINES),0)
 endif
 
 .PHONY: check-release
-check-release: testall check-master check-history ## Check if the release can be made
+check-release: test-slow check-master check-history ## Check if the release can be made
 
 .PHONY: release
 release: check-release bumpversion-release publish bumpversion-patch
