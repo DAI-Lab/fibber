@@ -6,6 +6,7 @@ from fibber import log
 from fibber.benchmark.benchmark_utils import update_detailed_result
 from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, verify_dataset
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
+from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.metrics.metric_base import MetricBase
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
@@ -136,7 +137,7 @@ class Benchmark(object):
                 paraphrase_strategy = built_in_strategies[paraphrase_strategy](
                     {}, self._dataset_name, strategy_gpu_id, self._output_dir, self._metric_bundle)
         else:
-            assert isinstance(paraphrase_strategy, MetricBase)
+            assert isinstance(paraphrase_strategy, StrategyBase)
 
         # get experiment name
         if exp_name is None:

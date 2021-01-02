@@ -153,8 +153,12 @@ class MetricBundle(object):
         self._target_clf = classifier_name
 
     def get_target_classifier_name(self):
+        """Return the name of the target classifier."""
+        return self._target_clf
+
+    def get_target_classifier(self):
         """Returns the classifier for attack."""
-        return self.get_classifier(self._target_clf)
+        return self.get_classifier(self.get_target_classifier_name())
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the results of all metrics in the bundle for one pair of text.
