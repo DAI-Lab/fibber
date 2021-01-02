@@ -102,7 +102,7 @@ class Benchmark(object):
 
         if customized_clf:
             self._metric_bundle.add_classifier(str(customized_clf), customized_clf)
-            self._metric_bundle.set_target_classifier(str(customized_clf))
+            self._metric_bundle.set_target_classifier_by_name(str(customized_clf))
 
         add_sentence_level_adversarial_attack_metrics(
             self._metric_bundle, gpt2_ppl_threshold=5, use_sim_threshold=0.85)

@@ -183,6 +183,6 @@ def add_sentence_level_adversarial_attack_metrics(
             metric_bundle.add_advanced_aggregation_fn(
                 "%s_best_sim_adv_%s" % (classifier_name, metric_name),
                 get_best_adv_metric_fn_constructor(
-                    get_best_adv_by_sim, metric_name, metric_bundle.set_target_classifier()),
+                    get_best_adv_by_sim, metric_name, metric_bundle.set_target_classifier_by_name()),
                 metric_bundle.get_metric_direction(metric_name)
             )

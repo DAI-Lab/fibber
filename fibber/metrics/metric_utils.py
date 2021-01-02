@@ -12,6 +12,7 @@ from fibber.metrics.glove_semantic_similarity_metric import GloVeSemanticSimilar
 from fibber.metrics.gpt2_grammar_quality_metric import GPT2GrammarQualityMetric
 from fibber.metrics.metric_base import MetricBase
 from fibber.metrics.use_semantic_similarity_metric import USESemanticSimilarityMetric
+from fibber.metrics.classifier_base import ClassifierBase
 
 logger = log.setup_custom_logger(__name__)
 
@@ -121,14 +122,14 @@ class MetricBundle(object):
         """Set a target classifier to attack.
 
         Args:
-            classifier_metric (MetricBase): Add the object to metric
-                bundle then set it as the target classifier.
+            classifier_metric (ClassifierBase): A classifier metric to be added.
             set_target_clf (bool): whether to set this classifier metric as target classifier.
         """
+        assert isinstance(classifier_metric, ClassifierBase)
         self._classifiers[str(classifier_metric)] = classifier_metric
         self._target_clf = str(classifier_metric)
         if set_target_clf:
-            self.set_target_classifier(str(classifier_metric))
+            self.set_target_classifier_by_name(str(classifier_metric))
 
     def get_classifier(self, classifier_name):
         """Returns the classifier in current metric bundle.
@@ -141,7 +142,7 @@ class MetricBundle(object):
     def get_classifier_names(self):
         return list(self._classifiers.keys())
 
-    def set_target_classifier(self, classifier_name):
+    def set_target_classifier_by_name(self, classifier_name):
         """Set a target classifier to attack.
 
         Args:
@@ -151,7 +152,7 @@ class MetricBundle(object):
         assert classifier_name in self._classifiers
         self._target_clf = classifier_name
 
-    def get_target_classifier(self):
+    def get_target_classifier_name(self):
         """Returns the classifier for attack."""
         return self.get_classifier(self._target_clf)
 
