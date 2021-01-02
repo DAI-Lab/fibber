@@ -12,7 +12,7 @@ from transformers import BertForSequenceClassification, BertTokenizerFast
 
 from fibber import get_root_dir, log, resources
 from fibber.datasets import DatasetForBert
-from fibber.metrics.metric_base import MetricBase
+from fibber.metrics.classifier_base import ClassifierBase
 
 logger = log.setup_custom_logger(__name__)
 
@@ -199,11 +199,11 @@ def load_or_train_bert_clf(model_init,
     return model
 
 
-class BertClfPrediction(MetricBase):
-    """BERT classifier prediction on paraphrases.
+class BertClassifier(ClassifierBase):
+    """BERT classifier prediction on paraphrase_list.
 
     This metric is special, it does not compare the original and paraphrased sentence.
-    Instead, it outputs the classifier prediction on paraphrases. So we should not compute
+    Instead, it outputs the classifier prediction on paraphrase_list. So we should not compute
     mean or std on this metric.
 
     Args:
@@ -229,7 +229,7 @@ class BertClfPrediction(MetricBase):
                  bert_clf_period_summary=100, bert_clf_period_val=500,
                  bert_clf_period_save=5000, bert_clf_val_steps=10, **kargs):
 
-        super(BertClfPrediction, self).__init__()
+        super(BertClassifier, self).__init__()
 
         if trainset["cased"]:
             model_init = "bert-base-cased"
@@ -266,26 +266,28 @@ class BertClfPrediction(MetricBase):
             bert_clf_val_steps=bert_clf_val_steps,
             device=self._device)
 
-    def predict_dist_batch(self, text, context):
-        """Get log probability of the BERT prediction.
+    def predict_dist_batch(self, origin, paraphrase_list, data_record=None,
+                           paraphrase_field="text0"):
+        """Predict the log-probability distribution over classes for one batch.
 
         Args:
-            text ([str]): a list of strs to be classified.
-            context (str or None):
-                On regular classification datasets, context is None.
-                On NLI datasets, context contains the premise.
+            origin (str): the original text.
+            paraphrase_list (list): a set of paraphrase_list.
+            data_record (dict): the corresponding data record of original text.
+            paraphrase_field (str): the field name to paraphrase.
 
         Returns:
-            (np.array): a numpy array of the unnormalized log probability over on each category.
+            (np.array): a numpy array of size ``(batch_size * num_labels)``.
         """
-        if context is None:
-            batch_input = self._tokenizer(text=text, padding=True, max_length=200,
+        if paraphrase_field == "text0":
+            batch_input = self._tokenizer(text=paraphrase_list, padding=True, max_length=200,
                                           truncation=True)
         else:
-            batch_input = self._tokenizer(
-                text=[context] * len(text), text_pair=text, padding=True, max_length=200,
-                truncation=True)
-
+            assert paraphrase_field == "text1"
+            batch_input = self._tokenizer(text=[data_record["text0"]] * len(paraphrase_list),
+                                          text_pair=paraphrase_list,
+                                          padding=True, max_length=200,
+                                          truncation=True)
         with torch.no_grad():
             res = F.log_softmax(self._model(
                 input_ids=torch.tensor(batch_input["input_ids"]).to(self._device),
@@ -294,40 +296,16 @@ class BertClfPrediction(MetricBase):
             )[0], dim=1).detach().cpu().numpy()
         return res
 
-    def predict_batch(self, text, context):
-        """Get the prediction of the BERT prediction.
-
-        Args:
-            text ([str]): a list of strs to be classified.
-            context (str or None):
-                On regular classification datasets, context is None.
-                On NLI datasets, context contains the premise.
-
-        Returns:
-            (np.array): the prediction of the classifier.
-        """
-
-        return np.argmax(self.predict_dist_batch(text=text, context=context), axis=1)
-
-    def measure_batch(self, origin, paraphrases, data_record=None, paraphrase_field="text0"):
-        """Measure the metric on a batch of paraphrases.
+    def predict_dist_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+        """Predict the log-probability distribution over classes for one example.
 
         Args:
             origin (str): the original text.
-            paraphrases (list): a set of paraphrases.
+            paraphrase (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
             paraphrase_field (str): the field name to paraphrase.
 
         Returns:
-            (list): a list containing the metric for each paraphrase.
+            (np.array): a numpy array of size ``(num_labels)``.
         """
-        res = self.predict_batch(paraphrases,
-                                 data_record["text0"] if paraphrase_field == "text1" else None)
-        return [int(x) for x in res]
-
-    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
-        if paraphrase_field == "text0":
-            return int(self.predict_batch([paraphrase], None)[0])
-        else:
-            assert paraphrase_field == "text1"
-            return int(self.predict_batch([paraphrase], data_record["text0"])[0])
+        return self.predict_dist_batch(origin, [paraphrase], data_record, paraphrase_field)[0]

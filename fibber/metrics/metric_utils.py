@@ -6,12 +6,13 @@ import pandas as pd
 import tqdm
 
 from fibber import log
-from fibber.metrics.bert_clf_prediction import BertClfPrediction
-from fibber.metrics.edit_distance import EditDistance
-from fibber.metrics.glove_semantic_similarity import GloVeSemanticSimilarity
-from fibber.metrics.gpt2_grammar_quality import GPT2GrammarQuality
+from fibber.metrics.bert_classifier import BertClassifier
+from fibber.metrics.classifier_base import ClassifierBase
+from fibber.metrics.edit_distance_metric import EditDistanceMetric
+from fibber.metrics.glove_semantic_similarity_metric import GloVeSemanticSimilarityMetric
+from fibber.metrics.gpt2_grammar_quality_metric import GPT2GrammarQualityMetric
 from fibber.metrics.metric_base import MetricBase
-from fibber.metrics.use_semantic_similarity import USESemanticSimilarity
+from fibber.metrics.use_semantic_similarity_metric import USESemanticSimilarityMetric
 
 logger = log.setup_custom_logger(__name__)
 
@@ -53,15 +54,15 @@ class MetricBundle(object):
         self._advanced_aggregation_fn = {}
 
         if enable_edit_distance:
-            self.add_metric(EditDistance(**kargs), DIRECTION_HIGHER_BETTER)
+            self.add_metric(EditDistanceMetric(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_use_semantic_similarity:
-            self.add_metric(USESemanticSimilarity(**kargs), DIRECTION_HIGHER_BETTER)
+            self.add_metric(USESemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_glove_semantic_similarity:
-            self.add_metric(GloVeSemanticSimilarity(**kargs), DIRECTION_HIGHER_BETTER)
+            self.add_metric(GloVeSemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_gpt2_grammar_quality:
-            self.add_metric(GPT2GrammarQuality(**kargs), DIRECTION_LOWER_BETTER)
+            self.add_metric(GPT2GrammarQualityMetric(**kargs), DIRECTION_LOWER_BETTER)
         if enable_bert_clf_prediction:
-            self.add_classifier(BertClfPrediction(**kargs), set_target_clf=True)
+            self.add_classifier(BertClassifier(**kargs), set_target_clf=True)
 
     def add_metric(self, metric, direction):
         """Add a customized metric to metric bundle.
@@ -121,14 +122,14 @@ class MetricBundle(object):
         """Set a target classifier to attack.
 
         Args:
-            classifier_metric (MetricBase): Add the object to metric
-                bundle then set it as the target classifier.
+            classifier_metric (ClassifierBase): A classifier metric to be added.
             set_target_clf (bool): whether to set this classifier metric as target classifier.
         """
+        assert isinstance(classifier_metric, ClassifierBase)
         self._classifiers[str(classifier_metric)] = classifier_metric
         self._target_clf = str(classifier_metric)
         if set_target_clf:
-            self.set_target_classifier(str(classifier_metric))
+            self.set_target_classifier_by_name(str(classifier_metric))
 
     def get_classifier(self, classifier_name):
         """Returns the classifier in current metric bundle.
@@ -141,7 +142,7 @@ class MetricBundle(object):
     def get_classifier_names(self):
         return list(self._classifiers.keys())
 
-    def set_target_classifier(self, classifier_name):
+    def set_target_classifier_by_name(self, classifier_name):
         """Set a target classifier to attack.
 
         Args:
@@ -151,9 +152,13 @@ class MetricBundle(object):
         assert classifier_name in self._classifiers
         self._target_clf = classifier_name
 
+    def get_target_classifier_name(self):
+        """Return the name of the target classifier."""
+        return self._target_clf
+
     def get_target_classifier(self):
         """Returns the classifier for attack."""
-        return self.get_classifier(self._target_clf)
+        return self.get_classifier(self.get_target_classifier_name())
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the results of all metrics in the bundle for one pair of text.
@@ -177,11 +182,37 @@ class MetricBundle(object):
                 origin, paraphrase, data_record, paraphrase_field)
         return ret
 
+    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0"):
+        """Measure the metric on a batch of paraphrase_list.
+
+        Args:
+            origin (str): the original text.
+            paraphrase_list (list): a set of paraphrase_list.
+            data_record (dict): the corresponding data record of original text.
+            paraphrase_field (str): the field name to paraphrase.
+
+        Returns:
+            (list): a list containing dict of metrics for each paraphrase.
+        """
+        ret = [{} for i in range(len(paraphrase_list))]
+        for name in self.get_metric_names():
+            metric = self.get_metric(name)
+            result = metric.measure_batch(origin, paraphrase_list, data_record, paraphrase_field)
+            for i in range(len(paraphrase_list)):
+                ret[i][name] = result[i]
+        for name in self.get_classifier_names():
+            classifier = self.get_classifier(name)
+            result = classifier.measure_batch(origin, paraphrase_list,
+                                              data_record, paraphrase_field)
+            for i in range(len(paraphrase_list)):
+                ret[i][name] = result[i]
+        return ret
+
     def measure_dataset(self, results, output_filename):
         """Compute the all metrics for results on a dataset.
 
         Args:
-            results (dict): A fibber dataset with paraphrases.
+            results (dict): A fibber dataset with paraphrase_list.
             output_filename (str): A json filename to store results and metrics.
 
         Returns:
@@ -202,13 +233,9 @@ class MetricBundle(object):
                 data_record_tmp, paraphrase_field)
 
             # Run metrics on paraphrased text
-            paraphrase_metric_list = []
-            for paraphrase in data_record[paraphrase_field + "_paraphrases"]:
-                paraphrase_metric_list.append(
-                    self.measure_example(data_record[paraphrase_field], paraphrase,
-                                         data_record_tmp, paraphrase_field))
-
-            data_record["paraphrase_metrics"] = paraphrase_metric_list
+            data_record["paraphrase_metrics"] = self.measure_batch(
+                data_record[paraphrase_field], data_record[paraphrase_field + "_paraphrases"],
+                data_record_tmp, paraphrase_field)
 
             # save tmp output every 30 seconds
             if datetime.datetime.now().timestamp() - last_output_save_time > 30:

@@ -13,7 +13,7 @@ class MetricBase(object):
 
     Some metrics may run more efficiently on a batch of data. In this case, you should overwrite
     the ``measure_batch`` function. If you don't overwrite batch_call, it will compute the metric
-    of paraphrases one by one.
+    of paraphrase_list one by one.
     """
 
     def __init__(self, **kargs):
@@ -22,12 +22,12 @@ class MetricBase(object):
     def __repr__(self):
         return self.__class__.__name__
 
-    def measure_batch(self, origin, paraphrases, data_record=None, paraphrase_field="text0"):
-        """Measure the metric on a batch of paraphrases.
+    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0"):
+        """Measure the metric on a batch of paraphrase_list.
 
         Args:
             origin (str): the original text.
-            paraphrases (list): a set of paraphrases.
+            paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
             paraphrase_field (str): the field name to paraphrase.
 
@@ -35,7 +35,7 @@ class MetricBase(object):
             (list): a list containing the metric for each paraphrase.
         """
         ret = []
-        for paraphrase in paraphrases:
+        for paraphrase in paraphrase_list:
             ret.append(self.measure_example(origin, paraphrase, data_record, paraphrase_field))
         return ret
 

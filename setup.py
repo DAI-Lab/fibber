@@ -13,7 +13,7 @@ with open('HISTORY.md', encoding='utf-8') as history_file:
 
 install_requires = [
     'numpy>=1.18.0',
-    'tensorflow>=2.0.0',
+    'tensorflow-gpu>=2.0.0',
     'tensorflow-hub>=0.9.0',
     'torch<2,>=1.0',
     'torchvision<1,>=0.4.2',
@@ -22,7 +22,7 @@ install_requires = [
     'spacy>=2.0.0',
     'pandas>=1.0.0',
     'nltk>=3.0',
-    'stanza==1.1.1'
+    'stanza>=1.1.0'
 ]
 
 setup_requires = [
@@ -100,6 +100,6 @@ setup(
     test_suite='tests',
     tests_require=tests_require,
     url='https://github.com/DAI-Lab/fibber',
-    version='0.1.4.dev0',
+    version='0.2.0.dev0',
     zip_safe=False,
 )
