@@ -63,11 +63,12 @@ def pairwise_editing_distance_fn(data_record):
     return float(np.mean(distance))
 
 
-def get_best_adv_by_sim(data_record, gpt2_ppl_threshold=5, use_sim_threshold=0.85):
+def get_best_adv_by_sim(data_record, target_clf, gpt2_ppl_threshold=5, use_sim_threshold=0.85):
     """Find the adversarial example with best similarity.
 
     Args:
         data_record (dict): a data record with paraphrases and metrics.
+        target_clf (str): the targeted classifier.
         gpt2_ppl_threshold (float): the gpt2 perplexity ration threshold for a legitimate
             adversarial example.
         use_sim_threshold (float): the USE cosine similarity threshold for a legitimate adversarial
@@ -76,12 +77,12 @@ def get_best_adv_by_sim(data_record, gpt2_ppl_threshold=5, use_sim_threshold=0.8
          (dict): the metrics of the best adversarial example. None if no legitimate adversarial
             example is found.
     """
-    if data_record["original_text_metrics"]["BertClassifier"] != data_record["label"]:
+    if data_record["original_text_metrics"][target_clf] != data_record["label"]:
         return None
     best_score = -1
     best_metrics = None
     for metrics in data_record["paraphrase_metrics"]:
-        if (metrics["BertClassifier"] == data_record["label"]
+        if (metrics[target_clf] == data_record["label"]
                 or metrics["GPT2GrammarQualityMetric"] > gpt2_ppl_threshold
                 or metrics["USESemanticSimilarityMetric"] < use_sim_threshold):
             continue
@@ -91,11 +92,12 @@ def get_best_adv_by_sim(data_record, gpt2_ppl_threshold=5, use_sim_threshold=0.8
     return best_metrics
 
 
-def get_best_adv_by_ppl(data_record, gpt2_ppl_threshold=5, use_sim_threshold=0.85):
+def get_best_adv_by_ppl(data_record, target_clf, gpt2_ppl_threshold=5, use_sim_threshold=0.85):
     """Find the adversarial example with lowest perplexity.
 
     Args:
         data_record (dict): a data record with paraphrases and metrics.
+        target_clf (str): the targeted classifier.
         gpt2_ppl_threshold (float): the gpt2 perplexity ration threshold for a legitimate
             adversarial example.
         use_sim_threshold (float): the USE cosine similarity threshold for a legitimate adversarial
@@ -104,12 +106,12 @@ def get_best_adv_by_ppl(data_record, gpt2_ppl_threshold=5, use_sim_threshold=0.8
          (dict): the metrics of the best adversarial example. None if no legitimate adversarial
             example is found.
     """
-    if data_record["original_text_metrics"]["BertClassifier"] != data_record["label"]:
+    if data_record["original_text_metrics"][target_clf] != data_record["label"]:
         return None
     best_score = 1e8
     best_metrics = None
     for metrics in data_record["paraphrase_metrics"]:
-        if (metrics["BertClassifier"] == data_record["label"]
+        if (metrics[target_clf] == data_record["label"]
                 or metrics["GPT2GrammarQualityMetric"] > gpt2_ppl_threshold
                 or metrics["USESemanticSimilarityMetric"] < use_sim_threshold):
             continue
@@ -119,7 +121,7 @@ def get_best_adv_by_ppl(data_record, gpt2_ppl_threshold=5, use_sim_threshold=0.8
     return best_metrics
 
 
-def get_best_adv_metric_fn_constructor(get_best_adv_fn, metric_name,
+def get_best_adv_metric_fn_constructor(get_best_adv_fn, metric_name, target_clf,
                                        gpt2_ppl_threshold=5, use_sim_threshold=0.85):
     """Returns an aggregation function that extracts the value of a specified metric for the best
     adversarial example.
@@ -130,6 +132,7 @@ def get_best_adv_metric_fn_constructor(get_best_adv_fn, metric_name,
         get_best_adv_fn (fn): a function that returns the metric dict of the best adversarial
             example.
         metric_name (str): a metric name.
+        target_clf (str): the targeted classifier.
         gpt2_ppl_threshold (float): the gpt2 perplexity ration threshold for a legitimate
             adversarial example.
         use_sim_threshold (float): the USE cosine similarity threshold for a legitimate adversarial
@@ -138,7 +141,8 @@ def get_best_adv_metric_fn_constructor(get_best_adv_fn, metric_name,
         (fn): an aggregation function that takes data_record as an input.
     """
     def agg_fn(data_record):
-        best_metrics = get_best_adv_fn(data_record, gpt2_ppl_threshold, use_sim_threshold)
+        best_metrics = get_best_adv_fn(data_record, target_clf,
+                                       gpt2_ppl_threshold, use_sim_threshold)
         if best_metrics is not None:
             return best_metrics[metric_name]
         return math.nan
@@ -178,6 +182,7 @@ def add_sentence_level_adversarial_attack_metrics(
         for metric_name in metric_bundle.get_metric_names():
             metric_bundle.add_advanced_aggregation_fn(
                 "%s_best_sim_adv_%s" % (classifier_name, metric_name),
-                get_best_adv_metric_fn_constructor(get_best_adv_by_sim, metric_name),
+                get_best_adv_metric_fn_constructor(
+                    get_best_adv_by_sim, metric_name, metric_bundle.set_target_classifier()),
                 metric_bundle.get_metric_direction(metric_name)
             )
