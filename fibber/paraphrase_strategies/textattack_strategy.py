@@ -1,5 +1,6 @@
 """This module implements the paraphrase strategy using TextFooler."""
 
+import sys
 
 from fibber import log
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
@@ -8,7 +9,7 @@ logger = log.setup_custom_logger(__name__)
 
 try:
     import textattack
-    from textattack.attack_recipes.textfooler_jin_2019 import TextFoolerJin2019
+    from textattack import attack_recipes
     from textattack.models.wrappers.model_wrapper import ModelWrapper
 except ImportError:
     logger.warning("TextAttack is not installed so TextFooler stategy can't be used. "
@@ -19,17 +20,20 @@ except ImportError:
 class CLFModel(ModelWrapper):
     """A classifier wrapper for textattack package."""
 
-    def __init__(self, clf_metric):
-        self._clf_metric = clf_metric
+    def __init__(self, clf_metric, field_name):
+        self.model = clf_metric
+        self._field_name = field_name
         self._tokenizer = clf_metric._tokenizer
-        self._context = None
+        self._data_record = None
 
     def __call__(self, text_list):
-        ret = self._clf_metric.predict_dist_batch(text_list, self._context)
+        ret = self.model.predict_dist_batch(
+            self._data_record[self._field_name], text_list,
+            data_record=self._data_record, paraphrase_field=self._field_name)
         return ret
 
-    def set_context(self, context):
-        self._context = context
+    def set_data_record(self, data_record):
+        self._data_record = data_record
 
     def tokenize(self, inputs):
         """Helper method that calls ``tokenizer.batch_encode`` if possible, and
@@ -40,31 +44,45 @@ class CLFModel(ModelWrapper):
             return [self._tokenizer.encode(x) for x in inputs]
 
 
-class TextFoolerStrategy(StrategyBase):
-    """This strategy uses TextFooler to generate paraphrase.s
+class TextAttackStrategy(StrategyBase):
+    """This strategy is a wrapper for strategies implemented in TextAttack Package.
 
-    We use TextFooler to attack the classifier in metric_bundle.
+    The recipe is used to attack the classifier in metric_bundle.
         If the attack succeeds, we use the adversarial sentence as a paraphrase.
         If the attack fails, we use the original sentence as a paraphrase.
 
     This strategy always returns one paraphrase for one data record, regardless of `n`.
     """
 
-    __abbr__ = "tf"
+    __abbr__ = "ta"
+    __hyperparameters__ = [
+        ("recipe", str, "TextFoolerJin2019", "an attacking recipe implemented in TextAttack.")
+    ]
+
+    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle):
+        if "textattack" not in sys.modules:
+            logger.error("TextAttack not installed. Please install textattack manually.")
+            raise RuntimeError
+        super(TextAttackStrategy, self).__init__(arg_dict, dataset_name, strategy_gpu_id,
+                                                 output_dir, metric_bundle)
+
+    def __repr__(self):
+        return self._strategy_config["recipe"]
 
     def fit(self, trainset):
         if ModelWrapper is None:
             raise RuntimeError("no internet connection.")
 
-        self._model = CLFModel(self._metric_bundle.get_target_classifier())
-        self._textfooler = TextFoolerJin2019.build(self._model)
+        self._model = CLFModel(self._metric_bundle.get_target_classifier(),
+                               trainset["paraphrase_field"])
+        self._recipe = getattr(attack_recipes, self._strategy_config["recipe"]
+                               ).build(self._model)
 
     def paraphrase_example(self, data_record, field_name, n):
         """Generate paraphrased sentences."""
-        if field_name == "text1":
-            self._model.set_context(data_record["text0"])
+        self._model.set_data_record(data_record)
 
-        att = next(self._textfooler.attack_dataset(
+        att = next(self._recipe.attack_dataset(
             [(data_record[field_name], data_record["label"])]))
         if isinstance(att, textattack.attack_results.SuccessfulAttackResult):
             return [att.perturbed_result.attacked_text.text]
