@@ -176,40 +176,40 @@ The output is a tuple of (str, list, list).
 # Original Text
 'The Avengers is a good movie. Although it is 3 hours long, every scene has something to watch.'
 
-# 5 paraphrases
+# 5 paraphrase_list
 ['the avengers is a good movie. even it is 2 hours long, there is not enough to watch.',
   'the avengers is a good movie. while it is 3 hours long, it is still very watchable.',
   'the avengers is a good movie and although it is 2 ¹⁄₂ hours long, it is never very interesting.',
   'avengers is not a good movie. while it is three hours long, it is still something to watch.',
   'the avengers is a bad movie. while it is three hours long, it is still something to watch.']
 
-# Evaluation metrics of these 5 paraphrases.
+# Evaluation metrics of these 5 paraphrase_list.
 
   {'EditingDistance': 8,
-   'USESemanticSimilarity': 0.9523628950119019,
-   'GloVeSemanticSimilarity': 0.9795315341042675,
-   'GPT2GrammarQuality': 1.492070198059082,
-   'BertClfPrediction': 0},
+   'USESemanticSimilarityMetric': 0.9523628950119019,
+   'GloVeSemanticSimilarityMetric': 0.9795315341042675,
+   'GPT2GrammarQualityMetric': 1.492070198059082,
+   'BertClassifier': 0},
   {'EditingDistance': 9,
-   'USESemanticSimilarity': 0.9372092485427856,
-   'GloVeSemanticSimilarity': 0.9575780832312993,
-   'GPT2GrammarQuality': 0.9813404679298401,
-   'BertClfPrediction': 1},
+   'USESemanticSimilarityMetric': 0.9372092485427856,
+   'GloVeSemanticSimilarityMetric': 0.9575780832312993,
+   'GPT2GrammarQualityMetric': 0.9813404679298401,
+   'BertClassifier': 1},
   {'EditingDistance': 11,
-   'USESemanticSimilarity': 0.9265919327735901,
-   'GloVeSemanticSimilarity': 0.9710499628056698,
-   'GPT2GrammarQuality': 1.325406551361084,
-   'BertClfPrediction': 0},
+   'USESemanticSimilarityMetric': 0.9265919327735901,
+   'GloVeSemanticSimilarityMetric': 0.9710499628056698,
+   'GPT2GrammarQualityMetric': 1.325406551361084,
+   'BertClassifier': 0},
   {'EditingDistance': 7,
-   'USESemanticSimilarity': 0.8913971185684204,
-   'GloVeSemanticSimilarity': 0.9800737898362042,
-   'GPT2GrammarQuality': 1.2504483461380005,
-   'BertClfPrediction': 1},
+   'USESemanticSimilarityMetric': 0.8913971185684204,
+   'GloVeSemanticSimilarityMetric': 0.9800737898362042,
+   'GPT2GrammarQualityMetric': 1.2504483461380005,
+   'BertClassifier': 1},
   {'EditingDistance': 8,
-   'USESemanticSimilarity': 0.9124080538749695,
-   'GloVeSemanticSimilarity': 0.9744155151490856,
-   'GPT2GrammarQuality': 1.1626977920532227,
-   'BertClfPrediction': 0}]
+   'USESemanticSimilarityMetric': 0.9124080538749695,
+   'GloVeSemanticSimilarityMetric': 0.9744155151490856,
+   'GPT2GrammarQualityMetric': 1.1626977920532227,
+   'BertClassifier': 0}]
 ```
 
 **(5) You can ask fibber to randomly pick a sentence from the dataset and paraphrase it.**

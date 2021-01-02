@@ -51,12 +51,12 @@ def compute_emb_sim(emb_table, tok_to_id, x, y):
             / (np.linalg.norm(ey) + 1e-8))
 
 
-class GloVeSemanticSimilarity(MetricBase):
+class GloVeSemanticSimilarityMetric(MetricBase):
     """This metric computes the cosine similarity between two sentences."""
 
     def __init__(self, **kargs):
         """Initialize, load Glove embeddings."""
-        super(GloVeSemanticSimilarity, self).__init__()
+        super(GloVeSemanticSimilarityMetric, self).__init__()
 
         get_nltk_data()
         self._glove = get_glove_emb()

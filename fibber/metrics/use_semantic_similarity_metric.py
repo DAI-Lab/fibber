@@ -35,13 +35,13 @@ def config_tf_gpu(gpu_id):
             tf.config.experimental.set_memory_growth(device, True)
 
 
-class USESemanticSimilarity(MetricBase):
+class USESemanticSimilarityMetric(MetricBase):
     """This metric uses universal sentence encoder to measure the semantic similarity of
     two sentences."""
 
     def __init__(self, use_gpu_id=-1, **kargs):
         """Initialize universal sentence encoder."""
-        super(USESemanticSimilarity, self).__init__()
+        super(USESemanticSimilarityMetric, self).__init__()
         logger.info("load universal sentence encoder")
         config_tf_gpu(use_gpu_id)
         if use_gpu_id == -1:
@@ -51,12 +51,12 @@ class USESemanticSimilarity(MetricBase):
         self.model = hub.load(resources.get_universal_sentence_encoder())
         log.remove_logger_tf_handler(logger)   # tensorflow_hub mess up the python logging
 
-    def measure_batch(self, origin, paraphrases, data_record=None, paraphrase_field="text0"):
-        """Measure the metric on a batch of paraphrases.
+    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0"):
+        """Measure the metric on a batch of paraphrase_list.
 
         Args:
             origin (str): the original text.
-            paraphrases (list): a set of paraphrases.
+            paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
             paraphrase_field (str): the field name to paraphrase.
 
@@ -64,8 +64,8 @@ class USESemanticSimilarity(MetricBase):
             (list): a list containing the USE similarity metric for each paraphrase.
         """
         origin = " ".join(origin.split()[:200])
-        paraphrases = [" ".join(x.split()[:200]) for x in paraphrases]
-        embs = self.model([origin] + paraphrases).numpy()
+        paraphrase_list = [" ".join(x.split()[:200]) for x in paraphrase_list]
+        embs = self.model([origin] + paraphrase_list).numpy()
 
         norm = np.linalg.norm(embs, axis=1)
         sim = np.sum(embs[0] * embs, axis=1) / norm[0] / norm

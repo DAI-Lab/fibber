@@ -9,7 +9,7 @@ from transformers import BertForMaskedLM
 
 from fibber import log, resources
 from fibber.datasets import DatasetForBert
-from fibber.metrics.bert_clf_prediction import get_optimizer
+from fibber.metrics.bert_classifier import get_optimizer
 
 logger = log.setup_custom_logger(__name__)
 

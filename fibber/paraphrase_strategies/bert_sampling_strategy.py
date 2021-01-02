@@ -103,8 +103,8 @@ def use_criteria_score(origin, paraphrases, use_metric, use_threshold, use_weigh
 
     Args:
         origin (str): original sentence.
-        paraphrases ([str]): a list of paraphrases.
-        use_metric (USESemanticSimilarity): a universal sentence encoder metric object.
+        paraphrases ([str]): a list of paraphrase_list.
+        use_metric (USESemanticSimilarityMetric): a universal sentence encoder metric object.
         use_threshold (float): the universal sentence encoder similarity threshold.
         use_weight (float): the weight parameter for the criteria.
 
@@ -123,8 +123,8 @@ def gpt2_criteria_score(origin, paraphrases, gpt2_metric, gpt2_weight):
 
     Args:
         origin (str): original sentence.
-        paraphrases ([str]): a list of paraphrases.
-        gpt2_metric (GPT2GrammarQuality): a GPT2GrammarQuality metric object.
+        paraphrases ([str]): a list of paraphrase_list.
+        gpt2_metric (GPT2GrammarQualityMetric): a GPT2GrammarQualityMetric metric object.
         gpt2_weight (float): the weight parameter for the criteria.
 
     Returns:
@@ -136,11 +136,12 @@ def gpt2_criteria_score(origin, paraphrases, gpt2_metric, gpt2_weight):
     return -gpt2_weight * (np.maximum(gpt2_ppl_ratio, 0) ** 2)
 
 
-def bert_criteria_score(paraphrases, context, label, bert_metric, bert_weight):
+def bert_criteria_score(origin, paraphrases, data_record, field_name, bert_metric, bert_weight):
     if bert_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
 
-    dist = bert_metric.predict_dist_batch(paraphrases, context)
+    dist = bert_metric.predict_dist_batch(origin, paraphrases, data_record, field_name)
+    label = data_record["label"]
     correct_prob = (dist[:, label]).copy()
     dist[:, label] = -1e8
     incorrect_prob = np.max(dist, axis=1)
@@ -166,12 +167,12 @@ def joint_weighted_criteria(
             size ``(batch_size, pos_ed-pos_st)``.
         candidate_ids (torch.Tensor): proposed word ids in this sampling step with
             size ``(batch_size, pos_ed-pos_st)``.
-        use_metric (USESemanticSimilarity): a universal sentence encoder metric object.
+        use_metric (USESemanticSimilarityMetric): a universal sentence encoder metric object.
         use_threshold (float): the universal sentence encoder similarity threshold.
         use_weight (float): the weight for USE criteria score.
-        bert_metric (BertClfPrediction): a BertClfPrediction metric.
+        bert_metric (BertClassifier): a BertClassifier metric.
         bert_weight (float): the weight for BERT criteria score.
-        gpt2_metric (GPT2GrammarQuality): a GPT2GrammarQuality metric.
+        gpt2_metric (GPT2GrammarQualityMetric): a GPT2GrammarQualityMetric metric.
         gpt2_weight (float): the weight for GPT2 criteria score.
         burnin_weight (float): the discount factor.
         stats (dict): a dict to keep track the accept rate.
@@ -193,9 +194,9 @@ def joint_weighted_criteria(
                                     gpt2_metric=gpt2_metric, gpt2_weight=gpt2_weight)
                 + use_criteria_score(origin=origin, paraphrases=paraphrases, use_metric=use_metric,
                                      use_weight=use_weight, use_threshold=use_threshold)
-                + bert_criteria_score(paraphrases=paraphrases, context=data_record["text0"]
-                                      if field_name == "text1" else None,
-                                      label=data_record["label"], bert_metric=bert_metric,
+                + bert_criteria_score(origin=origin, paraphrases=paraphrases,
+                                      data_record=data_record, field_name=field_name,
+                                      bert_metric=bert_metric,
                                       bert_weight=bert_weight)) * burnin_weight
 
     if state is not None:
@@ -312,9 +313,9 @@ class BertSamplingStrategy(StrategyBase):
             assert 0
 
         # Load useful metrics
-        self._use_metric = self._metric_bundle.get_metric("USESemanticSimilarity")
-        self._clf_metric = self._metric_bundle.get_metric("BertClfPrediction")
-        self._gpt2_metric = self._metric_bundle.get_metric("GPT2GrammarQuality")
+        self._use_metric = self._metric_bundle.get_metric("USESemanticSimilarityMetric")
+        self._clf_metric = self._metric_bundle.get_metric("BertClassifier")
+        self._gpt2_metric = self._metric_bundle.get_metric("GPT2GrammarQualityMetric")
 
         # load word piece embeddings.
         wpe = get_wordpiece_emb(self._output_dir, self._dataset_name, trainset, self._device)

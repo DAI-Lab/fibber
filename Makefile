@@ -42,7 +42,7 @@ test: ## run tests quickly with the default Python
 	python -m pytest -m "not slow" tests
 
 .PHONY: test-slow
-est-slow: ## run all tests (including slow tests)
+test-slow: ## run all tests (including slow tests)
 	python -m pytest tests
 
 .PHONY: lint

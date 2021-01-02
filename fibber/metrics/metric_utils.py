@@ -6,12 +6,12 @@ import pandas as pd
 import tqdm
 
 from fibber import log
-from fibber.metrics.bert_clf_prediction import BertClfPrediction
-from fibber.metrics.edit_distance import EditDistance
-from fibber.metrics.glove_semantic_similarity import GloVeSemanticSimilarity
-from fibber.metrics.gpt2_grammar_quality import GPT2GrammarQuality
+from fibber.metrics.bert_classifier import BertClassifier
+from fibber.metrics.edit_distance_metric import EditDistanceMetric
+from fibber.metrics.glove_semantic_similarity_metric import GloVeSemanticSimilarityMetric
+from fibber.metrics.gpt2_grammar_quality_metric import GPT2GrammarQualityMetric
 from fibber.metrics.metric_base import MetricBase
-from fibber.metrics.use_semantic_similarity import USESemanticSimilarity
+from fibber.metrics.use_semantic_similarity_metric import USESemanticSimilarityMetric
 
 logger = log.setup_custom_logger(__name__)
 
@@ -53,15 +53,15 @@ class MetricBundle(object):
         self._advanced_aggregation_fn = {}
 
         if enable_edit_distance:
-            self.add_metric(EditDistance(**kargs), DIRECTION_HIGHER_BETTER)
+            self.add_metric(EditDistanceMetric(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_use_semantic_similarity:
-            self.add_metric(USESemanticSimilarity(**kargs), DIRECTION_HIGHER_BETTER)
+            self.add_metric(USESemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_glove_semantic_similarity:
-            self.add_metric(GloVeSemanticSimilarity(**kargs), DIRECTION_HIGHER_BETTER)
+            self.add_metric(GloVeSemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_gpt2_grammar_quality:
-            self.add_metric(GPT2GrammarQuality(**kargs), DIRECTION_LOWER_BETTER)
+            self.add_metric(GPT2GrammarQualityMetric(**kargs), DIRECTION_LOWER_BETTER)
         if enable_bert_clf_prediction:
-            self.add_classifier(BertClfPrediction(**kargs), set_target_clf=True)
+            self.add_classifier(BertClassifier(**kargs), set_target_clf=True)
 
     def add_metric(self, metric, direction):
         """Add a customized metric to metric bundle.
@@ -181,7 +181,7 @@ class MetricBundle(object):
         """Compute the all metrics for results on a dataset.
 
         Args:
-            results (dict): A fibber dataset with paraphrases.
+            results (dict): A fibber dataset with paraphrase_list.
             output_filename (str): A json filename to store results and metrics.
 
         Returns:
