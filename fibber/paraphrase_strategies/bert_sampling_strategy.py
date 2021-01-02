@@ -314,7 +314,7 @@ class BertSamplingStrategy(StrategyBase):
 
         # Load useful metrics
         self._use_metric = self._metric_bundle.get_metric("USESemanticSimilarityMetric")
-        self._clf_metric = self._metric_bundle.get_metric("BertClassifier")
+        self._clf_metric = self._metric_bundle.get_target_classifier()
         self._gpt2_metric = self._metric_bundle.get_metric("GPT2GrammarQualityMetric")
 
         # load word piece embeddings.
