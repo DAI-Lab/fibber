@@ -16,12 +16,17 @@ def gpu_id():
 
 def metric_test_helper(metric, io_pairs, batched_io_pairs, eps=0):
     for (origin, paraphrase), true_output in io_pairs:
-        assert abs(metric.measure_example(origin, paraphrase) - true_output) <= eps
+        value = metric.measure_example(origin, paraphrase)
+        assert isinstance(value, int) or isinstance(value, float)
+        assert abs(value - true_output) <= eps
 
     for (origin, paraphrase_list), true_output_list in batched_io_pairs:
+        values = metric.measure_batch(origin, paraphrase_list)
+        assert isinstance(values, list)
+        assert all([isinstance(x, int) or isinstance(x, float) for x in values])
         assert all([abs(output - true_output) <= eps
                     for output, true_output in
-                    zip(metric.measure_batch(origin, paraphrase_list), true_output_list)])
+                    zip(values, true_output_list)])
 
 
 def test_edit_distance_metric():

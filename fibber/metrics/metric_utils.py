@@ -182,6 +182,32 @@ class MetricBundle(object):
                 origin, paraphrase, data_record, paraphrase_field)
         return ret
 
+    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0"):
+        """Measure the metric on a batch of paraphrase_list.
+
+        Args:
+            origin (str): the original text.
+            paraphrase_list (list): a set of paraphrase_list.
+            data_record (dict): the corresponding data record of original text.
+            paraphrase_field (str): the field name to paraphrase.
+
+        Returns:
+            (list): a list containing dict of metrics for each paraphrase.
+        """
+        ret = [{} for i in range(len(paraphrase_list))]
+        for name in self.get_metric_names():
+            metric = self.get_metric(name)
+            result = metric.measure_batch(origin, paraphrase_list, data_record, paraphrase_field)
+            for i in range(len(paraphrase_list)):
+                ret[i][name] = result[i]
+        for name in self.get_classifier_names():
+            classifier = self.get_classifier(name)
+            result = classifier.measure_batch(origin, paraphrase_list,
+                                              data_record, paraphrase_field)
+            for i in range(len(paraphrase_list)):
+                ret[i][name] = result[i]
+        return ret
+
     def measure_dataset(self, results, output_filename):
         """Compute the all metrics for results on a dataset.
 
@@ -207,13 +233,9 @@ class MetricBundle(object):
                 data_record_tmp, paraphrase_field)
 
             # Run metrics on paraphrased text
-            paraphrase_metric_list = []
-            for paraphrase in data_record[paraphrase_field + "_paraphrases"]:
-                paraphrase_metric_list.append(
-                    self.measure_example(data_record[paraphrase_field], paraphrase,
-                                         data_record_tmp, paraphrase_field))
-
-            data_record["paraphrase_metrics"] = paraphrase_metric_list
+            data_record["paraphrase_metrics"] = self.measure_batch(
+                data_record[paraphrase_field], data_record[paraphrase_field + "_paraphrases"],
+                data_record_tmp, paraphrase_field)
 
             # save tmp output every 30 seconds
             if datetime.datetime.now().timestamp() - last_output_save_time > 30:

@@ -95,8 +95,8 @@ class GPT2GrammarQualityMetric(MetricBase):
             (list): a list containing the USE similarity metric for each paraphrase.
         """
         ppls = self._get_ppl([origin] + paraphrase_list)
-
-        return list(ppls[1:]) / ppls[0]
+        res = ppls[1:] / ppls[0]
+        return [float(x) for x in res]
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the perplexity ratio.
