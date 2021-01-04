@@ -82,8 +82,9 @@ class TextAttackStrategy(StrategyBase):
         """Generate paraphrased sentences."""
         self._model.set_data_record(data_record)
 
+        attack_text = " ".join(data_record[field_name].split()[:200])
         att = next(self._recipe.attack_dataset(
-            [(data_record[field_name], data_record["label"])]))
+            [(attack_text, data_record["label"])]))
         if isinstance(att, textattack.attack_results.SuccessfulAttackResult):
             return [att.perturbed_result.attacked_text.text]
         else:
