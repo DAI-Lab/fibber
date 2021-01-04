@@ -8,7 +8,7 @@ from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, ve
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
-    BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextFoolerStrategy)
+    BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextAttackStrategy)
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
 logger = log.setup_custom_logger(__name__)
@@ -17,7 +17,7 @@ log.remove_logger_tf_handler(logger)
 built_in_strategies = {
     "RandomStrategy": RandomStrategy,
     "IdentityStrategy": IdentityStrategy,
-    "TextFoolerStrategy": TextFoolerStrategy,
+    "TextAttackStrategy": TextAttackStrategy,
     "BertSamplingStrategy": BertSamplingStrategy
 }
 
@@ -175,8 +175,8 @@ def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
     if strategy_name == "IdentityStrategy":
         return IdentityStrategy(
             arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
-    if strategy_name == "TextFoolerStrategy":
-        return TextFoolerStrategy(
+    if strategy_name == "TextAttackStrategy":
+        return TextAttackStrategy(
             arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
     if strategy_name == "BertSamplingStrategy":
         return BertSamplingStrategy(

@@ -11,10 +11,14 @@ API and is highly customizable. In this document, we will show
 
 The following table shows the benchmarking result. (Here we show the number of wins.)
 
-|   1_paraphrase_strategy_name  |   USESemanticSimilarity_mean  |   GPT2GrammarQuality_mean  |   3_ParaphraseAcc_usesim0.90_ppl2  |   4_ParaphraseAcc_usesim0.85_ppl5  |
-|-------------------------------|-------------------------------|----------------------------|------------------------------------|------------------------------------|
-|   IdentityStrategy           |   7                           |   7                        |   0                                |   0                                |
-|   RandomStrategy              |   0                           |   0                        |   5                                |   6                                |
+| StrategyName         | AfterAttackAccuracy | GPT2GrammarQuality | GloVeSemanticSimilarity | USESemanticSimilarity |
+|----------------------|---------------------|--------------------|-------------------------|-----------------------|
+| IdentityStrategy     | 0                   | 0                  | 0                       | 0                     |
+| RandomStrategy       | 5                   | 0                  | 16                      | 6                     |
+| TextFoolerJin2019    | 25                  | 12                 | 6                       | 11                    |
+| BAEGarg2019          | 13                  | 5                  | 14                      | 13                    |
+| PSOZang2020          | 16                  | 12                 | 6                       | 5                     |
+| BertSamplingStrategy | 33                  | 23                 | 10                      | 17                    |
 
 For detailed tables, see [Google Sheet](https://docs.google.com/spreadsheets/d/1B_5RiMfndNVhxZLX5ykMqt5SCjpy3MxOovBi_RL41Fw/edit?usp=sharing).
 
