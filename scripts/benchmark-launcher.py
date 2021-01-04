@@ -51,9 +51,9 @@ DATASET_CONFIG = {
         "--output_dir": "exp-mnli",
         "--bert_clf_steps": 20000
     },
-    "mnlim": {
-        "--dataset": "mnlim",
-        "--output_dir": "exp-mnlim",
+    "mnli_mis": {
+        "--dataset": "mnli_mis",
+        "--output_dir": "exp-mnli_mis",
         "--bert_clf_steps": 20000
     },
 }
