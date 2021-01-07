@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.textfooler_strategy &#8212; fibber 0.1.3 documentation</title>
+    <title>fibber.paraphrase_strategies.textattack_strategy &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -193,9 +193,10 @@
               
               <div>
                 
-  <h1>Source code for fibber.paraphrase_strategies.textfooler_strategy</h1><div class="highlight"><pre>
+  <h1>Source code for fibber.paraphrase_strategies.textattack_strategy</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;This module implements the paraphrase strategy using TextFooler.&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies.strategy_base</span> <span class="kn">import</span> <span class="n">StrategyBase</span>
@@ -204,7 +205,7 @@
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">textattack</span>
-    <span class="kn">from</span> <span class="nn">textattack.attack_recipes.textfooler_jin_2019</span> <span class="kn">import</span> <span class="n">TextFoolerJin2019</span>
+    <span class="kn">from</span> <span class="nn">textattack</span> <span class="kn">import</span> <span class="n">attack_recipes</span>
     <span class="kn">from</span> <span class="nn">textattack.models.wrappers.model_wrapper</span> <span class="kn">import</span> <span class="n">ModelWrapper</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;TextAttack is not installed so TextFooler stategy can&#39;t be used. &quot;</span>
@@ -212,22 +213,25 @@
     <span class="n">ModelWrapper</span> <span class="o">=</span> <span class="nb">object</span>
 
 
-<div class="viewcode-block" id="CLFModel"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textfooler_strategy.html#fibber.paraphrase_strategies.CLFModel">[docs]</a><span class="k">class</span> <span class="nc">CLFModel</span><span class="p">(</span><span class="n">ModelWrapper</span><span class="p">):</span>
+<div class="viewcode-block" id="CLFModel"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.CLFModel">[docs]</a><span class="k">class</span> <span class="nc">CLFModel</span><span class="p">(</span><span class="n">ModelWrapper</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A classifier wrapper for textattack package.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf_metric</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_clf_metric</span> <span class="o">=</span> <span class="n">clf_metric</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf_metric</span><span class="p">,</span> <span class="n">field_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">clf_metric</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_field_name</span> <span class="o">=</span> <span class="n">field_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">clf_metric</span><span class="o">.</span><span class="n">_tokenizer</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_context</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_record</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text_list</span><span class="p">):</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clf_metric</span><span class="o">.</span><span class="n">predict_dist_batch</span><span class="p">(</span><span class="n">text_list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict_dist_batch</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_field_name</span><span class="p">],</span> <span class="n">text_list</span><span class="p">,</span>
+            <span class="n">data_record</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_record</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_field_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-<div class="viewcode-block" id="CLFModel.set_context"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textfooler_strategy.html#fibber.paraphrase_strategies.CLFModel.set_context">[docs]</a>    <span class="k">def</span> <span class="nf">set_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_context</span> <span class="o">=</span> <span class="n">context</span></div>
+<div class="viewcode-block" id="CLFModel.set_data_record"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.CLFModel.set_data_record">[docs]</a>    <span class="k">def</span> <span class="nf">set_data_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_record</span> <span class="o">=</span> <span class="n">data_record</span></div>
 
-<div class="viewcode-block" id="CLFModel.tokenize"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textfooler_strategy.html#fibber.paraphrase_strategies.CLFModel.tokenize">[docs]</a>    <span class="k">def</span> <span class="nf">tokenize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+<div class="viewcode-block" id="CLFModel.tokenize"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.CLFModel.tokenize">[docs]</a>    <span class="k">def</span> <span class="nf">tokenize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Helper method that calls ``tokenizer.batch_encode`` if possible, and</span>
 <span class="sd">        if not, falls back to calling ``tokenizer.encode`` for each input.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">,</span> <span class="s2">&quot;batch_encode&quot;</span><span class="p">):</span>
@@ -236,32 +240,47 @@
             <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">]</span></div></div>
 
 
-<div class="viewcode-block" id="TextFoolerStrategy"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textfooler_strategy.html#fibber.paraphrase_strategies.TextFoolerStrategy">[docs]</a><span class="k">class</span> <span class="nc">TextFoolerStrategy</span><span class="p">(</span><span class="n">StrategyBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This strategy uses TextFooler to generate paraphrase.s</span>
+<div class="viewcode-block" id="TextAttackStrategy"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.TextAttackStrategy">[docs]</a><span class="k">class</span> <span class="nc">TextAttackStrategy</span><span class="p">(</span><span class="n">StrategyBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This strategy is a wrapper for strategies implemented in TextAttack Package.</span>
 
-<span class="sd">    We use TextFooler to attack the classifier in metric_bundle.</span>
+<span class="sd">    The recipe is used to attack the classifier in metric_bundle.</span>
 <span class="sd">        If the attack succeeds, we use the adversarial sentence as a paraphrase.</span>
 <span class="sd">        If the attack fails, we use the original sentence as a paraphrase.</span>
 
 <span class="sd">    This strategy always returns one paraphrase for one data record, regardless of `n`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">__abbr__</span> <span class="o">=</span> <span class="s2">&quot;tf&quot;</span>
+    <span class="n">__abbr__</span> <span class="o">=</span> <span class="s2">&quot;ta&quot;</span>
+    <span class="n">__hyperparameters__</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;recipe&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;TextFoolerJin2019&quot;</span><span class="p">,</span> <span class="s2">&quot;an attacking recipe implemented in TextAttack.&quot;</span><span class="p">)</span>
+    <span class="p">]</span>
 
-<div class="viewcode-block" id="TextFoolerStrategy.fit"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textfooler_strategy.html#fibber.paraphrase_strategies.TextFoolerStrategy.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;textattack&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;TextAttack not installed. Please install textattack manually.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TextAttackStrategy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span>
+                                                 <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;recipe&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="TextAttackStrategy.fit"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.TextAttackStrategy.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainset</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">ModelWrapper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;no internet connection.&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">CLFModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">get_target_classifier</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_textfooler</span> <span class="o">=</span> <span class="n">TextFoolerJin2019</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">CLFModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">get_target_classifier</span><span class="p">(),</span>
+                               <span class="n">trainset</span><span class="p">[</span><span class="s2">&quot;paraphrase_field&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_recipe</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">attack_recipes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;recipe&quot;</span><span class="p">]</span>
+                               <span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TextFoolerStrategy.paraphrase_example"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textfooler_strategy.html#fibber.paraphrase_strategies.TextFoolerStrategy.paraphrase_example">[docs]</a>    <span class="k">def</span> <span class="nf">paraphrase_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="TextAttackStrategy.paraphrase_example"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.TextAttackStrategy.paraphrase_example">[docs]</a>    <span class="k">def</span> <span class="nf">paraphrase_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate paraphrased sentences.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="s2">&quot;text1&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;text0&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">set_data_record</span><span class="p">(</span><span class="n">data_record</span><span class="p">)</span>
 
-        <span class="n">att</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_textfooler</span><span class="o">.</span><span class="n">attack_dataset</span><span class="p">(</span>
-            <span class="p">[(</span><span class="n">data_record</span><span class="p">[</span><span class="n">field_name</span><span class="p">],</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">])]))</span>
+        <span class="n">attack_text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_record</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">200</span><span class="p">])</span>
+        <span class="n">att</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_recipe</span><span class="o">.</span><span class="n">attack_dataset</span><span class="p">(</span>
+            <span class="p">[(</span><span class="n">attack_text</span><span class="p">,</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">])]))</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">att</span><span class="p">,</span> <span class="n">textattack</span><span class="o">.</span><span class="n">attack_results</span><span class="o">.</span><span class="n">SuccessfulAttackResult</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">att</span><span class="o">.</span><span class="n">perturbed_result</span><span class="o">.</span><span class="n">attacked_text</span><span class="o">.</span><span class="n">text</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>

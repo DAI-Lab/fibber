@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies package &#8212; fibber 0.1.3 documentation</title>
+    <title>fibber.paraphrase_strategies package &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -40,7 +40,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="fibber.paraphrase_strategies.bert_sampling_strategy module" href="fibber.paraphrase_strategies.bert_sampling_strategy.html" />
-    <link rel="prev" title="fibber.metrics.use_semantic_similarity module" href="fibber.metrics.use_semantic_similarity.html" />
+    <link rel="prev" title="fibber.metrics.use_semantic_similarity_metric module" href="fibber.metrics.use_semantic_similarity_metric.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
   </head>
@@ -216,7 +216,7 @@
                         </li>
                     
                         <li class="">
-                            <a href="fibber.paraphrase_strategies.textfooler_strategy.html">fibber.paraphrase_strategies.textfooler_strategy module</a>
+                            <a href="fibber.paraphrase_strategies.textattack_strategy.html">fibber.paraphrase_strategies.textattack_strategy module</a>
                         </li>
                     
                     </ul>
@@ -305,7 +305,7 @@
 <li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.identity_strategy.html">fibber.paraphrase_strategies.identity_strategy module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.random_strategy.html">fibber.paraphrase_strategies.random_strategy module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.strategy_base.html">fibber.paraphrase_strategies.strategy_base module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.textfooler_strategy.html">fibber.paraphrase_strategies.textfooler_strategy module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.paraphrase_strategies.textattack_strategy.html">fibber.paraphrase_strategies.textattack_strategy module</a></li>
 </ul>
 </div>
 </div>
@@ -623,12 +623,12 @@ use <code class="docutils literal notranslate"><span class="pre">self._strategy_
 </dd></dl>
 
 <dl class="py class">
-<dt id="fibber.paraphrase_strategies.TextFoolerStrategy">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.</code><code class="sig-name descname">TextFoolerStrategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span></em>, <em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/textfooler_strategy.html#TextFoolerStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.TextFoolerStrategy" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.paraphrase_strategies.TextAttackStrategy">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.</code><code class="sig-name descname">TextAttackStrategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span></em>, <em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/textattack_strategy.html#TextAttackStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.TextAttackStrategy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase" title="fibber.paraphrase_strategies.strategy_base.StrategyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.paraphrase_strategies.strategy_base.StrategyBase</span></code></a></p>
-<p>This strategy uses TextFooler to generate paraphrase.s</p>
+<p>This strategy is a wrapper for strategies implemented in TextAttack Package.</p>
 <dl class="simple">
-<dt>We use TextFooler to attack the classifier in metric_bundle.</dt><dd><p>If the attack succeeds, we use the adversarial sentence as a paraphrase.
+<dt>The recipe is used to attack the classifier in metric_bundle.</dt><dd><p>If the attack succeeds, we use the adversarial sentence as a paraphrase.
 If the attack fails, we use the original sentence as a paraphrase.</p>
 </dd>
 </dl>
@@ -659,8 +659,8 @@ use this device.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="fibber.paraphrase_strategies.TextFoolerStrategy.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trainset</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/textfooler_strategy.html#TextFoolerStrategy.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.TextFoolerStrategy.fit" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.paraphrase_strategies.TextAttackStrategy.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trainset</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/textattack_strategy.html#TextAttackStrategy.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.TextAttackStrategy.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the paraphrase strategy on a training set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -670,8 +670,8 @@ use this device.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="fibber.paraphrase_strategies.TextFoolerStrategy.paraphrase_example">
-<code class="sig-name descname">paraphrase_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/textfooler_strategy.html#TextFoolerStrategy.paraphrase_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.TextFoolerStrategy.paraphrase_example" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.paraphrase_strategies.TextAttackStrategy.paraphrase_example">
+<code class="sig-name descname">paraphrase_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/textattack_strategy.html#TextAttackStrategy.paraphrase_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.TextAttackStrategy.paraphrase_example" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate paraphrased sentences.</p>
 </dd></dl>
 
@@ -686,7 +686,7 @@ use this device.</p></li>
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="fibber.metrics.use_semantic_similarity.html" title="previous page">fibber.metrics.use_semantic_similarity module</a>
+    <a class='left-prev' id="prev-link" href="fibber.metrics.use_semantic_similarity_metric.html" title="previous page">fibber.metrics.use_semantic_similarity_metric module</a>
     <a class='right-next' id="next-link" href="fibber.paraphrase_strategies.bert_sampling_strategy.html" title="next page">fibber.paraphrase_strategies.bert_sampling_strategy module</a>
 
               </div>

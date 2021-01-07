@@ -1,7 +1,0 @@
-fibber.metrics.bert\_clf\_prediction module
-===========================================
-
-.. automodule:: fibber.metrics.bert_clf_prediction
-   :members:
-   :undoc-members:
-   :show-inheritance:

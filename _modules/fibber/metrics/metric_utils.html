@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.metric_utils &#8212; fibber 0.1.3 documentation</title>
+    <title>fibber.metrics.metric_utils &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -202,12 +202,13 @@
 <span class="kn">import</span> <span class="nn">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">fibber.metrics.bert_clf_prediction</span> <span class="kn">import</span> <span class="n">BertClfPrediction</span>
-<span class="kn">from</span> <span class="nn">fibber.metrics.edit_distance</span> <span class="kn">import</span> <span class="n">EditDistance</span>
-<span class="kn">from</span> <span class="nn">fibber.metrics.glove_semantic_similarity</span> <span class="kn">import</span> <span class="n">GloVeSemanticSimilarity</span>
-<span class="kn">from</span> <span class="nn">fibber.metrics.gpt2_grammar_quality</span> <span class="kn">import</span> <span class="n">GPT2GrammarQuality</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.bert_classifier</span> <span class="kn">import</span> <span class="n">BertClassifier</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.classifier_base</span> <span class="kn">import</span> <span class="n">ClassifierBase</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.edit_distance_metric</span> <span class="kn">import</span> <span class="n">EditDistanceMetric</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.glove_semantic_similarity_metric</span> <span class="kn">import</span> <span class="n">GloVeSemanticSimilarityMetric</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.gpt2_grammar_quality_metric</span> <span class="kn">import</span> <span class="n">GPT2GrammarQualityMetric</span>
 <span class="kn">from</span> <span class="nn">fibber.metrics.metric_base</span> <span class="kn">import</span> <span class="n">MetricBase</span>
-<span class="kn">from</span> <span class="nn">fibber.metrics.use_semantic_similarity</span> <span class="kn">import</span> <span class="n">USESemanticSimilarity</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.use_semantic_similarity_metric</span> <span class="kn">import</span> <span class="n">USESemanticSimilarityMetric</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -249,15 +250,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_advanced_aggregation_fn</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="n">enable_edit_distance</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_metric</span><span class="p">(</span><span class="n">EditDistance</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">),</span> <span class="n">DIRECTION_HIGHER_BETTER</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_metric</span><span class="p">(</span><span class="n">EditDistanceMetric</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">),</span> <span class="n">DIRECTION_HIGHER_BETTER</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">enable_use_semantic_similarity</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_metric</span><span class="p">(</span><span class="n">USESemanticSimilarity</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">),</span> <span class="n">DIRECTION_HIGHER_BETTER</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_metric</span><span class="p">(</span><span class="n">USESemanticSimilarityMetric</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">),</span> <span class="n">DIRECTION_HIGHER_BETTER</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">enable_glove_semantic_similarity</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_metric</span><span class="p">(</span><span class="n">GloVeSemanticSimilarity</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">),</span> <span class="n">DIRECTION_HIGHER_BETTER</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_metric</span><span class="p">(</span><span class="n">GloVeSemanticSimilarityMetric</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">),</span> <span class="n">DIRECTION_HIGHER_BETTER</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">enable_gpt2_grammar_quality</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_metric</span><span class="p">(</span><span class="n">GPT2GrammarQuality</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">),</span> <span class="n">DIRECTION_LOWER_BETTER</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_metric</span><span class="p">(</span><span class="n">GPT2GrammarQualityMetric</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">),</span> <span class="n">DIRECTION_LOWER_BETTER</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">enable_bert_clf_prediction</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_classifier</span><span class="p">(</span><span class="n">BertClfPrediction</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">),</span> <span class="n">set_target_clf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_classifier</span><span class="p">(</span><span class="n">BertClassifier</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">),</span> <span class="n">set_target_clf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MetricBundle.add_metric"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle.add_metric">[docs]</a>    <span class="k">def</span> <span class="nf">add_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a customized metric to metric bundle.</span>
@@ -317,14 +318,14 @@
         <span class="sd">&quot;&quot;&quot;Set a target classifier to attack.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            classifier_metric (MetricBase): Add the object to metric</span>
-<span class="sd">                bundle then set it as the target classifier.</span>
+<span class="sd">            classifier_metric (ClassifierBase): A classifier metric to be added.</span>
 <span class="sd">            set_target_clf (bool): whether to set this classifier metric as target classifier.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classifier_metric</span><span class="p">,</span> <span class="n">ClassifierBase</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_classifiers</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">classifier_metric</span><span class="p">)]</span> <span class="o">=</span> <span class="n">classifier_metric</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_target_clf</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">classifier_metric</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">set_target_clf</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_target_classifier</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">classifier_metric</span><span class="p">))</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_target_classifier_by_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">classifier_metric</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="MetricBundle.get_classifier"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle.get_classifier">[docs]</a>    <span class="k">def</span> <span class="nf">get_classifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the classifier in current metric bundle.</span>
@@ -337,7 +338,7 @@
 <div class="viewcode-block" id="MetricBundle.get_classifier_names"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle.get_classifier_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_classifier_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_classifiers</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="MetricBundle.set_target_classifier"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle.set_target_classifier">[docs]</a>    <span class="k">def</span> <span class="nf">set_target_classifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier_name</span><span class="p">):</span>
+<div class="viewcode-block" id="MetricBundle.set_target_classifier_by_name"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle.set_target_classifier_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">set_target_classifier_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set a target classifier to attack.</span>
 
 <span class="sd">        Args:</span>
@@ -347,9 +348,13 @@
         <span class="k">assert</span> <span class="n">classifier_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classifiers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_target_clf</span> <span class="o">=</span> <span class="n">classifier_name</span></div>
 
+<div class="viewcode-block" id="MetricBundle.get_target_classifier_name"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle.get_target_classifier_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_target_classifier_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the name of the target classifier.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_clf</span></div>
+
 <div class="viewcode-block" id="MetricBundle.get_target_classifier"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle.get_target_classifier">[docs]</a>    <span class="k">def</span> <span class="nf">get_target_classifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the classifier for attack.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_classifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_clf</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_classifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_target_classifier_name</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="MetricBundle.measure_example"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle.measure_example">[docs]</a>    <span class="k">def</span> <span class="nf">measure_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compute the results of all metrics in the bundle for one pair of text.</span>
@@ -373,11 +378,37 @@
                 <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span></div>
 
+<div class="viewcode-block" id="MetricBundle.measure_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle.measure_batch">[docs]</a>    <span class="k">def</span> <span class="nf">measure_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase_list</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Measure the metric on a batch of paraphrase_list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            origin (str): the original text.</span>
+<span class="sd">            paraphrase_list (list): a set of paraphrase_list.</span>
+<span class="sd">            data_record (dict): the corresponding data record of original text.</span>
+<span class="sd">            paraphrase_field (str): the field name to paraphrase.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (list): a list containing dict of metrics for each paraphrase.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">paraphrase_list</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_metric_names</span><span class="p">():</span>
+            <span class="n">metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_metric</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">measure_batch</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase_list</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">paraphrase_list</span><span class="p">)):</span>
+                <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_classifier_names</span><span class="p">():</span>
+            <span class="n">classifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_classifier</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">classifier</span><span class="o">.</span><span class="n">measure_batch</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase_list</span><span class="p">,</span>
+                                              <span class="n">data_record</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">paraphrase_list</span><span class="p">)):</span>
+                <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
 <div class="viewcode-block" id="MetricBundle.measure_dataset"><a class="viewcode-back" href="../../../api/fibber.metrics.metric_utils.html#fibber.metrics.MetricBundle.measure_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">measure_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compute the all metrics for results on a dataset.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            results (dict): A fibber dataset with paraphrases.</span>
+<span class="sd">            results (dict): A fibber dataset with paraphrase_list.</span>
 <span class="sd">            output_filename (str): A json filename to store results and metrics.</span>
 
 <span class="sd">        Returns:</span>
@@ -398,13 +429,9 @@
                 <span class="n">data_record_tmp</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">)</span>
 
             <span class="c1"># Run metrics on paraphrased text</span>
-            <span class="n">paraphrase_metric_list</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">paraphrase</span> <span class="ow">in</span> <span class="n">data_record</span><span class="p">[</span><span class="n">paraphrase_field</span> <span class="o">+</span> <span class="s2">&quot;_paraphrases&quot;</span><span class="p">]:</span>
-                <span class="n">paraphrase_metric_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">measure_example</span><span class="p">(</span><span class="n">data_record</span><span class="p">[</span><span class="n">paraphrase_field</span><span class="p">],</span> <span class="n">paraphrase</span><span class="p">,</span>
-                                         <span class="n">data_record_tmp</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">))</span>
-
-            <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;paraphrase_metrics&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">paraphrase_metric_list</span>
+            <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;paraphrase_metrics&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">measure_batch</span><span class="p">(</span>
+                <span class="n">data_record</span><span class="p">[</span><span class="n">paraphrase_field</span><span class="p">],</span> <span class="n">data_record</span><span class="p">[</span><span class="n">paraphrase_field</span> <span class="o">+</span> <span class="s2">&quot;_paraphrases&quot;</span><span class="p">],</span>
+                <span class="n">data_record_tmp</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">)</span>
 
             <span class="c1"># save tmp output every 30 seconds</span>
             <span class="k">if</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> <span class="o">-</span> <span class="n">last_output_save_time</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="p">:</span>

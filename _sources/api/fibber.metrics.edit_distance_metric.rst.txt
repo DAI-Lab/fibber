@@ -1,7 +1,7 @@
-fibber.metrics.gpt2\_grammar\_quality module
+fibber.metrics.edit\_distance\_metric module
 ============================================
 
-.. automodule:: fibber.metrics.gpt2_grammar_quality
+.. automodule:: fibber.metrics.edit_distance_metric
    :members:
    :undoc-members:
    :show-inheritance:

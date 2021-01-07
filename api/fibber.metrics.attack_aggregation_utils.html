@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.attack_aggregation module &#8212; fibber 0.1.3 documentation</title>
+    <title>fibber.metrics.attack_aggregation_utils module &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -39,7 +39,7 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.metrics.bert_clf_prediction module" href="fibber.metrics.bert_clf_prediction.html" />
+    <link rel="next" title="fibber.metrics.bert_classifier module" href="fibber.metrics.bert_classifier.html" />
     <link rel="prev" title="fibber.metrics package" href="fibber.metrics.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -182,23 +182,27 @@
                     <ul>
                     
                         <li class="active">
-                            <a href="">fibber.metrics.attack_aggregation module</a>
+                            <a href="">fibber.metrics.attack_aggregation_utils module</a>
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.bert_clf_prediction.html">fibber.metrics.bert_clf_prediction module</a>
+                            <a href="fibber.metrics.bert_classifier.html">fibber.metrics.bert_classifier module</a>
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.edit_distance.html">fibber.metrics.edit_distance module</a>
+                            <a href="fibber.metrics.classifier_base.html">fibber.metrics.classifier_base module</a>
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.glove_semantic_similarity.html">fibber.metrics.glove_semantic_similarity module</a>
+                            <a href="fibber.metrics.edit_distance_metric.html">fibber.metrics.edit_distance_metric module</a>
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.gpt2_grammar_quality.html">fibber.metrics.gpt2_grammar_quality module</a>
+                            <a href="fibber.metrics.glove_semantic_similarity_metric.html">fibber.metrics.glove_semantic_similarity_metric module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.gpt2_grammar_quality_metric.html">fibber.metrics.gpt2_grammar_quality_metric module</a>
                         </li>
                     
                         <li class="">
@@ -210,7 +214,7 @@
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.use_semantic_similarity.html">fibber.metrics.use_semantic_similarity module</a>
+                            <a href="fibber.metrics.use_semantic_similarity_metric.html">fibber.metrics.use_semantic_similarity_metric module</a>
                         </li>
                     
                     </ul>
@@ -281,12 +285,12 @@
               
               <div>
                 
-  <div class="section" id="module-fibber.metrics.attack_aggregation">
-<span id="fibber-metrics-attack-aggregation-module"></span><h1>fibber.metrics.attack_aggregation module<a class="headerlink" href="#module-fibber.metrics.attack_aggregation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-fibber.metrics.attack_aggregation_utils">
+<span id="fibber-metrics-attack-aggregation-utils-module"></span><h1>fibber.metrics.attack_aggregation_utils module<a class="headerlink" href="#module-fibber.metrics.attack_aggregation_utils" title="Permalink to this headline">¶</a></h1>
 <p>This module defines customized metric aggregation functions.</p>
 <dl class="py function">
-<dt id="fibber.metrics.attack_aggregation.add_sentence_level_adversarial_attack_metrics">
-<code class="sig-prename descclassname">fibber.metrics.attack_aggregation.</code><code class="sig-name descname">add_sentence_level_adversarial_attack_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metric_bundle</span></em>, <em class="sig-param"><span class="n">gpt2_ppl_threshold</span></em>, <em class="sig-param"><span class="n">use_sim_threshold</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation.html#add_sentence_level_adversarial_attack_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation.add_sentence_level_adversarial_attack_metrics" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.attack_aggregation_utils.add_sentence_level_adversarial_attack_metrics">
+<code class="sig-prename descclassname">fibber.metrics.attack_aggregation_utils.</code><code class="sig-name descname">add_sentence_level_adversarial_attack_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metric_bundle</span></em>, <em class="sig-param"><span class="n">gpt2_ppl_threshold</span></em>, <em class="sig-param"><span class="n">use_sim_threshold</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation_utils.html#add_sentence_level_adversarial_attack_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation_utils.add_sentence_level_adversarial_attack_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add advanced aggregation functions related to adversarial attack to a specific metric
 bundle.</p>
 <dl class="field-list simple">
@@ -303,18 +307,19 @@ example.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="fibber.metrics.attack_aggregation.editing_distance_element_worker">
-<code class="sig-prename descclassname">fibber.metrics.attack_aggregation.</code><code class="sig-name descname">editing_distance_element_worker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation.html#editing_distance_element_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation.editing_distance_element_worker" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.attack_aggregation_utils.editing_distance_element_worker">
+<code class="sig-prename descclassname">fibber.metrics.attack_aggregation_utils.</code><code class="sig-name descname">editing_distance_element_worker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation_utils.html#editing_distance_element_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation_utils.editing_distance_element_worker" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="fibber.metrics.attack_aggregation.get_best_adv_by_ppl">
-<code class="sig-prename descclassname">fibber.metrics.attack_aggregation.</code><code class="sig-name descname">get_best_adv_by_ppl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">gpt2_ppl_threshold</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">use_sim_threshold</span><span class="o">=</span><span class="default_value">0.85</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation.html#get_best_adv_by_ppl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation.get_best_adv_by_ppl" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.attack_aggregation_utils.get_best_adv_by_ppl">
+<code class="sig-prename descclassname">fibber.metrics.attack_aggregation_utils.</code><code class="sig-name descname">get_best_adv_by_ppl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">target_clf</span></em>, <em class="sig-param"><span class="n">gpt2_ppl_threshold</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">use_sim_threshold</span><span class="o">=</span><span class="default_value">0.85</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation_utils.html#get_best_adv_by_ppl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation_utils.get_best_adv_by_ppl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the adversarial example with lowest perplexity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_record</strong> (<em>dict</em>) – a data record with paraphrases and metrics.</p></li>
+<li><p><strong>target_clf</strong> (<em>str</em>) – the targeted classifier.</p></li>
 <li><p><strong>gpt2_ppl_threshold</strong> (<em>float</em>) – the gpt2 perplexity ration threshold for a legitimate
 adversarial example.</p></li>
 <li><p><strong>use_sim_threshold</strong> (<em>float</em>) – the USE cosine similarity threshold for a legitimate adversarial
@@ -335,13 +340,14 @@ example.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="fibber.metrics.attack_aggregation.get_best_adv_by_sim">
-<code class="sig-prename descclassname">fibber.metrics.attack_aggregation.</code><code class="sig-name descname">get_best_adv_by_sim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">gpt2_ppl_threshold</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">use_sim_threshold</span><span class="o">=</span><span class="default_value">0.85</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation.html#get_best_adv_by_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation.get_best_adv_by_sim" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.attack_aggregation_utils.get_best_adv_by_sim">
+<code class="sig-prename descclassname">fibber.metrics.attack_aggregation_utils.</code><code class="sig-name descname">get_best_adv_by_sim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">target_clf</span></em>, <em class="sig-param"><span class="n">gpt2_ppl_threshold</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">use_sim_threshold</span><span class="o">=</span><span class="default_value">0.85</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation_utils.html#get_best_adv_by_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation_utils.get_best_adv_by_sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the adversarial example with best similarity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_record</strong> (<em>dict</em>) – a data record with paraphrases and metrics.</p></li>
+<li><p><strong>target_clf</strong> (<em>str</em>) – the targeted classifier.</p></li>
 <li><p><strong>gpt2_ppl_threshold</strong> (<em>float</em>) – the gpt2 perplexity ration threshold for a legitimate
 adversarial example.</p></li>
 <li><p><strong>use_sim_threshold</strong> (<em>float</em>) – the USE cosine similarity threshold for a legitimate adversarial
@@ -362,8 +368,8 @@ example.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="fibber.metrics.attack_aggregation.get_best_adv_metric_fn_constructor">
-<code class="sig-prename descclassname">fibber.metrics.attack_aggregation.</code><code class="sig-name descname">get_best_adv_metric_fn_constructor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">get_best_adv_fn</span></em>, <em class="sig-param"><span class="n">metric_name</span></em>, <em class="sig-param"><span class="n">gpt2_ppl_threshold</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">use_sim_threshold</span><span class="o">=</span><span class="default_value">0.85</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation.html#get_best_adv_metric_fn_constructor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation.get_best_adv_metric_fn_constructor" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.attack_aggregation_utils.get_best_adv_metric_fn_constructor">
+<code class="sig-prename descclassname">fibber.metrics.attack_aggregation_utils.</code><code class="sig-name descname">get_best_adv_metric_fn_constructor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">get_best_adv_fn</span></em>, <em class="sig-param"><span class="n">metric_name</span></em>, <em class="sig-param"><span class="n">target_clf</span></em>, <em class="sig-param"><span class="n">gpt2_ppl_threshold</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">use_sim_threshold</span><span class="o">=</span><span class="default_value">0.85</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation_utils.html#get_best_adv_metric_fn_constructor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation_utils.get_best_adv_metric_fn_constructor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an aggregation function that extracts the value of a specified metric for the best
 adversarial example.</p>
 <p>The aggregation function returns NaN if no legitimate adversarial example is found.</p>
@@ -373,6 +379,7 @@ adversarial example.</p>
 <li><p><strong>get_best_adv_fn</strong> (<em>fn</em>) – a function that returns the metric dict of the best adversarial
 example.</p></li>
 <li><p><strong>metric_name</strong> (<em>str</em>) – a metric name.</p></li>
+<li><p><strong>target_clf</strong> (<em>str</em>) – the targeted classifier.</p></li>
 <li><p><strong>gpt2_ppl_threshold</strong> (<em>float</em>) – the gpt2 perplexity ration threshold for a legitimate
 adversarial example.</p></li>
 <li><p><strong>use_sim_threshold</strong> (<em>float</em>) – the USE cosine similarity threshold for a legitimate adversarial
@@ -389,23 +396,23 @@ example.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="fibber.metrics.attack_aggregation.pairwise_editing_distance_fn">
-<code class="sig-prename descclassname">fibber.metrics.attack_aggregation.</code><code class="sig-name descname">pairwise_editing_distance_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation.html#pairwise_editing_distance_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation.pairwise_editing_distance_fn" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.attack_aggregation_utils.pairwise_editing_distance_fn">
+<code class="sig-prename descclassname">fibber.metrics.attack_aggregation_utils.</code><code class="sig-name descname">pairwise_editing_distance_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation_utils.html#pairwise_editing_distance_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation_utils.pairwise_editing_distance_fn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the average pairwise editing distance metric.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="fibber.metrics.attack_aggregation.paraphrase_classification_accuracy_agg_fn_constructor">
-<code class="sig-prename descclassname">fibber.metrics.attack_aggregation.</code><code class="sig-name descname">paraphrase_classification_accuracy_agg_fn_constructor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gpt2_ppl_threshold</span></em>, <em class="sig-param"><span class="n">use_sim_threshold</span></em>, <em class="sig-param"><span class="n">target_clf</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation.html#paraphrase_classification_accuracy_agg_fn_constructor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation.paraphrase_classification_accuracy_agg_fn_constructor" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.attack_aggregation_utils.paraphrase_classification_accuracy_agg_fn_constructor">
+<code class="sig-prename descclassname">fibber.metrics.attack_aggregation_utils.</code><code class="sig-name descname">paraphrase_classification_accuracy_agg_fn_constructor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gpt2_ppl_threshold</span></em>, <em class="sig-param"><span class="n">use_sim_threshold</span></em>, <em class="sig-param"><span class="n">target_clf</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/attack_aggregation_utils.html#paraphrase_classification_accuracy_agg_fn_constructor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.attack_aggregation_utils.paraphrase_classification_accuracy_agg_fn_constructor" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function makes a aggregation function for the target classification metric.</p>
 <p>The aggregation function outputs the after attack accuracy of the BERT classifier.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gpt2_ppl_threshold</strong> (<em>float</em>) – the threshold for <code class="docutils literal notranslate"><span class="pre">GPT2GrammarQuality</span></code> metric. The
+<li><p><strong>gpt2_ppl_threshold</strong> (<em>float</em>) – the threshold for <code class="docutils literal notranslate"><span class="pre">GPT2GrammarQualityMetric</span></code> metric. The
 adversarial example should have the perplexity ratio measured by GPT2 lower than
 this threshold.</p></li>
-<li><p><strong>use_sim_threshold</strong> (<em>float</em>) – the threshold for <code class="docutils literal notranslate"><span class="pre">USESemanticSimilarity</span></code> metric. The
+<li><p><strong>use_sim_threshold</strong> (<em>float</em>) – the threshold for <code class="docutils literal notranslate"><span class="pre">USESemanticSimilarityMetric</span></code> metric. The
 adversarial example should have the USE similarity higher than this threshold.</p></li>
 <li><p><strong>target_clf</strong> (<em>str</em>) – the metric name of the target classifier.</p></li>
 </ul>
@@ -422,7 +429,7 @@ adversarial example should have the USE similarity higher than this threshold.</
               <div class='prev-next-bottom'>
                 
     <a class='left-prev' id="prev-link" href="fibber.metrics.html" title="previous page">fibber.metrics package</a>
-    <a class='right-next' id="next-link" href="fibber.metrics.bert_clf_prediction.html" title="next page">fibber.metrics.bert_clf_prediction module</a>
+    <a class='right-next' id="next-link" href="fibber.metrics.bert_classifier.html" title="next page">fibber.metrics.bert_classifier module</a>
 
               </div>
               

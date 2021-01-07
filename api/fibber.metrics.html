@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics package &#8212; fibber 0.1.3 documentation</title>
+    <title>fibber.metrics package &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -39,7 +39,7 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.metrics.attack_aggregation module" href="fibber.metrics.attack_aggregation.html" />
+    <link rel="next" title="fibber.metrics.attack_aggregation_utils module" href="fibber.metrics.attack_aggregation_utils.html" />
     <link rel="prev" title="fibber.datasets.preprocess_yelp module" href="fibber.datasets.preprocess_yelp.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -182,23 +182,27 @@
                     <ul>
                     
                         <li class="">
-                            <a href="fibber.metrics.attack_aggregation.html">fibber.metrics.attack_aggregation module</a>
+                            <a href="fibber.metrics.attack_aggregation_utils.html">fibber.metrics.attack_aggregation_utils module</a>
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.bert_clf_prediction.html">fibber.metrics.bert_clf_prediction module</a>
+                            <a href="fibber.metrics.bert_classifier.html">fibber.metrics.bert_classifier module</a>
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.edit_distance.html">fibber.metrics.edit_distance module</a>
+                            <a href="fibber.metrics.classifier_base.html">fibber.metrics.classifier_base module</a>
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.glove_semantic_similarity.html">fibber.metrics.glove_semantic_similarity module</a>
+                            <a href="fibber.metrics.edit_distance_metric.html">fibber.metrics.edit_distance_metric module</a>
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.gpt2_grammar_quality.html">fibber.metrics.gpt2_grammar_quality module</a>
+                            <a href="fibber.metrics.glove_semantic_similarity_metric.html">fibber.metrics.glove_semantic_similarity_metric module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.gpt2_grammar_quality_metric.html">fibber.metrics.gpt2_grammar_quality_metric module</a>
                         </li>
                     
                         <li class="">
@@ -210,7 +214,7 @@
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.use_semantic_similarity.html">fibber.metrics.use_semantic_similarity module</a>
+                            <a href="fibber.metrics.use_semantic_similarity_metric.html">fibber.metrics.use_semantic_similarity_metric module</a>
                         </li>
                     
                     </ul>
@@ -298,26 +302,27 @@
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.attack_aggregation.html">fibber.metrics.attack_aggregation module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.bert_clf_prediction.html">fibber.metrics.bert_clf_prediction module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.edit_distance.html">fibber.metrics.edit_distance module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.glove_semantic_similarity.html">fibber.metrics.glove_semantic_similarity module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.gpt2_grammar_quality.html">fibber.metrics.gpt2_grammar_quality module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.attack_aggregation_utils.html">fibber.metrics.attack_aggregation_utils module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.bert_classifier.html">fibber.metrics.bert_classifier module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.classifier_base.html">fibber.metrics.classifier_base module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.edit_distance_metric.html">fibber.metrics.edit_distance_metric module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.glove_semantic_similarity_metric.html">fibber.metrics.glove_semantic_similarity_metric module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.gpt2_grammar_quality_metric.html">fibber.metrics.gpt2_grammar_quality_metric module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.metrics.metric_base.html">fibber.metrics.metric_base module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.metrics.metric_utils.html">fibber.metrics.metric_utils module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.use_semantic_similarity.html">fibber.metrics.use_semantic_similarity module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.use_semantic_similarity_metric.html">fibber.metrics.use_semantic_similarity_metric module</a></li>
 </ul>
 </div>
 </div>
 <div class="section" id="module-fibber.metrics">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fibber.metrics" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="fibber.metrics.BertClfPrediction">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.</code><code class="sig-name descname">BertClfPrediction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">trainset</span></em>, <em class="sig-param"><span class="n">testset</span></em>, <em class="sig-param"><span class="n">bert_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">bert_clf_steps</span><span class="o">=</span><span class="default_value">20000</span></em>, <em class="sig-param"><span class="n">bert_clf_bs</span><span class="o">=</span><span class="default_value">32</span></em>, <em class="sig-param"><span class="n">bert_clf_lr</span><span class="o">=</span><span class="default_value">2e-05</span></em>, <em class="sig-param"><span class="n">bert_clf_optimizer</span><span class="o">=</span><span class="default_value">'adamw'</span></em>, <em class="sig-param"><span class="n">bert_clf_weight_decay</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">bert_clf_period_summary</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">bert_clf_period_val</span><span class="o">=</span><span class="default_value">500</span></em>, <em class="sig-param"><span class="n">bert_clf_period_save</span><span class="o">=</span><span class="default_value">5000</span></em>, <em class="sig-param"><span class="n">bert_clf_val_steps</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_clf_prediction.html#BertClfPrediction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClfPrediction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase" title="fibber.metrics.metric_base.MetricBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.metric_base.MetricBase</span></code></a></p>
-<p>BERT classifier prediction on paraphrases.</p>
+<dt id="fibber.metrics.BertClassifier">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.</code><code class="sig-name descname">BertClassifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">trainset</span></em>, <em class="sig-param"><span class="n">testset</span></em>, <em class="sig-param"><span class="n">bert_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">bert_clf_steps</span><span class="o">=</span><span class="default_value">20000</span></em>, <em class="sig-param"><span class="n">bert_clf_bs</span><span class="o">=</span><span class="default_value">32</span></em>, <em class="sig-param"><span class="n">bert_clf_lr</span><span class="o">=</span><span class="default_value">2e-05</span></em>, <em class="sig-param"><span class="n">bert_clf_optimizer</span><span class="o">=</span><span class="default_value">'adamw'</span></em>, <em class="sig-param"><span class="n">bert_clf_weight_decay</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">bert_clf_period_summary</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">bert_clf_period_val</span><span class="o">=</span><span class="default_value">500</span></em>, <em class="sig-param"><span class="n">bert_clf_period_save</span><span class="o">=</span><span class="default_value">5000</span></em>, <em class="sig-param"><span class="n">bert_clf_val_steps</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_classifier.html#BertClassifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fibber.metrics.classifier_base.html#fibber.metrics.classifier_base.ClassifierBase" title="fibber.metrics.classifier_base.ClassifierBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.classifier_base.ClassifierBase</span></code></a></p>
+<p>BERT classifier prediction on paraphrase_list.</p>
 <p>This metric is special, it does not compare the original and paraphrased sentence.
-Instead, it outputs the classifier prediction on paraphrases. So we should not compute
+Instead, it outputs the classifier prediction on paraphrase_list. So we should not compute
 mean or std on this metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -340,46 +345,20 @@ summary.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="fibber.metrics.BertClfPrediction.measure_batch">
-<code class="sig-name descname">measure_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrases</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_clf_prediction.html#BertClfPrediction.measure_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClfPrediction.measure_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Measure the metric on a batch of paraphrases.</p>
+<dt id="fibber.metrics.BertClassifier.predict_dist_batch">
+<code class="sig-name descname">predict_dist_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase_list</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_classifier.html#BertClassifier.predict_dist_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClassifier.predict_dist_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the log-probability distribution over classes for one batch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>origin</strong> (<em>str</em>) – the original text.</p></li>
-<li><p><strong>paraphrases</strong> (<em>list</em>) – a set of paraphrases.</p></li>
+<li><p><strong>paraphrase_list</strong> (<em>list</em>) – a set of paraphrase_list.</p></li>
 <li><p><strong>data_record</strong> (<em>dict</em>) – the corresponding data record of original text.</p></li>
 <li><p><strong>paraphrase_field</strong> (<em>str</em>) – the field name to paraphrase.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a list containing the metric for each paraphrase.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="fibber.metrics.BertClfPrediction.measure_example">
-<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_clf_prediction.html#BertClfPrediction.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClfPrediction.measure_example" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="fibber.metrics.BertClfPrediction.predict_batch">
-<code class="sig-name descname">predict_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em>, <em class="sig-param"><span class="n">context</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_clf_prediction.html#BertClfPrediction.predict_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClfPrediction.predict_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the prediction of the BERT prediction.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<em>[</em><em>str</em><em>]</em>) – a list of strs to be classified.</p></li>
-<li><p><strong>context</strong> (<em>str</em><em> or </em><em>None</em>) – On regular classification datasets, context is None.
-On NLI datasets, context contains the premise.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the prediction of the classifier.</p>
+<dd class="field-even"><p>a numpy array of size <code class="docutils literal notranslate"><span class="pre">(batch_size</span> <span class="pre">*</span> <span class="pre">num_labels)</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>(np.array)</p>
@@ -388,19 +367,20 @@ On NLI datasets, context contains the premise.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="fibber.metrics.BertClfPrediction.predict_dist_batch">
-<code class="sig-name descname">predict_dist_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em>, <em class="sig-param"><span class="n">context</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_clf_prediction.html#BertClfPrediction.predict_dist_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClfPrediction.predict_dist_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get log probability of the BERT prediction.</p>
+<dt id="fibber.metrics.BertClassifier.predict_dist_example">
+<code class="sig-name descname">predict_dist_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_classifier.html#BertClassifier.predict_dist_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClassifier.predict_dist_example" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the log-probability distribution over classes for one example.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<em>[</em><em>str</em><em>]</em>) – a list of strs to be classified.</p></li>
-<li><p><strong>context</strong> (<em>str</em><em> or </em><em>None</em>) – On regular classification datasets, context is None.
-On NLI datasets, context contains the premise.</p></li>
+<li><p><strong>origin</strong> (<em>str</em>) – the original text.</p></li>
+<li><p><strong>paraphrase</strong> (<em>list</em>) – a set of paraphrase_list.</p></li>
+<li><p><strong>data_record</strong> (<em>dict</em>) – the corresponding data record of original text.</p></li>
+<li><p><strong>paraphrase_field</strong> (<em>str</em>) – the field name to paraphrase.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a numpy array of the unnormalized log probability over on each category.</p>
+<dd class="field-even"><p>a numpy array of size <code class="docutils literal notranslate"><span class="pre">(num_labels)</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>(np.array)</p>
@@ -411,8 +391,8 @@ On NLI datasets, context contains the premise.</p></li>
 </dd></dl>
 
 <dl class="py class">
-<dt id="fibber.metrics.EditDistance">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.</code><code class="sig-name descname">EditDistance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">editing_distance_ignore_punctuation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/edit_distance.html#EditDistance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.EditDistance" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.EditDistanceMetric">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.</code><code class="sig-name descname">EditDistanceMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">editing_distance_ignore_punctuation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/edit_distance_metric.html#EditDistanceMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.EditDistanceMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase" title="fibber.metrics.metric_base.MetricBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.metric_base.MetricBase</span></code></a></p>
 <p>This class measures the editing distance between two sentences.</p>
 <p>Initialize.</p>
@@ -423,8 +403,8 @@ computing editing distance.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="fibber.metrics.EditDistance.measure_example">
-<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/edit_distance.html#EditDistance.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.EditDistance.measure_example" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.EditDistanceMetric.measure_example">
+<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/edit_distance_metric.html#EditDistanceMetric.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.EditDistanceMetric.measure_example" title="Permalink to this definition">¶</a></dt>
 <dd><p>compute editing distance between original and parapharse.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -447,21 +427,21 @@ computing editing distance.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="fibber.metrics.GPT2GrammarQuality">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.</code><code class="sig-name descname">GPT2GrammarQuality</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gpt2_pretrained_model</span><span class="o">=</span><span class="default_value">'gpt2-medium'</span></em>, <em class="sig-param"><span class="n">gpt2_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/gpt2_grammar_quality.html#GPT2GrammarQuality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.GPT2GrammarQuality" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.GPT2GrammarQualityMetric">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.</code><code class="sig-name descname">GPT2GrammarQualityMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gpt2_pretrained_model</span><span class="o">=</span><span class="default_value">'gpt2-medium'</span></em>, <em class="sig-param"><span class="n">gpt2_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/gpt2_grammar_quality_metric.html#GPT2GrammarQualityMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.GPT2GrammarQualityMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase" title="fibber.metrics.metric_base.MetricBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.metric_base.MetricBase</span></code></a></p>
 <p>This metric computes the perplexity of paraphrased text divided by the perplexity of
 original text. The perplexity is measured using GPT2 model.</p>
 <p>Initialize GPT2 model.</p>
 <dl class="py method">
-<dt id="fibber.metrics.GPT2GrammarQuality.measure_batch">
-<code class="sig-name descname">measure_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrases</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/gpt2_grammar_quality.html#GPT2GrammarQuality.measure_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.GPT2GrammarQuality.measure_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Measure the metric on a batch of paraphrases.</p>
+<dt id="fibber.metrics.GPT2GrammarQualityMetric.measure_batch">
+<code class="sig-name descname">measure_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase_list</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/gpt2_grammar_quality_metric.html#GPT2GrammarQualityMetric.measure_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.GPT2GrammarQualityMetric.measure_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure the metric on a batch of paraphrase_list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>origin</strong> (<em>str</em>) – the original text.</p></li>
-<li><p><strong>paraphrases</strong> (<em>list</em>) – a set of paraphrases.</p></li>
+<li><p><strong>paraphrase_list</strong> (<em>list</em>) – a set of paraphrase_list.</p></li>
 <li><p><strong>data_record</strong> (<em>dict</em>) – the corresponding data record of original text.</p></li>
 <li><p><strong>paraphrase_field</strong> (<em>str</em>) – the field name to paraphrase.</p></li>
 </ul>
@@ -476,8 +456,8 @@ original text. The perplexity is measured using GPT2 model.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="fibber.metrics.GPT2GrammarQuality.measure_example">
-<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/gpt2_grammar_quality.html#GPT2GrammarQuality.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.GPT2GrammarQuality.measure_example" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.GPT2GrammarQualityMetric.measure_example">
+<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/gpt2_grammar_quality_metric.html#GPT2GrammarQualityMetric.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.GPT2GrammarQualityMetric.measure_example" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the perplexity ratio.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -494,14 +474,14 @@ original text. The perplexity is measured using GPT2 model.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="fibber.metrics.GloVeSemanticSimilarity">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.</code><code class="sig-name descname">GloVeSemanticSimilarity</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/glove_semantic_similarity.html#GloVeSemanticSimilarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.GloVeSemanticSimilarity" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.GloVeSemanticSimilarityMetric">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.</code><code class="sig-name descname">GloVeSemanticSimilarityMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/glove_semantic_similarity_metric.html#GloVeSemanticSimilarityMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.GloVeSemanticSimilarityMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase" title="fibber.metrics.metric_base.MetricBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.metric_base.MetricBase</span></code></a></p>
 <p>This metric computes the cosine similarity between two sentences.</p>
 <p>Initialize, load Glove embeddings.</p>
 <dl class="py method">
-<dt id="fibber.metrics.GloVeSemanticSimilarity.measure_example">
-<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/glove_semantic_similarity.html#GloVeSemanticSimilarity.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.GloVeSemanticSimilarity.measure_example" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.GloVeSemanticSimilarityMetric.measure_example">
+<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/glove_semantic_similarity_metric.html#GloVeSemanticSimilarityMetric.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.GloVeSemanticSimilarityMetric.measure_example" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the Glove cosine similarity between two sentences.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -530,16 +510,16 @@ can use the <code class="docutils literal notranslate"><span class="pre">origin<
 or <code class="docutils literal notranslate"><span class="pre">label</span></code>. Thus the <code class="docutils literal notranslate"><span class="pre">data_record</span></code> and <code class="docutils literal notranslate"><span class="pre">paraphrase_field</span></code> are also provided as args.</p>
 <p>Some metrics may run more efficiently on a batch of data. In this case, you should overwrite
 the <code class="docutils literal notranslate"><span class="pre">measure_batch</span></code> function. If you don’t overwrite batch_call, it will compute the metric
-of paraphrases one by one.</p>
+of paraphrase_list one by one.</p>
 <dl class="py method">
 <dt id="fibber.metrics.MetricBase.measure_batch">
-<code class="sig-name descname">measure_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrases</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_base.html#MetricBase.measure_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.MetricBase.measure_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Measure the metric on a batch of paraphrases.</p>
+<code class="sig-name descname">measure_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase_list</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_base.html#MetricBase.measure_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.MetricBase.measure_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure the metric on a batch of paraphrase_list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>origin</strong> (<em>str</em>) – the original text.</p></li>
-<li><p><strong>paraphrases</strong> (<em>list</em>) – a set of paraphrases.</p></li>
+<li><p><strong>paraphrase_list</strong> (<em>list</em>) – a set of paraphrase_list.</p></li>
 <li><p><strong>data_record</strong> (<em>dict</em>) – the corresponding data record of original text.</p></li>
 <li><p><strong>paraphrase_field</strong> (<em>str</em>) – the field name to paraphrase.</p></li>
 </ul>
@@ -606,8 +586,7 @@ and DIRECTION_UNKNOWN.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>classifier_metric</strong> (<a class="reference internal" href="#fibber.metrics.MetricBase" title="fibber.metrics.MetricBase"><em>MetricBase</em></a>) – Add the object to metric
-bundle then set it as the target classifier.</p></li>
+<li><p><strong>classifier_metric</strong> (<a class="reference internal" href="fibber.metrics.classifier_base.html#fibber.metrics.classifier_base.ClassifierBase" title="fibber.metrics.classifier_base.ClassifierBase"><em>ClassifierBase</em></a>) – A classifier metric to be added.</p></li>
 <li><p><strong>set_target_clf</strong> (<em>bool</em>) – whether to set this classifier metric as target classifier.</p></li>
 </ul>
 </dd>
@@ -739,13 +718,41 @@ and <code class="docutils literal notranslate"><span class="pre">DIRECTION_UNKNO
 </dd></dl>
 
 <dl class="py method">
+<dt id="fibber.metrics.MetricBundle.get_target_classifier_name">
+<code class="sig-name descname">get_target_classifier_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.get_target_classifier_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.MetricBundle.get_target_classifier_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the name of the target classifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.MetricBundle.measure_batch">
+<code class="sig-name descname">measure_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase_list</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.measure_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.MetricBundle.measure_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure the metric on a batch of paraphrase_list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>origin</strong> (<em>str</em>) – the original text.</p></li>
+<li><p><strong>paraphrase_list</strong> (<em>list</em>) – a set of paraphrase_list.</p></li>
+<li><p><strong>data_record</strong> (<em>dict</em>) – the corresponding data record of original text.</p></li>
+<li><p><strong>paraphrase_field</strong> (<em>str</em>) – the field name to paraphrase.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list containing dict of metrics for each paraphrase.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="fibber.metrics.MetricBundle.measure_dataset">
 <code class="sig-name descname">measure_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">results</span></em>, <em class="sig-param"><span class="n">output_filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.measure_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.MetricBundle.measure_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the all metrics for results on a dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>results</strong> (<em>dict</em>) – A fibber dataset with paraphrases.</p></li>
+<li><p><strong>results</strong> (<em>dict</em>) – A fibber dataset with paraphrase_list.</p></li>
 <li><p><strong>output_filename</strong> (<em>str</em>) – A json filename to store results and metrics.</p></li>
 </ul>
 </dd>
@@ -785,8 +792,8 @@ and <code class="docutils literal notranslate"><span class="pre">DIRECTION_UNKNO
 </dd></dl>
 
 <dl class="py method">
-<dt id="fibber.metrics.MetricBundle.set_target_classifier">
-<code class="sig-name descname">set_target_classifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classifier_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.set_target_classifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.MetricBundle.set_target_classifier" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.MetricBundle.set_target_classifier_by_name">
+<code class="sig-name descname">set_target_classifier_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classifier_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/metric_utils.html#MetricBundle.set_target_classifier_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.MetricBundle.set_target_classifier_by_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a target classifier to attack.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -798,21 +805,21 @@ and <code class="docutils literal notranslate"><span class="pre">DIRECTION_UNKNO
 </dd></dl>
 
 <dl class="py class">
-<dt id="fibber.metrics.USESemanticSimilarity">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.</code><code class="sig-name descname">USESemanticSimilarity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">use_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/use_semantic_similarity.html#USESemanticSimilarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.USESemanticSimilarity" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.USESemanticSimilarityMetric">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.</code><code class="sig-name descname">USESemanticSimilarityMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">use_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/use_semantic_similarity_metric.html#USESemanticSimilarityMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.USESemanticSimilarityMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase" title="fibber.metrics.metric_base.MetricBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.metric_base.MetricBase</span></code></a></p>
 <p>This metric uses universal sentence encoder to measure the semantic similarity of
 two sentences.</p>
 <p>Initialize universal sentence encoder.</p>
 <dl class="py method">
-<dt id="fibber.metrics.USESemanticSimilarity.measure_batch">
-<code class="sig-name descname">measure_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrases</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/use_semantic_similarity.html#USESemanticSimilarity.measure_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.USESemanticSimilarity.measure_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Measure the metric on a batch of paraphrases.</p>
+<dt id="fibber.metrics.USESemanticSimilarityMetric.measure_batch">
+<code class="sig-name descname">measure_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase_list</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/use_semantic_similarity_metric.html#USESemanticSimilarityMetric.measure_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.USESemanticSimilarityMetric.measure_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure the metric on a batch of paraphrase_list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>origin</strong> (<em>str</em>) – the original text.</p></li>
-<li><p><strong>paraphrases</strong> (<em>list</em>) – a set of paraphrases.</p></li>
+<li><p><strong>paraphrase_list</strong> (<em>list</em>) – a set of paraphrase_list.</p></li>
 <li><p><strong>data_record</strong> (<em>dict</em>) – the corresponding data record of original text.</p></li>
 <li><p><strong>paraphrase_field</strong> (<em>str</em>) – the field name to paraphrase.</p></li>
 </ul>
@@ -827,8 +834,8 @@ two sentences.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="fibber.metrics.USESemanticSimilarity.measure_example">
-<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/use_semantic_similarity.html#USESemanticSimilarity.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.USESemanticSimilarity.measure_example" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.USESemanticSimilarityMetric.measure_example">
+<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/use_semantic_similarity_metric.html#USESemanticSimilarityMetric.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.USESemanticSimilarityMetric.measure_example" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the cosine similarity between the embedding of original text and paraphrased
 text.</p>
 <dl class="field-list simple">
@@ -855,7 +862,7 @@ text.</p>
               <div class='prev-next-bottom'>
                 
     <a class='left-prev' id="prev-link" href="fibber.datasets.preprocess_yelp.html" title="previous page">fibber.datasets.preprocess_yelp module</a>
-    <a class='right-next' id="next-link" href="fibber.metrics.attack_aggregation.html" title="next page">fibber.metrics.attack_aggregation module</a>
+    <a class='right-next' id="next-link" href="fibber.metrics.attack_aggregation_utils.html" title="next page">fibber.metrics.attack_aggregation_utils module</a>
 
               </div>
               

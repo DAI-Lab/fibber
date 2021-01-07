@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.glove_semantic_similarity module &#8212; fibber 0.1.3 documentation</title>
+    <title>fibber.metrics.glove_semantic_similarity_metric module &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -39,8 +39,8 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.metrics.gpt2_grammar_quality module" href="fibber.metrics.gpt2_grammar_quality.html" />
-    <link rel="prev" title="fibber.metrics.edit_distance module" href="fibber.metrics.edit_distance.html" />
+    <link rel="next" title="fibber.metrics.gpt2_grammar_quality_metric module" href="fibber.metrics.gpt2_grammar_quality_metric.html" />
+    <link rel="prev" title="fibber.metrics.edit_distance_metric module" href="fibber.metrics.edit_distance_metric.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
   </head>
@@ -182,23 +182,27 @@
                     <ul>
                     
                         <li class="">
-                            <a href="fibber.metrics.attack_aggregation.html">fibber.metrics.attack_aggregation module</a>
+                            <a href="fibber.metrics.attack_aggregation_utils.html">fibber.metrics.attack_aggregation_utils module</a>
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.bert_clf_prediction.html">fibber.metrics.bert_clf_prediction module</a>
+                            <a href="fibber.metrics.bert_classifier.html">fibber.metrics.bert_classifier module</a>
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.edit_distance.html">fibber.metrics.edit_distance module</a>
+                            <a href="fibber.metrics.classifier_base.html">fibber.metrics.classifier_base module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.edit_distance_metric.html">fibber.metrics.edit_distance_metric module</a>
                         </li>
                     
                         <li class="active">
-                            <a href="">fibber.metrics.glove_semantic_similarity module</a>
+                            <a href="">fibber.metrics.glove_semantic_similarity_metric module</a>
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.gpt2_grammar_quality.html">fibber.metrics.gpt2_grammar_quality module</a>
+                            <a href="fibber.metrics.gpt2_grammar_quality_metric.html">fibber.metrics.gpt2_grammar_quality_metric module</a>
                         </li>
                     
                         <li class="">
@@ -210,7 +214,7 @@
                         </li>
                     
                         <li class="">
-                            <a href="fibber.metrics.use_semantic_similarity.html">fibber.metrics.use_semantic_similarity module</a>
+                            <a href="fibber.metrics.use_semantic_similarity_metric.html">fibber.metrics.use_semantic_similarity_metric module</a>
                         </li>
                     
                     </ul>
@@ -281,19 +285,19 @@
               
               <div>
                 
-  <div class="section" id="module-fibber.metrics.glove_semantic_similarity">
-<span id="fibber-metrics-glove-semantic-similarity-module"></span><h1>fibber.metrics.glove_semantic_similarity module<a class="headerlink" href="#module-fibber.metrics.glove_semantic_similarity" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-fibber.metrics.glove_semantic_similarity_metric">
+<span id="fibber-metrics-glove-semantic-similarity-metric-module"></span><h1>fibber.metrics.glove_semantic_similarity_metric module<a class="headerlink" href="#module-fibber.metrics.glove_semantic_similarity_metric" title="Permalink to this headline">¶</a></h1>
 <p>This metric computes the cosine similarity between two sentences. The sentence embedding is
 the sum of GloVe word embeddings.</p>
 <dl class="py class">
-<dt id="fibber.metrics.glove_semantic_similarity.GloVeSemanticSimilarity">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.glove_semantic_similarity.</code><code class="sig-name descname">GloVeSemanticSimilarity</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/glove_semantic_similarity.html#GloVeSemanticSimilarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.glove_semantic_similarity.GloVeSemanticSimilarity" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.glove_semantic_similarity_metric.GloVeSemanticSimilarityMetric">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.glove_semantic_similarity_metric.</code><code class="sig-name descname">GloVeSemanticSimilarityMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/glove_semantic_similarity_metric.html#GloVeSemanticSimilarityMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.glove_semantic_similarity_metric.GloVeSemanticSimilarityMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase" title="fibber.metrics.metric_base.MetricBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.metric_base.MetricBase</span></code></a></p>
 <p>This metric computes the cosine similarity between two sentences.</p>
 <p>Initialize, load Glove embeddings.</p>
 <dl class="py method">
-<dt id="fibber.metrics.glove_semantic_similarity.GloVeSemanticSimilarity.measure_example">
-<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/glove_semantic_similarity.html#GloVeSemanticSimilarity.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.glove_semantic_similarity.GloVeSemanticSimilarity.measure_example" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.glove_semantic_similarity_metric.GloVeSemanticSimilarityMetric.measure_example">
+<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/glove_semantic_similarity_metric.html#GloVeSemanticSimilarityMetric.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.glove_semantic_similarity_metric.GloVeSemanticSimilarityMetric.measure_example" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the Glove cosine similarity between two sentences.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -310,8 +314,8 @@ the sum of GloVe word embeddings.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="fibber.metrics.glove_semantic_similarity.compute_emb">
-<code class="sig-prename descclassname">fibber.metrics.glove_semantic_similarity.</code><code class="sig-name descname">compute_emb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">emb_table</span></em>, <em class="sig-param"><span class="n">tok_to_id</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/glove_semantic_similarity.html#compute_emb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.glove_semantic_similarity.compute_emb" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.glove_semantic_similarity_metric.compute_emb">
+<code class="sig-prename descclassname">fibber.metrics.glove_semantic_similarity_metric.</code><code class="sig-name descname">compute_emb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">emb_table</span></em>, <em class="sig-param"><span class="n">tok_to_id</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/glove_semantic_similarity_metric.html#compute_emb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.glove_semantic_similarity_metric.compute_emb" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the sum of word embeddings for a sentence.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -331,8 +335,8 @@ the sum of GloVe word embeddings.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="fibber.metrics.glove_semantic_similarity.compute_emb_sim">
-<code class="sig-prename descclassname">fibber.metrics.glove_semantic_similarity.</code><code class="sig-name descname">compute_emb_sim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">emb_table</span></em>, <em class="sig-param"><span class="n">tok_to_id</span></em>, <em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/glove_semantic_similarity.html#compute_emb_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.glove_semantic_similarity.compute_emb_sim" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.metrics.glove_semantic_similarity_metric.compute_emb_sim">
+<code class="sig-prename descclassname">fibber.metrics.glove_semantic_similarity_metric.</code><code class="sig-name descname">compute_emb_sim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">emb_table</span></em>, <em class="sig-param"><span class="n">tok_to_id</span></em>, <em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/glove_semantic_similarity_metric.html#compute_emb_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.glove_semantic_similarity_metric.compute_emb_sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the cosine similarity between two sentences. The sentence embedding is the sum
 of word embeddings.</p>
 <dl class="field-list simple">
@@ -361,8 +365,8 @@ of word embeddings.</p>
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="fibber.metrics.edit_distance.html" title="previous page">fibber.metrics.edit_distance module</a>
-    <a class='right-next' id="next-link" href="fibber.metrics.gpt2_grammar_quality.html" title="next page">fibber.metrics.gpt2_grammar_quality module</a>
+    <a class='left-prev' id="prev-link" href="fibber.metrics.edit_distance_metric.html" title="previous page">fibber.metrics.edit_distance_metric module</a>
+    <a class='right-next' id="next-link" href="fibber.metrics.gpt2_grammar_quality_metric.html" title="next page">fibber.metrics.gpt2_grammar_quality_metric module</a>
 
               </div>
               

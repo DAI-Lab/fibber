@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fibber &#8212; fibber 0.1.3 documentation</title>
+    <title>Fibber &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -390,40 +390,40 @@ getting started with <strong>fibber</strong>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Original Text</span>
 <span class="s1">&#39;The Avengers is a good movie. Although it is 3 hours long, every scene has something to watch.&#39;</span>
 
-<span class="c1"># 5 paraphrases</span>
+<span class="c1"># 5 paraphrase_list</span>
 <span class="p">[</span><span class="s1">&#39;the avengers is a good movie. even it is 2 hours long, there is not enough to watch.&#39;</span><span class="p">,</span>
   <span class="s1">&#39;the avengers is a good movie. while it is 3 hours long, it is still very watchable.&#39;</span><span class="p">,</span>
   <span class="s1">&#39;the avengers is a good movie and although it is 2 ¹⁄₂ hours long, it is never very interesting.&#39;</span><span class="p">,</span>
   <span class="s1">&#39;avengers is not a good movie. while it is three hours long, it is still something to watch.&#39;</span><span class="p">,</span>
   <span class="s1">&#39;the avengers is a bad movie. while it is three hours long, it is still something to watch.&#39;</span><span class="p">]</span>
 
-<span class="c1"># Evaluation metrics of these 5 paraphrases.</span>
+<span class="c1"># Evaluation metrics of these 5 paraphrase_list.</span>
 
   <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9523628950119019</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9795315341042675</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">1.492070198059082</span><span class="p">,</span>
-   <span class="s1">&#39;BertClfPrediction&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+   <span class="s1">&#39;USESemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9523628950119019</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9795315341042675</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2GrammarQualityMetric&#39;</span><span class="p">:</span> <span class="mf">1.492070198059082</span><span class="p">,</span>
+   <span class="s1">&#39;BertClassifier&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
   <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9372092485427856</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9575780832312993</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">0.9813404679298401</span><span class="p">,</span>
-   <span class="s1">&#39;BertClfPrediction&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+   <span class="s1">&#39;USESemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9372092485427856</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9575780832312993</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2GrammarQualityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9813404679298401</span><span class="p">,</span>
+   <span class="s1">&#39;BertClassifier&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
   <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9265919327735901</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9710499628056698</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">1.325406551361084</span><span class="p">,</span>
-   <span class="s1">&#39;BertClfPrediction&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+   <span class="s1">&#39;USESemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9265919327735901</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9710499628056698</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2GrammarQualityMetric&#39;</span><span class="p">:</span> <span class="mf">1.325406551361084</span><span class="p">,</span>
+   <span class="s1">&#39;BertClassifier&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
   <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.8913971185684204</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9800737898362042</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">1.2504483461380005</span><span class="p">,</span>
-   <span class="s1">&#39;BertClfPrediction&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+   <span class="s1">&#39;USESemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.8913971185684204</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9800737898362042</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2GrammarQualityMetric&#39;</span><span class="p">:</span> <span class="mf">1.2504483461380005</span><span class="p">,</span>
+   <span class="s1">&#39;BertClassifier&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
   <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9124080538749695</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarity&#39;</span><span class="p">:</span> <span class="mf">0.9744155151490856</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQuality&#39;</span><span class="p">:</span> <span class="mf">1.1626977920532227</span><span class="p">,</span>
-   <span class="s1">&#39;BertClfPrediction&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}]</span>
+   <span class="s1">&#39;USESemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9124080538749695</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9744155151490856</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2GrammarQualityMetric&#39;</span><span class="p">:</span> <span class="mf">1.1626977920532227</span><span class="p">,</span>
+   <span class="s1">&#39;BertClassifier&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}]</span>
 </pre></div>
 </div>
 <p><strong>(5) You can ask fibber to randomly pick a sentence from the dataset and paraphrase it.</strong></p>

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.gpt2_grammar_quality &#8212; fibber 0.1.3 documentation</title>
+    <title>fibber.metrics.gpt2_grammar_quality_metric &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -193,7 +193,7 @@
               
               <div>
                 
-  <h1>Source code for fibber.metrics.gpt2_grammar_quality</h1><div class="highlight"><pre>
+  <h1>Source code for fibber.metrics.gpt2_grammar_quality_metric</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;This metric computes the perplexity ratio ppl(paraphrase) / ppl(original text).</span>
 
 <span class="sd">The perplexity is estimated using GPT2 model. This metric can reveal the meaningfulness of a</span>
@@ -211,14 +211,14 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="make_input_output_pair"><a class="viewcode-back" href="../../../api/fibber.metrics.gpt2_grammar_quality.html#fibber.metrics.make_input_output_pair">[docs]</a><span class="k">def</span> <span class="nf">make_input_output_pair</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="make_input_output_pair"><a class="viewcode-back" href="../../../api/fibber.metrics.gpt2_grammar_quality_metric.html#fibber.metrics.make_input_output_pair">[docs]</a><span class="k">def</span> <span class="nf">make_input_output_pair</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Tokenize the text, then construct input and output for GPT2.&quot;&quot;&quot;</span>
     <span class="n">toks</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">add_special_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">toks</span> <span class="o">=</span> <span class="n">toks</span><span class="p">[:</span><span class="mi">200</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">bos_token_id</span><span class="p">]</span> <span class="o">+</span> <span class="n">toks</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">toks</span></div>
 
 
-<div class="viewcode-block" id="make_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.gpt2_grammar_quality.html#fibber.metrics.make_batch">[docs]</a><span class="k">def</span> <span class="nf">make_batch</span><span class="p">(</span><span class="n">toks_list</span><span class="p">):</span>
+<div class="viewcode-block" id="make_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.gpt2_grammar_quality_metric.html#fibber.metrics.make_batch">[docs]</a><span class="k">def</span> <span class="nf">make_batch</span><span class="p">(</span><span class="n">toks_list</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert multiple text to a batch tensor.&quot;&quot;&quot;</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">toks_list</span><span class="p">)</span>
     <span class="n">max_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">toks_list</span><span class="p">])</span>
@@ -233,14 +233,14 @@
     <span class="k">return</span> <span class="n">ids</span><span class="p">,</span> <span class="n">mask</span></div>
 
 
-<div class="viewcode-block" id="GPT2GrammarQuality"><a class="viewcode-back" href="../../../api/fibber.metrics.gpt2_grammar_quality.html#fibber.metrics.GPT2GrammarQuality">[docs]</a><span class="k">class</span> <span class="nc">GPT2GrammarQuality</span><span class="p">(</span><span class="n">MetricBase</span><span class="p">):</span>
+<div class="viewcode-block" id="GPT2GrammarQualityMetric"><a class="viewcode-back" href="../../../api/fibber.metrics.gpt2_grammar_quality_metric.html#fibber.metrics.GPT2GrammarQualityMetric">[docs]</a><span class="k">class</span> <span class="nc">GPT2GrammarQualityMetric</span><span class="p">(</span><span class="n">MetricBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This metric computes the perplexity of paraphrased text divided by the perplexity of</span>
 <span class="sd">    original text. The perplexity is measured using GPT2 model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gpt2_pretrained_model</span><span class="o">=</span><span class="s2">&quot;gpt2-medium&quot;</span><span class="p">,</span> <span class="n">gpt2_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize GPT2 model.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GPT2GrammarQuality</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GPT2GrammarQualityMetric</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;load gpt2 model.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">GPT2TokenizerFast</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
@@ -278,23 +278,23 @@
         <span class="n">ppl</span> <span class="o">=</span> <span class="n">ppl</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">ppl</span>
 
-<div class="viewcode-block" id="GPT2GrammarQuality.measure_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.gpt2_grammar_quality.html#fibber.metrics.GPT2GrammarQuality.measure_batch">[docs]</a>    <span class="k">def</span> <span class="nf">measure_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrases</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Measure the metric on a batch of paraphrases.</span>
+<div class="viewcode-block" id="GPT2GrammarQualityMetric.measure_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.gpt2_grammar_quality_metric.html#fibber.metrics.GPT2GrammarQualityMetric.measure_batch">[docs]</a>    <span class="k">def</span> <span class="nf">measure_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase_list</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Measure the metric on a batch of paraphrase_list.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            origin (str): the original text.</span>
-<span class="sd">            paraphrases (list): a set of paraphrases.</span>
+<span class="sd">            paraphrase_list (list): a set of paraphrase_list.</span>
 <span class="sd">            data_record (dict): the corresponding data record of original text.</span>
 <span class="sd">            paraphrase_field (str): the field name to paraphrase.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (list): a list containing the USE similarity metric for each paraphrase.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ppls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ppl</span><span class="p">([</span><span class="n">origin</span><span class="p">]</span> <span class="o">+</span> <span class="n">paraphrases</span><span class="p">)</span>
+        <span class="n">ppls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ppl</span><span class="p">([</span><span class="n">origin</span><span class="p">]</span> <span class="o">+</span> <span class="n">paraphrase_list</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">ppls</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">/</span> <span class="n">ppls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]</span></div>
 
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">ppls</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">/</span> <span class="n">ppls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="GPT2GrammarQuality.measure_example"><a class="viewcode-back" href="../../../api/fibber.metrics.gpt2_grammar_quality.html#fibber.metrics.GPT2GrammarQuality.measure_example">[docs]</a>    <span class="k">def</span> <span class="nf">measure_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="GPT2GrammarQualityMetric.measure_example"><a class="viewcode-back" href="../../../api/fibber.metrics.gpt2_grammar_quality_metric.html#fibber.metrics.GPT2GrammarQualityMetric.measure_example">[docs]</a>    <span class="k">def</span> <span class="nf">measure_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compute the perplexity ratio.</span>
 
 <span class="sd">        Args:</span>

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.benchmark.benchmark &#8212; fibber 0.1.3 documentation</title>
+    <title>fibber.benchmark.benchmark &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -201,11 +201,11 @@
 <span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">fibber.benchmark.benchmark_utils</span> <span class="kn">import</span> <span class="n">update_detailed_result</span>
 <span class="kn">from</span> <span class="nn">fibber.datasets</span> <span class="kn">import</span> <span class="n">builtin_datasets</span><span class="p">,</span> <span class="n">get_dataset</span><span class="p">,</span> <span class="n">subsample_dataset</span><span class="p">,</span> <span class="n">verify_dataset</span>
-<span class="kn">from</span> <span class="nn">fibber.metrics.attack_aggregation</span> <span class="kn">import</span> <span class="n">add_sentence_level_adversarial_attack_metrics</span>
-<span class="kn">from</span> <span class="nn">fibber.metrics.metric_base</span> <span class="kn">import</span> <span class="n">MetricBase</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.attack_aggregation_utils</span> <span class="kn">import</span> <span class="n">add_sentence_level_adversarial_attack_metrics</span>
 <span class="kn">from</span> <span class="nn">fibber.metrics.metric_utils</span> <span class="kn">import</span> <span class="n">MetricBundle</span>
 <span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">BertSamplingStrategy</span><span class="p">,</span> <span class="n">IdentityStrategy</span><span class="p">,</span> <span class="n">RandomStrategy</span><span class="p">,</span> <span class="n">TextFoolerStrategy</span><span class="p">)</span>
+    <span class="n">BertSamplingStrategy</span><span class="p">,</span> <span class="n">IdentityStrategy</span><span class="p">,</span> <span class="n">RandomStrategy</span><span class="p">,</span> <span class="n">TextAttackStrategy</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies.strategy_base</span> <span class="kn">import</span> <span class="n">StrategyBase</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">log</span><span class="o">.</span><span class="n">remove_logger_tf_handler</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
@@ -213,7 +213,7 @@
 <span class="n">built_in_strategies</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;RandomStrategy&quot;</span><span class="p">:</span> <span class="n">RandomStrategy</span><span class="p">,</span>
     <span class="s2">&quot;IdentityStrategy&quot;</span><span class="p">:</span> <span class="n">IdentityStrategy</span><span class="p">,</span>
-    <span class="s2">&quot;TextFoolerStrategy&quot;</span><span class="p">:</span> <span class="n">TextFoolerStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;TextAttackStrategy&quot;</span><span class="p">:</span> <span class="n">TextAttackStrategy</span><span class="p">,</span>
     <span class="s2">&quot;BertSamplingStrategy&quot;</span><span class="p">:</span> <span class="n">BertSamplingStrategy</span>
 <span class="p">}</span>
 
@@ -298,7 +298,7 @@
 
         <span class="k">if</span> <span class="n">customized_clf</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">add_classifier</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">customized_clf</span><span class="p">),</span> <span class="n">customized_clf</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">set_target_classifier</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">customized_clf</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">set_target_classifier_by_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">customized_clf</span><span class="p">))</span>
 
         <span class="n">add_sentence_level_adversarial_attack_metrics</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="p">,</span> <span class="n">gpt2_ppl_threshold</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">use_sim_threshold</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
@@ -332,7 +332,7 @@
                 <span class="n">paraphrase_strategy</span> <span class="o">=</span> <span class="n">built_in_strategies</span><span class="p">[</span><span class="n">paraphrase_strategy</span><span class="p">](</span>
                     <span class="p">{},</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="p">,</span> <span class="n">MetricBase</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="p">,</span> <span class="n">StrategyBase</span><span class="p">)</span>
 
         <span class="c1"># get experiment name</span>
         <span class="k">if</span> <span class="n">exp_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -371,8 +371,8 @@
     <span class="k">if</span> <span class="n">strategy_name</span> <span class="o">==</span> <span class="s2">&quot;IdentityStrategy&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">IdentityStrategy</span><span class="p">(</span>
             <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">strategy_name</span> <span class="o">==</span> <span class="s2">&quot;TextFoolerStrategy&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">TextFoolerStrategy</span><span class="p">(</span>
+    <span class="k">if</span> <span class="n">strategy_name</span> <span class="o">==</span> <span class="s2">&quot;TextAttackStrategy&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">TextAttackStrategy</span><span class="p">(</span>
             <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">strategy_name</span> <span class="o">==</span> <span class="s2">&quot;BertSamplingStrategy&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">BertSamplingStrategy</span><span class="p">(</span>

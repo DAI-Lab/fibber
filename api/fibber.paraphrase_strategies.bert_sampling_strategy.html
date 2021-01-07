@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.bert_sampling_strategy module &#8212; fibber 0.1.3 documentation</title>
+    <title>fibber.paraphrase_strategies.bert_sampling_strategy module &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -216,7 +216,7 @@
                         </li>
                     
                         <li class="">
-                            <a href="fibber.paraphrase_strategies.textfooler_strategy.html">fibber.paraphrase_strategies.textfooler_strategy module</a>
+                            <a href="fibber.paraphrase_strategies.textattack_strategy.html">fibber.paraphrase_strategies.textattack_strategy module</a>
                         </li>
                     
                     </ul>
@@ -379,7 +379,7 @@ None means this criteria does not have any state.</p>
 
 <dl class="py function">
 <dt id="fibber.paraphrase_strategies.bert_sampling_strategy.bert_criteria_score">
-<code class="sig-prename descclassname">fibber.paraphrase_strategies.bert_sampling_strategy.</code><code class="sig-name descname">bert_criteria_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paraphrases</span></em>, <em class="sig-param"><span class="n">context</span></em>, <em class="sig-param"><span class="n">label</span></em>, <em class="sig-param"><span class="n">bert_metric</span></em>, <em class="sig-param"><span class="n">bert_weight</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/bert_sampling_strategy.html#bert_criteria_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.bert_sampling_strategy.bert_criteria_score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fibber.paraphrase_strategies.bert_sampling_strategy.</code><code class="sig-name descname">bert_criteria_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrases</span></em>, <em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span></em>, <em class="sig-param"><span class="n">bert_metric</span></em>, <em class="sig-param"><span class="n">bert_weight</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/bert_sampling_strategy.html#bert_criteria_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.bert_sampling_strategy.bert_criteria_score" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -390,8 +390,8 @@ None means this criteria does not have any state.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>origin</strong> (<em>str</em>) – original sentence.</p></li>
-<li><p><strong>paraphrases</strong> (<em>[</em><em>str</em><em>]</em>) – a list of paraphrases.</p></li>
-<li><p><strong>gpt2_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.GPT2GrammarQuality" title="fibber.metrics.GPT2GrammarQuality"><em>GPT2GrammarQuality</em></a>) – a GPT2GrammarQuality metric object.</p></li>
+<li><p><strong>paraphrases</strong> (<em>[</em><em>str</em><em>]</em>) – a list of paraphrase_list.</p></li>
+<li><p><strong>gpt2_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.GPT2GrammarQualityMetric" title="fibber.metrics.GPT2GrammarQualityMetric"><em>GPT2GrammarQualityMetric</em></a>) – a GPT2GrammarQualityMetric metric object.</p></li>
 <li><p><strong>gpt2_weight</strong> (<em>float</em>) – the weight parameter for the criteria.</p></li>
 </ul>
 </dd>
@@ -422,12 +422,12 @@ None means this criteria does not have any state.</p>
 size <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">pos_ed-pos_st)</span></code>.</p></li>
 <li><p><strong>candidate_ids</strong> (<em>torch.Tensor</em>) – proposed word ids in this sampling step with
 size <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">pos_ed-pos_st)</span></code>.</p></li>
-<li><p><strong>use_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.USESemanticSimilarity" title="fibber.metrics.USESemanticSimilarity"><em>USESemanticSimilarity</em></a>) – a universal sentence encoder metric object.</p></li>
+<li><p><strong>use_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.USESemanticSimilarityMetric" title="fibber.metrics.USESemanticSimilarityMetric"><em>USESemanticSimilarityMetric</em></a>) – a universal sentence encoder metric object.</p></li>
 <li><p><strong>use_threshold</strong> (<em>float</em>) – the universal sentence encoder similarity threshold.</p></li>
 <li><p><strong>use_weight</strong> (<em>float</em>) – the weight for USE criteria score.</p></li>
-<li><p><strong>bert_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.BertClfPrediction" title="fibber.metrics.BertClfPrediction"><em>BertClfPrediction</em></a>) – a BertClfPrediction metric.</p></li>
+<li><p><strong>bert_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.BertClassifier" title="fibber.metrics.BertClassifier"><em>BertClassifier</em></a>) – a BertClassifier metric.</p></li>
 <li><p><strong>bert_weight</strong> (<em>float</em>) – the weight for BERT criteria score.</p></li>
-<li><p><strong>gpt2_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.GPT2GrammarQuality" title="fibber.metrics.GPT2GrammarQuality"><em>GPT2GrammarQuality</em></a>) – a GPT2GrammarQuality metric.</p></li>
+<li><p><strong>gpt2_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.GPT2GrammarQualityMetric" title="fibber.metrics.GPT2GrammarQualityMetric"><em>GPT2GrammarQualityMetric</em></a>) – a GPT2GrammarQualityMetric metric.</p></li>
 <li><p><strong>gpt2_weight</strong> (<em>float</em>) – the weight for GPT2 criteria score.</p></li>
 <li><p><strong>burnin_weight</strong> (<em>float</em>) – the discount factor.</p></li>
 <li><p><strong>stats</strong> (<em>dict</em>) – a dict to keep track the accept rate.</p></li>
@@ -503,8 +503,8 @@ size <code class="docutils literal notranslate"><span class="pre">(batch_size,</
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>origin</strong> (<em>str</em>) – original sentence.</p></li>
-<li><p><strong>paraphrases</strong> (<em>[</em><em>str</em><em>]</em>) – a list of paraphrases.</p></li>
-<li><p><strong>use_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.USESemanticSimilarity" title="fibber.metrics.USESemanticSimilarity"><em>USESemanticSimilarity</em></a>) – a universal sentence encoder metric object.</p></li>
+<li><p><strong>paraphrases</strong> (<em>[</em><em>str</em><em>]</em>) – a list of paraphrase_list.</p></li>
+<li><p><strong>use_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.USESemanticSimilarityMetric" title="fibber.metrics.USESemanticSimilarityMetric"><em>USESemanticSimilarityMetric</em></a>) – a universal sentence encoder metric object.</p></li>
 <li><p><strong>use_threshold</strong> (<em>float</em>) – the universal sentence encoder similarity threshold.</p></li>
 <li><p><strong>use_weight</strong> (<em>float</em>) – the weight parameter for the criteria.</p></li>
 </ul>

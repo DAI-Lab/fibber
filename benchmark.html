@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Benchmark &#8212; fibber 0.1.3 documentation</title>
+    <title>Benchmark &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -293,25 +293,49 @@ API and is highly customizable. In this document, we will show</p>
 <col style="width: 20%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p>1_paraphrase_strategy_name</p></th>
-<th class="head"><p>USESemanticSimilarity_mean</p></th>
-<th class="head"><p>GPT2GrammarQuality_mean</p></th>
-<th class="head"><p>3_ParaphraseAcc_usesim0.90_ppl2</p></th>
-<th class="head"><p>4_ParaphraseAcc_usesim0.85_ppl5</p></th>
+<tr class="row-odd"><th class="head"><p>StrategyName</p></th>
+<th class="head"><p>AfterAttackAccuracy</p></th>
+<th class="head"><p>GPT2GrammarQuality</p></th>
+<th class="head"><p>GloVeSemanticSimilarity</p></th>
+<th class="head"><p>USESemanticSimilarity</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>IdentityStrategy</p></td>
-<td><p>7</p></td>
-<td><p>7</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
 <td><p>0</p></td>
 <td><p>0</p></td>
 </tr>
 <tr class="row-odd"><td><p>RandomStrategy</p></td>
-<td><p>0</p></td>
-<td><p>0</p></td>
 <td><p>5</p></td>
+<td><p>0</p></td>
+<td><p>16</p></td>
 <td><p>6</p></td>
+</tr>
+<tr class="row-even"><td><p>TextFoolerJin2019</p></td>
+<td><p>25</p></td>
+<td><p>12</p></td>
+<td><p>6</p></td>
+<td><p>11</p></td>
+</tr>
+<tr class="row-odd"><td><p>BAEGarg2019</p></td>
+<td><p>13</p></td>
+<td><p>5</p></td>
+<td><p>14</p></td>
+<td><p>13</p></td>
+</tr>
+<tr class="row-even"><td><p>PSOZang2020</p></td>
+<td><p>16</p></td>
+<td><p>12</p></td>
+<td><p>6</p></td>
+<td><p>5</p></td>
+</tr>
+<tr class="row-odd"><td><p>BertSamplingStrategy</p></td>
+<td><p>33</p></td>
+<td><p>23</p></td>
+<td><p>10</p></td>
+<td><p>17</p></td>
 </tr>
 </tbody>
 </table>

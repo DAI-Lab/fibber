@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.use_semantic_similarity &#8212; fibber 0.1.3 documentation</title>
+    <title>fibber.metrics.use_semantic_similarity_metric &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -193,7 +193,7 @@
               
               <div>
                 
-  <h1>Source code for fibber.metrics.use_semantic_similarity</h1><div class="highlight"><pre>
+  <h1>Source code for fibber.metrics.use_semantic_similarity_metric</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;This metric computes the cosine similarity between two sentences. The sentence embedding is</span>
 <span class="sd">the universal sentence encoder.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -211,7 +211,7 @@
 <span class="n">log</span><span class="o">.</span><span class="n">remove_logger_tf_handler</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>    <span class="c1"># tensorflow_hub mess up the python logging</span>
 
 
-<div class="viewcode-block" id="config_tf_gpu"><a class="viewcode-back" href="../../../api/fibber.metrics.use_semantic_similarity.html#fibber.metrics.config_tf_gpu">[docs]</a><span class="k">def</span> <span class="nf">config_tf_gpu</span><span class="p">(</span><span class="n">gpu_id</span><span class="p">):</span>
+<div class="viewcode-block" id="config_tf_gpu"><a class="viewcode-back" href="../../../api/fibber.metrics.use_semantic_similarity_metric.html#fibber.metrics.config_tf_gpu">[docs]</a><span class="k">def</span> <span class="nf">config_tf_gpu</span><span class="p">(</span><span class="n">gpu_id</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Configure tensorflow to use a specific GPU.</span>
 
 <span class="sd">    Args:</span>
@@ -231,13 +231,13 @@
             <span class="n">tf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">set_memory_growth</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="USESemanticSimilarity"><a class="viewcode-back" href="../../../api/fibber.metrics.use_semantic_similarity.html#fibber.metrics.USESemanticSimilarity">[docs]</a><span class="k">class</span> <span class="nc">USESemanticSimilarity</span><span class="p">(</span><span class="n">MetricBase</span><span class="p">):</span>
+<div class="viewcode-block" id="USESemanticSimilarityMetric"><a class="viewcode-back" href="../../../api/fibber.metrics.use_semantic_similarity_metric.html#fibber.metrics.USESemanticSimilarityMetric">[docs]</a><span class="k">class</span> <span class="nc">USESemanticSimilarityMetric</span><span class="p">(</span><span class="n">MetricBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This metric uses universal sentence encoder to measure the semantic similarity of</span>
 <span class="sd">    two sentences.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize universal sentence encoder.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">USESemanticSimilarity</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">USESemanticSimilarityMetric</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;load universal sentence encoder&quot;</span><span class="p">)</span>
         <span class="n">config_tf_gpu</span><span class="p">(</span><span class="n">use_gpu_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">use_gpu_id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
@@ -247,12 +247,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">hub</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">resources</span><span class="o">.</span><span class="n">get_universal_sentence_encoder</span><span class="p">())</span>
         <span class="n">log</span><span class="o">.</span><span class="n">remove_logger_tf_handler</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>   <span class="c1"># tensorflow_hub mess up the python logging</span>
 
-<div class="viewcode-block" id="USESemanticSimilarity.measure_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.use_semantic_similarity.html#fibber.metrics.USESemanticSimilarity.measure_batch">[docs]</a>    <span class="k">def</span> <span class="nf">measure_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrases</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Measure the metric on a batch of paraphrases.</span>
+<div class="viewcode-block" id="USESemanticSimilarityMetric.measure_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.use_semantic_similarity_metric.html#fibber.metrics.USESemanticSimilarityMetric.measure_batch">[docs]</a>    <span class="k">def</span> <span class="nf">measure_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase_list</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Measure the metric on a batch of paraphrase_list.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            origin (str): the original text.</span>
-<span class="sd">            paraphrases (list): a set of paraphrases.</span>
+<span class="sd">            paraphrase_list (list): a set of paraphrase_list.</span>
 <span class="sd">            data_record (dict): the corresponding data record of original text.</span>
 <span class="sd">            paraphrase_field (str): the field name to paraphrase.</span>
 
@@ -260,15 +260,15 @@
 <span class="sd">            (list): a list containing the USE similarity metric for each paraphrase.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">origin</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">origin</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">200</span><span class="p">])</span>
-        <span class="n">paraphrases</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">200</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">paraphrases</span><span class="p">]</span>
-        <span class="n">embs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">([</span><span class="n">origin</span><span class="p">]</span> <span class="o">+</span> <span class="n">paraphrases</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">paraphrase_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">200</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">paraphrase_list</span><span class="p">]</span>
+        <span class="n">embs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">([</span><span class="n">origin</span><span class="p">]</span> <span class="o">+</span> <span class="n">paraphrase_list</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 
         <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">embs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">embs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">embs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">norm</span>
         <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-4</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">sim</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sim</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span></div>
 
-<div class="viewcode-block" id="USESemanticSimilarity.measure_example"><a class="viewcode-back" href="../../../api/fibber.metrics.use_semantic_similarity.html#fibber.metrics.USESemanticSimilarity.measure_example">[docs]</a>    <span class="k">def</span> <span class="nf">measure_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="USESemanticSimilarityMetric.measure_example"><a class="viewcode-back" href="../../../api/fibber.metrics.use_semantic_similarity_metric.html#fibber.metrics.USESemanticSimilarityMetric.measure_example">[docs]</a>    <span class="k">def</span> <span class="nf">measure_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compute the cosine similarity between the embedding of original text and paraphrased</span>
 <span class="sd">        text.</span>
 

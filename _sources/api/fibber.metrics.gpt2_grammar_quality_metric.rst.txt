@@ -1,0 +1,7 @@
+fibber.metrics.gpt2\_grammar\_quality\_metric module
+====================================================
+
+.. automodule:: fibber.metrics.gpt2_grammar_quality_metric
+   :members:
+   :undoc-members:
+   :show-inheritance:

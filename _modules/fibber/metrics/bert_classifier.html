@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.bert_clf_prediction &#8212; fibber 0.1.3 documentation</title>
+    <title>fibber.metrics.bert_classifier &#8212; fibber 0.2.0 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -193,7 +193,7 @@
               
               <div>
                 
-  <h1>Source code for fibber.metrics.bert_clf_prediction</h1><div class="highlight"><pre>
+  <h1>Source code for fibber.metrics.bert_classifier</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;This metric outputs the BERT classifier prediction of the paraphrased text.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
@@ -208,12 +208,12 @@
 
 <span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">get_root_dir</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">resources</span>
 <span class="kn">from</span> <span class="nn">fibber.datasets</span> <span class="kn">import</span> <span class="n">DatasetForBert</span>
-<span class="kn">from</span> <span class="nn">fibber.metrics.metric_base</span> <span class="kn">import</span> <span class="n">MetricBase</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.classifier_base</span> <span class="kn">import</span> <span class="n">ClassifierBase</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="get_optimizer"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.get_optimizer">[docs]</a><span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<div class="viewcode-block" id="get_optimizer"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_classifier.html#fibber.metrics.get_optimizer">[docs]</a><span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create an optimizer and schedule of learning rate for parameters.</span>
 
 <span class="sd">    Args:</span>
@@ -242,7 +242,7 @@
     <span class="k">return</span> <span class="n">opt</span><span class="p">,</span> <span class="n">sche</span></div>
 
 
-<div class="viewcode-block" id="run_evaluate"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.run_evaluate">[docs]</a><span class="k">def</span> <span class="nf">run_evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataloader_iter</span><span class="p">,</span> <span class="n">eval_steps</span><span class="p">,</span> <span class="n">summary</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+<div class="viewcode-block" id="run_evaluate"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_classifier.html#fibber.metrics.run_evaluate">[docs]</a><span class="k">def</span> <span class="nf">run_evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataloader_iter</span><span class="p">,</span> <span class="n">eval_steps</span><span class="p">,</span> <span class="n">summary</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Evaluate a model and add error rate and validation loss to Tensorboard.</span>
 
 <span class="sd">    Args:</span>
@@ -279,7 +279,7 @@
     <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="load_or_train_bert_clf"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.load_or_train_bert_clf">[docs]</a><span class="k">def</span> <span class="nf">load_or_train_bert_clf</span><span class="p">(</span><span class="n">model_init</span><span class="p">,</span>
+<div class="viewcode-block" id="load_or_train_bert_clf"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_classifier.html#fibber.metrics.load_or_train_bert_clf">[docs]</a><span class="k">def</span> <span class="nf">load_or_train_bert_clf</span><span class="p">(</span><span class="n">model_init</span><span class="p">,</span>
                            <span class="n">dataset_name</span><span class="p">,</span>
                            <span class="n">trainset</span><span class="p">,</span>
                            <span class="n">testset</span><span class="p">,</span>
@@ -395,11 +395,11 @@
     <span class="k">return</span> <span class="n">model</span></div>
 
 
-<div class="viewcode-block" id="BertClfPrediction"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction">[docs]</a><span class="k">class</span> <span class="nc">BertClfPrediction</span><span class="p">(</span><span class="n">MetricBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;BERT classifier prediction on paraphrases.</span>
+<div class="viewcode-block" id="BertClassifier"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_classifier.html#fibber.metrics.BertClassifier">[docs]</a><span class="k">class</span> <span class="nc">BertClassifier</span><span class="p">(</span><span class="n">ClassifierBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;BERT classifier prediction on paraphrase_list.</span>
 
 <span class="sd">    This metric is special, it does not compare the original and paraphrased sentence.</span>
-<span class="sd">    Instead, it outputs the classifier prediction on paraphrases. So we should not compute</span>
+<span class="sd">    Instead, it outputs the classifier prediction on paraphrase_list. So we should not compute</span>
 <span class="sd">    mean or std on this metric.</span>
 
 <span class="sd">    Args:</span>
@@ -425,7 +425,7 @@
                  <span class="n">bert_clf_period_summary</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">bert_clf_period_val</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
                  <span class="n">bert_clf_period_save</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">bert_clf_val_steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">BertClfPrediction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BertClassifier</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">trainset</span><span class="p">[</span><span class="s2">&quot;cased&quot;</span><span class="p">]:</span>
             <span class="n">model_init</span> <span class="o">=</span> <span class="s2">&quot;bert-base-cased&quot;</span>
@@ -462,26 +462,28 @@
             <span class="n">bert_clf_val_steps</span><span class="o">=</span><span class="n">bert_clf_val_steps</span><span class="p">,</span>
             <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BertClfPrediction.predict_dist_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.predict_dist_batch">[docs]</a>    <span class="k">def</span> <span class="nf">predict_dist_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get log probability of the BERT prediction.</span>
+<div class="viewcode-block" id="BertClassifier.predict_dist_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_classifier.html#fibber.metrics.BertClassifier.predict_dist_batch">[docs]</a>    <span class="k">def</span> <span class="nf">predict_dist_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase_list</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predict the log-probability distribution over classes for one batch.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            text ([str]): a list of strs to be classified.</span>
-<span class="sd">            context (str or None):</span>
-<span class="sd">                On regular classification datasets, context is None.</span>
-<span class="sd">                On NLI datasets, context contains the premise.</span>
+<span class="sd">            origin (str): the original text.</span>
+<span class="sd">            paraphrase_list (list): a set of paraphrase_list.</span>
+<span class="sd">            data_record (dict): the corresponding data record of original text.</span>
+<span class="sd">            paraphrase_field (str): the field name to paraphrase.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (np.array): a numpy array of the unnormalized log probability over on each category.</span>
+<span class="sd">            (np.array): a numpy array of size ``(batch_size * num_labels)``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">batch_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="k">if</span> <span class="n">paraphrase_field</span> <span class="o">==</span> <span class="s2">&quot;text0&quot;</span><span class="p">:</span>
+            <span class="n">batch_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">paraphrase_list</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
                                           <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">batch_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">(</span>
-                <span class="n">text</span><span class="o">=</span><span class="p">[</span><span class="n">context</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">text_pair</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
-                <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
+            <span class="k">assert</span> <span class="n">paraphrase_field</span> <span class="o">==</span> <span class="s2">&quot;text1&quot;</span>
+            <span class="n">batch_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="p">[</span><span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;text0&quot;</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">paraphrase_list</span><span class="p">),</span>
+                                          <span class="n">text_pair</span><span class="o">=</span><span class="n">paraphrase_list</span><span class="p">,</span>
+                                          <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+                                          <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
             <span class="n">res</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span>
                 <span class="n">input_ids</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">batch_input</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">),</span>
@@ -490,43 +492,19 @@
             <span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="BertClfPrediction.predict_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.predict_batch">[docs]</a>    <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get the prediction of the BERT prediction.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            text ([str]): a list of strs to be classified.</span>
-<span class="sd">            context (str or None):</span>
-<span class="sd">                On regular classification datasets, context is None.</span>
-<span class="sd">                On NLI datasets, context contains the premise.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            (np.array): the prediction of the classifier.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_dist_batch</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="BertClfPrediction.measure_batch"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.measure_batch">[docs]</a>    <span class="k">def</span> <span class="nf">measure_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrases</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Measure the metric on a batch of paraphrases.</span>
+<div class="viewcode-block" id="BertClassifier.predict_dist_example"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_classifier.html#fibber.metrics.BertClassifier.predict_dist_example">[docs]</a>    <span class="k">def</span> <span class="nf">predict_dist_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predict the log-probability distribution over classes for one example.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            origin (str): the original text.</span>
-<span class="sd">            paraphrases (list): a set of paraphrases.</span>
+<span class="sd">            paraphrase (list): a set of paraphrase_list.</span>
 <span class="sd">            data_record (dict): the corresponding data record of original text.</span>
 <span class="sd">            paraphrase_field (str): the field name to paraphrase.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (list): a list containing the metric for each paraphrase.</span>
+<span class="sd">            (np.array): a numpy array of size ``(num_labels)``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">paraphrases</span><span class="p">,</span>
-                                 <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;text0&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">paraphrase_field</span> <span class="o">==</span> <span class="s2">&quot;text1&quot;</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="BertClfPrediction.measure_example"><a class="viewcode-back" href="../../../api/fibber.metrics.bert_clf_prediction.html#fibber.metrics.BertClfPrediction.measure_example">[docs]</a>    <span class="k">def</span> <span class="nf">measure_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">paraphrase_field</span> <span class="o">==</span> <span class="s2">&quot;text0&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">([</span><span class="n">paraphrase</span><span class="p">],</span> <span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">paraphrase_field</span> <span class="o">==</span> <span class="s2">&quot;text1&quot;</span>
-            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">([</span><span class="n">paraphrase</span><span class="p">],</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;text0&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_dist_batch</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="p">[</span><span class="n">paraphrase</span><span class="p">],</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div></div>
 </pre></div>
 
               </div>
