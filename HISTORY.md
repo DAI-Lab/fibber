@@ -1,5 +1,16 @@
 # History
 
+## Version 0.2.0 - 2021-01-06
+This release updates the structure of the project and improve documentation.
+
+### New Features
+
+- Metric module is redesigned to have a consistant API. ([Issue #12](https://github.com/DAI-Lab/fibber/issues/12))
+- More unit tests are added. Slow unit tests are skipped in CI. ([Issue #11](https://github.com/DAI-Lab/fibber/issues/11))
+- Benchmark table is updated. ([Issue #10](https://github.com/DAI-Lab/fibber/issues/10))
+- Better support to `TextAttack`. Users can choose any implemented attacking method in `TextAttack` using the `ta_recipe` arg. ([Issue #9](https://github.com/DAI-Lab/fibber/issues/9))
+
+
 ## Version 0.1.3
 
 This release includes the following updates:
