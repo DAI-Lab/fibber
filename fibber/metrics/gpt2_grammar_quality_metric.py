@@ -37,14 +37,14 @@ def make_batch(toks_list):
     return ids, mask
 
 
-class GPT2GrammarQuality(MetricBase):
+class GPT2GrammarQualityMetric(MetricBase):
     """This metric computes the perplexity of paraphrased text divided by the perplexity of
     original text. The perplexity is measured using GPT2 model.
     """
 
     def __init__(self, gpt2_pretrained_model="gpt2-medium", gpt2_gpu_id=-1, **kargs):
         """Initialize GPT2 model."""
-        super(GPT2GrammarQuality, self).__init__()
+        super(GPT2GrammarQualityMetric, self).__init__()
 
         logger.info("load gpt2 model.")
         self._tokenizer = GPT2TokenizerFast.from_pretrained(
@@ -82,21 +82,21 @@ class GPT2GrammarQuality(MetricBase):
         ppl = ppl.detach().cpu().numpy()
         return ppl
 
-    def measure_batch(self, origin, paraphrases, data_record=None, paraphrase_field="text0"):
-        """Measure the metric on a batch of paraphrases.
+    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0"):
+        """Measure the metric on a batch of paraphrase_list.
 
         Args:
             origin (str): the original text.
-            paraphrases (list): a set of paraphrases.
+            paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
             paraphrase_field (str): the field name to paraphrase.
 
         Returns:
             (list): a list containing the USE similarity metric for each paraphrase.
         """
-        ppls = self._get_ppl([origin] + paraphrases)
-
-        return list(ppls[1:]) / ppls[0]
+        ppls = self._get_ppl([origin] + paraphrase_list)
+        res = ppls[1:] / ppls[0]
+        return [float(x) for x in res]
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the perplexity ratio.

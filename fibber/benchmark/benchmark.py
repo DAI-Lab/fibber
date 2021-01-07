@@ -5,11 +5,11 @@ import os
 from fibber import log
 from fibber.benchmark.benchmark_utils import update_detailed_result
 from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, verify_dataset
-from fibber.metrics.attack_aggregation import add_sentence_level_adversarial_attack_metrics
-from fibber.metrics.metric_base import MetricBase
+from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
-    BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextFoolerStrategy)
+    BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextAttackStrategy)
+from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
@@ -17,7 +17,7 @@ log.remove_logger_tf_handler(logger)
 built_in_strategies = {
     "RandomStrategy": RandomStrategy,
     "IdentityStrategy": IdentityStrategy,
-    "TextFoolerStrategy": TextFoolerStrategy,
+    "TextAttackStrategy": TextAttackStrategy,
     "BertSamplingStrategy": BertSamplingStrategy
 }
 
@@ -102,7 +102,7 @@ class Benchmark(object):
 
         if customized_clf:
             self._metric_bundle.add_classifier(str(customized_clf), customized_clf)
-            self._metric_bundle.set_target_classifier(str(customized_clf))
+            self._metric_bundle.set_target_classifier_by_name(str(customized_clf))
 
         add_sentence_level_adversarial_attack_metrics(
             self._metric_bundle, gpt2_ppl_threshold=5, use_sim_threshold=0.85)
@@ -136,7 +136,7 @@ class Benchmark(object):
                 paraphrase_strategy = built_in_strategies[paraphrase_strategy](
                     {}, self._dataset_name, strategy_gpu_id, self._output_dir, self._metric_bundle)
         else:
-            assert isinstance(paraphrase_strategy, MetricBase)
+            assert isinstance(paraphrase_strategy, StrategyBase)
 
         # get experiment name
         if exp_name is None:
@@ -175,8 +175,8 @@ def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
     if strategy_name == "IdentityStrategy":
         return IdentityStrategy(
             arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
-    if strategy_name == "TextFoolerStrategy":
-        return TextFoolerStrategy(
+    if strategy_name == "TextAttackStrategy":
+        return TextAttackStrategy(
             arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
     if strategy_name == "BertSamplingStrategy":
         return BertSamplingStrategy(
