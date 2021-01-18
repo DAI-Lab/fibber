@@ -29,7 +29,7 @@ downloaded, you can type in your own sentences, and use Fibber to rewrite it. Yo
 metric evaluation of rewritten sentence. You will see some rewritten sentences have the same meaning as your input but
 get misclassified by the classifier.
 
-[**Click here to Launch Colab!**](https://colab.research.google.com/drive/1zefsU19P3HdrBUqJy7HU9b9cSaB_nBMP#scrollTo=uNcmhgzHJ3VQ)
+**[Click here to Launch Colab!](https://colab.research.google.com/drive/1zefsU19P3HdrBUqJy7HU9b9cSaB_nBMP#scrollTo=uNcmhgzHJ3VQ)**
 
 
 # Install
