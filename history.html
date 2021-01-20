@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>History &#8212; fibber 0.2.0 documentation</title>
+    <title>History &#8212; fibber 0.2.1 documentation</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -90,6 +90,10 @@
         </li>
         
         <li class="nav-item ">
+            <a class="nav-link" href="dataformat.html">Data Format</a>
+        </li>
+        
+        <li class="nav-item ">
             <a class="nav-link" href="benchmark.html">Benchmark</a>
         </li>
         
@@ -167,6 +171,8 @@
         
         
         
+        
+        
           
         
         
@@ -187,10 +193,20 @@
     <ul class="nav section-nav flex-column">
     
         <li class="nav-item toc-entry toc-h2">
-            <a href="#version-0-2-0-2021-01-06" class="nav-link">Version 0.2.0 - 2021-01-06</a><ul class="nav section-nav flex-column">
+            <a href="#version-0-2-1-2021-01-20" class="nav-link">Version 0.2.1 - 2021-01-20</a><ul class="nav section-nav flex-column">
                 
         <li class="nav-item toc-entry toc-h3">
             <a href="#new-features" class="nav-link">New Features</a>
+        </li>
+    
+            </ul>
+        </li>
+    
+        <li class="nav-item toc-entry toc-h2">
+            <a href="#version-0-2-0-2021-01-06" class="nav-link">Version 0.2.0 - 2021-01-06</a><ul class="nav section-nav flex-column">
+                
+        <li class="nav-item toc-entry toc-h3">
+            <a href="#id1" class="nav-link">New Features</a>
         </li>
     
             </ul>
@@ -231,11 +247,23 @@
                 
   <div class="section" id="history">
 <h1>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-0-2-1-2021-01-20">
+<h2>Version 0.2.1 - 2021-01-20<a class="headerlink" href="#version-0-2-1-2021-01-20" title="Permalink to this headline">¶</a></h2>
+<p>This release improves documentation and unit tests.</p>
+<div class="section" id="new-features">
+<h3>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Add integrity test for IdentityStrategy, TextAttackStrategy, and BertSamplingStrategy.</p></li>
+<li><p>For IdentityStrategy and TextAttackStrategy, accuracy is verified.</p></li>
+<li><p>Improve documentation, split data format from benchmark.</p></li>
+</ul>
+</div>
+</div>
 <div class="section" id="version-0-2-0-2021-01-06">
 <h2>Version 0.2.0 - 2021-01-06<a class="headerlink" href="#version-0-2-0-2021-01-06" title="Permalink to this headline">¶</a></h2>
 <p>This release updates the structure of the project and improve documentation.</p>
-<div class="section" id="new-features">
-<h3>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h3>New Features<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Metric module is redesigned to have a consistant API. (<a class="reference external" href="https://github.com/DAI-Lab/fibber/issues/12">Issue #12</a>)</p></li>
 <li><p>More unit tests are added. Slow unit tests are skipped in CI. (<a class="reference external" href="https://github.com/DAI-Lab/fibber/issues/11">Issue #11</a>)</p></li>
