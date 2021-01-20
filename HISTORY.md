@@ -1,5 +1,15 @@
 # History
 
+## Version 0.2.1 - 2021-01-20
+This release improves documentation and unit tests.
+
+### New Features
+
+- Add integrity test for IdentityStrategy, TextAttackStrategy, and BertSamplingStrategy.
+- For IdentityStrategy and TextAttackStrategy, accuracy is verified.
+- Improve documentation, split data format from benchmark.
+
+
 ## Version 0.2.0 - 2021-01-06
 This release updates the structure of the project and improve documentation.
 

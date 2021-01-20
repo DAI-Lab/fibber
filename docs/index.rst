@@ -11,6 +11,7 @@
     :hidden:
     :titlesonly:
 
+    dataformat
     benchmark
     API Reference <api/fibber>
     contributing
