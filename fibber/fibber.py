@@ -2,7 +2,7 @@ import numpy as np
 
 from fibber.metrics import MetricBundle
 from fibber.paraphrase_strategies import (
-    BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextFoolerStrategy)
+    BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextAttackStrategy)
 
 
 class Fibber(object):
@@ -38,8 +38,8 @@ class Fibber(object):
         if strategy_name == "IdentityStrategy":
             self._strategy = IdentityStrategy(
                 arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
-        if strategy_name == "TextFoolerStrategy":
-            self._strategy = TextFoolerStrategy(
+        if strategy_name == "TextAttackStrategy":
+            self._strategy = TextAttackStrategy(
                 arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
         if strategy_name == "BertSamplingStrategy":
             self._strategy = BertSamplingStrategy(
