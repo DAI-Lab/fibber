@@ -228,7 +228,8 @@ def main():
                                        arg_dict["strategy_gpu_id"], arg_dict["output_dir"],
                                        benchmark.get_metric_bundle())
 
-    benchmark.run_benchmark(paraphrase_strategy=paraphrase_strategy)
+    benchmark.run_benchmark(paraphrase_strategy=paraphrase_strategy,
+                            num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"])
 
 
 if __name__ == "__main__":
