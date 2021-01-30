@@ -1,15 +1,20 @@
 import numpy as np
 
+from fibber import log
+from fibber.datasets import builtin_datasets
+from fibber.datasets.dataset_utils import get_dataset, verify_dataset
 from fibber.metrics import MetricBundle
 from fibber.paraphrase_strategies import (
     BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextAttackStrategy)
+
+logger = log.setup_custom_logger(__name__)
 
 
 class Fibber(object):
     """Fibber is a unified interface for paraphrase strategies."""
 
-    def __init__(self, arg_dict, dataset_name, strategy_name, trainset, testset,
-                 output_dir, bert_clf_steps=5000):
+    def __init__(self, arg_dict, dataset_name, strategy_name, trainset=None, testset=None,
+                 output_dir=".", bert_clf_steps=5000):
         """Initialize
 
         Args:
@@ -21,6 +26,17 @@ class Fibber(object):
             output_dir (str): directory to cache the strategy.
         """
         super(Fibber, self).__init__()
+
+        # setup dataset
+        if dataset_name in builtin_datasets:
+            if trainset is not None or testset is not None:
+                logger.error(("dataset name %d conflict with builtin dataset. "
+                              "set trainset and testset to None.") % dataset_name)
+                raise RuntimeError
+            trainset, testset = get_dataset(dataset_name)
+        else:
+            verify_dataset(trainset)
+            verify_dataset(testset)
 
         self._metric_bundle = MetricBundle(
             enable_bert_clf_prediction=True,
@@ -44,10 +60,12 @@ class Fibber(object):
         if strategy_name == "BertSamplingStrategy":
             self._strategy = BertSamplingStrategy(
                 arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
-        else:
-            assert 0
+        if self._strategy is None:
+            logger.error("unknown strategy name %s." % strategy_name)
+            raise RuntimeError
 
         self._strategy.fit(trainset)
+
         self._trainset = trainset
         self._testset = testset
 
