@@ -15,6 +15,7 @@ Submodules
    fibber.metrics.gpt2_grammar_quality_metric
    fibber.metrics.metric_base
    fibber.metrics.metric_utils
+   fibber.metrics.sbert_semantic_similarity_metric
    fibber.metrics.use_semantic_similarity_metric
 
 Module contents

@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics package &#8212; fibber 0.2.1 documentation</title>
+    <title>fibber.metrics package &#8212; fibber 0.2.2 documentation</title>
     
-  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+  <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
     
   <link rel="stylesheet"
@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+  <link rel="preload" as="script" href="../_static/js/index.d3f166471bb80abb5163.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -220,6 +220,10 @@
                         </li>
                     
                         <li class="">
+                            <a href="fibber.metrics.sbert_semantic_similarity_metric.html">fibber.metrics.sbert_semantic_similarity_metric module</a>
+                        </li>
+                    
+                        <li class="">
                             <a href="fibber.metrics.use_semantic_similarity_metric.html">fibber.metrics.use_semantic_similarity_metric module</a>
                         </li>
                     
@@ -316,6 +320,7 @@
 <li class="toctree-l1"><a class="reference internal" href="fibber.metrics.gpt2_grammar_quality_metric.html">fibber.metrics.gpt2_grammar_quality_metric module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.metrics.metric_base.html">fibber.metrics.metric_base module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.metrics.metric_utils.html">fibber.metrics.metric_utils module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fibber.metrics.sbert_semantic_similarity_metric.html">fibber.metrics.sbert_semantic_similarity_metric module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibber.metrics.use_semantic_similarity_metric.html">fibber.metrics.use_semantic_similarity_metric module</a></li>
 </ul>
 </div>
@@ -811,6 +816,54 @@ and <code class="docutils literal notranslate"><span class="pre">DIRECTION_UNKNO
 </dd></dl>
 
 <dl class="py class">
+<dt id="fibber.metrics.SBERTSemanticSimilarityMetric">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.</code><code class="sig-name descname">SBERTSemanticSimilarityMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sbert_pretrained_model</span><span class="o">=</span><span class="default_value">'stsb-bert-base'</span></em>, <em class="sig-param"><span class="n">sbert_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/sbert_semantic_similarity_metric.html#SBERTSemanticSimilarityMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.SBERTSemanticSimilarityMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase" title="fibber.metrics.metric_base.MetricBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.metric_base.MetricBase</span></code></a></p>
+<p>This metric computes the semantic similarity of two sentences using Sentence BERT model.</p>
+<p>By default the we use stsb-bert-base model.</p>
+<p>see <cite>https://github.com/UKPLab/sentence-transformers</cite> for more information.</p>
+<p>Initialize sbert model.</p>
+<dl class="py method">
+<dt id="fibber.metrics.SBERTSemanticSimilarityMetric.measure_batch">
+<code class="sig-name descname">measure_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase_list</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/sbert_semantic_similarity_metric.html#SBERTSemanticSimilarityMetric.measure_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.SBERTSemanticSimilarityMetric.measure_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure the metric on a batch of paraphrase_list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>origin</strong> (<em>str</em>) – the original text.</p></li>
+<li><p><strong>paraphrase_list</strong> (<em>list</em>) – a set of paraphrase_list.</p></li>
+<li><p><strong>data_record</strong> (<em>dict</em>) – the corresponding data record of original text.</p></li>
+<li><p><strong>paraphrase_field</strong> (<em>str</em>) – the field name to paraphrase.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list containing the USE similarity metric for each paraphrase.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.SBERTSemanticSimilarityMetric.measure_example">
+<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/sbert_semantic_similarity_metric.html#SBERTSemanticSimilarityMetric.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.SBERTSemanticSimilarityMetric.measure_example" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the perplexity ratio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>origin</strong> (<em>str</em>) – original text.</p></li>
+<li><p><strong>paraphrase</strong> (<em>str</em>) – paraphrased text.</p></li>
+<li><p><strong>data_record</strong> – ignored.</p></li>
+<li><p><strong>paraphrase_field</strong> – ignored.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="fibber.metrics.USESemanticSimilarityMetric">
 <em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.</code><code class="sig-name descname">USESemanticSimilarityMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">use_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/use_semantic_similarity_metric.html#USESemanticSimilarityMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.USESemanticSimilarityMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase" title="fibber.metrics.metric_base.MetricBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.metric_base.MetricBase</span></code></a></p>
@@ -879,7 +932,7 @@ text.</p>
     </div>
 
     
-  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+  <script src="../_static/js/index.d3f166471bb80abb5163.js"></script>
 
 
     <footer class="footer mt-5 mt-md-0">

@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.fibber module &#8212; fibber 0.2.1 documentation</title>
+    <title>fibber.fibber module &#8212; fibber 0.2.2 documentation</title>
     
-  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+  <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
     
   <link rel="stylesheet"
@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+  <link rel="preload" as="script" href="../_static/js/index.d3f166471bb80abb5163.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -251,8 +251,78 @@
               
               <div>
                 
-  <div class="section" id="fibber-fibber-module">
-<h1>fibber.fibber module<a class="headerlink" href="#fibber-fibber-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-fibber.fibber">
+<span id="fibber-fibber-module"></span><h1>fibber.fibber module<a class="headerlink" href="#module-fibber.fibber" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="fibber.fibber.Fibber">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.fibber.</code><code class="sig-name descname">Fibber</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_name</span></em>, <em class="sig-param"><span class="n">trainset</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">testset</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="o">=</span><span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">bert_clf_steps</span><span class="o">=</span><span class="default_value">5000</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/fibber.html#Fibber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.fibber.Fibber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Fibber is a unified interface for paraphrase strategies.</p>
+<p>Initialize</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg_dict</strong> (<em>dict</em>) – a dict of hyper parameters for the MetricBundle and strategy.</p></li>
+<li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
+<li><p><strong>strategy_name</strong> (<em>str</em>) – the strategy name.</p></li>
+<li><p><strong>trainset</strong> (<em>str</em>) – fibber dataset.</p></li>
+<li><p><strong>testset</strong> (<em>str</em>) – fibber testset.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – directory to cache the strategy.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="fibber.fibber.Fibber.get_metric_bundle">
+<code class="sig-name descname">get_metric_bundle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/fibber.html#Fibber.get_metric_bundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.fibber.Fibber.get_metric_bundle" title="Permalink to this definition">¶</a></dt>
+<dd><p>“Get the metric bundle.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.fibber.Fibber.paraphrase">
+<code class="sig-name descname">paraphrase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span><span class="o">=</span><span class="default_value">'text0'</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">20</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/fibber.html#Fibber.paraphrase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.fibber.Fibber.paraphrase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paraphrase a given data record.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_record</strong> (<em>dict</em>) – data record to be paraphrased.</p></li>
+<li><p><strong>field_name</strong> (<em>str</em>) – select from <code class="docutils literal notranslate"><span class="pre">[&quot;text0&quot;,</span> <span class="pre">&quot;text1&quot;]</span></code></p></li>
+<li><p><strong>n</strong> (<em>int</em>) – number of paraphrases.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>a list of str as paraphrased sentences.</p></li>
+<li><p>a list of dict as corresponding metrics.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fibber.fibber.Fibber.paraphrase_a_random_sentence">
+<code class="sig-name descname">paraphrase_a_random_sentence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">from_testset</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/fibber.html#Fibber.paraphrase_a_random_sentence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.fibber.Fibber.paraphrase_a_random_sentence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly pick one data, then paraphrase it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – number of paraphrases.</p></li>
+<li><p><strong>from_testset</strong> (<em>bool</em>) – if true, select data from test set, otherwise from training set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>a str as the original text.</p></li>
+<li><p>a list of str as the paraphrased text.</p></li>
+<li><p>a list of dict as corresponding metrics.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -273,7 +343,7 @@
     </div>
 
     
-  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+  <script src="../_static/js/index.d3f166471bb80abb5163.js"></script>
 
 
     <footer class="footer mt-5 mt-md-0">

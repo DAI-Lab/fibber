@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.datasets.preprocess_yelp module &#8212; fibber 0.2.2 documentation</title>
+    <title>fibber.metrics.sbert_semantic_similarity_metric module &#8212; fibber 0.2.2 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -39,8 +39,8 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.metrics package" href="fibber.metrics.html" />
-    <link rel="prev" title="fibber.datasets.preprocess_utils module" href="fibber.datasets.preprocess_utils.html" />
+    <link rel="next" title="fibber.metrics.use_semantic_similarity_metric module" href="fibber.metrics.use_semantic_similarity_metric.html" />
+    <link rel="prev" title="fibber.metrics.metric_utils module" href="fibber.metrics.metric_utils.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
   </head>
@@ -176,58 +176,58 @@
             
           
             
-  
-                <li class="active">
+                <li class="">
                     <a href="fibber.datasets.html">fibber.datasets package</a>
-                    <ul>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.dataset_utils.html">fibber.datasets.dataset_utils module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.download_datasets.html">fibber.datasets.download_datasets module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.downloadable_datasets.html">fibber.datasets.downloadable_datasets module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_ag.html">fibber.datasets.preprocess_ag module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_imdb.html">fibber.datasets.preprocess_imdb module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_mnli.html">fibber.datasets.preprocess_mnli module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_mr.html">fibber.datasets.preprocess_mr module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_snli.html">fibber.datasets.preprocess_snli module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_utils.html">fibber.datasets.preprocess_utils module</a>
-                        </li>
-                    
-                        <li class="active">
-                            <a href="">fibber.datasets.preprocess_yelp module</a>
-                        </li>
-                    
-                    </ul>
                 </li>
             
           
             
-                <li class="">
+  
+                <li class="active">
                     <a href="fibber.metrics.html">fibber.metrics package</a>
+                    <ul>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.attack_aggregation_utils.html">fibber.metrics.attack_aggregation_utils module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.bert_classifier.html">fibber.metrics.bert_classifier module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.classifier_base.html">fibber.metrics.classifier_base module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.edit_distance_metric.html">fibber.metrics.edit_distance_metric module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.glove_semantic_similarity_metric.html">fibber.metrics.glove_semantic_similarity_metric module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.gpt2_grammar_quality_metric.html">fibber.metrics.gpt2_grammar_quality_metric module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.metric_base.html">fibber.metrics.metric_base module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.metric_utils.html">fibber.metrics.metric_utils module</a>
+                        </li>
+                    
+                        <li class="active">
+                            <a href="">fibber.metrics.sbert_semantic_similarity_metric module</a>
+                        </li>
+                    
+                        <li class="">
+                            <a href="fibber.metrics.use_semantic_similarity_metric.html">fibber.metrics.use_semantic_similarity_metric module</a>
+                        </li>
+                    
+                    </ul>
                 </li>
             
           
@@ -295,18 +295,55 @@
               
               <div>
                 
-  <div class="section" id="module-fibber.datasets.preprocess_yelp">
-<span id="fibber-datasets-preprocess-yelp-module"></span><h1>fibber.datasets.preprocess_yelp module<a class="headerlink" href="#module-fibber.datasets.preprocess_yelp" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt id="fibber.datasets.preprocess_yelp.download_and_preprocess_yelp">
-<code class="sig-prename descclassname">fibber.datasets.preprocess_yelp.</code><code class="sig-name descname">download_and_preprocess_yelp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/preprocess_yelp.html#download_and_preprocess_yelp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.preprocess_yelp.download_and_preprocess_yelp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Download and preprocess Yelp dataset.</p>
+  <div class="section" id="module-fibber.metrics.sbert_semantic_similarity_metric">
+<span id="fibber-metrics-sbert-semantic-similarity-metric-module"></span><h1>fibber.metrics.sbert_semantic_similarity_metric module<a class="headerlink" href="#module-fibber.metrics.sbert_semantic_similarity_metric" title="Permalink to this headline">¶</a></h1>
+<p>This metric computes the embedding similarity using SBERT model.</p>
+<dl class="py class">
+<dt id="fibber.metrics.sbert_semantic_similarity_metric.SBERTSemanticSimilarityMetric">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.sbert_semantic_similarity_metric.</code><code class="sig-name descname">SBERTSemanticSimilarityMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sbert_pretrained_model</span><span class="o">=</span><span class="default_value">'stsb-bert-base'</span></em>, <em class="sig-param"><span class="n">sbert_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/sbert_semantic_similarity_metric.html#SBERTSemanticSimilarityMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.sbert_semantic_similarity_metric.SBERTSemanticSimilarityMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase" title="fibber.metrics.metric_base.MetricBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.metric_base.MetricBase</span></code></a></p>
+<p>This metric computes the semantic similarity of two sentences using Sentence BERT model.</p>
+<p>By default the we use stsb-bert-base model.</p>
+<p>see <cite>https://github.com/UKPLab/sentence-transformers</cite> for more information.</p>
+<p>Initialize sbert model.</p>
+<dl class="py method">
+<dt id="fibber.metrics.sbert_semantic_similarity_metric.SBERTSemanticSimilarityMetric.measure_batch">
+<code class="sig-name descname">measure_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase_list</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/sbert_semantic_similarity_metric.html#SBERTSemanticSimilarityMetric.measure_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.sbert_semantic_similarity_metric.SBERTSemanticSimilarityMetric.measure_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure the metric on a batch of paraphrase_list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>origin</strong> (<em>str</em>) – the original text.</p></li>
+<li><p><strong>paraphrase_list</strong> (<em>list</em>) – a set of paraphrase_list.</p></li>
+<li><p><strong>data_record</strong> (<em>dict</em>) – the corresponding data record of original text.</p></li>
+<li><p><strong>paraphrase_field</strong> (<em>str</em>) – the field name to paraphrase.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list containing the USE similarity metric for each paraphrase.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(list)</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="py function">
-<dt id="fibber.datasets.preprocess_yelp.preprocess_yelp_data">
-<code class="sig-prename descclassname">fibber.datasets.preprocess_yelp.</code><code class="sig-name descname">preprocess_yelp_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_filename</span></em>, <em class="sig-param"><span class="n">output_filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/preprocess_yelp.html#preprocess_yelp_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.preprocess_yelp.preprocess_yelp_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>preprocess Yelp dataset to Fibber’s JSON format.</p>
+<dl class="py method">
+<dt id="fibber.metrics.sbert_semantic_similarity_metric.SBERTSemanticSimilarityMetric.measure_example">
+<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/sbert_semantic_similarity_metric.html#SBERTSemanticSimilarityMetric.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.sbert_semantic_similarity_metric.SBERTSemanticSimilarityMetric.measure_example" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the perplexity ratio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>origin</strong> (<em>str</em>) – original text.</p></li>
+<li><p><strong>paraphrase</strong> (<em>str</em>) – paraphrased text.</p></li>
+<li><p><strong>data_record</strong> – ignored.</p></li>
+<li><p><strong>paraphrase_field</strong> – ignored.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -317,8 +354,8 @@
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="fibber.datasets.preprocess_utils.html" title="previous page">fibber.datasets.preprocess_utils module</a>
-    <a class='right-next' id="next-link" href="fibber.metrics.html" title="next page">fibber.metrics package</a>
+    <a class='left-prev' id="prev-link" href="fibber.metrics.metric_utils.html" title="previous page">fibber.metrics.metric_utils module</a>
+    <a class='right-next' id="next-link" href="fibber.metrics.use_semantic_similarity_metric.html" title="next page">fibber.metrics.use_semantic_similarity_metric module</a>
 
               </div>
               
