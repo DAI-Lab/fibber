@@ -3,6 +3,7 @@ import subprocess
 
 COMMON_CONFIG = {
     "--subsample_testset": 100,
+    "--num_paraphrases_per_text": 50
 }
 
 GPU_CONFIG = {

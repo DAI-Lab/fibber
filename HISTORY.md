@@ -1,5 +1,14 @@
 # History
 
+## Version 0.2.2 - 2021-02-3
+This release fixes bugs and adds unit tests.
+
+### New Features
+
+- Add Sentence BERT metric and corresponding unit test.
+- Fix the bug of the colab demo.
+
+
 ## Version 0.2.1 - 2021-01-20
 This release improves documentation and unit tests.
 

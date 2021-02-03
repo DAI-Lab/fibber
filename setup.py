@@ -22,7 +22,8 @@ install_requires = [
     'spacy>=2.0.0',
     'pandas>=1.0.0',
     'nltk>=3.0',
-    'stanza>=1.1.0'
+    'stanza>=1.1.0',
+    'sentence-transformers>=0.3.0'
 ]
 
 setup_requires = [
@@ -100,6 +101,6 @@ setup(
     test_suite='tests',
     tests_require=tests_require,
     url='https://github.com/DAI-Lab/fibber',
-    version='0.2.1',
+    version='0.2.2.dev1',
     zip_safe=False,
 )
