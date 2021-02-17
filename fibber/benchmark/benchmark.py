@@ -112,8 +112,11 @@ class Benchmark(object):
             self._metric_bundle.add_classifier(str(customized_clf), customized_clf)
             self._metric_bundle.set_target_classifier_by_name(str(customized_clf))
 
-        self._metric_bundle.get_target_classifier().load_robust_tuned_model(
-            load_robust_tuned_clf_desc, robust_tuning_steps)
+        if (load_robust_tuned_clf_desc is not None and
+                load_robust_tuned_clf_desc not in ["null", "None", "none", ""]):
+            self._metric_bundle.get_target_classifier().load_robust_tuned_model(
+                load_robust_tuned_clf_desc, robust_tuning_steps)
+
         add_sentence_level_adversarial_attack_metrics(
             self._metric_bundle, gpt2_ppl_threshold=5, use_sim_threshold=0.85)
 
