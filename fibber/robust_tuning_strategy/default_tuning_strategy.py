@@ -1,6 +1,8 @@
 import copy
+
 import numpy as np
 import tqdm
+
 
 class TuningStrategyBase(object):
     pass
