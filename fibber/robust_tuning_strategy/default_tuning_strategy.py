@@ -55,8 +55,8 @@ class DefaultTuningStrategy(TuningStrategyBase):
                     paraphrase_field)
 
                 for (paraphrase, metric) in zip(paraphrase_list, metric_list):
-                    if (metric["USESemanticSimilarityMetric"] < 0.85 or
-                            metric["GPT2GrammarQualityMetric"] > 5):
+                    if (metric["USESemanticSimilarityMetric"] < 0.85
+                            or metric["GPT2GrammarQualityMetric"] > 5):
                         continue
 
                     data_record_new = copy.deepcopy(data_record_t)
