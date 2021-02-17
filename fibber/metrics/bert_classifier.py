@@ -363,7 +363,7 @@ class BertClassifier(ClassifierBase):
         self._model.eval()
         return logits.argmax(axis=1).detach().cpu().numpy(), float(loss.detach().cpu().numpy())
 
-    def restore_robust_tuned_model(self, desc, step):
+    def load_robust_tuned_model(self, desc, step):
         model_dir = os.path.join(get_root_dir(), "bert_clf", self._dataset_name, desc)
         ckpt_path = os.path.join(model_dir, self._model_init + "-%04dk" % (step // 1000))
         self._model.save_pretrained(ckpt_path)

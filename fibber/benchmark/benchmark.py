@@ -44,7 +44,9 @@ class Benchmark(object):
                  gpt2_gpu_id=-1,
                  bert_gpu_id=-1,
                  bert_clf_steps=20000,
-                 bert_clf_bs=32):
+                 bert_clf_bs=32,
+                 load_robust_tuned_clf_desc=None,
+                 robust_tuning_steps=0):
         """Initialize Benchmark framework.
 
         Args:
@@ -110,6 +112,8 @@ class Benchmark(object):
             self._metric_bundle.add_classifier(str(customized_clf), customized_clf)
             self._metric_bundle.set_target_classifier_by_name(str(customized_clf))
 
+        self._metric_bundle.get_target_classifier().load_robust_tuned_model(
+            load_robust_tuned_clf_desc, robust_tuning_steps)
         add_sentence_level_adversarial_attack_metrics(
             self._metric_bundle, gpt2_ppl_threshold=5, use_sim_threshold=0.85)
 
@@ -226,6 +230,7 @@ def main():
                         help="use 1 for robust training. (make a separate run to attack).\\"
                              "use 0 for attack.")
     parser.add_argument("--robust_tuning_steps", type=int, default=5000)
+    parser.add_argument("--load_robust_tuned_clf_desc", type=str, default=None)
 
     # add experiment args
     parser.add_argument("--dataset", type=str, default="ag")
@@ -251,12 +256,17 @@ def main():
     os.makedirs(arg_dict["output_dir"], exist_ok=True)
     os.makedirs(os.path.join(arg_dict["output_dir"], "log"), exist_ok=True)
 
+    if arg_dict["robust_tuning"] == "1":
+        assert arg_dict["load_robust_tuned_clf_desc"] is None
+
     benchmark = Benchmark(arg_dict["output_dir"], arg_dict["dataset"],
                           subsample_attack_set=arg_dict["subsample_testset"],
                           use_gpu_id=arg_dict["use_gpu_id"],
                           bert_gpu_id=arg_dict["bert_gpu_id"],
                           gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
-                          bert_clf_steps=arg_dict["bert_clf_steps"])
+                          bert_clf_steps=arg_dict["bert_clf_steps"],
+                          load_robust_tuned_clf_desc=arg_dict["load_robust_tuned_clf_desc"],
+                          robust_tuning_steps=arg_dict["robust_tuning_steps"])
 
     log.add_file_handler(
         logger, os.path.join(arg_dict["output_dir"], "log.log"))
