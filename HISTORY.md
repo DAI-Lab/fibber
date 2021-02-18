@@ -1,5 +1,15 @@
 # History
 
+## Version 0.2.3 - 2021-02-17
+This release adds experimental code to adversarial training.
+
+### New Features
+
+- Add a default adversarial tuning strategy.
+- Add API in classifiers to support adversarial tuning.
+- Add args in benchmark for adversarial tuning.
+
+
 ## Version 0.2.2 - 2021-02-3
 This release fixes bugs and adds unit tests.
 

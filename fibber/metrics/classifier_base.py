@@ -115,3 +115,12 @@ class ClassifierBase(MetricBase):
          """
         return [int(x) for x in
                 self.predict_batch(origin, paraphrase_list, data_record, paraphrase_field)]
+
+    def robust_tune_step(self, data_record_list):
+        raise NotImplementedError
+
+    def load_robust_tuned_model(self, desc, step):
+        raise NotImplementedError
+
+    def save_robust_tuned_model(self, desc, step):
+        raise NotImplementedError

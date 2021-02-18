@@ -10,15 +10,21 @@ from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
     BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextAttackStrategy)
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
+from fibber.robust_tuning_strategy.default_tuning_strategy import (
+    DefaultTuningStrategy, TuningStrategyBase)
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
 
-built_in_strategies = {
+built_in_paraphrase_strategies = {
     "RandomStrategy": RandomStrategy,
     "IdentityStrategy": IdentityStrategy,
     "TextAttackStrategy": TextAttackStrategy,
     "BertSamplingStrategy": BertSamplingStrategy
+}
+
+built_in_tuning_strategies = {
+    "DefaultTuningStrategy": DefaultTuningStrategy
 }
 
 DATASET_NAME_COL = "0_dataset_name"
@@ -38,7 +44,9 @@ class Benchmark(object):
                  gpt2_gpu_id=-1,
                  bert_gpu_id=-1,
                  bert_clf_steps=20000,
-                 bert_clf_bs=32):
+                 bert_clf_bs=32,
+                 load_robust_tuned_clf_desc=None,
+                 robust_tuning_steps=0):
         """Initialize Benchmark framework.
 
         Args:
@@ -104,8 +112,40 @@ class Benchmark(object):
             self._metric_bundle.add_classifier(str(customized_clf), customized_clf)
             self._metric_bundle.set_target_classifier_by_name(str(customized_clf))
 
+        if (load_robust_tuned_clf_desc is not None
+                and load_robust_tuned_clf_desc not in ["null", "None", "none", ""]):
+            self._metric_bundle.get_target_classifier().load_robust_tuned_model(
+                load_robust_tuned_clf_desc, robust_tuning_steps)
+
         add_sentence_level_adversarial_attack_metrics(
             self._metric_bundle, gpt2_ppl_threshold=5, use_sim_threshold=0.85)
+
+    def run_robust_tuning(self,
+                          paraphrase_strategy="IdentityStrategy",
+                          tuning_strategy="DefaultTuningStrategy",
+                          strategy_gpu_id=-1,
+                          num_paraphrases_per_text=50,
+                          tuning_steps=5000):
+        if isinstance(paraphrase_strategy, str):
+            if paraphrase_strategy in built_in_paraphrase_strategies:
+                paraphrase_strategy = built_in_paraphrase_strategies[paraphrase_strategy](
+                    {}, self._dataset_name, strategy_gpu_id, self._output_dir, self._metric_bundle)
+        assert isinstance(paraphrase_strategy, StrategyBase)
+
+        if isinstance(tuning_strategy, str):
+            if tuning_strategy in built_in_tuning_strategies:
+                robust_tuning_strategy = built_in_tuning_strategies[tuning_strategy]()
+        assert isinstance(robust_tuning_strategy, TuningStrategyBase)
+
+        paraphrase_strategy.fit(self._trainset)
+
+        robust_tuning_strategy.fine_tune_classifier(
+            metric_bundle=self._metric_bundle,
+            paraphrase_strategy=paraphrase_strategy,
+            train_set=self._trainset,
+            num_paraphrases_per_text=num_paraphrases_per_text,
+            tuning_steps=tuning_steps
+        )
 
     def run_benchmark(self,
                       paraphrase_strategy="IdentityStrategy",
@@ -132,8 +172,8 @@ class Benchmark(object):
         """
         # setup strategy
         if isinstance(paraphrase_strategy, str):
-            if paraphrase_strategy in built_in_strategies:
-                paraphrase_strategy = built_in_strategies[paraphrase_strategy](
+            if paraphrase_strategy in built_in_paraphrase_strategies:
+                paraphrase_strategy = built_in_paraphrase_strategies[paraphrase_strategy](
                     {}, self._dataset_name, strategy_gpu_id, self._output_dir, self._metric_bundle)
         else:
             assert isinstance(paraphrase_strategy, StrategyBase)
@@ -188,6 +228,13 @@ def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
 def main():
     parser = argparse.ArgumentParser()
 
+    # option on robust training vs attack
+    parser.add_argument("--robust_tuning", type=str, default="0",
+                        help="use 1 for robust training. (make a separate run to attack).\\"
+                             "use 0 for attack.")
+    parser.add_argument("--robust_tuning_steps", type=int, default=5000)
+    parser.add_argument("--load_robust_tuned_clf_desc", type=str, default=None)
+
     # add experiment args
     parser.add_argument("--dataset", type=str, default="ag")
     parser.add_argument("--output_dir", type=str, default=None)
@@ -203,7 +250,7 @@ def main():
     parser.add_argument("--bert_clf_steps", type=int, default=20000)
 
     # add builtin strategies' args to parser.
-    for item in built_in_strategies.values():
+    for item in built_in_paraphrase_strategies.values():
         item.add_parser_args(parser)
 
     arg_dict = vars(parser.parse_args())
@@ -212,12 +259,17 @@ def main():
     os.makedirs(arg_dict["output_dir"], exist_ok=True)
     os.makedirs(os.path.join(arg_dict["output_dir"], "log"), exist_ok=True)
 
+    if arg_dict["robust_tuning"] == "1":
+        assert arg_dict["load_robust_tuned_clf_desc"] is None
+
     benchmark = Benchmark(arg_dict["output_dir"], arg_dict["dataset"],
                           subsample_attack_set=arg_dict["subsample_testset"],
                           use_gpu_id=arg_dict["use_gpu_id"],
                           bert_gpu_id=arg_dict["bert_gpu_id"],
                           gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
-                          bert_clf_steps=arg_dict["bert_clf_steps"])
+                          bert_clf_steps=arg_dict["bert_clf_steps"],
+                          load_robust_tuned_clf_desc=arg_dict["load_robust_tuned_clf_desc"],
+                          robust_tuning_steps=arg_dict["robust_tuning_steps"])
 
     log.add_file_handler(
         logger, os.path.join(arg_dict["output_dir"], "log.log"))
@@ -228,8 +280,13 @@ def main():
                                        arg_dict["strategy_gpu_id"], arg_dict["output_dir"],
                                        benchmark.get_metric_bundle())
 
-    benchmark.run_benchmark(paraphrase_strategy=paraphrase_strategy,
-                            num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"])
+    if arg_dict["robust_tuning"] == "1":
+        benchmark.run_robust_tuning(paraphrase_strategy=paraphrase_strategy,
+                                    num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"],
+                                    tuning_steps=arg_dict["robust_tuning_steps"])
+    else:
+        benchmark.run_benchmark(paraphrase_strategy=paraphrase_strategy,
+                                num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"])
 
 
 if __name__ == "__main__":
