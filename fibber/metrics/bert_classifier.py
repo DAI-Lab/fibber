@@ -250,6 +250,8 @@ class BertClassifier(ClassifierBase):
             logger.info("BERT metric is running on GPU %d.", bert_gpu_id)
             self._device = torch.device("cuda:%d" % bert_gpu_id)
 
+        self._model_init = model_init
+        self._dataset_name = dataset_name
         self._model = load_or_train_bert_clf(
             model_init=model_init,
             dataset_name=dataset_name,
@@ -265,6 +267,8 @@ class BertClassifier(ClassifierBase):
             bert_clf_period_save=bert_clf_period_save,
             bert_clf_val_steps=bert_clf_val_steps,
             device=self._device)
+        self._fine_tune_sche = None
+        self._fine_tune_opt = None
 
     def predict_dist_batch(self, origin, paraphrase_list, data_record=None,
                            paraphrase_field="text0"):
@@ -309,3 +313,64 @@ class BertClassifier(ClassifierBase):
             (np.array): a numpy array of size ``(num_labels)``.
         """
         return self.predict_dist_batch(origin, [paraphrase], data_record, paraphrase_field)[0]
+
+    def robust_tune_init(self, bert_clf_optimizer, bert_clf_lr, bert_clf_weight_decay,
+                         bert_clf_steps, **kwargs):
+        if self._fine_tune_sche is not None or self._fine_tune_opt is not None:
+            logger.error("fine tuning has been initialized.")
+            raise RuntimeError("fine tuning has been initialized.")
+
+        params = self._model.parameters()
+        self._fine_tune_opt, self._fine_tune_sche = get_optimizer(
+            bert_clf_optimizer, bert_clf_lr, bert_clf_weight_decay, bert_clf_steps, params)
+
+    def robust_tune_step(self, data_record_list):
+        if self._fine_tune_sche is None or self._fine_tune_opt is None:
+            logger.error("fine tuning not initialized.")
+            raise RuntimeError("fine tuning not initialized.")
+
+        self._model.train()
+        text0_list = []
+        text1_list = []
+        labels = []
+        for data_record in data_record_list:
+            if "text0" in data_record:
+                text0_list.append(data_record["text0"])
+            if "text1" in data_record:
+                text1_list.append(data_record["text1"])
+            labels.append(data_record["label"])
+
+        if len(text1_list) == 0:
+            text1_list = None
+        elif len(text1_list) != len(text0_list):
+            raise RuntimeError("data records are not consistent.")
+
+        batch_input = self._tokenizer(text=text0_list, text_pair=text1_list,
+                                      padding=True, max_length=200, truncation=True)
+
+        loss, logits = self._model(
+            input_ids=torch.tensor(batch_input["input_ids"]).to(self._device),
+            token_type_ids=torch.tensor(batch_input["token_type_ids"]).to(self._device),
+            attention_mask=torch.tensor(batch_input["attention_mask"]).to(self._device),
+            labels=torch.tensor(labels).to(self._device)
+        )[:2]
+
+        self._fine_tune_opt.zero_grad()
+        loss.backward()
+        self._fine_tune_opt.step()
+        self._fine_tune_sche.step()
+
+        self._model.eval()
+        return logits.argmax(axis=1).detach().cpu().numpy(), float(loss.detach().cpu().numpy())
+
+    def load_robust_tuned_model(self, desc, step):
+        model_dir = os.path.join(get_root_dir(), "bert_clf", self._dataset_name, desc)
+        ckpt_path = os.path.join(model_dir, self._model_init + "-%04dk" % (step // 1000))
+        self._model.save_pretrained(ckpt_path)
+        logger.info("BERT classifier saved at %s.", ckpt_path)
+
+    def save_robust_tuned_model(self, desc, step):
+        model_dir = os.path.join(get_root_dir(), "bert_clf", self._dataset_name, desc)
+        ckpt_path = os.path.join(model_dir, self._model_init + "-%04dk" % (step // 1000))
+        self._model.save_pretrained(ckpt_path)
+        logger.info("BERT classifier saved at %s.", ckpt_path)
