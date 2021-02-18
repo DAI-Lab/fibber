@@ -1,0 +1,18 @@
+fibber.robust\_tuning\_strategy package
+=======================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   fibber.robust_tuning_strategy.default_tuning_strategy
+
+Module contents
+---------------
+
+.. automodule:: fibber.robust_tuning_strategy
+   :members:
+   :undoc-members:
+   :show-inheritance:

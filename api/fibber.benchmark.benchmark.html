@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.benchmark.benchmark module &#8212; fibber 0.2.2 documentation</title>
+    <title>fibber.benchmark.benchmark module &#8212; fibber 0.2.3 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -217,6 +217,12 @@
           
             
                 <li class="">
+                    <a href="fibber.robust_tuning_strategy.html">fibber.robust_tuning_strategy package</a>
+                </li>
+            
+          
+            
+                <li class="">
                     <a href="fibber.download_utils.html">fibber.download_utils module</a>
                 </li>
             
@@ -271,7 +277,7 @@
 <span id="fibber-benchmark-benchmark-module"></span><h1>fibber.benchmark.benchmark module<a class="headerlink" href="#module-fibber.benchmark.benchmark" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="fibber.benchmark.benchmark.Benchmark">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.benchmark.benchmark.</code><code class="sig-name descname">Benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">trainset</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">testset</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">attack_set</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">subsample_attack_set</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">customized_clf</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">enable_bert_clf</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">gpt2_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">bert_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">bert_clf_steps</span><span class="o">=</span><span class="default_value">20000</span></em>, <em class="sig-param"><span class="n">bert_clf_bs</span><span class="o">=</span><span class="default_value">32</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#Benchmark"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.benchmark.Benchmark" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">fibber.benchmark.benchmark.</code><code class="sig-name descname">Benchmark</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">trainset</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">testset</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">attack_set</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">subsample_attack_set</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">customized_clf</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">enable_bert_clf</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">gpt2_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">bert_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">bert_clf_steps</span><span class="o">=</span><span class="default_value">20000</span></em>, <em class="sig-param"><span class="n">bert_clf_bs</span><span class="o">=</span><span class="default_value">32</span></em>, <em class="sig-param"><span class="n">load_robust_tuned_clf_desc</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">robust_tuning_steps</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#Benchmark"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.benchmark.Benchmark" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Benchmark framework for adversarial attack methods on text classification.</p>
 <p>Initialize Benchmark framework.</p>
@@ -331,6 +337,11 @@ benchmark output dir.</p></li>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt id="fibber.benchmark.benchmark.Benchmark.run_robust_tuning">
+<code class="sig-name descname">run_robust_tuning</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paraphrase_strategy</span><span class="o">=</span><span class="default_value">'IdentityStrategy'</span></em>, <em class="sig-param"><span class="n">tuning_strategy</span><span class="o">=</span><span class="default_value">'DefaultTuningStrategy'</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">num_paraphrases_per_text</span><span class="o">=</span><span class="default_value">50</span></em>, <em class="sig-param"><span class="n">tuning_steps</span><span class="o">=</span><span class="default_value">5000</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#Benchmark.run_robust_tuning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.benchmark.Benchmark.run_robust_tuning" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

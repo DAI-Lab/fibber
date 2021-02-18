@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; fibber 0.2.2 documentation</title>
+    <title>Index &#8212; fibber 0.2.3 documentation</title>
     
   <link rel="stylesheet" href="_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -350,6 +350,8 @@
         <li><a href="api/fibber.datasets.dataset_utils.html#fibber.datasets.dataset_utils.DatasetForBert">(class in fibber.datasets.dataset_utils)</a>
 </li>
       </ul></li>
+      <li><a href="api/fibber.robust_tuning_strategy.default_tuning_strategy.html#fibber.robust_tuning_strategy.default_tuning_strategy.DefaultTuningStrategy">DefaultTuningStrategy (class in fibber.robust_tuning_strategy.default_tuning_strategy)</a>
+</li>
       <li><a href="api/fibber.resources.html#fibber.resources.download_all">download_all() (in module fibber.resources)</a>
 
       <ul>
@@ -360,10 +362,10 @@
 </li>
       <li><a href="api/fibber.datasets.preprocess_imdb.html#fibber.datasets.preprocess_imdb.download_and_preprocess_imdb">download_and_preprocess_imdb() (in module fibber.datasets.preprocess_imdb)</a>
 </li>
-      <li><a href="api/fibber.datasets.preprocess_mnli.html#fibber.datasets.preprocess_mnli.download_and_preprocess_mnli">download_and_preprocess_mnli() (in module fibber.datasets.preprocess_mnli)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/fibber.datasets.preprocess_mnli.html#fibber.datasets.preprocess_mnli.download_and_preprocess_mnli">download_and_preprocess_mnli() (in module fibber.datasets.preprocess_mnli)</a>
+</li>
       <li><a href="api/fibber.datasets.preprocess_mr.html#fibber.datasets.preprocess_mr.download_and_preprocess_mr">download_and_preprocess_mr() (in module fibber.datasets.preprocess_mr)</a>
 </li>
       <li><a href="api/fibber.datasets.preprocess_snli.html#fibber.datasets.preprocess_snli.download_and_preprocess_snli">download_and_preprocess_snli() (in module fibber.datasets.preprocess_snli)</a>
@@ -565,8 +567,6 @@
         <li><a href="api/fibber.metrics.classifier_base.html#module-fibber.metrics.classifier_base">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     fibber.metrics.edit_distance_metric
 
@@ -574,6 +574,8 @@
         <li><a href="api/fibber.metrics.edit_distance_metric.html#module-fibber.metrics.edit_distance_metric">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     fibber.metrics.glove_semantic_similarity_metric
 
@@ -707,6 +709,22 @@
         <li><a href="api/fibber.resources.resource_utils.html#module-fibber.resources.resource_utils">module</a>
 </li>
       </ul></li>
+      <li>
+    fibber.robust_tuning_strategy
+
+      <ul>
+        <li><a href="api/fibber.robust_tuning_strategy.html#module-fibber.robust_tuning_strategy">module</a>
+</li>
+      </ul></li>
+      <li>
+    fibber.robust_tuning_strategy.default_tuning_strategy
+
+      <ul>
+        <li><a href="api/fibber.robust_tuning_strategy.default_tuning_strategy.html#module-fibber.robust_tuning_strategy.default_tuning_strategy">module</a>
+</li>
+      </ul></li>
+      <li><a href="api/fibber.robust_tuning_strategy.default_tuning_strategy.html#fibber.robust_tuning_strategy.default_tuning_strategy.DefaultTuningStrategy.fine_tune_classifier">fine_tune_classifier() (fibber.robust_tuning_strategy.default_tuning_strategy.DefaultTuningStrategy method)</a>
+</li>
       <li><a href="api/fibber.paraphrase_strategies.bert_sampling_strategy.html#fibber.paraphrase_strategies.bert_sampling_strategy.BertSamplingStrategy.fit">fit() (fibber.paraphrase_strategies.bert_sampling_strategy.BertSamplingStrategy method)</a>
 
       <ul>
@@ -919,12 +937,20 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fibber.benchmark.benchmark_utils.html#fibber.benchmark.benchmark_utils.load_detailed_result">load_detailed_result() (in module fibber.benchmark.benchmark_utils)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fibber.resources.resource_utils.html#fibber.resources.resource_utils.load_glove_model">load_glove_model() (in module fibber.resources.resource_utils)</a>
 </li>
       <li><a href="api/fibber.metrics.bert_classifier.html#fibber.metrics.bert_classifier.load_or_train_bert_clf">load_or_train_bert_clf() (in module fibber.metrics.bert_classifier)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/fibber.metrics.bert_classifier.html#fibber.metrics.bert_classifier.BertClassifier.load_robust_tuned_model">load_robust_tuned_model() (fibber.metrics.bert_classifier.BertClassifier method)</a>
+
+      <ul>
+        <li><a href="api/fibber.metrics.html#fibber.metrics.BertClassifier.load_robust_tuned_model">(fibber.metrics.BertClassifier method)</a>
+</li>
+        <li><a href="api/fibber.metrics.classifier_base.html#fibber.metrics.classifier_base.ClassifierBase.load_robust_tuned_model">(fibber.metrics.classifier_base.ClassifierBase method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1103,6 +1129,10 @@
 </li>
         <li><a href="api/fibber.resources.resource_utils.html#module-fibber.resources.resource_utils">fibber.resources.resource_utils</a>
 </li>
+        <li><a href="api/fibber.robust_tuning_strategy.html#module-fibber.robust_tuning_strategy">fibber.robust_tuning_strategy</a>
+</li>
+        <li><a href="api/fibber.robust_tuning_strategy.default_tuning_strategy.html#module-fibber.robust_tuning_strategy.default_tuning_strategy">fibber.robust_tuning_strategy.default_tuning_strategy</a>
+</li>
       </ul></li>
   </ul></td>
 </tr></table>
@@ -1210,6 +1240,20 @@
       </ul></li>
       <li><a href="api/fibber.log.html#fibber.log.remove_logger_tf_handler">remove_logger_tf_handler() (in module fibber.log)</a>
 </li>
+      <li><a href="api/fibber.metrics.bert_classifier.html#fibber.metrics.bert_classifier.BertClassifier.robust_tune_init">robust_tune_init() (fibber.metrics.bert_classifier.BertClassifier method)</a>
+
+      <ul>
+        <li><a href="api/fibber.metrics.html#fibber.metrics.BertClassifier.robust_tune_init">(fibber.metrics.BertClassifier method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/fibber.metrics.bert_classifier.html#fibber.metrics.bert_classifier.BertClassifier.robust_tune_step">robust_tune_step() (fibber.metrics.bert_classifier.BertClassifier method)</a>
+
+      <ul>
+        <li><a href="api/fibber.metrics.html#fibber.metrics.BertClassifier.robust_tune_step">(fibber.metrics.BertClassifier method)</a>
+</li>
+        <li><a href="api/fibber.metrics.classifier_base.html#fibber.metrics.classifier_base.ClassifierBase.robust_tune_step">(fibber.metrics.classifier_base.ClassifierBase method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fibber.benchmark.html#fibber.benchmark.Benchmark.run_benchmark">run_benchmark() (fibber.benchmark.Benchmark method)</a>
@@ -1220,6 +1264,12 @@
       </ul></li>
       <li><a href="api/fibber.metrics.bert_classifier.html#fibber.metrics.bert_classifier.run_evaluate">run_evaluate() (in module fibber.metrics.bert_classifier)</a>
 </li>
+      <li><a href="api/fibber.benchmark.html#fibber.benchmark.Benchmark.run_robust_tuning">run_robust_tuning() (fibber.benchmark.Benchmark method)</a>
+
+      <ul>
+        <li><a href="api/fibber.benchmark.benchmark.html#fibber.benchmark.benchmark.Benchmark.run_robust_tuning">(fibber.benchmark.benchmark.Benchmark method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1228,6 +1278,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fibber.paraphrase_strategies.bert_sampling_strategy.html#fibber.paraphrase_strategies.bert_sampling_strategy.sample_word_from_logits">sample_word_from_logits() (in module fibber.paraphrase_strategies.bert_sampling_strategy)</a>
 </li>
+      <li><a href="api/fibber.metrics.bert_classifier.html#fibber.metrics.bert_classifier.BertClassifier.save_robust_tuned_model">save_robust_tuned_model() (fibber.metrics.bert_classifier.BertClassifier method)</a>
+
+      <ul>
+        <li><a href="api/fibber.metrics.html#fibber.metrics.BertClassifier.save_robust_tuned_model">(fibber.metrics.BertClassifier method)</a>
+</li>
+        <li><a href="api/fibber.metrics.classifier_base.html#fibber.metrics.classifier_base.ClassifierBase.save_robust_tuned_model">(fibber.metrics.classifier_base.ClassifierBase method)</a>
+</li>
+      </ul></li>
       <li><a href="api/fibber.metrics.html#fibber.metrics.SBERTSemanticSimilarityMetric">SBERTSemanticSimilarityMetric (class in fibber.metrics)</a>
 
       <ul>
@@ -1236,14 +1294,14 @@
       </ul></li>
       <li><a href="api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.textattack_strategy.CLFModel.set_data_record">set_data_record() (fibber.paraphrase_strategies.textattack_strategy.CLFModel method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fibber.metrics.metric_utils.html#fibber.metrics.metric_utils.MetricBundle.set_target_classifier_by_name">set_target_classifier_by_name() (fibber.metrics.metric_utils.MetricBundle method)</a>
 
       <ul>
         <li><a href="api/fibber.metrics.html#fibber.metrics.MetricBundle.set_target_classifier_by_name">(fibber.metrics.MetricBundle method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fibber.log.html#fibber.log.setup_custom_logger">setup_custom_logger() (in module fibber.log)</a>
 </li>
       <li><a href="api/fibber.paraphrase_strategies.bert_sampling_utils_text_parser.html#fibber.paraphrase_strategies.bert_sampling_utils_text_parser.TextParser.split_paragraph_to_sentences">split_paragraph_to_sentences() (fibber.paraphrase_strategies.bert_sampling_utils_text_parser.TextParser method)</a>
@@ -1281,6 +1339,8 @@
       <li><a href="api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.textattack_strategy.CLFModel.tokenize">tokenize() (fibber.paraphrase_strategies.textattack_strategy.CLFModel method)</a>
 </li>
       <li><a href="api/fibber.paraphrase_strategies.bert_sampling_strategy.html#fibber.paraphrase_strategies.bert_sampling_strategy.tostring">tostring() (in module fibber.paraphrase_strategies.bert_sampling_strategy)</a>
+</li>
+      <li><a href="api/fibber.robust_tuning_strategy.default_tuning_strategy.html#fibber.robust_tuning_strategy.default_tuning_strategy.TuningStrategyBase">TuningStrategyBase (class in fibber.robust_tuning_strategy.default_tuning_strategy)</a>
 </li>
   </ul></td>
 </tr></table>

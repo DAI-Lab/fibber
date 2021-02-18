@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.edit_distance_metric module &#8212; fibber 0.2.3 documentation</title>
+    <title>fibber.robust_tuning_strategy package &#8212; fibber 0.2.3 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -39,8 +39,8 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.metrics.glove_semantic_similarity_metric module" href="fibber.metrics.glove_semantic_similarity_metric.html" />
-    <link rel="prev" title="fibber.metrics.classifier_base module" href="fibber.metrics.classifier_base.html" />
+    <link rel="next" title="fibber.robust_tuning_strategy.default_tuning_strategy module" href="fibber.robust_tuning_strategy.default_tuning_strategy.html" />
+    <link rel="prev" title="fibber.resources.resource_utils module" href="fibber.resources.resource_utils.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
   </head>
@@ -182,52 +182,8 @@
             
           
             
-  
-                <li class="active">
+                <li class="">
                     <a href="fibber.metrics.html">fibber.metrics package</a>
-                    <ul>
-                    
-                        <li class="">
-                            <a href="fibber.metrics.attack_aggregation_utils.html">fibber.metrics.attack_aggregation_utils module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.metrics.bert_classifier.html">fibber.metrics.bert_classifier module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.metrics.classifier_base.html">fibber.metrics.classifier_base module</a>
-                        </li>
-                    
-                        <li class="active">
-                            <a href="">fibber.metrics.edit_distance_metric module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.metrics.glove_semantic_similarity_metric.html">fibber.metrics.glove_semantic_similarity_metric module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.metrics.gpt2_grammar_quality_metric.html">fibber.metrics.gpt2_grammar_quality_metric module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.metrics.metric_base.html">fibber.metrics.metric_base module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.metrics.metric_utils.html">fibber.metrics.metric_utils module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.metrics.sbert_semantic_similarity_metric.html">fibber.metrics.sbert_semantic_similarity_metric module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.metrics.use_semantic_similarity_metric.html">fibber.metrics.use_semantic_similarity_metric module</a>
-                        </li>
-                    
-                    </ul>
                 </li>
             
           
@@ -244,8 +200,16 @@
             
           
             
-                <li class="">
-                    <a href="fibber.robust_tuning_strategy.html">fibber.robust_tuning_strategy package</a>
+  
+                <li class="active">
+                    <a href="">fibber.robust_tuning_strategy package</a>
+                    <ul>
+                    
+                        <li class="">
+                            <a href="fibber.robust_tuning_strategy.default_tuning_strategy.html">fibber.robust_tuning_strategy.default_tuning_strategy module</a>
+                        </li>
+                    
+                    </ul>
                 </li>
             
           
@@ -284,9 +248,20 @@
           
           <div class="d-none d-xl-block col-xl-2 bd-toc">
               
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
 
 <nav id="bd-toc-nav">
     <ul class="nav section-nav flex-column">
+    
+        <li class="nav-item toc-entry toc-h2">
+            <a href="#submodules" class="nav-link">Submodules</a>
+        </li>
+    
+        <li class="nav-item toc-entry toc-h2">
+            <a href="#module-fibber.robust_tuning_strategy" class="nav-link">Module contents</a>
+        </li>
     
     </ul>
 </nav>
@@ -301,46 +276,19 @@
               
               <div>
                 
-  <div class="section" id="module-fibber.metrics.edit_distance_metric">
-<span id="fibber-metrics-edit-distance-metric-module"></span><h1>fibber.metrics.edit_distance_metric module<a class="headerlink" href="#module-fibber.metrics.edit_distance_metric" title="Permalink to this headline">¶</a></h1>
-<p>This metric outputs the word-level editing distance between original text and paraphrased
-text.</p>
-<dl class="py class">
-<dt id="fibber.metrics.edit_distance_metric.EditDistanceMetric">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.metrics.edit_distance_metric.</code><code class="sig-name descname">EditDistanceMetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">editing_distance_ignore_punctuation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/edit_distance_metric.html#EditDistanceMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.edit_distance_metric.EditDistanceMetric" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="fibber.metrics.metric_base.html#fibber.metrics.metric_base.MetricBase" title="fibber.metrics.metric_base.MetricBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.metrics.metric_base.MetricBase</span></code></a></p>
-<p>This class measures the editing distance between two sentences.</p>
-<p>Initialize.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>editing_distance_ignore_punctuation</strong> (<em>bool</em>) – whether to ignore punctuation when
-computing editing distance.</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="fibber.metrics.edit_distance_metric.EditDistanceMetric.measure_example">
-<code class="sig-name descname">measure_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/edit_distance_metric.html#EditDistanceMetric.measure_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.edit_distance_metric.EditDistanceMetric.measure_example" title="Permalink to this definition">¶</a></dt>
-<dd><p>compute editing distance between original and parapharse.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>origin</strong> (<em>str</em>) – original text.</p></li>
-<li><p><strong>paraphrase</strong> (<em>str</em>) – paraphrased text.</p></li>
-<li><p><strong>data_record</strong> – ignored.</p></li>
-<li><p><strong>paraphrase_field</strong> – ignored.</p></li>
+  <div class="section" id="fibber-robust-tuning-strategy-package">
+<h1>fibber.robust_tuning_strategy package<a class="headerlink" href="#fibber-robust-tuning-strategy-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fibber.robust_tuning_strategy.default_tuning_strategy.html">fibber.robust_tuning_strategy.default_tuning_strategy module</a></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the editing distance.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(int)</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+</div>
+</div>
+<div class="section" id="module-fibber.robust_tuning_strategy">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fibber.robust_tuning_strategy" title="Permalink to this headline">¶</a></h2>
+</div>
 </div>
 
 
@@ -349,8 +297,8 @@ computing editing distance.</p>
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="fibber.metrics.classifier_base.html" title="previous page">fibber.metrics.classifier_base module</a>
-    <a class='right-next' id="next-link" href="fibber.metrics.glove_semantic_similarity_metric.html" title="next page">fibber.metrics.glove_semantic_similarity_metric module</a>
+    <a class='left-prev' id="prev-link" href="fibber.resources.resource_utils.html" title="previous page">fibber.resources.resource_utils module</a>
+    <a class='right-next' id="next-link" href="fibber.robust_tuning_strategy.default_tuning_strategy.html" title="next page">fibber.robust_tuning_strategy.default_tuning_strategy module</a>
 
               </div>
               

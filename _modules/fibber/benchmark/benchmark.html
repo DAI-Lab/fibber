@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.benchmark.benchmark &#8212; fibber 0.2.2 documentation</title>
+    <title>fibber.benchmark.benchmark &#8212; fibber 0.2.3 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -212,15 +212,21 @@
 <span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">BertSamplingStrategy</span><span class="p">,</span> <span class="n">IdentityStrategy</span><span class="p">,</span> <span class="n">RandomStrategy</span><span class="p">,</span> <span class="n">TextAttackStrategy</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies.strategy_base</span> <span class="kn">import</span> <span class="n">StrategyBase</span>
+<span class="kn">from</span> <span class="nn">fibber.robust_tuning_strategy.default_tuning_strategy</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DefaultTuningStrategy</span><span class="p">,</span> <span class="n">TuningStrategyBase</span><span class="p">)</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">log</span><span class="o">.</span><span class="n">remove_logger_tf_handler</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
 
-<span class="n">built_in_strategies</span> <span class="o">=</span> <span class="p">{</span>
+<span class="n">built_in_paraphrase_strategies</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;RandomStrategy&quot;</span><span class="p">:</span> <span class="n">RandomStrategy</span><span class="p">,</span>
     <span class="s2">&quot;IdentityStrategy&quot;</span><span class="p">:</span> <span class="n">IdentityStrategy</span><span class="p">,</span>
     <span class="s2">&quot;TextAttackStrategy&quot;</span><span class="p">:</span> <span class="n">TextAttackStrategy</span><span class="p">,</span>
     <span class="s2">&quot;BertSamplingStrategy&quot;</span><span class="p">:</span> <span class="n">BertSamplingStrategy</span>
+<span class="p">}</span>
+
+<span class="n">built_in_tuning_strategies</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;DefaultTuningStrategy&quot;</span><span class="p">:</span> <span class="n">DefaultTuningStrategy</span>
 <span class="p">}</span>
 
 <span class="n">DATASET_NAME_COL</span> <span class="o">=</span> <span class="s2">&quot;0_dataset_name&quot;</span>
@@ -240,7 +246,9 @@
                  <span class="n">gpt2_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
                  <span class="n">bert_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
                  <span class="n">bert_clf_steps</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span>
-                 <span class="n">bert_clf_bs</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
+                 <span class="n">bert_clf_bs</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+                 <span class="n">load_robust_tuned_clf_desc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">robust_tuning_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize Benchmark framework.</span>
 
 <span class="sd">        Args:</span>
@@ -306,8 +314,40 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">add_classifier</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">customized_clf</span><span class="p">),</span> <span class="n">customized_clf</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">set_target_classifier_by_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">customized_clf</span><span class="p">))</span>
 
+        <span class="k">if</span> <span class="p">(</span><span class="n">load_robust_tuned_clf_desc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="n">load_robust_tuned_clf_desc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;null&quot;</span><span class="p">,</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">get_target_classifier</span><span class="p">()</span><span class="o">.</span><span class="n">load_robust_tuned_model</span><span class="p">(</span>
+                <span class="n">load_robust_tuned_clf_desc</span><span class="p">,</span> <span class="n">robust_tuning_steps</span><span class="p">)</span>
+
         <span class="n">add_sentence_level_adversarial_attack_metrics</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="p">,</span> <span class="n">gpt2_ppl_threshold</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">use_sim_threshold</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Benchmark.run_robust_tuning"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark.html#fibber.benchmark.Benchmark.run_robust_tuning">[docs]</a>    <span class="k">def</span> <span class="nf">run_robust_tuning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                          <span class="n">paraphrase_strategy</span><span class="o">=</span><span class="s2">&quot;IdentityStrategy&quot;</span><span class="p">,</span>
+                          <span class="n">tuning_strategy</span><span class="o">=</span><span class="s2">&quot;DefaultTuningStrategy&quot;</span><span class="p">,</span>
+                          <span class="n">strategy_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                          <span class="n">num_paraphrases_per_text</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                          <span class="n">tuning_steps</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">paraphrase_strategy</span> <span class="ow">in</span> <span class="n">built_in_paraphrase_strategies</span><span class="p">:</span>
+                <span class="n">paraphrase_strategy</span> <span class="o">=</span> <span class="n">built_in_paraphrase_strategies</span><span class="p">[</span><span class="n">paraphrase_strategy</span><span class="p">](</span>
+                    <span class="p">{},</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="p">,</span> <span class="n">StrategyBase</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tuning_strategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">tuning_strategy</span> <span class="ow">in</span> <span class="n">built_in_tuning_strategies</span><span class="p">:</span>
+                <span class="n">robust_tuning_strategy</span> <span class="o">=</span> <span class="n">built_in_tuning_strategies</span><span class="p">[</span><span class="n">tuning_strategy</span><span class="p">]()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">robust_tuning_strategy</span><span class="p">,</span> <span class="n">TuningStrategyBase</span><span class="p">)</span>
+
+        <span class="n">paraphrase_strategy</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trainset</span><span class="p">)</span>
+
+        <span class="n">robust_tuning_strategy</span><span class="o">.</span><span class="n">fine_tune_classifier</span><span class="p">(</span>
+            <span class="n">metric_bundle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="p">,</span>
+            <span class="n">paraphrase_strategy</span><span class="o">=</span><span class="n">paraphrase_strategy</span><span class="p">,</span>
+            <span class="n">train_set</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_trainset</span><span class="p">,</span>
+            <span class="n">num_paraphrases_per_text</span><span class="o">=</span><span class="n">num_paraphrases_per_text</span><span class="p">,</span>
+            <span class="n">tuning_steps</span><span class="o">=</span><span class="n">tuning_steps</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Benchmark.run_benchmark"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark.html#fibber.benchmark.Benchmark.run_benchmark">[docs]</a>    <span class="k">def</span> <span class="nf">run_benchmark</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                       <span class="n">paraphrase_strategy</span><span class="o">=</span><span class="s2">&quot;IdentityStrategy&quot;</span><span class="p">,</span>
@@ -334,8 +374,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># setup strategy</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">paraphrase_strategy</span> <span class="ow">in</span> <span class="n">built_in_strategies</span><span class="p">:</span>
-                <span class="n">paraphrase_strategy</span> <span class="o">=</span> <span class="n">built_in_strategies</span><span class="p">[</span><span class="n">paraphrase_strategy</span><span class="p">](</span>
+            <span class="k">if</span> <span class="n">paraphrase_strategy</span> <span class="ow">in</span> <span class="n">built_in_paraphrase_strategies</span><span class="p">:</span>
+                <span class="n">paraphrase_strategy</span> <span class="o">=</span> <span class="n">built_in_paraphrase_strategies</span><span class="p">[</span><span class="n">paraphrase_strategy</span><span class="p">](</span>
                     <span class="p">{},</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="p">,</span> <span class="n">StrategyBase</span><span class="p">)</span>
@@ -390,6 +430,13 @@
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark.html#fibber.benchmark.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
 
+    <span class="c1"># option on robust training vs attack</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--robust_tuning&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;use 1 for robust training. (make a separate run to attack).</span><span class="se">\\</span><span class="s2">&quot;</span>
+                             <span class="s2">&quot;use 0 for attack.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--robust_tuning_steps&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--load_robust_tuned_clf_desc&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
     <span class="c1"># add experiment args</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--dataset&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;ag&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--output_dir&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -405,7 +452,7 @@
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--bert_clf_steps&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>
 
     <span class="c1"># add builtin strategies&#39; args to parser.</span>
-    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">built_in_strategies</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">built_in_paraphrase_strategies</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="n">item</span><span class="o">.</span><span class="n">add_parser_args</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
 
     <span class="n">arg_dict</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">())</span>
@@ -414,12 +461,17 @@
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;output_dir&quot;</span><span class="p">],</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;output_dir&quot;</span><span class="p">],</span> <span class="s2">&quot;log&quot;</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;robust_tuning&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;load_robust_tuned_clf_desc&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
+
     <span class="n">benchmark</span> <span class="o">=</span> <span class="n">Benchmark</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;output_dir&quot;</span><span class="p">],</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">],</span>
                           <span class="n">subsample_attack_set</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;subsample_testset&quot;</span><span class="p">],</span>
                           <span class="n">use_gpu_id</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;use_gpu_id&quot;</span><span class="p">],</span>
                           <span class="n">bert_gpu_id</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;bert_gpu_id&quot;</span><span class="p">],</span>
                           <span class="n">gpt2_gpu_id</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;gpt2_gpu_id&quot;</span><span class="p">],</span>
-                          <span class="n">bert_clf_steps</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;bert_clf_steps&quot;</span><span class="p">])</span>
+                          <span class="n">bert_clf_steps</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;bert_clf_steps&quot;</span><span class="p">],</span>
+                          <span class="n">load_robust_tuned_clf_desc</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;load_robust_tuned_clf_desc&quot;</span><span class="p">],</span>
+                          <span class="n">robust_tuning_steps</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;robust_tuning_steps&quot;</span><span class="p">])</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">add_file_handler</span><span class="p">(</span>
         <span class="n">logger</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;output_dir&quot;</span><span class="p">],</span> <span class="s2">&quot;log.log&quot;</span><span class="p">))</span>
@@ -430,8 +482,13 @@
                                        <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;strategy_gpu_id&quot;</span><span class="p">],</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;output_dir&quot;</span><span class="p">],</span>
                                        <span class="n">benchmark</span><span class="o">.</span><span class="n">get_metric_bundle</span><span class="p">())</span>
 
-    <span class="n">benchmark</span><span class="o">.</span><span class="n">run_benchmark</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="o">=</span><span class="n">paraphrase_strategy</span><span class="p">,</span>
-                            <span class="n">num_paraphrases_per_text</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;num_paraphrases_per_text&quot;</span><span class="p">])</span></div>
+    <span class="k">if</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;robust_tuning&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+        <span class="n">benchmark</span><span class="o">.</span><span class="n">run_robust_tuning</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="o">=</span><span class="n">paraphrase_strategy</span><span class="p">,</span>
+                                    <span class="n">num_paraphrases_per_text</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;num_paraphrases_per_text&quot;</span><span class="p">],</span>
+                                    <span class="n">tuning_steps</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;robust_tuning_steps&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">benchmark</span><span class="o">.</span><span class="n">run_benchmark</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="o">=</span><span class="n">paraphrase_strategy</span><span class="p">,</span>
+                                <span class="n">num_paraphrases_per_text</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;num_paraphrases_per_text&quot;</span><span class="p">])</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>

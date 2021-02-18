@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics package &#8212; fibber 0.2.2 documentation</title>
+    <title>fibber.metrics package &#8212; fibber 0.2.3 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -245,6 +245,12 @@
           
             
                 <li class="">
+                    <a href="fibber.robust_tuning_strategy.html">fibber.robust_tuning_strategy package</a>
+                </li>
+            
+          
+            
+                <li class="">
                     <a href="fibber.download_utils.html">fibber.download_utils module</a>
                 </li>
             
@@ -356,6 +362,11 @@ summary.</p></li>
 </dd>
 </dl>
 <dl class="py method">
+<dt id="fibber.metrics.BertClassifier.load_robust_tuned_model">
+<code class="sig-name descname">load_robust_tuned_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">desc</span></em>, <em class="sig-param"><span class="n">step</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_classifier.html#BertClassifier.load_robust_tuned_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClassifier.load_robust_tuned_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="fibber.metrics.BertClassifier.predict_dist_batch">
 <code class="sig-name descname">predict_dist_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrase_list</span></em>, <em class="sig-param"><span class="n">data_record</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">paraphrase_field</span><span class="o">=</span><span class="default_value">'text0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_classifier.html#BertClassifier.predict_dist_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClassifier.predict_dist_batch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the log-probability distribution over classes for one batch.</p>
@@ -398,6 +409,21 @@ summary.</p></li>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.BertClassifier.robust_tune_init">
+<code class="sig-name descname">robust_tune_init</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bert_clf_optimizer</span></em>, <em class="sig-param"><span class="n">bert_clf_lr</span></em>, <em class="sig-param"><span class="n">bert_clf_weight_decay</span></em>, <em class="sig-param"><span class="n">bert_clf_steps</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_classifier.html#BertClassifier.robust_tune_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClassifier.robust_tune_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.BertClassifier.robust_tune_step">
+<code class="sig-name descname">robust_tune_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record_list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_classifier.html#BertClassifier.robust_tune_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClassifier.robust_tune_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="fibber.metrics.BertClassifier.save_robust_tuned_model">
+<code class="sig-name descname">save_robust_tuned_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">desc</span></em>, <em class="sig-param"><span class="n">step</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/metrics/bert_classifier.html#BertClassifier.save_robust_tuned_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.metrics.BertClassifier.save_robust_tuned_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.classifier_base &#8212; fibber 0.2.2 documentation</title>
+    <title>fibber.metrics.classifier_base &#8212; fibber 0.2.3 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -316,7 +316,16 @@
 <span class="sd">             ([int]): predicted label</span>
 <span class="sd">         &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase_list</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">)]</span></div></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase_list</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="ClassifierBase.robust_tune_step"><a class="viewcode-back" href="../../../api/fibber.metrics.classifier_base.html#fibber.metrics.classifier_base.ClassifierBase.robust_tune_step">[docs]</a>    <span class="k">def</span> <span class="nf">robust_tune_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record_list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ClassifierBase.load_robust_tuned_model"><a class="viewcode-back" href="../../../api/fibber.metrics.classifier_base.html#fibber.metrics.classifier_base.ClassifierBase.load_robust_tuned_model">[docs]</a>    <span class="k">def</span> <span class="nf">load_robust_tuned_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ClassifierBase.save_robust_tuned_model"><a class="viewcode-back" href="../../../api/fibber.metrics.classifier_base.html#fibber.metrics.classifier_base.ClassifierBase.save_robust_tuned_model">[docs]</a>    <span class="k">def</span> <span class="nf">save_robust_tuned_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
 </pre></div>
 
               </div>

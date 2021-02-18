@@ -12,6 +12,7 @@ Subpackages
    fibber.metrics
    fibber.paraphrase_strategies
    fibber.resources
+   fibber.robust_tuning_strategy
 
 Submodules
 ----------
