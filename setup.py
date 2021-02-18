@@ -101,6 +101,6 @@ setup(
     test_suite='tests',
     tests_require=tests_require,
     url='https://github.com/DAI-Lab/fibber',
-    version='0.2.3.dev1',
+    version='0.2.3',
     zip_safe=False,
 )
