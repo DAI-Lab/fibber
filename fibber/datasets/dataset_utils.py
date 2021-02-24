@@ -217,7 +217,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
     __iter__(self):
 
     Yields:
-        A tuple of tensors.
+        A tuple of tensors (or list).
 
         * The first tensor is an int tensor of size ``(batch_size, L)``, representing
           word ids. Each row of this tensor correspond to one example in the dataset.
@@ -231,16 +231,19 @@ class DatasetForBert(torch.utils.data.IterableDataset):
           For padding positions, token type is 0.
         * The forth tensor an int tensor of size ``(batch_size,)``, representing the
           classification label.
-        * (optional) If ``masked_lm == True``, the fifth tensor is a tensor of size
+        * (optional) If ``masked_lm == True``, or ``dynamic_masked_lm == True``
+          the fifth tensor is a tensor of size
           ``(batch_size, L)``. Each entry in this tensor is either -100 if the position is
           not masked, or the correct word if the position is masked. Note that, a masked
           position is not always a ``[MASK]`` token in the first tensor. With 80%
           probability, it is a ``[MASK]``. With 10% probability, it is the original word.
           And with 10% probability, it is a random word.
+        * (optional) if ``include_raw_text == True``, the last item is a list of str.
     """
 
     def __init__(self, dataset, model_init, batch_size, exclude=-1,
-                 masked_lm=False, masked_lm_ratio=0.2, seed=0):
+                 masked_lm=False, masked_lm_ratio=0.2, dynamic_masked_lm=False,
+                 include_raw_text=False, seed=0):
         """Initialize.
 
         Args:
@@ -252,6 +255,9 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 Use -1 (default) to include all categories.
             masked_lm (bool): whether to randomly replace words with mask tokens.
             masked_lm_ratio (float): the ratio of random masks. Ignored when masked_lm is False.
+            dynamic_masked_lm (bool): whether to generate dynamic masked language model. lm ratio
+                will be randomly sampled. ``dynamic_masked_lm`` and ``masked_lm`` should not be
+                set True at the same time.
             seed: random seed.
         """
         self._buckets = [30, 50, 100, 200]
@@ -268,6 +274,12 @@ class DatasetForBert(torch.utils.data.IterableDataset):
         self._masked_lm = masked_lm
         self._masked_lm_ratio = masked_lm_ratio
         self._mask_tok_id = self._tokenizer.mask_token_id
+
+        if dynamic_masked_lm and masked_lm:
+            raise RuntimeError("Cannot have dynamic_masked_lm and masked_lm both True.")
+
+        self._dynamic_masked_lm = dynamic_masked_lm
+        self._include_raw_text = include_raw_text
 
         counter = 0
         logger.info("DatasetForBert is processing data.")
@@ -292,7 +304,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
 
             for bucket_id in range(len(self._buckets)):
                 if self._buckets[bucket_id] >= len(text_ids):
-                    self._data[bucket_id].append((text_ids, y, len(s0_ids), len(s1_ids)))
+                    self._data[bucket_id].append((text_ids, y, len(s0_ids), len(s1_ids), s0 + s1))
                     break
 
         logger.info("Load %d documents. with filter %d.", counter, exclude)
@@ -310,7 +322,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
             bucket_id = self._rng.choice(len(self._bucket_prob), p=self._bucket_prob)
             ids = self._rng.choice(len(self._data[bucket_id]), self._batch_size)
 
-            texts, labels, l0s, l1s = zip(*[self._data[bucket_id][id] for id in ids])
+            texts, labels, l0s, l1s, raw_text = zip(*[self._data[bucket_id][id] for id in ids])
 
             text_len = [len(x) for x in texts]
             max_text_len = max(text_len)
@@ -327,13 +339,26 @@ class DatasetForBert(torch.utils.data.IterableDataset):
             labels = np.asarray(labels)
             tok_types = np.asarray(tok_types)
 
-            if not self._masked_lm:
-                yield (torch.tensor(texts), torch.tensor(masks),
-                       torch.tensor(tok_types), torch.tensor(labels))
+            if not self._masked_lm and not self._dynamic_masked_lm:
+                ret = [torch.tensor(x) for x in [texts, masks, tok_types, labels]]
+                if self._include_raw_text:
+                    ret.append(raw_text)
+                yield tuple(ret)
             else:
                 rand_t = self._rng.rand(self._batch_size, max_text_len)
-                masked_pos = (rand_t < self._masked_lm_ratio) * masks
+
+                if self._masked_lm:
+                    mask_pos_threshold = self._masked_lm_ratio
+                elif self._dynamic_masked_lm:
+                    mask_pos_threshold = self._rng.rand()
+                masked_pos = (rand_t < mask_pos_threshold) * masks
+
+                # No mask on cls and sep.
                 masked_pos[:, 0] = 0
+                masked_pos *= np.asarray(texts != self._tokenizer.sep_token_id, dtype="int")
+
+                if np.sum(masked_pos) == 0:
+                    continue
                 lm_labels = (masked_pos * texts - 100 * (1 - masked_pos))
                 rand_t = self._rng.rand(self._batch_size, max_text_len)
                 filling = self._rng.randint(0, self._tokenizer.vocab_size,
@@ -342,5 +367,10 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                            + (rand_t >= 0.8) * (rand_t < 0.9) * filling
                            + (rand_t >= 0.9) * texts)
                 texts = masked_pos * filling + (1 - masked_pos) * texts
-                yield (torch.tensor(texts), torch.tensor(masks), torch.tensor(tok_types),
-                       torch.tensor(labels), torch.tensor(lm_labels))
+
+                ret = [torch.tensor(x) for x in [texts, masks, tok_types, labels, lm_labels]]
+
+                if self._include_raw_text:
+                    ret.append(raw_text)
+
+                yield tuple(ret)
