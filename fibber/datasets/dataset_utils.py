@@ -258,6 +258,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
             dynamic_masked_lm (bool): whether to generate dynamic masked language model. lm ratio
                 will be randomly sampled. ``dynamic_masked_lm`` and ``masked_lm`` should not be
                 set True at the same time.
+            include_raw_text (bool): whether to return the raw text. 
             seed: random seed.
         """
         self._buckets = [30, 50, 100, 200]
