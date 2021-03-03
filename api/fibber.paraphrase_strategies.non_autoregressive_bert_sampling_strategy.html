@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.bert_sampling_utils_text_parser module &#8212; fibber 0.2.4 documentation</title>
+    <title>fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy module &#8212; fibber 0.2.4 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -39,8 +39,8 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.paraphrase_strategies.bert_sampling_utils_wpe module" href="fibber.paraphrase_strategies.bert_sampling_utils_wpe.html" />
-    <link rel="prev" title="fibber.paraphrase_strategies.bert_sampling_utils_lm module" href="fibber.paraphrase_strategies.bert_sampling_utils_lm.html" />
+    <link rel="next" title="fibber.paraphrase_strategies.random_strategy module" href="fibber.paraphrase_strategies.random_strategy.html" />
+    <link rel="prev" title="fibber.paraphrase_strategies.identity_strategy module" href="fibber.paraphrase_strategies.identity_strategy.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
   </head>
@@ -201,8 +201,8 @@
                             <a href="fibber.paraphrase_strategies.bert_sampling_utils_lm.html">fibber.paraphrase_strategies.bert_sampling_utils_lm module</a>
                         </li>
                     
-                        <li class="active">
-                            <a href="">fibber.paraphrase_strategies.bert_sampling_utils_text_parser module</a>
+                        <li class="">
+                            <a href="fibber.paraphrase_strategies.bert_sampling_utils_text_parser.html">fibber.paraphrase_strategies.bert_sampling_utils_text_parser module</a>
                         </li>
                     
                         <li class="">
@@ -213,8 +213,8 @@
                             <a href="fibber.paraphrase_strategies.identity_strategy.html">fibber.paraphrase_strategies.identity_strategy module</a>
                         </li>
                     
-                        <li class="">
-                            <a href="fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.html">fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy module</a>
+                        <li class="active">
+                            <a href="">fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy module</a>
                         </li>
                     
                         <li class="">
@@ -297,93 +297,83 @@
               
               <div>
                 
-  <div class="section" id="module-fibber.paraphrase_strategies.bert_sampling_utils_text_parser">
-<span id="fibber-paraphrase-strategies-bert-sampling-utils-text-parser-module"></span><h1>fibber.paraphrase_strategies.bert_sampling_utils_text_parser module<a class="headerlink" href="#module-fibber.paraphrase_strategies.bert_sampling_utils_text_parser" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy">
+<span id="fibber-paraphrase-strategies-non-autoregressive-bert-sampling-strategy-module"></span><h1>fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy module<a class="headerlink" href="#module-fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="fibber.paraphrase_strategies.bert_sampling_utils_text_parser.TextParser">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.bert_sampling_utils_text_parser.</code><code class="sig-name descname">TextParser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">port</span><span class="o">=</span><span class="default_value">9000</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/bert_sampling_utils_text_parser.html#TextParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.bert_sampling_utils_text_parser.TextParser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>TextParser uses stanford core nlp tool to parse text.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>port</strong> (<em>int</em>) – the port to launch a stanford core nlp client</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="fibber.paraphrase_strategies.bert_sampling_utils_text_parser.TextParser.get_phrases">
-<code class="sig-name descname">get_phrases</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sentence</span></em>, <em class="sig-param"><span class="n">phrase_level</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/bert_sampling_utils_text_parser.html#TextParser.get_phrases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.bert_sampling_utils_text_parser.TextParser.get_phrases" title="Permalink to this definition">¶</a></dt>
-<dd><p>Split a sentence into phrases.</p>
+<dt id="fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.</code><code class="sig-name descname">NonAutoregressiveBertSamplingStrategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span></em>, <em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/non_autoregressive_bert_sampling_strategy.html#NonAutoregressiveBertSamplingStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase" title="fibber.paraphrase_strategies.strategy_base.StrategyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.paraphrase_strategies.strategy_base.StrategyBase</span></code></a></p>
+<p>Initialize the paraphrase_strategies.</p>
+<p>This function initialize the <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,
+<code class="docutils literal notranslate"><span class="pre">self._device</span></code>, <code class="docutils literal notranslate"><span class="pre">self._output_dir</span></code>, <code class="docutils literal notranslate"><span class="pre">self._dataset_name</span></code>.</p>
+<p><strong>You should not overwrite this function.</strong></p>
+<ul class="simple">
+<li><p>self._strategy_config (dict): a dictionary that stores the strategy name and all
+hyperparameter values. The dict is also saved to the results.</p></li>
+<li><p>self._metric_bundle (MetricBundle): the metrics that will be used to evaluate
+paraphrases. Strategies can compute metrics during paraphrasing.</p></li>
+<li><p>self._device (torch.Device): any computation that requires a GPU accelerator should
+use this device.</p></li>
+<li><p>self._output_dir (str): the dir name where the strategy can save files.</p></li>
+<li><p>self._dataset_name (str): the dataset name.</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sentence</strong> (<em>str</em>) – a sentence in English.</p></li>
-<li><p><strong>phrase_level</strong> (<em>int</em>) – larger value gives shorter phrases.</p></li>
+<li><p><strong>arg_dict</strong> (<em>dict</em>) – all args load from command line.</p></li>
+<li><p><strong>dataset_name</strong> (<em>str</em>) – the name of the dataset.</p></li>
+<li><p><strong>strategy_gpu_id</strong> (<em>int</em>) – the gpu id to run the strategy.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – a directory to save any models or temporary files.</p></li>
+<li><p><strong>metric_bundle</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.MetricBundle" title="fibber.metrics.MetricBundle"><em>MetricBundle</em></a>) – a MetricBundle object.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a list of phrases.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>([str])</p>
-</dd>
 </dl>
-</dd></dl>
-
 <dl class="py method">
-<dt id="fibber.paraphrase_strategies.bert_sampling_utils_text_parser.TextParser.phrase_level_shuffle">
-<code class="sig-name descname">phrase_level_shuffle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paragraph</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/bert_sampling_utils_text_parser.html#TextParser.phrase_level_shuffle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.bert_sampling_utils_text_parser.TextParser.phrase_level_shuffle" title="Permalink to this definition">¶</a></dt>
-<dd><p>For each sentence, randomly shuffle phrases in that sentence.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>paraphrase</strong> (<em>str</em>) – a paragraph in English.</p></li>
-<li><p><strong>n</strong> (<em>int</em>) – number of randomly shuffled paragraph to generate.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a list of <code class="docutils literal notranslate"><span class="pre">n</span></code> shuffled paragraphs.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>([str])</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="fibber.paraphrase_strategies.bert_sampling_utils_text_parser.TextParser.split_paragraph_to_sentences">
-<code class="sig-name descname">split_paragraph_to_sentences</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paragraph</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/bert_sampling_utils_text_parser.html#TextParser.split_paragraph_to_sentences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.bert_sampling_utils_text_parser.TextParser.split_paragraph_to_sentences" title="Permalink to this definition">¶</a></dt>
-<dd><p>Split a paragraph into a list of sentences.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>paragraph</strong> (<em>str</em>) – a paragraph of English text.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a list of sentences.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>([str])</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt id="fibber.paraphrase_strategies.bert_sampling_utils_text_parser.generate_phrases_by_dfs">
-<code class="sig-prename descclassname">fibber.paraphrase_strategies.bert_sampling_utils_text_parser.</code><code class="sig-name descname">generate_phrases_by_dfs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">node</span></em>, <em class="sig-param"><span class="n">level</span></em>, <em class="sig-param"><span class="n">phrase_level</span></em>, <em class="sig-param"><span class="n">result</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/bert_sampling_utils_text_parser.html#generate_phrases_by_dfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.bert_sampling_utils_text_parser.generate_phrases_by_dfs" title="Permalink to this definition">¶</a></dt>
-<dd><p>DFS a parsing tree and generate all phrases in the tree.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="fibber.paraphrase_strategies.bert_sampling_utils_text_parser.is_port_in_use">
-<code class="sig-prename descclassname">fibber.paraphrase_strategies.bert_sampling_utils_text_parser.</code><code class="sig-name descname">is_port_in_use</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">port</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/bert_sampling_utils_text_parser.html#is_port_in_use"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.bert_sampling_utils_text_parser.is_port_in_use" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy.enforce_similarity">
+<code class="sig-name descname">enforce_similarity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">batch_tensor</span></em>, <em class="sig-param"><span class="n">batch_tensor_new</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/non_autoregressive_bert_sampling_strategy.html#NonAutoregressiveBertSamplingStrategy.enforce_similarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy.enforce_similarity" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py function">
-<dt id="fibber.paraphrase_strategies.bert_sampling_utils_text_parser.preprocess">
-<code class="sig-prename descclassname">fibber.paraphrase_strategies.bert_sampling_utils_text_parser.</code><code class="sig-name descname">preprocess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/bert_sampling_utils_text_parser.html#preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.bert_sampling_utils_text_parser.preprocess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a space after punctuation.</p>
+<dl class="py method">
+<dt id="fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trainset</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/non_autoregressive_bert_sampling_strategy.html#NonAutoregressiveBertSamplingStrategy.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the paraphrase strategy on a training set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>trainset</strong> (<em>dict</em>) – a fibber dataset.</p>
+</dd>
+</dl>
 </dd></dl>
+
+<dl class="py method">
+<dt id="fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy.paraphrase_example">
+<code class="sig-name descname">paraphrase_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/non_autoregressive_bert_sampling_strategy.html#NonAutoregressiveBertSamplingStrategy.paraphrase_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy.paraphrase_example" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paraphrase one data record.</p>
+<p>This function should be overwritten by subclasses. When overwriting this class, you can
+use <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,  <code class="docutils literal notranslate"><span class="pre">self._device</span></code>,
+<code class="docutils literal notranslate"><span class="pre">self._output_dir</span></code>, and <code class="docutils literal notranslate"><span class="pre">self._dataset_name</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_record</strong> (<em>dict</em>) – a dict storing one data of a dataset.</p></li>
+<li><p><strong>field_name</strong> (<em>str</em>) – the field needed to be paraphrased.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – number of paraphrases.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list contain at most n strings.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>([str,])</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.compute_emb">
+<code class="sig-prename descclassname">fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.</code><code class="sig-name descname">compute_emb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lm_model</span></em>, <em class="sig-param"><span class="n">seq</span></em>, <em class="sig-param"><span class="n">tok_type</span></em>, <em class="sig-param"><span class="n">sent_emb</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/non_autoregressive_bert_sampling_strategy.html#compute_emb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.compute_emb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 
@@ -393,8 +383,8 @@
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="fibber.paraphrase_strategies.bert_sampling_utils_lm.html" title="previous page">fibber.paraphrase_strategies.bert_sampling_utils_lm module</a>
-    <a class='right-next' id="next-link" href="fibber.paraphrase_strategies.bert_sampling_utils_wpe.html" title="next page">fibber.paraphrase_strategies.bert_sampling_utils_wpe module</a>
+    <a class='left-prev' id="prev-link" href="fibber.paraphrase_strategies.identity_strategy.html" title="previous page">fibber.paraphrase_strategies.identity_strategy module</a>
+    <a class='right-next' id="next-link" href="fibber.paraphrase_strategies.random_strategy.html" title="next page">fibber.paraphrase_strategies.random_strategy module</a>
 
               </div>
               

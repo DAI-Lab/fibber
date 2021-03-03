@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.bert_sampling_strategy &#8212; fibber 0.2.3 documentation</title>
+    <title>fibber.paraphrase_strategies.bert_sampling_strategy &#8212; fibber 0.2.4 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -207,9 +207,8 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
-<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">BertForMaskedLM</span><span class="p">,</span> <span class="n">BertTokenizerFast</span>
 
-<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">resources</span>
+<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies.bert_sampling_utils_lm</span> <span class="kn">import</span> <span class="n">get_lm</span>
 <span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies.bert_sampling_utils_text_parser</span> <span class="kn">import</span> <span class="n">TextParser</span>
 <span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies.bert_sampling_utils_wpe</span> <span class="kn">import</span> <span class="n">get_wordpiece_emb</span>
@@ -481,38 +480,14 @@
         <span class="c1"># load BERT language model.</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Load bert language model for BertSamplingStrategy.&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">trainset</span><span class="p">[</span><span class="s2">&quot;cased&quot;</span><span class="p">]:</span>
-            <span class="n">model_init</span> <span class="o">=</span> <span class="s2">&quot;bert-base-cased&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">,</span> <span class="n">lm</span> <span class="o">=</span> <span class="n">get_lm</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;lm_option&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span> <span class="n">trainset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;lm_steps&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lm</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bert_lms</span> <span class="o">=</span> <span class="n">lm</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">model_init</span> <span class="o">=</span> <span class="s2">&quot;bert-base-uncased&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">BertTokenizerFast</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
-            <span class="n">resources</span><span class="o">.</span><span class="n">get_transformers</span><span class="p">(</span><span class="n">model_init</span><span class="p">),</span> <span class="n">do_lower_case</span><span class="o">=</span><span class="s2">&quot;uncased&quot;</span> <span class="ow">in</span> <span class="n">model_init</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="o">.</span><span class="n">do_lower_case</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="s2">&quot;uncased&quot;</span> <span class="ow">in</span> <span class="n">model_init</span> <span class="k">else</span> <span class="kc">False</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;lm_option&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;pretrain&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_bert_lm</span> <span class="o">=</span> <span class="n">BertForMaskedLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
-                <span class="n">resources</span><span class="o">.</span><span class="n">get_transformers</span><span class="p">(</span><span class="n">model_init</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_bert_lm</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bert_lm</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
-                <span class="n">item</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;lm_option&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;finetune&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_bert_lm</span> <span class="o">=</span> <span class="n">get_lm</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span> <span class="n">trainset</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;lm_steps&quot;</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_bert_lm</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bert_lm</span> <span class="o">=</span> <span class="n">lm</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bert_lm</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bert_lm</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
-                <span class="n">item</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;lm_option&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;adv&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_bert_lms</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trainset</span><span class="p">[</span><span class="s2">&quot;label_mapping&quot;</span><span class="p">])):</span>
-                <span class="n">lm</span> <span class="o">=</span> <span class="n">get_lm</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span> <span class="n">trainset</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;lm_steps&quot;</span><span class="p">])</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lm</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
-                    <span class="n">item</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_bert_lms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lm</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="mi">0</span>
 
         <span class="c1"># Load useful metrics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_use_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">get_metric</span><span class="p">(</span><span class="s2">&quot;USESemanticSimilarityMetric&quot;</span><span class="p">)</span>

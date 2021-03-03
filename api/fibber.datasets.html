@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.datasets package &#8212; fibber 0.2.3 documentation</title>
+    <title>fibber.datasets package &#8212; fibber 0.2.4 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -347,7 +347,7 @@ the input, the two parts are separated by <code class="docutils literal notransl
 <p>__iter__(self):</p>
 <dl class="field-list simple">
 <dt class="field-odd">Yields</dt>
-<dd class="field-odd"><p>A tuple of tensors.</p>
+<dd class="field-odd"><p>A tuple of tensors (or list).</p>
 <ul class="simple">
 <li><p>The first tensor is an int tensor of size <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">L)</span></code>, representing
 word ids. Each row of this tensor correspond to one example in the dataset.
@@ -361,12 +361,14 @@ input text. And it is 1 if current position is in the second part of the input.
 For padding positions, token type is 0.</p></li>
 <li><p>The forth tensor an int tensor of size <code class="docutils literal notranslate"><span class="pre">(batch_size,)</span></code>, representing the
 classification label.</p></li>
-<li><p>(optional) If <code class="docutils literal notranslate"><span class="pre">masked_lm</span> <span class="pre">==</span> <span class="pre">True</span></code>, the fifth tensor is a tensor of size
+<li><p>(optional) If <code class="docutils literal notranslate"><span class="pre">masked_lm</span> <span class="pre">==</span> <span class="pre">True</span></code>, or <code class="docutils literal notranslate"><span class="pre">dynamic_masked_lm</span> <span class="pre">==</span> <span class="pre">True</span></code>
+the fifth tensor is a tensor of size
 <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">L)</span></code>. Each entry in this tensor is either -100 if the position is
 not masked, or the correct word if the position is masked. Note that, a masked
 position is not always a <code class="docutils literal notranslate"><span class="pre">[MASK]</span></code> token in the first tensor. With 80%
 probability, it is a <code class="docutils literal notranslate"><span class="pre">[MASK]</span></code>. With 10% probability, it is the original word.
 And with 10% probability, it is a random word.</p></li>
+<li><p>(optional) if <code class="docutils literal notranslate"><span class="pre">include_raw_text</span> <span class="pre">==</span> <span class="pre">True</span></code>, the last item is a list of str.</p></li>
 </ul>
 </dd>
 </dl>
@@ -382,6 +384,10 @@ And with 10% probability, it is a random word.</p></li>
 Use -1 (default) to include all categories.</p></li>
 <li><p><strong>masked_lm</strong> (<em>bool</em>) – whether to randomly replace words with mask tokens.</p></li>
 <li><p><strong>masked_lm_ratio</strong> (<em>float</em>) – the ratio of random masks. Ignored when masked_lm is False.</p></li>
+<li><p><strong>dynamic_masked_lm</strong> (<em>bool</em>) – whether to generate dynamic masked language model. lm ratio
+will be randomly sampled. <code class="docutils literal notranslate"><span class="pre">dynamic_masked_lm</span></code> and <code class="docutils literal notranslate"><span class="pre">masked_lm</span></code> should not be
+set True at the same time.</p></li>
+<li><p><strong>include_raw_text</strong> (<em>bool</em>) – whether to return the raw text.</p></li>
 <li><p><strong>seed</strong> – random seed.</p></li>
 </ul>
 </dd>

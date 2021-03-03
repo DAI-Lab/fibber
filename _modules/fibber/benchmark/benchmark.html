@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.benchmark.benchmark &#8212; fibber 0.2.3 documentation</title>
+    <title>fibber.benchmark.benchmark &#8212; fibber 0.2.4 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -210,7 +210,8 @@
 <span class="kn">from</span> <span class="nn">fibber.metrics.attack_aggregation_utils</span> <span class="kn">import</span> <span class="n">add_sentence_level_adversarial_attack_metrics</span>
 <span class="kn">from</span> <span class="nn">fibber.metrics.metric_utils</span> <span class="kn">import</span> <span class="n">MetricBundle</span>
 <span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">BertSamplingStrategy</span><span class="p">,</span> <span class="n">IdentityStrategy</span><span class="p">,</span> <span class="n">RandomStrategy</span><span class="p">,</span> <span class="n">TextAttackStrategy</span><span class="p">)</span>
+    <span class="n">BertSamplingStrategy</span><span class="p">,</span> <span class="n">IdentityStrategy</span><span class="p">,</span> <span class="n">NonAutoregressiveBertSamplingStrategy</span><span class="p">,</span> <span class="n">RandomStrategy</span><span class="p">,</span>
+    <span class="n">TextAttackStrategy</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies.strategy_base</span> <span class="kn">import</span> <span class="n">StrategyBase</span>
 <span class="kn">from</span> <span class="nn">fibber.robust_tuning_strategy.default_tuning_strategy</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">DefaultTuningStrategy</span><span class="p">,</span> <span class="n">TuningStrategyBase</span><span class="p">)</span>
@@ -222,7 +223,8 @@
     <span class="s2">&quot;RandomStrategy&quot;</span><span class="p">:</span> <span class="n">RandomStrategy</span><span class="p">,</span>
     <span class="s2">&quot;IdentityStrategy&quot;</span><span class="p">:</span> <span class="n">IdentityStrategy</span><span class="p">,</span>
     <span class="s2">&quot;TextAttackStrategy&quot;</span><span class="p">:</span> <span class="n">TextAttackStrategy</span><span class="p">,</span>
-    <span class="s2">&quot;BertSamplingStrategy&quot;</span><span class="p">:</span> <span class="n">BertSamplingStrategy</span>
+    <span class="s2">&quot;BertSamplingStrategy&quot;</span><span class="p">:</span> <span class="n">BertSamplingStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;NonAutoregressiveBertSamplingStrategy&quot;</span><span class="p">:</span> <span class="n">NonAutoregressiveBertSamplingStrategy</span>
 <span class="p">}</span>
 
 <span class="n">built_in_tuning_strategies</span> <span class="o">=</span> <span class="p">{</span>
@@ -328,6 +330,19 @@
                           <span class="n">strategy_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
                           <span class="n">num_paraphrases_per_text</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
                           <span class="n">tuning_steps</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Using a paraphrase strategy to do adversarial fine tuning for the target classifier.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            paraphrase_strategy (str or StrategyBase): the paraphrase strategy to benchmark.</span>
+<span class="sd">                Either the name of a builtin strategy or a customized strategy derived from</span>
+<span class="sd">                StrategyBase.</span>
+<span class="sd">            tuning_strategy (str or TuningStrategyBase): the adversarial tuning strategy.</span>
+<span class="sd">                Either the name of a builtin strategy or a customized strategy derived from</span>
+<span class="sd">                TuningStrategyBase</span>
+<span class="sd">            strategy_gpu_id (int): the GPU id to run the paraphrase strategy.</span>
+<span class="sd">            num_paraphrases_per_text (int): number of paraphrases for each sentence.</span>
+<span class="sd">            tuning_steps (int): number of steps to tune the classifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">paraphrase_strategy</span> <span class="ow">in</span> <span class="n">built_in_paraphrase_strategies</span><span class="p">:</span>
                 <span class="n">paraphrase_strategy</span> <span class="o">=</span> <span class="n">built_in_paraphrase_strategies</span><span class="p">[</span><span class="n">paraphrase_strategy</span><span class="p">](</span>
@@ -412,19 +427,8 @@
 <div class="viewcode-block" id="get_strategy"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark.html#fibber.benchmark.get_strategy">[docs]</a><span class="k">def</span> <span class="nf">get_strategy</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span>
                  <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Take the strategy name and construct a strategy object.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">strategy_name</span> <span class="o">==</span> <span class="s2">&quot;RandomStrategy&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">RandomStrategy</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">strategy_name</span> <span class="o">==</span> <span class="s2">&quot;IdentityStrategy&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">IdentityStrategy</span><span class="p">(</span>
-            <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">strategy_name</span> <span class="o">==</span> <span class="s2">&quot;TextAttackStrategy&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">TextAttackStrategy</span><span class="p">(</span>
-            <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">strategy_name</span> <span class="o">==</span> <span class="s2">&quot;BertSamplingStrategy&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">BertSamplingStrategy</span><span class="p">(</span>
-            <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="mi">0</span></div>
+    <span class="k">return</span> <span class="n">built_in_paraphrase_strategies</span><span class="p">[</span><span class="n">strategy_name</span><span class="p">](</span>
+        <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark.html#fibber.benchmark.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>

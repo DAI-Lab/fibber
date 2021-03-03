@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.robust_tuning_strategy.default_tuning_strategy &#8212; fibber 0.2.3 documentation</title>
+    <title>fibber.robust_tuning_strategy.default_tuning_strategy &#8212; fibber 0.2.4 documentation</title>
     
   <link rel="stylesheet" href="../../../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -211,8 +211,31 @@
 
 
 <div class="viewcode-block" id="DefaultTuningStrategy"><a class="viewcode-back" href="../../../api/fibber.robust_tuning_strategy.default_tuning_strategy.html#fibber.robust_tuning_strategy.default_tuning_strategy.DefaultTuningStrategy">[docs]</a><span class="k">class</span> <span class="nc">DefaultTuningStrategy</span><span class="p">(</span><span class="n">TuningStrategyBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;Default Tuning Strategy tunes the target classifier using adversarial training.</span>
+
+<span class="sd">    This strategy maintains two lists of data. The ``correct_list`` contains the examples that are</span>
+<span class="sd">    correctly classified by the classifer. The ``incorrect_list`` contains the examples that are</span>
+<span class="sd">    misclassified. The training set is added to the ``correct_list`` at beginning.</span>
+
+<span class="sd">    In each tuning step, this strategy select some sentences from the training set to rewrite. The</span>
+<span class="sd">    rewritten sentences are added to two lists correspondingly.</span>
+
+<span class="sd">    Then we sample half of tuning batch from ``correct_list`` and half from ``incorrect_list``.</span>
+<span class="sd">    The selected batch is used to tune the classifier. After tuning, these selected examples are</span>
+<span class="sd">    put back to two lists according to the current prediction of the classifier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_criteria</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">gpt2_criteria</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1234</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the strategy.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            use_criteria (float): the USE similarity criteria for a legitimate rewriting.</span>
+<span class="sd">            gpt2_criteria (float): the GPT2 perplexity criteria for a legitimate rewriting.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DefaultTuningStrategy</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_criteria</span> <span class="o">=</span> <span class="n">use_criteria</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gpt2_criteria</span> <span class="o">=</span> <span class="n">gpt2_criteria</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
@@ -226,6 +249,21 @@
                              <span class="n">tuning_batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
                              <span class="n">num_sentences_to_rewrite_per_step</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
                              <span class="n">period_save</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fine tune the classifier using given data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric_bundle (MetricBundle): a metric bundle including the target classifier.</span>
+<span class="sd">            paraphrase_strategy (StrategyBase): a paraphrase strategy to fine tune the classifier.</span>
+<span class="sd">            train_set (dict): the training set of the classifier.</span>
+<span class="sd">            num_paraphrases_per_text (int): the number of paraphrases to generate for each data.</span>
+<span class="sd">                This parameter is for paraphrase strategy.</span>
+<span class="sd">            tuning_steps (int): the number of steps to fine tune the classifier.</span>
+<span class="sd">            tuning_batch_size (int): the batch size for fine tuning.</span>
+<span class="sd">            num_sentences_to_rewrite_per_step (int): the number of data to rewrite using the</span>
+<span class="sd">                paraphrase strategy in each tuning step. You can set is as large as the tuning</span>
+<span class="sd">                batch size. You can also use a smaller value to speed up the tuning.</span>
+<span class="sd">            period_save (int): the period in steps to save the fine tuned classifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">global_step</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="n">classifier</span> <span class="o">=</span> <span class="n">metric_bundle</span><span class="o">.</span><span class="n">get_target_classifier</span><span class="p">()</span>
@@ -257,8 +295,8 @@
                     <span class="n">paraphrase_field</span><span class="p">)</span>
 
                 <span class="k">for</span> <span class="p">(</span><span class="n">paraphrase</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">paraphrase_list</span><span class="p">,</span> <span class="n">metric_list</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="n">metric</span><span class="p">[</span><span class="s2">&quot;USESemanticSimilarityMetric&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.85</span>
-                            <span class="ow">or</span> <span class="n">metric</span><span class="p">[</span><span class="s2">&quot;GPT2GrammarQualityMetric&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">metric</span><span class="p">[</span><span class="s2">&quot;USESemanticSimilarityMetric&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_criteria</span>
+                            <span class="ow">or</span> <span class="n">metric</span><span class="p">[</span><span class="s2">&quot;GPT2GrammarQualityMetric&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gpt2_criteria</span><span class="p">):</span>
                         <span class="k">continue</span>
 
                     <span class="n">data_record_new</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data_record_t</span><span class="p">)</span>

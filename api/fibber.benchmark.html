@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.benchmark package &#8212; fibber 0.2.3 documentation</title>
+    <title>fibber.benchmark package &#8212; fibber 0.2.4 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -364,7 +364,23 @@ benchmark output dir.</p></li>
 <dl class="py method">
 <dt id="fibber.benchmark.Benchmark.run_robust_tuning">
 <code class="sig-name descname">run_robust_tuning</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paraphrase_strategy</span><span class="o">=</span><span class="default_value">'IdentityStrategy'</span></em>, <em class="sig-param"><span class="n">tuning_strategy</span><span class="o">=</span><span class="default_value">'DefaultTuningStrategy'</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">num_paraphrases_per_text</span><span class="o">=</span><span class="default_value">50</span></em>, <em class="sig-param"><span class="n">tuning_steps</span><span class="o">=</span><span class="default_value">5000</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/benchmark/benchmark.html#Benchmark.run_robust_tuning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.benchmark.Benchmark.run_robust_tuning" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Using a paraphrase strategy to do adversarial fine tuning for the target classifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>paraphrase_strategy</strong> (<em>str</em><em> or </em><a class="reference internal" href="fibber.paraphrase_strategies.html#fibber.paraphrase_strategies.StrategyBase" title="fibber.paraphrase_strategies.StrategyBase"><em>StrategyBase</em></a>) – the paraphrase strategy to benchmark.
+Either the name of a builtin strategy or a customized strategy derived from
+StrategyBase.</p></li>
+<li><p><strong>tuning_strategy</strong> (<em>str</em><em> or </em><a class="reference internal" href="fibber.robust_tuning_strategy.default_tuning_strategy.html#fibber.robust_tuning_strategy.default_tuning_strategy.TuningStrategyBase" title="fibber.robust_tuning_strategy.default_tuning_strategy.TuningStrategyBase"><em>TuningStrategyBase</em></a>) – the adversarial tuning strategy.
+Either the name of a builtin strategy or a customized strategy derived from
+TuningStrategyBase</p></li>
+<li><p><strong>strategy_gpu_id</strong> (<em>int</em>) – the GPU id to run the paraphrase strategy.</p></li>
+<li><p><strong>num_paraphrases_per_text</strong> (<em>int</em>) – number of paraphrases for each sentence.</p></li>
+<li><p><strong>tuning_steps</strong> (<em>int</em>) – number of steps to tune the classifier.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

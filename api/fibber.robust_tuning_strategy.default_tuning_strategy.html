@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.robust_tuning_strategy.default_tuning_strategy module &#8212; fibber 0.2.3 documentation</title>
+    <title>fibber.robust_tuning_strategy.default_tuning_strategy module &#8212; fibber 0.2.4 documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -269,12 +269,48 @@
 <span id="fibber-robust-tuning-strategy-default-tuning-strategy-module"></span><h1>fibber.robust_tuning_strategy.default_tuning_strategy module<a class="headerlink" href="#module-fibber.robust_tuning_strategy.default_tuning_strategy" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="fibber.robust_tuning_strategy.default_tuning_strategy.DefaultTuningStrategy">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.robust_tuning_strategy.default_tuning_strategy.</code><code class="sig-name descname">DefaultTuningStrategy</code><a class="reference internal" href="../_modules/fibber/robust_tuning_strategy/default_tuning_strategy.html#DefaultTuningStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.robust_tuning_strategy.default_tuning_strategy.DefaultTuningStrategy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">fibber.robust_tuning_strategy.default_tuning_strategy.</code><code class="sig-name descname">DefaultTuningStrategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">use_criteria</span><span class="o">=</span><span class="default_value">0.85</span></em>, <em class="sig-param"><span class="n">gpt2_criteria</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">1234</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/robust_tuning_strategy/default_tuning_strategy.html#DefaultTuningStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.robust_tuning_strategy.default_tuning_strategy.DefaultTuningStrategy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#fibber.robust_tuning_strategy.default_tuning_strategy.TuningStrategyBase" title="fibber.robust_tuning_strategy.default_tuning_strategy.TuningStrategyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.robust_tuning_strategy.default_tuning_strategy.TuningStrategyBase</span></code></a></p>
+<p>Default Tuning Strategy tunes the target classifier using adversarial training.</p>
+<p>This strategy maintains two lists of data. The <code class="docutils literal notranslate"><span class="pre">correct_list</span></code> contains the examples that are
+correctly classified by the classifer. The <code class="docutils literal notranslate"><span class="pre">incorrect_list</span></code> contains the examples that are
+misclassified. The training set is added to the <code class="docutils literal notranslate"><span class="pre">correct_list</span></code> at beginning.</p>
+<p>In each tuning step, this strategy select some sentences from the training set to rewrite. The
+rewritten sentences are added to two lists correspondingly.</p>
+<p>Then we sample half of tuning batch from <code class="docutils literal notranslate"><span class="pre">correct_list</span></code> and half from <code class="docutils literal notranslate"><span class="pre">incorrect_list</span></code>.
+The selected batch is used to tune the classifier. After tuning, these selected examples are
+put back to two lists according to the current prediction of the classifier.</p>
+<p>Initialize the strategy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>use_criteria</strong> (<em>float</em>) – the USE similarity criteria for a legitimate rewriting.</p></li>
+<li><p><strong>gpt2_criteria</strong> (<em>float</em>) – the GPT2 perplexity criteria for a legitimate rewriting.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="fibber.robust_tuning_strategy.default_tuning_strategy.DefaultTuningStrategy.fine_tune_classifier">
 <code class="sig-name descname">fine_tune_classifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metric_bundle</span></em>, <em class="sig-param"><span class="n">paraphrase_strategy</span></em>, <em class="sig-param"><span class="n">train_set</span></em>, <em class="sig-param"><span class="n">num_paraphrases_per_text</span></em>, <em class="sig-param"><span class="n">tuning_steps</span></em>, <em class="sig-param"><span class="n">tuning_batch_size</span><span class="o">=</span><span class="default_value">32</span></em>, <em class="sig-param"><span class="n">num_sentences_to_rewrite_per_step</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">period_save</span><span class="o">=</span><span class="default_value">5000</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/robust_tuning_strategy/default_tuning_strategy.html#DefaultTuningStrategy.fine_tune_classifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.robust_tuning_strategy.default_tuning_strategy.DefaultTuningStrategy.fine_tune_classifier" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Fine tune the classifier using given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric_bundle</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.MetricBundle" title="fibber.metrics.MetricBundle"><em>MetricBundle</em></a>) – a metric bundle including the target classifier.</p></li>
+<li><p><strong>paraphrase_strategy</strong> (<a class="reference internal" href="fibber.paraphrase_strategies.html#fibber.paraphrase_strategies.StrategyBase" title="fibber.paraphrase_strategies.StrategyBase"><em>StrategyBase</em></a>) – a paraphrase strategy to fine tune the classifier.</p></li>
+<li><p><strong>train_set</strong> (<em>dict</em>) – the training set of the classifier.</p></li>
+<li><p><strong>num_paraphrases_per_text</strong> (<em>int</em>) – the number of paraphrases to generate for each data.
+This parameter is for paraphrase strategy.</p></li>
+<li><p><strong>tuning_steps</strong> (<em>int</em>) – the number of steps to fine tune the classifier.</p></li>
+<li><p><strong>tuning_batch_size</strong> (<em>int</em>) – the batch size for fine tuning.</p></li>
+<li><p><strong>num_sentences_to_rewrite_per_step</strong> (<em>int</em>) – the number of data to rewrite using the
+paraphrase strategy in each tuning step. You can set is as large as the tuning
+batch size. You can also use a smaller value to speed up the tuning.</p></li>
+<li><p><strong>period_save</strong> (<em>int</em>) – the period in steps to save the fine tuned classifier.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

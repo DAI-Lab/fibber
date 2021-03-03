@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; fibber 0.2.3 documentation</title>
+    <title>Index &#8212; fibber 0.2.4 documentation</title>
     
   <link rel="stylesheet" href="_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -328,13 +328,19 @@
 </li>
       <li><a href="api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.textattack_strategy.CLFModel">CLFModel (class in fibber.paraphrase_strategies.textattack_strategy)</a>
 </li>
+      <li><a href="api/fibber.metrics.glove_semantic_similarity_metric.html#fibber.metrics.glove_semantic_similarity_metric.compute_emb">compute_emb() (in module fibber.metrics.glove_semantic_similarity_metric)</a>
+
+      <ul>
+        <li><a href="api/fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.html#fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.compute_emb">(in module fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/fibber.metrics.glove_semantic_similarity_metric.html#fibber.metrics.glove_semantic_similarity_metric.compute_emb">compute_emb() (in module fibber.metrics.glove_semantic_similarity_metric)</a>
-</li>
       <li><a href="api/fibber.metrics.glove_semantic_similarity_metric.html#fibber.metrics.glove_semantic_similarity_metric.compute_emb_sim">compute_emb_sim() (in module fibber.metrics.glove_semantic_similarity_metric)</a>
 </li>
       <li><a href="api/fibber.paraphrase_strategies.bert_sampling_utils_lm.html#fibber.paraphrase_strategies.bert_sampling_utils_lm.compute_lm_loss">compute_lm_loss() (in module fibber.paraphrase_strategies.bert_sampling_utils_lm)</a>
+</li>
+      <li><a href="api/fibber.paraphrase_strategies.bert_sampling_utils_lm.html#fibber.paraphrase_strategies.bert_sampling_utils_lm.compute_non_autoregressive_lm_loss">compute_non_autoregressive_lm_loss() (in module fibber.paraphrase_strategies.bert_sampling_utils_lm)</a>
 </li>
       <li><a href="api/fibber.metrics.use_semantic_similarity_metric.html#fibber.metrics.use_semantic_similarity_metric.config_tf_gpu">config_tf_gpu() (in module fibber.metrics.use_semantic_similarity_metric)</a>
 </li>
@@ -398,6 +404,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fibber.metrics.attack_aggregation_utils.html#fibber.metrics.attack_aggregation_utils.editing_distance_element_worker">editing_distance_element_worker() (in module fibber.metrics.attack_aggregation_utils)</a>
 </li>
+      <li><a href="api/fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.html#fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy.enforce_similarity">enforce_similarity() (fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy method)</a>
+
+      <ul>
+        <li><a href="api/fibber.paraphrase_strategies.html#fibber.paraphrase_strategies.NonAutoregressiveBertSamplingStrategy.enforce_similarity">(fibber.paraphrase_strategies.NonAutoregressiveBertSamplingStrategy method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -574,8 +586,6 @@
         <li><a href="api/fibber.metrics.edit_distance_metric.html#module-fibber.metrics.edit_distance_metric">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     fibber.metrics.glove_semantic_similarity_metric
 
@@ -590,6 +600,8 @@
         <li><a href="api/fibber.metrics.gpt2_grammar_quality_metric.html#module-fibber.metrics.gpt2_grammar_quality_metric">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     fibber.metrics.metric_base
 
@@ -661,6 +673,13 @@
 </li>
       </ul></li>
       <li>
+    fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy
+
+      <ul>
+        <li><a href="api/fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.html#module-fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy">module</a>
+</li>
+      </ul></li>
+      <li>
     fibber.paraphrase_strategies.random_strategy
 
       <ul>
@@ -725,10 +744,16 @@
       </ul></li>
       <li><a href="api/fibber.robust_tuning_strategy.default_tuning_strategy.html#fibber.robust_tuning_strategy.default_tuning_strategy.DefaultTuningStrategy.fine_tune_classifier">fine_tune_classifier() (fibber.robust_tuning_strategy.default_tuning_strategy.DefaultTuningStrategy method)</a>
 </li>
+      <li><a href="api/fibber.paraphrase_strategies.bert_sampling_utils_lm.html#fibber.paraphrase_strategies.bert_sampling_utils_lm.fine_tune_lm">fine_tune_lm() (in module fibber.paraphrase_strategies.bert_sampling_utils_lm)</a>
+</li>
       <li><a href="api/fibber.paraphrase_strategies.bert_sampling_strategy.html#fibber.paraphrase_strategies.bert_sampling_strategy.BertSamplingStrategy.fit">fit() (fibber.paraphrase_strategies.bert_sampling_strategy.BertSamplingStrategy method)</a>
 
       <ul>
         <li><a href="api/fibber.paraphrase_strategies.html#fibber.paraphrase_strategies.BertSamplingStrategy.fit">(fibber.paraphrase_strategies.BertSamplingStrategy method)</a>
+</li>
+        <li><a href="api/fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.html#fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy.fit">(fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy method)</a>
+</li>
+        <li><a href="api/fibber.paraphrase_strategies.html#fibber.paraphrase_strategies.NonAutoregressiveBertSamplingStrategy.fit">(fibber.paraphrase_strategies.NonAutoregressiveBertSamplingStrategy method)</a>
 </li>
         <li><a href="api/fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase.fit">(fibber.paraphrase_strategies.strategy_base.StrategyBase method)</a>
 </li>
@@ -739,6 +764,8 @@
         <li><a href="api/fibber.paraphrase_strategies.html#fibber.paraphrase_strategies.TextAttackStrategy.fit">(fibber.paraphrase_strategies.TextAttackStrategy method)</a>
 </li>
       </ul></li>
+      <li><a href="api/fibber.paraphrase_strategies.bert_sampling_utils_lm.html#fibber.paraphrase_strategies.bert_sampling_utils_lm.NonAutoregressiveBertLM.forward">forward() (fibber.paraphrase_strategies.bert_sampling_utils_lm.NonAutoregressiveBertLM method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1115,6 +1142,8 @@
 </li>
         <li><a href="api/fibber.paraphrase_strategies.identity_strategy.html#module-fibber.paraphrase_strategies.identity_strategy">fibber.paraphrase_strategies.identity_strategy</a>
 </li>
+        <li><a href="api/fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.html#module-fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy">fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy</a>
+</li>
         <li><a href="api/fibber.paraphrase_strategies.random_strategy.html#module-fibber.paraphrase_strategies.random_strategy">fibber.paraphrase_strategies.random_strategy</a>
 </li>
         <li><a href="api/fibber.paraphrase_strategies.strategy_base.html#module-fibber.paraphrase_strategies.strategy_base">fibber.paraphrase_strategies.strategy_base</a>
@@ -1142,8 +1171,18 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fibber.paraphrase_strategies.bert_sampling_utils_lm.html#fibber.paraphrase_strategies.bert_sampling_utils_lm.new_stats">new_stats() (in module fibber.paraphrase_strategies.bert_sampling_utils_lm)</a>
 </li>
+      <li><a href="api/fibber.paraphrase_strategies.bert_sampling_utils_lm.html#fibber.paraphrase_strategies.bert_sampling_utils_lm.non_autoregressive_fine_tune_lm">non_autoregressive_fine_tune_lm() (in module fibber.paraphrase_strategies.bert_sampling_utils_lm)</a>
+</li>
+      <li><a href="api/fibber.paraphrase_strategies.bert_sampling_utils_lm.html#fibber.paraphrase_strategies.bert_sampling_utils_lm.NonAutoregressiveBertLM">NonAutoregressiveBertLM (class in fibber.paraphrase_strategies.bert_sampling_utils_lm)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/fibber.paraphrase_strategies.html#fibber.paraphrase_strategies.NonAutoregressiveBertSamplingStrategy">NonAutoregressiveBertSamplingStrategy (class in fibber.paraphrase_strategies)</a>
+
+      <ul>
+        <li><a href="api/fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.html#fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy">(class in fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy)</a>
+</li>
+      </ul></li>
       <li><a href="api/fibber.paraphrase_strategies.bert_sampling_strategy.html#fibber.paraphrase_strategies.bert_sampling_strategy.none_constraint">none_constraint() (in module fibber.paraphrase_strategies.bert_sampling_strategy)</a>
 </li>
   </ul></td>
@@ -1174,6 +1213,10 @@
         <li><a href="api/fibber.paraphrase_strategies.identity_strategy.html#fibber.paraphrase_strategies.identity_strategy.IdentityStrategy.paraphrase_example">(fibber.paraphrase_strategies.identity_strategy.IdentityStrategy method)</a>
 </li>
         <li><a href="api/fibber.paraphrase_strategies.html#fibber.paraphrase_strategies.IdentityStrategy.paraphrase_example">(fibber.paraphrase_strategies.IdentityStrategy method)</a>
+</li>
+        <li><a href="api/fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.html#fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy.paraphrase_example">(fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.NonAutoregressiveBertSamplingStrategy method)</a>
+</li>
+        <li><a href="api/fibber.paraphrase_strategies.html#fibber.paraphrase_strategies.NonAutoregressiveBertSamplingStrategy.paraphrase_example">(fibber.paraphrase_strategies.NonAutoregressiveBertSamplingStrategy method)</a>
 </li>
         <li><a href="api/fibber.paraphrase_strategies.random_strategy.html#fibber.paraphrase_strategies.random_strategy.RandomStrategy.paraphrase_example">(fibber.paraphrase_strategies.random_strategy.RandomStrategy method)</a>
 </li>
@@ -1332,13 +1375,15 @@
         <li><a href="api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.textattack_strategy.TextAttackStrategy">(class in fibber.paraphrase_strategies.textattack_strategy)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fibber.paraphrase_strategies.bert_sampling_utils_text_parser.html#fibber.paraphrase_strategies.bert_sampling_utils_text_parser.TextParser">TextParser (class in fibber.paraphrase_strategies.bert_sampling_utils_text_parser)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.textattack_strategy.CLFModel.tokenize">tokenize() (fibber.paraphrase_strategies.textattack_strategy.CLFModel method)</a>
 </li>
       <li><a href="api/fibber.paraphrase_strategies.bert_sampling_strategy.html#fibber.paraphrase_strategies.bert_sampling_strategy.tostring">tostring() (in module fibber.paraphrase_strategies.bert_sampling_strategy)</a>
+</li>
+      <li><a href="api/fibber.paraphrase_strategies.bert_sampling_utils_lm.html#fibber.paraphrase_strategies.bert_sampling_utils_lm.NonAutoregressiveBertLM.training">training (fibber.paraphrase_strategies.bert_sampling_utils_lm.NonAutoregressiveBertLM attribute)</a>
 </li>
       <li><a href="api/fibber.robust_tuning_strategy.default_tuning_strategy.html#fibber.robust_tuning_strategy.default_tuning_strategy.TuningStrategyBase">TuningStrategyBase (class in fibber.robust_tuning_strategy.default_tuning_strategy)</a>
 </li>
