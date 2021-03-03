@@ -9,8 +9,31 @@ class TuningStrategyBase(object):
 
 
 class DefaultTuningStrategy(TuningStrategyBase):
-    def __init__(self):
-        self._rng = np.random.RandomState(1234)
+    """Default Tuning Strategy tunes the target classifier using adversarial training.
+
+    This strategy maintains two lists of data. The ``correct_list`` contains the examples that are
+    correctly classified by the classifer. The ``incorrect_list`` contains the examples that are
+    misclassified. The training set is added to the ``correct_list`` at beginning.
+
+    In each tuning step, this strategy select some sentences from the training set to rewrite. The
+    rewritten sentences are added to two lists correspondingly.
+
+    Then we sample half of tuning batch from ``correct_list`` and half from ``incorrect_list``.
+    The selected batch is used to tune the classifier. After tuning, these selected examples are
+    put back to two lists according to the current prediction of the classifier.
+    """
+
+    def __init__(self, use_criteria=0.85, gpt2_criteria=5, seed=1234):
+        """Initialize the strategy.
+
+        Args:
+            use_criteria (float): the USE similarity criteria for a legitimate rewriting.
+            gpt2_criteria (float): the GPT2 perplexity criteria for a legitimate rewriting.
+        """
+        super(self, DefaultTuningStrategy).__init__()
+        self._rng = np.random.RandomState(seed)
+        self._use_criteria = use_criteria
+        self._gpt2_criteria = gpt2_criteria
 
     def __repr__(self):
         return self.__class__.__name__
@@ -24,6 +47,21 @@ class DefaultTuningStrategy(TuningStrategyBase):
                              tuning_batch_size=32,
                              num_sentences_to_rewrite_per_step=10,
                              period_save=5000):
+        """Fine tune the classifier using given data.
+
+        Args:
+            metric_bundle (MetricBundle): a metric bundle including the target classifier.
+            paraphrase_strategy (StrategyBase): a paraphrase strategy to fine tune the classifier.
+            train_set (dict): the training set of the classifier.
+            num_paraphrases_per_text (int): the number of paraphrases to generate for each data.
+                This parameter is for paraphrase strategy.
+            tuning_steps (int): the number of steps to fine tune the classifier.
+            tuning_batch_size (int): the batch size for fine tuning.
+            num_sentences_to_rewrite_per_step (int): the number of data to rewrite using the
+                paraphrase strategy in each tuning step. You can set is as large as the tuning
+                batch size. You can also use a smaller value to speed up the tuning.
+            period_save (int): the period in steps to save the fine tuned classifier.
+        """
         global_step = 0
 
         classifier = metric_bundle.get_target_classifier()
@@ -55,8 +93,8 @@ class DefaultTuningStrategy(TuningStrategyBase):
                     paraphrase_field)
 
                 for (paraphrase, metric) in zip(paraphrase_list, metric_list):
-                    if (metric["USESemanticSimilarityMetric"] < 0.85
-                            or metric["GPT2GrammarQualityMetric"] > 5):
+                    if (metric["USESemanticSimilarityMetric"] < self._use_criteria
+                            or metric["GPT2GrammarQualityMetric"] > self._gpt2_criteria):
                         continue
 
                     data_record_new = copy.deepcopy(data_record_t)

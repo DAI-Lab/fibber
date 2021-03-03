@@ -5,9 +5,8 @@ import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F
-from transformers import BertForMaskedLM, BertTokenizerFast
 
-from fibber import log, resources
+from fibber import log
 from fibber.paraphrase_strategies.bert_sampling_utils_lm import get_lm
 from fibber.paraphrase_strategies.bert_sampling_utils_text_parser import TextParser
 from fibber.paraphrase_strategies.bert_sampling_utils_wpe import get_wordpiece_emb
@@ -279,38 +278,14 @@ class BertSamplingStrategy(StrategyBase):
         # load BERT language model.
         logger.info("Load bert language model for BertSamplingStrategy.")
 
-        if trainset["cased"]:
-            model_init = "bert-base-cased"
+        self._tokenizer, lm = get_lm(
+            self._strategy_config["lm_option"], self._output_dir, trainset, self._device,
+            self._strategy_config["lm_steps"])
+        if isinstance(lm, list):
+            self._bert_lms = lm
         else:
-            model_init = "bert-base-uncased"
-        self._tokenizer = BertTokenizerFast.from_pretrained(
-            resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
-        self._tokenizer.do_lower_case = True if "uncased" in model_init else False
-
-        if self._strategy_config["lm_option"] == "pretrain":
-            self._bert_lm = BertForMaskedLM.from_pretrained(
-                resources.get_transformers(model_init)).to(self._device)
-            self._bert_lm.eval()
-            for item in self._bert_lm.parameters():
-                item.requires_grad = False
-        elif self._strategy_config["lm_option"] == "finetune":
-            self._bert_lm = get_lm(
-                self._output_dir, trainset, -1, self._device, self._strategy_config["lm_steps"])
-            self._bert_lm.eval()
+            self._bert_lm = lm
             self._bert_lm.to(self._device)
-            for item in self._bert_lm.parameters():
-                item.requires_grad = False
-        elif self._strategy_config["lm_option"] == "adv":
-            self._bert_lms = []
-            for i in range(len(trainset["label_mapping"])):
-                lm = get_lm(
-                    self._output_dir, trainset, i, self._device, self._strategy_config["lm_steps"])
-                lm.eval()
-                for item in lm.parameters():
-                    item.requires_grad = False
-                self._bert_lms.append(lm)
-        else:
-            assert 0
 
         # Load useful metrics
         self._use_metric = self._metric_bundle.get_metric("USESemanticSimilarityMetric")

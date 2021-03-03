@@ -8,7 +8,8 @@ from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, ve
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
-    BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextAttackStrategy)
+    BertSamplingStrategy, IdentityStrategy, NonAutoregressiveBertSamplingStrategy, RandomStrategy,
+    TextAttackStrategy)
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.robust_tuning_strategy.default_tuning_strategy import (
     DefaultTuningStrategy, TuningStrategyBase)
@@ -20,7 +21,8 @@ built_in_paraphrase_strategies = {
     "RandomStrategy": RandomStrategy,
     "IdentityStrategy": IdentityStrategy,
     "TextAttackStrategy": TextAttackStrategy,
-    "BertSamplingStrategy": BertSamplingStrategy
+    "BertSamplingStrategy": BertSamplingStrategy,
+    "NonAutoregressiveBertSamplingStrategy": NonAutoregressiveBertSamplingStrategy
 }
 
 built_in_tuning_strategies = {
@@ -126,6 +128,19 @@ class Benchmark(object):
                           strategy_gpu_id=-1,
                           num_paraphrases_per_text=50,
                           tuning_steps=5000):
+        """Using a paraphrase strategy to do adversarial fine tuning for the target classifier.
+
+        Args:
+            paraphrase_strategy (str or StrategyBase): the paraphrase strategy to benchmark.
+                Either the name of a builtin strategy or a customized strategy derived from
+                StrategyBase.
+            tuning_strategy (str or TuningStrategyBase): the adversarial tuning strategy.
+                Either the name of a builtin strategy or a customized strategy derived from
+                TuningStrategyBase
+            strategy_gpu_id (int): the GPU id to run the paraphrase strategy.
+            num_paraphrases_per_text (int): number of paraphrases for each sentence.
+            tuning_steps (int): number of steps to tune the classifier.
+        """
         if isinstance(paraphrase_strategy, str):
             if paraphrase_strategy in built_in_paraphrase_strategies:
                 paraphrase_strategy = built_in_paraphrase_strategies[paraphrase_strategy](
@@ -210,19 +225,8 @@ class Benchmark(object):
 def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
                  output_dir, metric_bundle):
     """Take the strategy name and construct a strategy object."""
-    if strategy_name == "RandomStrategy":
-        return RandomStrategy(arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
-    if strategy_name == "IdentityStrategy":
-        return IdentityStrategy(
-            arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
-    if strategy_name == "TextAttackStrategy":
-        return TextAttackStrategy(
-            arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
-    if strategy_name == "BertSamplingStrategy":
-        return BertSamplingStrategy(
-            arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
-    else:
-        assert 0
+    return built_in_paraphrase_strategies[strategy_name](
+        arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
 
 
 def main():
