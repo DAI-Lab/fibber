@@ -1,5 +1,13 @@
 # History
 
+## Version 0.2.4 - 2021-03-3
+This release includes the following updates
+
+### New Features
+
+- Improve the doc string and documentation for adversarial training.
+- Add experimental code about non-autoregressive paraphrase strategy.
+
 ## Version 0.2.3 - 2021-02-17
 This release adds experimental code to adversarial training.
 
