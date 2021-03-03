@@ -73,11 +73,6 @@ class NonAutoregressiveBertSamplingStrategy(StrategyBase):
         for iter_id, replace_percentage in enumerate([0.3, 0.3, 0.3, 0.2, 0.1, 0.05]):
             num_pos = max(int(replace_percentage * (tensor_len - 2)), 1)
 
-            tmp = torch.topk(previous_logits, k=num_pos, dim=1, largest=False)[1]
-            # print(tmp)
-            # print(tmp.max(dim=1))
-            # print(tensor_len)
-
             pos = F.one_hot(
                 torch.topk(previous_logits, k=num_pos, dim=1, largest=False)[1],
                 num_classes=tensor_len).sum(dim=1)
