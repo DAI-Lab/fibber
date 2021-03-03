@@ -128,6 +128,19 @@ class Benchmark(object):
                           strategy_gpu_id=-1,
                           num_paraphrases_per_text=50,
                           tuning_steps=5000):
+        """Using a paraphrase strategy to do adversarial fine tuning for the target classifier.
+
+        Args:
+            paraphrase_strategy (str or StrategyBase): the paraphrase strategy to benchmark.
+                Either the name of a builtin strategy or a customized strategy derived from
+                StrategyBase.
+            tuning_strategy (str or TuningStrategyBase): the adversarial tuning strategy.
+                Either the name of a builtin strategy or a customized strategy derived from
+                TuningStrategyBase
+            strategy_gpu_id (int): the GPU id to run the paraphrase strategy.
+            num_paraphrases_per_text (int): number of paraphrases for each sentence.
+            tuning_steps (int): number of steps to tune the classifier.
+        """
         if isinstance(paraphrase_strategy, str):
             if paraphrase_strategy in built_in_paraphrase_strategies:
                 paraphrase_strategy = built_in_paraphrase_strategies[paraphrase_strategy](

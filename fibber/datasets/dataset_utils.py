@@ -258,7 +258,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
             dynamic_masked_lm (bool): whether to generate dynamic masked language model. lm ratio
                 will be randomly sampled. ``dynamic_masked_lm`` and ``masked_lm`` should not be
                 set True at the same time.
-            include_raw_text (bool): whether to return the raw text. 
+            include_raw_text (bool): whether to return the raw text.
             seed: random seed.
         """
         self._buckets = [30, 50, 100, 200]
@@ -351,8 +351,8 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 if self._masked_lm:
                     mask_pos_threshold = self._masked_lm_ratio
                 elif self._dynamic_masked_lm:
-                    mask_pos_threshold = self._rng.rand()
-                masked_pos = (rand_t < mask_pos_threshold) * masks
+                    mask_pos_threshold = self._rng.rand(self._batch_size)
+                masked_pos = (rand_t < mask_pos_threshold[:, None]) * masks
 
                 # No mask on cls and sep.
                 masked_pos[:, 0] = 0
