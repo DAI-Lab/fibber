@@ -18,16 +18,24 @@ logger = log.setup_custom_logger(__name__)
 class NonAutoregressiveBertLM(BertForMaskedLM):
     def __init__(self, config, sentence_embed_size):
         super().__init__(config)
-        self.sentence_emb_transform = nn.Linear(sentence_embed_size, self.config.hidden_size)
+        self.sentence_emb_transform = nn.Sequential(
+            nn.Linear(sentence_embed_size + self.config.hidden_size, self.config.hidden_size),
+            nn.LayerNorm(self.config.hidden_size),
+            nn.ReLU(),
+            nn.Linear(self.config.hidden_size, self.config.hidden_size),
+        )
 
     def _compute_emb(self, sentence_embeds, input_ids):
         # print(sentence_embeds.shape)
-        transformed_sentence_embs = self.sentence_emb_transform(
-            torch.tensor(sentence_embeds).to(self.device))
         bert_input_embs = self.bert.embeddings.word_embeddings(input_ids)
-        inp_emb = torch.cat([transformed_sentence_embs[:, None, :], bert_input_embs[:, 1:]], dim=1)
+        transformed_sentence_embs = self.sentence_emb_transform(
+            torch.cat([
+                bert_input_embs,
+                torch.tensor(sentence_embeds).to(self.device)[:, None, :].expand(
+                    (-1, bert_input_embs.size(1), -1)),
+            ], dim=2))
 
-        return inp_emb
+        return bert_input_embs + transformed_sentence_embs
 
     def forward(self,
                 sentence_embeds=None,
@@ -242,7 +250,7 @@ def compute_non_autoregressive_lm_loss(
 def non_autoregressive_fine_tune_lm(
         output_dir, trainset, filter, device, use_metric, lm_steps=5000, lm_bs=32,
         lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
-        lm_period_summary=100, lm_period_save=5000):
+        lm_period_summary=100, lm_period_save=5000, lm_pretune_steps=20000):
     """Returns a finetuned BERT language model on a given dataset.
 
     The language model will be stored at ``<output_dir>/lm_all`` if filter is -1, or
@@ -301,13 +309,20 @@ def non_autoregressive_fine_tune_lm(
         dataset, batch_size=None, num_workers=2)
 
     params = list(lm_model.parameters())
-    opt, sche = get_optimizer(lm_opt, lm_lr, lm_decay, lm_steps, params)
+    opt, sche = get_optimizer(lm_opt, lm_lr, decay=0,
+                              train_step=lm_steps - lm_pretune_steps, params=params)
+    pretune_opt = torch.optim.SGD(params=lm_model.sentence_emb_transform.parameters(),
+                                  lr=0.01, momentum=0.5)
 
     global_step = 0
     stats = new_stats()
     for seq, mask, tok_type, label, lm_label, raw_text in tqdm.tqdm(
             dataloader, total=lm_steps):
-        opt.zero_grad()
+
+        if global_step < lm_pretune_steps:
+            pretune_opt.zero_grad()
+        else:
+            opt.zero_grad()
 
         global_step += 1
 
@@ -331,8 +346,11 @@ def non_autoregressive_fine_tune_lm(
             tok_type=tok_type, lm_label=lm_label, stats=stats)
         lm_loss.backward()
 
-        opt.step()
-        sche.step()
+        if global_step < lm_pretune_steps:
+            pretune_opt.step()
+        else:
+            opt.step()
+            sche.step()
 
         if global_step % lm_period_summary == 0:
             write_summary(stats, summary, global_step)
