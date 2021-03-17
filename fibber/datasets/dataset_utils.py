@@ -47,6 +47,7 @@ import os
 import numpy as np
 import torch
 import tqdm
+from rake_nltk import Rake
 from transformers import BertTokenizerFast
 
 from fibber import get_root_dir, log, resources
@@ -203,6 +204,30 @@ def verify_dataset(dataset):
         assert item > 0, "empty class"
 
 
+class KeywordsExtractor(object):
+    def __init__(self):
+        self._extractor = Rake()
+
+    def extract_keywords(self, text, n=5, keep_order=True):
+        """Extract keywords from text.
+
+        Args:
+            text (str): a paragraph of text.
+            n (int): maximum number of keywords.
+            keep_order (bool): if true, keep the order of the words appearing in the text.
+                if false, ordered by importance.
+
+        Returns:
+            [str]: a list of strs representing keywords. keywords will be lowercased.
+        """
+        self._extractor.extract_keywords_from_text(text)
+        keywords = self._extractor.get_ranked_phrases()[:n]
+        if keep_order:
+            keywords = list(
+                zip(*sorted([(x, text.lower().find(x)) for x in keywords], key=lambda x: x[1])))[0]
+        return keywords
+
+
 class DatasetForBert(torch.utils.data.IterableDataset):
     """Create a ``torch.IterableDataset`` for a BERT model.
 
@@ -243,7 +268,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
 
     def __init__(self, dataset, model_init, batch_size, exclude=-1,
                  masked_lm=False, masked_lm_ratio=0.2, dynamic_masked_lm=False,
-                 include_raw_text=False, seed=0):
+                 include_raw_text=False, kw_and_padding=False, num_keywords=0, seed=0):
         """Initialize.
 
         Args:
@@ -258,6 +283,9 @@ class DatasetForBert(torch.utils.data.IterableDataset):
             dynamic_masked_lm (bool): whether to generate dynamic masked language model. lm ratio
                 will be randomly sampled. ``dynamic_masked_lm`` and ``masked_lm`` should not be
                 set True at the same time.
+            kw_and_padding (bool): use keywords as the first sentence, and the field to paraphrase
+                as the second sentence. Add a padding symbol at the beginning of the first
+                sentence to input sentence embedding later.
             include_raw_text (bool): whether to return the raw text.
             seed: random seed.
         """
@@ -281,6 +309,12 @@ class DatasetForBert(torch.utils.data.IterableDataset):
 
         self._dynamic_masked_lm = dynamic_masked_lm
         self._include_raw_text = include_raw_text
+        self._kw_and_padding = kw_and_padding
+        if kw_and_padding:
+            self._kw_extractor = KeywordsExtractor()
+            self._num_keywords = num_keywords
+
+        field_name = dataset["paraphrase_field"]
 
         counter = 0
         logger.info("DatasetForBert is processing data.")
@@ -291,6 +325,14 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 s1 = item["text1"] + " [SEP]"
             else:
                 s1 = ""
+
+            if kw_and_padding:
+                s1 = item[field_name]
+                s0 = " , ".join(self._kw_extractor.extract_keywords(
+                    item[field_name], n=num_keywords, keep_order=True))
+
+                s0 = "[CLS] [PAD] " + s0 + "[SEP]"
+                s1 = s1 + " [SEP]"
 
             if y == exclude:
                 continue
@@ -357,6 +399,10 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 # No mask on cls and sep.
                 masked_pos[:, 0] = 0
                 masked_pos *= np.asarray(texts != self._tokenizer.sep_token_id, dtype="int")
+                # if use keywords, do not mask the first sentence
+                if self._kw_and_padding:
+                    for id, l0 in enumerate(l0s):
+                        masked_pos[id, :l0] = 0
 
                 if np.sum(masked_pos) == 0:
                     continue
