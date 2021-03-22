@@ -5,9 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.datasets.preprocess_imdb module &#8212; fibber 0.2.4 documentation</title>
+    <title>fibber.datasets.preprocess_imdb module &#8212; fibber 0.2.5 documentation</title>
     
-  <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
+  <link href="../_static/css/theme.css" rel="stylesheet" />
+  <link href="../_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
 
     
   <link rel="stylesheet"
@@ -19,16 +20,12 @@
 
     
       
-  <link rel="stylesheet"
-    href="../_static/vendor/open-sans_all/1.44.1/index.css">
-  <link rel="stylesheet"
-    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
 
     
     <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.d3f166471bb80abb5163.js">
+  <link rel="preload" as="script" href="../_static/js/index.1e043a052b0af929e4d8.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -46,89 +43,76 @@
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
-    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main">
-<div class="container-xl">
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
 
-    <a class="navbar-brand" href="../index.html">
+
     
-      <img src="../_static/dai-logo-white-200.png" class="logo" alt="logo" />
+      
+      <a class="navbar-brand" href="../index.html">
+        <img src="../_static/dai-logo-white-200.png" class="logo" alt="logo">
+      </a>
+      
     
-    </a>
+
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
+    
     <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
       <ul id="navbar-main-elements" class="navbar-nav mr-auto">
-        
-        
-        <li class="nav-item ">
-            <a class="nav-link" href="../readme.html">Fibber</a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href=""></a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href=""></a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href=""></a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href=""></a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href=""></a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href=""></a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href="../dataformat.html">Data Format</a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href="../benchmark.html">Benchmark</a>
-        </li>
-        
-        <li class="nav-item active">
-            <a class="nav-link" href="fibber.html">API Reference</a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href="../contributing.html">Contributing</a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href="../authors.html">Credits</a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href="../history.html">History</a>
-        </li>
-        
+        <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../readme.html">
+  Fibber
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../dataformat.html">
+  Data Format
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../benchmark.html">
+  Benchmark
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="fibber.html">
+  API Reference
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../contributing.html">
+  Contributing
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../authors.html">
+  Credits
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../history.html">
+  History
+ </a>
+</li>
+
         
       </ul>
 
-
-      
-
-      <ul class="navbar-nav">
-        
-          <li class="nav-item">
-            <a class="nav-link" href="https://github.com/dai-lab/fibber" target="_blank" rel="noopener">
-              <span><i class="fab fa-github-square"></i></span>
-            </a>
-          </li>
-        
-        
+      <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/dai-lab/fibber" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
       </ul>
     </div>
 </div>
@@ -138,147 +122,117 @@
     <div class="container-xl">
       <div class="row">
           
-          <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form>
 <nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-
-    <div class="bd-toc-item active">
-    
-  
-    <ul class="nav bd-sidenav">
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-          
+  <div class="bd-toc-item active">
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l2">
+  <a class="reference internal" href="fibber.benchmark.html">
+   fibber.benchmark package
+  </a>
+ </li>
+ <li class="toctree-l2 current active">
+  <a class="reference internal" href="fibber.datasets.html">
+   fibber.datasets package
+  </a>
+  <ul class="current">
+   <li class="toctree-l3">
+    <a class="reference internal" href="fibber.datasets.dataset_utils.html">
+     fibber.datasets.dataset_utils module
+    </a>
+   </li>
+   <li class="toctree-l3">
+    <a class="reference internal" href="fibber.datasets.download_datasets.html">
+     fibber.datasets.download_datasets module
+    </a>
+   </li>
+   <li class="toctree-l3">
+    <a class="reference internal" href="fibber.datasets.downloadable_datasets.html">
+     fibber.datasets.downloadable_datasets module
+    </a>
+   </li>
+   <li class="toctree-l3">
+    <a class="reference internal" href="fibber.datasets.preprocess_ag.html">
+     fibber.datasets.preprocess_ag module
+    </a>
+   </li>
+   <li class="toctree-l3 current active">
+    <a class="current reference internal" href="#">
+     fibber.datasets.preprocess_imdb module
+    </a>
+   </li>
+   <li class="toctree-l3">
+    <a class="reference internal" href="fibber.datasets.preprocess_mnli.html">
+     fibber.datasets.preprocess_mnli module
+    </a>
+   </li>
+   <li class="toctree-l3">
+    <a class="reference internal" href="fibber.datasets.preprocess_mr.html">
+     fibber.datasets.preprocess_mr module
+    </a>
+   </li>
+   <li class="toctree-l3">
+    <a class="reference internal" href="fibber.datasets.preprocess_snli.html">
+     fibber.datasets.preprocess_snli module
+    </a>
+   </li>
+   <li class="toctree-l3">
+    <a class="reference internal" href="fibber.datasets.preprocess_utils.html">
+     fibber.datasets.preprocess_utils module
+    </a>
+   </li>
+   <li class="toctree-l3">
+    <a class="reference internal" href="fibber.datasets.preprocess_yelp.html">
+     fibber.datasets.preprocess_yelp module
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l2">
+  <a class="reference internal" href="fibber.metrics.html">
+   fibber.metrics package
+  </a>
+ </li>
+ <li class="toctree-l2">
+  <a class="reference internal" href="fibber.paraphrase_strategies.html">
+   fibber.paraphrase_strategies package
+  </a>
+ </li>
+ <li class="toctree-l2">
+  <a class="reference internal" href="fibber.resources.html">
+   fibber.resources package
+  </a>
+ </li>
+ <li class="toctree-l2">
+  <a class="reference internal" href="fibber.robust_tuning_strategy.html">
+   fibber.robust_tuning_strategy package
+  </a>
+ </li>
+ <li class="toctree-l2">
+  <a class="reference internal" href="fibber.download_utils.html">
+   fibber.download_utils module
+  </a>
+ </li>
+ <li class="toctree-l2">
+  <a class="reference internal" href="fibber.fibber.html">
+   fibber.fibber module
+  </a>
+ </li>
+ <li class="toctree-l2">
+  <a class="reference internal" href="fibber.log.html">
+   fibber.log module
+  </a>
+ </li>
+</ul>
+  </div>
+</nav>
+            </div>
             
-                <li class="">
-                    <a href="fibber.benchmark.html">fibber.benchmark package</a>
-                </li>
-            
-          
-            
-  
-                <li class="active">
-                    <a href="fibber.datasets.html">fibber.datasets package</a>
-                    <ul>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.dataset_utils.html">fibber.datasets.dataset_utils module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.download_datasets.html">fibber.datasets.download_datasets module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.downloadable_datasets.html">fibber.datasets.downloadable_datasets module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_ag.html">fibber.datasets.preprocess_ag module</a>
-                        </li>
-                    
-                        <li class="active">
-                            <a href="">fibber.datasets.preprocess_imdb module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_mnli.html">fibber.datasets.preprocess_mnli module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_mr.html">fibber.datasets.preprocess_mr module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_snli.html">fibber.datasets.preprocess_snli module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_utils.html">fibber.datasets.preprocess_utils module</a>
-                        </li>
-                    
-                        <li class="">
-                            <a href="fibber.datasets.preprocess_yelp.html">fibber.datasets.preprocess_yelp module</a>
-                        </li>
-                    
-                    </ul>
-                </li>
-            
-          
-            
-                <li class="">
-                    <a href="fibber.metrics.html">fibber.metrics package</a>
-                </li>
-            
-          
-            
-                <li class="">
-                    <a href="fibber.paraphrase_strategies.html">fibber.paraphrase_strategies package</a>
-                </li>
-            
-          
-            
-                <li class="">
-                    <a href="fibber.resources.html">fibber.resources package</a>
-                </li>
-            
-          
-            
-                <li class="">
-                    <a href="fibber.robust_tuning_strategy.html">fibber.robust_tuning_strategy package</a>
-                </li>
-            
-          
-            
-                <li class="">
-                    <a href="fibber.download_utils.html">fibber.download_utils module</a>
-                </li>
-            
-          
-            
-                <li class="">
-                    <a href="fibber.fibber.html">fibber.fibber module</a>
-                </li>
-            
-          
-            
-                <li class="">
-                    <a href="fibber.log.html">fibber.log module</a>
-                </li>
-            
-          
-        
-        
-        
-        
-        
-        
-        
-        
-      </ul>
-  
-  </nav>
-          </div>
           
 
           
@@ -286,9 +240,7 @@
               
 
 <nav id="bd-toc-nav">
-    <ul class="nav section-nav flex-column">
     
-    </ul>
 </nav>
 
 
@@ -296,6 +248,9 @@
           </div>
           
 
+          
+          
+            
           
           <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
               
@@ -335,7 +290,7 @@
     </div>
 
     
-  <script src="../_static/js/index.d3f166471bb80abb5163.js"></script>
+  <script src="../_static/js/index.1e043a052b0af929e4d8.js"></script>
 
 
     <footer class="footer mt-5 mt-md-0">
