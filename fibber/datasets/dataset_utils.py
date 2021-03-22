@@ -349,7 +349,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 rand_t = self._rng.rand(self._batch_size, max_text_len)
 
                 if self._masked_lm:
-                    mask_pos_threshold = self._masked_lm_ratio
+                    mask_pos_threshold = np.asarray([self._masked_lm_ratio] * self._batch_size)
                 elif self._dynamic_masked_lm:
                     mask_pos_threshold = self._rng.rand(self._batch_size)
                 masked_pos = (rand_t < mask_pos_threshold[:, None]) * masks

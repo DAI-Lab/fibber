@@ -1,12 +1,20 @@
 # History
 
-## Version 0.2.4 - 2021-03-3
+
+## Version 0.2.5 - 2021-03-22
+This release is an emergency bug fix.
+
+- Fix the bug in DatasetForBert introduced by the previous update.
+
+
+## Version 0.2.4 - 2021-03-03
 This release includes the following updates
 
 ### New Features
 
 - Improve the doc string and documentation for adversarial training.
 - Add experimental code about non-autoregressive paraphrase strategy.
+
 
 ## Version 0.2.3 - 2021-02-17
 This release adds experimental code to adversarial training.
@@ -18,7 +26,7 @@ This release adds experimental code to adversarial training.
 - Add args in benchmark for adversarial tuning.
 
 
-## Version 0.2.2 - 2021-02-3
+## Version 0.2.2 - 2021-02-03
 This release fixes bugs and adds unit tests.
 
 ### New Features
