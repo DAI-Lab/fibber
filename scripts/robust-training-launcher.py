@@ -2,10 +2,9 @@ import argparse
 import subprocess
 
 COMMON_CONFIG = {
-    "--subsample_testset": 1000,
-    "--num_paraphrases_per_text": 50,
-    "--robust_tuning": "0",
-    # ignored when robut_tuning is 0 and load_robust_tuned_clf is not set
+    "--subsample_testset": 100,
+    "--num_paraphrases_per_text": 20,
+    "--robust_tuning": "1",
     "--robust_tuning_steps": 5000,
     # "--load_robust_tuned_clf": "DefaultTuningStrategy-TextFoolerJin2019"
 }
@@ -92,9 +91,9 @@ STRATEGY_CONFIG = {
         "--bs_wpe_threshold": 1.0,
         "--bs_wpe_weight": 1000,
         "--bs_use_threshold": 0.95,
-        "--bs_use_weight": 1000,
-        "--bs_gpt2_weight": 10,
-        "--bs_sampling_steps": 200,
+        "--bs_use_weight": 500,
+        "--bs_gpt2_weight": 5,
+        "--bs_sampling_steps": 50,
         "--bs_burnin_steps": 100,
         "--bs_clf_weight": 3,
         "--bs_window_size": 3,
@@ -134,7 +133,6 @@ def main():
     parser.add_argument("--dataset", choices=list(DATASET_CONFIG.keys()) + ["all"], default="all")
     parser.add_argument("--strategy", choices=list(STRATEGY_CONFIG.keys()) + ["all"],
                         default="all")
-    parser.add_argument("--robust_desc", type=str, default=None)
 
     args = parser.parse_args()
     if args.dataset == "all":
@@ -150,14 +148,11 @@ def main():
     for dataset in dataset_list:
         for strategy in strategy_list:
             command = ["python3", "-m", "fibber.benchmark.benchmark"]
-            if args.robust_desc is not None:
-                command += to_command({"--load_robust_tuned_clf": args.robust_desc})
             command += to_command(COMMON_CONFIG)
             command += to_command(GPU_CONFIG[args.gpu])
             command += to_command(DATASET_CONFIG[dataset])
             command += to_command(STRATEGY_CONFIG[strategy])
             subprocess.call(command)
-
 
 if __name__ == "__main__":
     main()

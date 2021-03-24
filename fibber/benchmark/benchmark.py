@@ -3,13 +3,13 @@ import datetime
 import os
 
 from fibber import log
-from fibber.benchmark.benchmark_utils import update_detailed_result
+from fibber.benchmark.benchmark_utils import update_detailed_result, update_attack_robust_result
 from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, verify_dataset
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
     BertSamplingStrategy, IdentityStrategy, NonAutoregressiveBertSamplingStrategy, RandomStrategy,
-    TextAttackStrategy)
+    TextAttackStrategy, NARRLStrategy)
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.robust_tuning_strategy.default_tuning_strategy import (
     DefaultTuningStrategy, TuningStrategyBase)
@@ -22,7 +22,8 @@ built_in_paraphrase_strategies = {
     "IdentityStrategy": IdentityStrategy,
     "TextAttackStrategy": TextAttackStrategy,
     "BertSamplingStrategy": BertSamplingStrategy,
-    "NonAutoregressiveBertSamplingStrategy": NonAutoregressiveBertSamplingStrategy
+    "NonAutoregressiveBertSamplingStrategy": NonAutoregressiveBertSamplingStrategy,
+    "NARRLStrategy": NARRLStrategy,
 }
 
 built_in_tuning_strategies = {
@@ -118,6 +119,11 @@ class Benchmark(object):
                 and load_robust_tuned_clf_desc not in ["null", "None", "none", ""]):
             self._metric_bundle.get_target_classifier().load_robust_tuned_model(
                 load_robust_tuned_clf_desc, robust_tuning_steps)
+            self._robust_tuned_clf_desc = load_robust_tuned_clf_desc
+            self._robust_tuning_steps = robust_tuning_steps
+        else:
+            self._robust_tuned_clf_desc = None
+            self._robust_tuning_steps = 0
 
         add_sentence_level_adversarial_attack_metrics(
             self._metric_bundle, gpt2_ppl_threshold=5, use_sim_threshold=0.85)
@@ -214,8 +220,16 @@ class Benchmark(object):
 
         aggregated_result = self._metric_bundle.aggregate_metrics(
             self._dataset_name, str(paraphrase_strategy), exp_name, results)
-        update_detailed_result(aggregated_result,
-                               self._output_dir if not update_global_results else None)
+
+        if self._robust_tuned_clf_desc is None:
+            update_detailed_result(aggregated_result,
+                                   self._output_dir if not update_global_results else None)
+        else:
+            update_attack_robust_result(aggregated_result,
+                                        self._robust_tuned_clf_desc,
+                                        self._robust_tuning_steps,
+                                        self._output_dir if not update_global_results else None)
+
         return aggregated_result
 
     def get_metric_bundle(self):

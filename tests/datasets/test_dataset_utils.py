@@ -36,6 +36,10 @@ def test_keywords_extractor():
     assert (len(result) == len(reference) and
             all([x == y for x, y in zip(result, reference_keep_order)]))
 
+    result = extractor.extract_keywords("a a a.", keep_order=False)
+    print(result, reference)
+    assert len(result) == 0
+
 
 def test_dataset_with_kw_and_padding(mock_dataset):
     dataset = DatasetForBert(

@@ -49,6 +49,7 @@ import torch
 import tqdm
 from rake_nltk import Rake
 from transformers import BertTokenizerFast
+from nltk import sent_tokenize
 
 from fibber import get_root_dir, log, resources
 from fibber.datasets.downloadable_datasets import downloadable_dataset_urls
@@ -205,8 +206,8 @@ def verify_dataset(dataset):
 
 
 class KeywordsExtractor(object):
-    def __init__(self):
-        self._extractor = Rake()
+    def __init__(self, max_length=3):
+        self._extractor = Rake(max_length=max_length)
 
     def extract_keywords(self, text, n=5, keep_order=True):
         """Extract keywords from text.
@@ -222,10 +223,13 @@ class KeywordsExtractor(object):
         """
         self._extractor.extract_keywords_from_text(text)
         keywords = self._extractor.get_ranked_phrases()[:n]
+        if len(keywords) == 0:
+            return []
+
         if keep_order:
             keywords = list(
                 zip(*sorted([(x, text.lower().find(x)) for x in keywords], key=lambda x: x[1])))[0]
-        return keywords
+        return list(keywords)
 
 
 class DatasetForBert(torch.utils.data.IterableDataset):
@@ -268,7 +272,8 @@ class DatasetForBert(torch.utils.data.IterableDataset):
 
     def __init__(self, dataset, model_init, batch_size, exclude=-1,
                  masked_lm=False, masked_lm_ratio=0.2, dynamic_masked_lm=False,
-                 include_raw_text=False, kw_and_padding=False, num_keywords=0, seed=0):
+                 include_raw_text=False, kw_and_padding=False, split_sentences=False,
+                 num_keywords=0, seed=0):
         """Initialize.
 
         Args:
@@ -286,6 +291,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
             kw_and_padding (bool): use keywords as the first sentence, and the field to paraphrase
                 as the second sentence. Add a padding symbol at the beginning of the first
                 sentence to input sentence embedding later.
+            split_sentences (bool): split paragraph to sentence.
             include_raw_text (bool): whether to return the raw text.
             seed: random seed.
         """
@@ -318,7 +324,18 @@ class DatasetForBert(torch.utils.data.IterableDataset):
 
         counter = 0
         logger.info("DatasetForBert is processing data.")
-        for item in tqdm.tqdm(dataset["data"]):
+
+        if split_sentences:
+            data_record_list = []
+            for item in tqdm.tqdm(dataset["data"]):
+                for sent in sent_tokenize(item[field_name]):
+                    item_tmp = copy.copy(item)
+                    item_tmp[field_name] = sent
+                    data_record_list.append(item_tmp)
+        else:
+            data_record_list = dataset["data"]
+
+        for item in tqdm.tqdm(data_record_list):
             y = item["label"]
             s0 = "[CLS] " + item["text0"] + " [SEP]"
             if "text1" in item:
@@ -391,7 +408,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 rand_t = self._rng.rand(self._batch_size, max_text_len)
 
                 if self._masked_lm:
-                    mask_pos_threshold = self._masked_lm_ratio
+                    mask_pos_threshold = np.asarray([self._masked_lm_ratio] * self._batch_size)
                 elif self._dynamic_masked_lm:
                     mask_pos_threshold = self._rng.rand(self._batch_size)
                 masked_pos = (rand_t < mask_pos_threshold[:, None]) * masks

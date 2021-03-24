@@ -30,7 +30,7 @@ class DefaultTuningStrategy(TuningStrategyBase):
             use_criteria (float): the USE similarity criteria for a legitimate rewriting.
             gpt2_criteria (float): the GPT2 perplexity criteria for a legitimate rewriting.
         """
-        super(self, DefaultTuningStrategy).__init__()
+        super(DefaultTuningStrategy, self).__init__()
         self._rng = np.random.RandomState(seed)
         self._use_criteria = use_criteria
         self._gpt2_criteria = gpt2_criteria
