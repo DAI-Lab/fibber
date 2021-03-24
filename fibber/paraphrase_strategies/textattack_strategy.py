@@ -1,5 +1,6 @@
 """This module implements the paraphrase strategy using TextFooler."""
 
+import signal
 import sys
 
 from fibber import log
@@ -15,6 +16,15 @@ except ImportError:
     logger.warning("TextAttack is not installed so TextFooler stategy can't be used. "
                    "Install it by `pip install textattack`.")
     ModelWrapper = object
+
+
+class TimeOutException(Exception):
+    pass
+
+
+def alarm_handler(signum, frame):
+    print("ALARM signal received")
+    raise TimeOutException()
 
 
 class CLFModel(ModelWrapper):
@@ -83,8 +93,20 @@ class TextAttackStrategy(StrategyBase):
         self._model.set_data_record(data_record)
 
         attack_text = " ".join(data_record[field_name].split()[:200])
-        att = next(self._recipe.attack_dataset(
-            [(attack_text, data_record["label"])]))
+
+        signal.signal(signal.SIGALRM, alarm_handler)
+        signal.alarm(60)
+        try:
+            att = next(self._recipe.attack_dataset(
+                [(attack_text, data_record["label"])]))
+        except TimeOutException:
+            logger.warn("Timeout.")
+            att = None
+        except BaseException:
+            logger.warn("TextAttack package failure.")
+            att = None
+        signal.alarm(0)
+
         if isinstance(att, textattack.attack_results.SuccessfulAttackResult):
             return [att.perturbed_result.attacked_text.text]
         else:
