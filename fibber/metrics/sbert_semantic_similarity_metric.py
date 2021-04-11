@@ -2,10 +2,11 @@
 
 import numpy as np
 import torch
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import CrossEncoder
 
 from fibber import log
 from fibber.metrics.metric_base import MetricBase
+from fibber.download_utils import get_root_dir
 
 logger = log.setup_custom_logger(__name__)
 
@@ -18,20 +19,23 @@ class SBERTSemanticSimilarityMetric(MetricBase):
     see `https://github.com/UKPLab/sentence-transformers` for more information.
     """
 
-    def __init__(self, sbert_pretrained_model="stsb-bert-base", sbert_gpu_id=-1, **kargs):
+    def __init__(self, sbert_pretrained_model="stsb-roberta-large", sbert_gpu_id=-1, **kargs):
         """Initialize sbert model."""
         super(SBERTSemanticSimilarityMetric, self).__init__()
 
         if sbert_gpu_id == -1:
-            logger.warning("GPT2 metric is running on CPU.")
+            logger.warning("SBERT metric is running on CPU.")
             self._device = torch.device("cpu")
         else:
-            logger.info("GPT2 metric is running on GPU %d.", sbert_gpu_id)
+            logger.info("SBERT metric is running on GPU %d.", sbert_gpu_id)
             self._device = torch.device("cuda:%d" % sbert_gpu_id)
 
         logger.info("load sbert model.")
 
-        self._model = SentenceTransformer(sbert_pretrained_model).to(self._device)
+        #TODO: use resources utils to manage model.
+        sbert_pretrained_model = (get_root_dir() + "/common/transformers_pretrained/"
+                                  + sbert_pretrained_model)
+        self._model = CrossEncoder(sbert_pretrained_model, device=self._device)
 
     def _get_emb(self, sentences):
         """Compute the embedding of sentences."""
@@ -49,10 +53,8 @@ class SBERTSemanticSimilarityMetric(MetricBase):
         Returns:
             (list): a list containing the USE similarity metric for each paraphrase.
         """
-        embs = self._get_emb([origin] + paraphrase_list)
-        norm = np.linalg.norm(embs, axis=1)
-        sim = np.sum(embs[0] * embs, axis=1) / norm[0] / norm
-        return [float(x) for x in sim[1:]]
+        return [float(x) for x in self._model.predict([(origin, paraphrase)
+                                                       for paraphrase in paraphrase_list])]
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the perplexity ratio.
@@ -63,5 +65,4 @@ class SBERTSemanticSimilarityMetric(MetricBase):
             data_record: ignored.
             paraphrase_field: ignored.
         """
-        embs = self._get_emb([origin, paraphrase])
-        return float(np.sum(embs[0] * embs[1]) / np.linalg.norm(embs[0]) / np.linalg.norm(embs[1]))
+        return float(self._model.predict([(origin, paraphrase)])[0])

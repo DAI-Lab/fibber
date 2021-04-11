@@ -45,6 +45,8 @@ class Benchmark(object):
                  use_gpu_id=-1,
                  gpt2_gpu_id=-1,
                  bert_gpu_id=-1,
+                 sbert_gpu_id=-1,
+                 enable_sbert_semantic_similarity=False,
                  bert_clf_steps=20000,
                  bert_clf_bs=32,
                  load_robust_tuned_clf_desc=None,
@@ -107,7 +109,9 @@ class Benchmark(object):
             bert_gpu_id=bert_gpu_id, dataset_name=dataset_name,
             trainset=self._trainset, testset=testset,
             bert_clf_steps=bert_clf_steps,
-            bert_clf_bs=bert_clf_bs
+            bert_clf_bs=bert_clf_bs,
+            sbert_gpu_id=sbert_gpu_id,
+            enable_sbert_semantic_similarity=enable_sbert_semantic_similarity
         )
 
         if customized_clf:
@@ -252,6 +256,8 @@ def main():
     parser.add_argument("--bert_gpu_id", type=int, default=-1)
     parser.add_argument("--use_gpu_id", type=int, default=-1)
     parser.add_argument("--bert_clf_steps", type=int, default=20000)
+    parser.add_argument("--sbert_gpu_id", type=int, default=-1)
+    parser.add_argument("--use_sbert", type=str, default="0")
 
     # add builtin strategies' args to parser.
     for item in built_in_paraphrase_strategies.values():
@@ -273,7 +279,9 @@ def main():
                           gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
                           bert_clf_steps=arg_dict["bert_clf_steps"],
                           load_robust_tuned_clf_desc=arg_dict["load_robust_tuned_clf_desc"],
-                          robust_tuning_steps=arg_dict["robust_tuning_steps"])
+                          robust_tuning_steps=arg_dict["robust_tuning_steps"],
+                          sbert_gpu_id=arg_dict["sbert_gpu_id"],
+                          enable_sbert_semantic_similarity=(arg_dict["use_sbert"] == "1"))
 
     log.add_file_handler(
         logger, os.path.join(arg_dict["output_dir"], "log.log"))
