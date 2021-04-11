@@ -2,7 +2,7 @@ import argparse
 import subprocess
 
 COMMON_CONFIG = {
-    "--subsample_testset": 1000,
+    "--subsample_testset": 500,
     "--num_paraphrases_per_text": 50,
     "--robust_tuning": "0",
     # ignored when robut_tuning is 0 and load_robust_tuned_clf is not set
@@ -15,11 +15,13 @@ GPU_CONFIG = {
         "--use_gpu_id": 0,
         "--gpt2_gpu_id": 0,
         "--strategy_gpu_id": 0,
+        "--sbert_gpu_id": 0
     },
     "multi": {
         "--bert_gpu_id": 0,
         "--use_gpu_id": 0,
         "--gpt2_gpu_id": 1,
+        "--sbert_gpu_id": 1,
         "--strategy_gpu_id": 2,
     }
 }
@@ -91,8 +93,8 @@ STRATEGY_CONFIG = {
         "--bs_wpe_threshold": 1.0,
         "--bs_wpe_weight": 1000,
         "--bs_use_threshold": 0.95,
-        "--bs_use_weight": 1000,
-        "--bs_gpt2_weight": 10,
+        "--bs_use_weight": 500,
+        "--bs_gpt2_weight": 5,
         "--bs_sampling_steps": 200,
         "--bs_burnin_steps": 100,
         "--bs_clf_weight": 3,
@@ -104,6 +106,30 @@ STRATEGY_CONFIG = {
         "--bs_split_sentence": "auto",
         "--bs_lm_option": "finetune",
         "--bs_stanza_port": 9001,
+        "--bs_similarity_metric": "SBERTSemanticSimilarityMetric",
+        "--use_sbert": "1"
+    },
+    "asrs-nli": {
+        "--strategy": "BertSamplingStrategy",
+        "--bs_enforcing_dist": "wpe",
+        "--bs_wpe_threshold": 1.0,
+        "--bs_wpe_weight": 1000,
+        "--bs_use_threshold": 0.95,
+        "--bs_use_weight": 100,
+        "--bs_gpt2_weight": 3,
+        "--bs_sampling_steps": 200,
+        "--bs_burnin_steps": 100,
+        "--bs_clf_weight": 3,
+        "--bs_window_size": 3,
+        "--bs_accept_criteria": "joint_weighted_criteria",
+        "--bs_burnin_enforcing_schedule": "1",
+        "--bs_burnin_criteria_schedule": "1",
+        "--bs_seed_option": "origin",
+        "--bs_split_sentence": "auto",
+        "--bs_lm_option": "finetune",
+        "--bs_stanza_port": 9001,
+        "--bs_similarity_metric": "SBERTSemanticSimilarityMetric",
+        "--use_sbert": "1"
     },
     "nabs": {
         "--strategy": "NonAutoregressiveBertSamplingStrategy",

@@ -12,6 +12,7 @@ from fibber.metrics.edit_distance_metric import EditDistanceMetric
 from fibber.metrics.glove_semantic_similarity_metric import GloVeSemanticSimilarityMetric
 from fibber.metrics.gpt2_grammar_quality_metric import GPT2GrammarQualityMetric
 from fibber.metrics.metric_base import MetricBase
+from fibber.metrics.sbert_semantic_similarity_metric import SBERTSemanticSimilarityMetric
 from fibber.metrics.use_semantic_similarity_metric import USESemanticSimilarityMetric
 
 logger = log.setup_custom_logger(__name__)
@@ -31,6 +32,7 @@ class MetricBundle(object):
                  enable_glove_semantic_similarity=True,
                  enable_gpt2_grammar_quality=True,
                  enable_bert_clf_prediction=False,
+                 enable_sbert_semantic_similarity=False,
                  **kargs):
         """Initialize various metrics.
 
@@ -61,6 +63,8 @@ class MetricBundle(object):
             self.add_metric(GloVeSemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_gpt2_grammar_quality:
             self.add_metric(GPT2GrammarQualityMetric(**kargs), DIRECTION_LOWER_BETTER)
+        if enable_sbert_semantic_similarity:
+            self.add_metric(SBERTSemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_bert_clf_prediction:
             self.add_classifier(BertClassifier(**kargs), set_target_clf=True)
 

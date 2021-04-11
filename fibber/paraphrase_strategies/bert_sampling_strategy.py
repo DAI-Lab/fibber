@@ -266,6 +266,7 @@ class BertSamplingStrategy(StrategyBase):
         ("lm_steps", int, 5000, "lm training steps."),
         ("clf_weight", float, 1, "weight for the clf score in the criteria."),
         ("gpt2_weight", float, 10, "the smoothing parameter for gpt2."),
+        ("similarity_metric", str, "USESemanticSimilarityMetric", "similarity metric")
     ]
 
     def __repr__(self):
@@ -288,7 +289,8 @@ class BertSamplingStrategy(StrategyBase):
             self._bert_lm.to(self._device)
 
         # Load useful metrics
-        self._use_metric = self._metric_bundle.get_metric("USESemanticSimilarityMetric")
+        self._use_metric = self._metric_bundle.get_metric(
+            self._strategy_config["similarity_metric"])
         self._clf_metric = self._metric_bundle.get_target_classifier()
         self._gpt2_metric = self._metric_bundle.get_metric("GPT2GrammarQualityMetric")
 
