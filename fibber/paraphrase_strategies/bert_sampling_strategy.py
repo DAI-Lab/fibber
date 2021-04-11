@@ -289,7 +289,8 @@ class BertSamplingStrategy(StrategyBase):
             self._bert_lm.to(self._device)
 
         # Load useful metrics
-        self._use_metric = self._metric_bundle.get_metric(self._strategy_config["similarity_metric"])
+        self._use_metric = self._metric_bundle.get_metric(
+            self._strategy_config["similarity_metric"])
         self._clf_metric = self._metric_bundle.get_target_classifier()
         self._gpt2_metric = self._metric_bundle.get_metric("GPT2GrammarQualityMetric")
 

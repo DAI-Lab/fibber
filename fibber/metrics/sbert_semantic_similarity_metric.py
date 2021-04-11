@@ -1,12 +1,11 @@
 """This metric computes the embedding similarity using SBERT model."""
 
-import numpy as np
 import torch
 from sentence_transformers import CrossEncoder
 
 from fibber import log
-from fibber.metrics.metric_base import MetricBase
 from fibber.download_utils import get_root_dir
+from fibber.metrics.metric_base import MetricBase
 
 logger = log.setup_custom_logger(__name__)
 
@@ -32,7 +31,7 @@ class SBERTSemanticSimilarityMetric(MetricBase):
 
         logger.info("load sbert model.")
 
-        #TODO: use resources utils to manage model.
+        # TODO: use resources utils to manage model.
         sbert_pretrained_model = (get_root_dir() + "/common/transformers_pretrained/"
                                   + sbert_pretrained_model)
         self._model = CrossEncoder(sbert_pretrained_model, device=self._device)
