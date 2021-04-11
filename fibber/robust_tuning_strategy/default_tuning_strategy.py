@@ -23,17 +23,10 @@ class DefaultTuningStrategy(TuningStrategyBase):
     put back to two lists according to the current prediction of the classifier.
     """
 
-    def __init__(self, use_criteria=0.85, gpt2_criteria=5, seed=1234):
-        """Initialize the strategy.
-
-        Args:
-            use_criteria (float): the USE similarity criteria for a legitimate rewriting.
-            gpt2_criteria (float): the GPT2 perplexity criteria for a legitimate rewriting.
-        """
+    def __init__(self, seed=1234):
+        """Initialize the strategy."""
         super(DefaultTuningStrategy, self).__init__()
         self._rng = np.random.RandomState(seed)
-        self._use_criteria = use_criteria
-        self._gpt2_criteria = gpt2_criteria
 
     def __repr__(self):
         return self.__class__.__name__
@@ -93,9 +86,6 @@ class DefaultTuningStrategy(TuningStrategyBase):
                     paraphrase_field)
 
                 for (paraphrase, metric) in zip(paraphrase_list, metric_list):
-                    if (metric["USESemanticSimilarityMetric"] < self._use_criteria
-                            or metric["GPT2GrammarQualityMetric"] > self._gpt2_criteria):
-                        continue
 
                     data_record_new = copy.deepcopy(data_record_t)
                     data_record_new[paraphrase_field] = paraphrase
