@@ -45,7 +45,7 @@ class DefaultTuningStrategy(TuningStrategyBase):
                              num_paraphrases_per_text,
                              tuning_steps,
                              tuning_batch_size=32,
-                             num_sentences_to_rewrite_per_step=10,
+                             num_sentences_to_rewrite_per_step=20,
                              period_save=5000):
         """Fine tune the classifier using given data.
 
@@ -140,14 +140,15 @@ class DefaultTuningStrategy(TuningStrategyBase):
             pbar.update(1)
             pbar.set_postfix({
                 "loss": loss,
-                "training_acc": correct_cnt / tuning_batch_size,
+                "training_acc": correct_cnt / len(predict_list),
                 "incorrect_list": len(incorrect_set),
                 "correct_list": len(correct_set)
             })
 
             if global_step % period_save == 0 or global_step == tuning_steps:
                 classifier.save_robust_tuned_model(
-                    self.__repr__() + "-" + str(paraphrase_strategy), global_step)
+                    self.__repr__() + "-" + str(num_sentences_to_rewrite_per_step)
+                    + "-" + str(paraphrase_strategy), global_step)
 
             if global_step >= tuning_steps:
                 break

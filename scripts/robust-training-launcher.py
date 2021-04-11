@@ -3,7 +3,7 @@ import subprocess
 
 COMMON_CONFIG = {
     "--subsample_testset": 100,
-    "--num_paraphrases_per_text": 20,
+    "--num_paraphrases_per_text": 50,
     "--robust_tuning": "1",
     "--robust_tuning_steps": 5000,
     # "--load_robust_tuned_clf": "DefaultTuningStrategy-TextFoolerJin2019"
@@ -94,7 +94,7 @@ STRATEGY_CONFIG = {
         "--bs_use_weight": 500,
         "--bs_gpt2_weight": 5,
         "--bs_sampling_steps": 50,
-        "--bs_burnin_steps": 100,
+        "--bs_burnin_steps": 10,
         "--bs_clf_weight": 3,
         "--bs_window_size": 3,
         "--bs_accept_criteria": "joint_weighted_criteria",
@@ -104,6 +104,7 @@ STRATEGY_CONFIG = {
         "--bs_split_sentence": "auto",
         "--bs_lm_option": "finetune",
         "--bs_stanza_port": 9001,
+        "--robust_tune_num_attack_per_step": 2,
     },
     "nabs": {
         "--strategy": "NonAutoregressiveBertSamplingStrategy",

@@ -7,7 +7,6 @@ COMMON_CONFIG = {
     "--robust_tuning": "0",
     # ignored when robut_tuning is 0 and load_robust_tuned_clf is not set
     "--robust_tuning_steps": 5000,
-    # "--load_robust_tuned_clf": "DefaultTuningStrategy-TextFoolerJin2019"
 }
 
 GPU_CONFIG = {

@@ -133,7 +133,8 @@ class Benchmark(object):
                           tuning_strategy="DefaultTuningStrategy",
                           strategy_gpu_id=-1,
                           num_paraphrases_per_text=50,
-                          tuning_steps=5000):
+                          tuning_steps=5000,
+                          num_sentences_to_rewrite_per_step=20):
         """Using a paraphrase strategy to do adversarial fine tuning for the target classifier.
 
         Args:
@@ -165,7 +166,8 @@ class Benchmark(object):
             paraphrase_strategy=paraphrase_strategy,
             train_set=self._trainset,
             num_paraphrases_per_text=num_paraphrases_per_text,
-            tuning_steps=tuning_steps
+            tuning_steps=tuning_steps,
+            num_sentences_to_rewrite_per_step=num_sentences_to_rewrite_per_step
         )
 
     def run_benchmark(self,
@@ -260,6 +262,7 @@ def main():
     parser.add_argument("--subsample_testset", type=int, default=1000)
     parser.add_argument("--strategy", type=str, default="RandomStrategy")
     parser.add_argument("--strategy_gpu_id", type=int, default=-1)
+    parser.add_argument("--robust_tune_num_attack_per_step", type=int, default=20)
 
     # metric args
     parser.add_argument("--gpt2_gpu_id", type=int, default=-1)
@@ -301,7 +304,9 @@ def main():
     if arg_dict["robust_tuning"] == "1":
         benchmark.run_robust_tuning(paraphrase_strategy=paraphrase_strategy,
                                     num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"],
-                                    tuning_steps=arg_dict["robust_tuning_steps"])
+                                    tuning_steps=arg_dict["robust_tuning_steps"],
+                                    num_sentences_to_rewrite_per_step=arg_dict[
+                                        "robust_tune_num_attack_per_step"])
     else:
         benchmark.run_benchmark(paraphrase_strategy=paraphrase_strategy,
                                 num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"])
