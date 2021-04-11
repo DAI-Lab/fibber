@@ -39,7 +39,7 @@ class DefaultTuningStrategy(TuningStrategyBase):
                              tuning_steps,
                              tuning_batch_size=32,
                              num_sentences_to_rewrite_per_step=20,
-                             period_save=5000):
+                             period_save=1000):
         """Fine tune the classifier using given data.
 
         Args:
