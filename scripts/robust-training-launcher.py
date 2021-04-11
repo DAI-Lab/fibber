@@ -106,6 +106,7 @@ STRATEGY_CONFIG = {
         "--bs_split_sentence": "auto",
         "--bs_lm_option": "finetune",
         "--bs_stanza_port": 9001,
+        "--robust_tune_num_attack_per_step": 2,
         "--bs_similarity_metric": "SBERTSemanticSimilarityMetric",
         "--use_sbert": "1"
     },
@@ -128,6 +129,7 @@ STRATEGY_CONFIG = {
         "--bs_split_sentence": "auto",
         "--bs_lm_option": "finetune",
         "--bs_stanza_port": 9001,
+        "--robust_tune_num_attack_per_step": 2,
         "--bs_similarity_metric": "SBERTSemanticSimilarityMetric",
         "--use_sbert": "1"
     },
