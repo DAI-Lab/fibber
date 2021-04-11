@@ -33,8 +33,8 @@ def test_keywords_extractor():
 
     result = extractor.extract_keywords(text, keep_order=True)
     print(result, reference_keep_order)
-    assert (len(result) == len(reference) and
-            all([x == y for x, y in zip(result, reference_keep_order)]))
+    assert (len(result) == len(reference)
+            and all([x == y for x, y in zip(result, reference_keep_order)]))
 
     result = extractor.extract_keywords("a a a.", keep_order=False)
     print(result, reference)

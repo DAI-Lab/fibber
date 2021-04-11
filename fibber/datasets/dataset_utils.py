@@ -47,9 +47,9 @@ import os
 import numpy as np
 import torch
 import tqdm
+from nltk import sent_tokenize
 from rake_nltk import Rake
 from transformers import BertTokenizerFast
-from nltk import sent_tokenize
 
 from fibber import get_root_dir, log, resources
 from fibber.datasets.downloadable_datasets import downloadable_dataset_urls

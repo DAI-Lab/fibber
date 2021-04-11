@@ -12,8 +12,6 @@ from fibber import log, resources
 from fibber.datasets import DatasetForBert
 from fibber.metrics.bert_classifier import get_optimizer
 
-import copy
-
 logger = log.setup_custom_logger(__name__)
 
 
@@ -99,7 +97,8 @@ class NARRLBertLM(BertForMaskedLM):
 def write_summary(stats, summary, global_step):
     """Save langauge model training summary."""
     summary.add_scalar("attack/loss_lm", np.mean(stats["lm_loss"]), global_step)
-    summary.add_scalar("attack/error_lm", 1 - stats["lm_correct"] / stats["lm_total"], global_step)
+    summary.add_scalar("attack/error_lm", 1 - stats["lm_correct"] / stats["lm_total"],
+                       global_step)
 
 
 def new_stats():
@@ -287,8 +286,9 @@ def compute_non_autoregressive_lm_loss(
 
 def non_autoregressive_fine_tune_lm(
         output_dir, trainset, filter, device, use_metric, model_class, num_keywords=0,
-        split_sentences=False, lm_steps=5000, lm_bs=32, lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
-        lm_period_summary=100, lm_period_save=5000, lm_pretune_steps=20000, **kwargs):
+        split_sentences=False, lm_steps=5000, lm_bs=32, lm_opt="adamw", lm_lr=0.0001,
+        lm_decay=0.01, lm_period_summary=100, lm_period_save=5000, lm_pretune_steps=20000,
+        **kwargs):
     """Returns a finetuned BERT language model on a given dataset.
 
     The language model will be stored at ``<output_dir>/lm_all`` if filter is -1, or
@@ -420,7 +420,8 @@ class Env(object):
         self._sentence_embs = use_metric.model(raw_text).numpy()
         self._use_metrc = use_metric
         self._tokenizer = tokenizer
-        self._modifiable_pos = mask * (tok_type == 1).long() * (seq != tokenizer.sep_token_id).long()
+        self._modifiable_pos = mask * (tok_type == 1).long() * \
+            (seq != tokenizer.sep_token_id).long()
         self._step = 0
 
         self._seq = seq
@@ -431,7 +432,7 @@ class Env(object):
         self._max_mask_rate = max_mask_rate
         self._max_step = max_step
         self._logits = (torch.rand_like(seq.float()) * self._modifiable_pos
-                                 + 1e8 * (1 - self._modifiable_pos))
+                        + 1e8 * (1 - self._modifiable_pos))
 
         # use fixed language model for masking
         # self._lm_model_pretrained = copy.deepcopy(lm_model)
@@ -447,7 +448,8 @@ class Env(object):
             torch.topk(self._logits, k=num_pos, dim=1, largest=False)[1],
             num_classes=tensor_len).sum(dim=1) * self._modifiable_pos
 
-        self._masked_input = self._seq * (1 - self._pos) + self._pos * self._tokenizer.mask_token_id
+        self._masked_input = self._seq * (1 - self._pos) + \
+            self._pos * self._tokenizer.mask_token_id
         return self._masked_input, self._pos
 
     def step(self, seq_candidate, logits_candidate):
@@ -477,8 +479,10 @@ class Env(object):
 
         if self._step == self._max_step:
             current_emb = self._use_metrc.model(currect_text)
-            cos_sim = np.sum((self._sentence_embs / np.linalg.norm(self._sentence_embs, axis=1)[:, None])
-                             * (current_emb / np.linalg.norm(current_emb, axis=1)[:, None]), axis=1)
+            cos_sim = np.sum((self._sentence_embs / np.linalg.norm(self._sentence_embs, axis=1
+                                                                   )[:, None])
+                             * (current_emb / np.linalg.norm(current_emb, axis=1)[:, None]),
+                             axis=1)
 
             self._score = cos_sim
             return self._score
@@ -563,13 +567,13 @@ def rl_fine_tune_lm(output_dir, trainset, filter, device, lm_model, use_metric, 
                     F.softmax(logits, dim=2).view(-1, logits.size(2)), 1, replacement=False
                 ).view_as(seq_input)
                 logits_candidate = torch.gather(
-                    F.log_softmax(logits, dim=2), dim=2, index=seq_candidate[:, :, None]).squeeze(2)
+                    F.log_softmax(logits, dim=2), dim=2, index=seq_candidate[:, :, None]
+                ).squeeze(2)
 
                 # print("seq_candidate", seq_candidate.size())
                 # print("logits_candidate", logits_candidate.size())
                 reward = environment.step(seq_candidate, logits_candidate)
                 episode.append([reward, torch.sum(logits_candidate * pos, dim=1)])
-
 
             stats["reward"].append(environment._score.copy())
             print("score", environment._score)
@@ -581,7 +585,8 @@ def rl_fine_tune_lm(output_dir, trainset, filter, device, lm_model, use_metric, 
                 episode[i][0] += discount * episode[i + 1][0]
             print(episode)
 
-            loss = -sum([torch.mean(torch.tensor(reward).to(device) * logp) for reward, logp in episode])
+            loss = -sum([torch.mean(torch.tensor(reward).to(device) * logp)
+                         for reward, logp in episode])
             loss.backward()
 
         opt.step()

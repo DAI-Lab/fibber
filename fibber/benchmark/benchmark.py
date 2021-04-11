@@ -3,13 +3,13 @@ import datetime
 import os
 
 from fibber import log
-from fibber.benchmark.benchmark_utils import update_detailed_result, update_attack_robust_result
+from fibber.benchmark.benchmark_utils import update_attack_robust_result, update_detailed_result
 from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, verify_dataset
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
-    BertSamplingStrategy, IdentityStrategy, NonAutoregressiveBertSamplingStrategy, RandomStrategy,
-    TextAttackStrategy, NARRLStrategy)
+    BertSamplingStrategy, IdentityStrategy, NARRLStrategy, NonAutoregressiveBertSamplingStrategy,
+    RandomStrategy, TextAttackStrategy)
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.robust_tuning_strategy.default_tuning_strategy import (
     DefaultTuningStrategy, TuningStrategyBase)

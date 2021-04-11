@@ -1,14 +1,15 @@
-from fibber.paraphrase_strategies.strategy_base import StrategyBase
+import copy
+import random
 
 import numpy as np
-import random
 import torch
 import torch.nn.functional as F
-from fibber import log
-from fibber.paraphrase_strategies.bert_sampling_utils_lm import get_lm
-from fibber.datasets.dataset_utils import KeywordsExtractor
 from nltk import sent_tokenize
-import copy
+
+from fibber import log
+from fibber.datasets.dataset_utils import KeywordsExtractor
+from fibber.paraphrase_strategies.bert_sampling_utils_lm import get_lm
+from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
 logger = log.setup_custom_logger(__name__)
 
@@ -130,6 +131,3 @@ class NARRLStrategy(StrategyBase):
                 result[i] += result_tmp[i]
 
         return result
-
-
-
