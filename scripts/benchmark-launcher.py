@@ -1,12 +1,14 @@
 import argparse
+import copy
 import subprocess
 
 COMMON_CONFIG = {
-    "--subsample_testset": 500,
+    "--subsample_testset": 1000,
     "--num_paraphrases_per_text": 50,
     "--robust_tuning": "0",
     # ignored when robut_tuning is 0 and load_robust_tuned_clf is not set
     "--robust_tuning_steps": 5000,
+    "--use_sbert": "1"
 }
 
 GPU_CONFIG = {
@@ -107,29 +109,22 @@ STRATEGY_CONFIG = {
         "--bs_lm_option": "finetune",
         "--bs_stanza_port": 9001,
         "--bs_similarity_metric": "SBERTSemanticSimilarityMetric",
-        "--use_sbert": "1"
+    },
+    "asrs-no_enf": {
+        "--bs_enforcing_dist": "none",
+    },
+    "asrs-no_dec": {
+        "--bs_accept_criteria": "all",
+    },
+    "asrs-no_clf": {
+        "--bs_clf_weight": 0,
+    },
+    "asrs-no_block": {
+        "--bs_window_size": 1,
     },
     "asrs-nli": {
-        "--strategy": "BertSamplingStrategy",
-        "--bs_enforcing_dist": "wpe",
-        "--bs_wpe_threshold": 1.0,
-        "--bs_wpe_weight": 1000,
-        "--bs_use_threshold": 0.95,
         "--bs_use_weight": 100,
         "--bs_gpt2_weight": 3,
-        "--bs_sampling_steps": 200,
-        "--bs_burnin_steps": 100,
-        "--bs_clf_weight": 3,
-        "--bs_window_size": 3,
-        "--bs_accept_criteria": "joint_weighted_criteria",
-        "--bs_burnin_enforcing_schedule": "1",
-        "--bs_burnin_criteria_schedule": "1",
-        "--bs_seed_option": "origin",
-        "--bs_split_sentence": "auto",
-        "--bs_lm_option": "finetune",
-        "--bs_stanza_port": 9001,
-        "--bs_similarity_metric": "SBERTSemanticSimilarityMetric",
-        "--use_sbert": "1"
     },
     "nabs": {
         "--strategy": "NonAutoregressiveBertSamplingStrategy",
@@ -180,7 +175,14 @@ def main():
             command += to_command(COMMON_CONFIG)
             command += to_command(GPU_CONFIG[args.gpu])
             command += to_command(DATASET_CONFIG[dataset])
-            command += to_command(STRATEGY_CONFIG[strategy])
+            if strategy[:4] == "asrs":
+                strategy_config_tmp = copy.copy(STRATEGY_CONFIG["asrs"])
+                if strategy != "asrs":
+                    for k, v in STRATEGY_CONFIG[strategy].items():
+                        strategy_config_tmp[k] = v
+                command += to_command(strategy_config_tmp)
+            else:
+                command += to_command(STRATEGY_CONFIG[strategy])
             subprocess.call(command)
 
 

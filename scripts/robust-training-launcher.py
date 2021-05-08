@@ -6,16 +6,16 @@ COMMON_CONFIG = {
     "--num_paraphrases_per_text": 50,
     "--robust_tuning": "1",
     "--robust_tuning_steps": 5000,
-    # "--load_robust_tuned_clf": "DefaultTuningStrategy-TextFoolerJin2019"
+    "--use_sbert": "1"
 }
 
 GPU_CONFIG = {
     "single": {
         "--bert_gpu_id": 0,
-        "--use_gpu_id": 0,
-        "--gpt2_gpu_id": 0,
+        "--use_gpu_id": -1,
+        "--gpt2_gpu_id": -1,
         "--strategy_gpu_id": 0,
-        "--sbert_gpu_id": 0,
+        "--sbert_gpu_id": -1,
     },
     "multi": {
         "--bert_gpu_id": 0,
@@ -91,11 +91,11 @@ STRATEGY_CONFIG = {
         "--strategy": "BertSamplingStrategy",
         "--bs_enforcing_dist": "wpe",
         "--bs_wpe_threshold": 1.0,
-        "--bs_wpe_weight": 1000,
+        "--bs_wpe_weight": 200,
         "--bs_use_threshold": 0.95,
-        "--bs_use_weight": 500,
-        "--bs_gpt2_weight": 5,
-        "--bs_sampling_steps": 50,
+        "--bs_use_weight": 300,
+        "--bs_gpt2_weight": 0,
+        "--bs_sampling_steps": 20,
         "--bs_burnin_steps": 10,
         "--bs_clf_weight": 3,
         "--bs_window_size": 3,
@@ -106,9 +106,8 @@ STRATEGY_CONFIG = {
         "--bs_split_sentence": "auto",
         "--bs_lm_option": "finetune",
         "--bs_stanza_port": 9001,
-        "--robust_tune_num_attack_per_step": 2,
+        "--robust_tune_num_attack_per_step": 5,
         "--bs_similarity_metric": "SBERTSemanticSimilarityMetric",
-        "--use_sbert": "1"
     },
     "asrs-nli": {
         "--strategy": "BertSamplingStrategy",
@@ -129,7 +128,7 @@ STRATEGY_CONFIG = {
         "--bs_split_sentence": "auto",
         "--bs_lm_option": "finetune",
         "--bs_stanza_port": 9001,
-        "--robust_tune_num_attack_per_step": 2,
+        "--robust_tune_num_attack_per_step": 5,
         "--bs_similarity_metric": "SBERTSemanticSimilarityMetric",
         "--use_sbert": "1"
     },

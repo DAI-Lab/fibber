@@ -210,6 +210,10 @@ class Benchmark(object):
             exp_name = (self._dataset_name + "-" + str(paraphrase_strategy) + "-"
                         + datetime.datetime.now().strftime("%m%d-%H%M%S"))
 
+        log.add_file_handler(
+            logger, os.path.join(self._output_dir, "log", "%s.log" % exp_name))
+        log.remove_logger_tf_handler(logger)
+
         paraphrase_strategy.fit(self._trainset)
         tmp_output_filename = os.path.join(
             self._output_dir, exp_name + "-tmp.json")
