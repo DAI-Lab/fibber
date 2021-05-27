@@ -10,31 +10,31 @@ from fibber.metrics.metric_base import MetricBase
 logger = log.setup_custom_logger(__name__)
 
 
-class SBERTSemanticSimilarityMetric(MetricBase):
-    """This metric computes the semantic similarity of two sentences using Sentence BERT model.
+class CESemanticSimilarityMetric(MetricBase):
+    """This metric computes the semantic similarity of two sentences using Cross Encoder model.
 
-    By default the we use stsb-bert-base model.
+    By default the we use stsb-roberta-large model.
 
     see `https://github.com/UKPLab/sentence-transformers` for more information.
     """
 
-    def __init__(self, sbert_pretrained_model="stsb-roberta-large", sbert_gpu_id=-1, **kargs):
-        """Initialize sbert model."""
-        super(SBERTSemanticSimilarityMetric, self).__init__()
+    def __init__(self, ce_pretrained_model="stsb-roberta-large", ce_gpu_id=-1, **kargs):
+        """Initialize ce model."""
+        super(CESemanticSimilarityMetric, self).__init__()
 
-        if sbert_gpu_id == -1:
-            logger.warning("SBERT metric is running on CPU.")
+        if ce_gpu_id == -1:
+            logger.warning("CE metric is running on CPU.")
             self._device = torch.device("cpu")
         else:
-            logger.info("SBERT metric is running on GPU %d.", sbert_gpu_id)
-            self._device = torch.device("cuda:%d" % sbert_gpu_id)
+            logger.info("CE metric is running on GPU %d.", ce_gpu_id)
+            self._device = torch.device("cuda:%d" % ce_gpu_id)
 
-        logger.info("load sbert model.")
+        logger.info("load ce model.")
 
         # TODO: use resources utils to manage model.
-        sbert_pretrained_model = (get_root_dir() + "/common/transformers_pretrained/"
-                                  + sbert_pretrained_model)
-        self._model = CrossEncoder(sbert_pretrained_model, device=self._device)
+        ce_pretrained_model = (get_root_dir() + "/common/transformers_pretrained/"
+                                  + ce_pretrained_model)
+        self._model = CrossEncoder(ce_pretrained_model, device=self._device)
 
     def _get_emb(self, sentences):
         """Compute the embedding of sentences."""
@@ -52,8 +52,8 @@ class SBERTSemanticSimilarityMetric(MetricBase):
         Returns:
             (list): a list containing the USE similarity metric for each paraphrase.
         """
-        return [float(x) for x in self._model.predict([(origin, paraphrase)
-                                                       for paraphrase in paraphrase_list])]
+        return [float(x) for x in self._model.predict(
+            [(origin, paraphrase) for paraphrase in paraphrase_list])]
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the perplexity ratio.

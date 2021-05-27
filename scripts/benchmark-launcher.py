@@ -8,7 +8,7 @@ COMMON_CONFIG = {
     "--robust_tuning": "0",
     # ignored when robut_tuning is 0 and load_robust_tuned_clf is not set
     "--robust_tuning_steps": 5000,
-    "--use_sbert": "1"
+    "--use_ce": "1"
 }
 
 GPU_CONFIG = {
@@ -17,13 +17,13 @@ GPU_CONFIG = {
         "--use_gpu_id": 0,
         "--gpt2_gpu_id": 0,
         "--strategy_gpu_id": 0,
-        "--sbert_gpu_id": 0
+        "--ce_gpu_id": 0
     },
     "multi": {
         "--bert_gpu_id": 0,
         "--use_gpu_id": 0,
         "--gpt2_gpu_id": 1,
-        "--sbert_gpu_id": 1,
+        "--ce_gpu_id": 1,
         "--strategy_gpu_id": 2,
     }
 }
@@ -108,7 +108,7 @@ STRATEGY_CONFIG = {
         "--bs_split_sentence": "auto",
         "--bs_lm_option": "finetune",
         "--bs_stanza_port": 9001,
-        "--bs_similarity_metric": "SBERTSemanticSimilarityMetric",
+        "--bs_similarity_metric": "CESemanticSimilarityMetric",
     },
     "asrs-no_enf": {
         "--bs_enforcing_dist": "none",

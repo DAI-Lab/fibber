@@ -4,7 +4,7 @@ import torch
 from fibber.metrics.edit_distance_metric import EditDistanceMetric
 from fibber.metrics.glove_semantic_similarity_metric import GloVeSemanticSimilarityMetric
 from fibber.metrics.gpt2_grammar_quality_metric import GPT2GrammarQualityMetric
-from fibber.metrics.sbert_semantic_similarity_metric import SBERTSemanticSimilarityMetric
+from fibber.metrics.ce_semantic_similarity_metric import CESemanticSimilarityMetric
 from fibber.metrics.use_semantic_similarity_metric import USESemanticSimilarityMetric
 
 
@@ -64,7 +64,7 @@ def test_use_semantic_similarity(gpu_id):
 
 
 @pytest.mark.slow
-def test_sbert_semantic_similarity(gpu_id):
+def test_ce_semantic_similarity(gpu_id):
     io_pairs = [
         (("Sunday is the first day in a week.",
           "Obama was the president of the United State."), 0.326),
@@ -77,8 +77,8 @@ def test_sbert_semantic_similarity(gpu_id):
            "Saturday is the last day in a week"]),
          [0.326, 0.619]),
     ]
-    sbert_semantic_similarity_metric = SBERTSemanticSimilarityMetric(sbert_gpu_id=gpu_id)
-    metric_test_helper(sbert_semantic_similarity_metric, io_pairs, batched_io_pairs, eps=0.01)
+    ce_semantic_similarity_metric = CESemanticSimilarityMetric(ce_gpu_id=gpu_id)
+    metric_test_helper(ce_semantic_similarity_metric, io_pairs, batched_io_pairs, eps=0.01)
 
 
 @pytest.mark.slow

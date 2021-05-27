@@ -8,6 +8,7 @@ from fibber import log
 
 logger = log.setup_custom_logger(__name__)
 
+
 class TuningStrategyBase(object):
     pass
 
@@ -41,7 +42,7 @@ class DefaultTuningStrategy(TuningStrategyBase):
                              train_set,
                              num_paraphrases_per_text,
                              tuning_steps,
-                             tuning_batch_size=16,
+                             tuning_batch_size=32,
                              num_sentences_to_rewrite_per_step=20,
                              num_updates_per_step=5,
                              period_save=1000):
@@ -58,6 +59,7 @@ class DefaultTuningStrategy(TuningStrategyBase):
             num_sentences_to_rewrite_per_step (int): the number of data to rewrite using the
                 paraphrase strategy in each tuning step. You can set is as large as the tuning
                 batch size. You can also use a smaller value to speed up the tuning.
+            num_updates_per_step (int): the number of classifier updates per iteration.
             period_save (int): the period in steps to save the fine tuned classifier.
         """
         exp_time = datetime.datetime.now().strftime("%m%d%H%M")
@@ -105,6 +107,7 @@ class DefaultTuningStrategy(TuningStrategyBase):
 
             correct_cnt = 0
             tot_cnt = 0
+            loss = 0
             for i in range(num_updates_per_step):
                 # sample sentences from the list.
                 tuning_batch_id_list = []
