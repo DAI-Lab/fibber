@@ -48,14 +48,14 @@ def test_paraphrase_classification_accuracy_agg_fn_constructor():
                                    paraphrase_sim_list=[0.98, 0.7, 0.95],
                                    paraphrase_pred_list=[2, 3, 1],
                                    classifier=classifier)
-    assert agg_fn(data_record) == 1
+    assert agg_fn(data_record) == 0
 
     data_record = make_data_record(label=1, origin_predict=1,
                                    paraphrase_ppl_list=[5, 1.2, 1.1],
                                    paraphrase_sim_list=[0.98, 0.7, 0.95],
                                    paraphrase_pred_list=[1, 1, 1],
                                    classifier=classifier)
-    assert agg_fn(data_record) == 0
+    assert agg_fn(data_record) == 1
 
 
 def test_pairwise_editing_distance_fn():
