@@ -1,10 +1,8 @@
 """This metric computes the embedding similarity using SBERT model."""
 
-import torch
 from sentence_transformers import CrossEncoder
 
-from fibber import log
-from fibber.download_utils import get_root_dir
+from fibber import log, resources
 from fibber.metrics.metric_base import MetricBase
 
 logger = log.setup_custom_logger(__name__)
@@ -24,17 +22,17 @@ class CESemanticSimilarityMetric(MetricBase):
 
         if ce_gpu_id == -1:
             logger.warning("CE metric is running on CPU.")
-            self._device = torch.device("cpu")
+            device = "cpu"
         else:
             logger.info("CE metric is running on GPU %d.", ce_gpu_id)
-            self._device = torch.device("cuda:%d" % ce_gpu_id)
+            device = "cuda:%d" % ce_gpu_id
 
         logger.info("load ce model.")
 
         # TODO: use resources utils to manage model.
-        ce_pretrained_model = (get_root_dir() + "/common/transformers_pretrained/"
-                                  + ce_pretrained_model)
-        self._model = CrossEncoder(ce_pretrained_model, device=self._device)
+
+        self._model = CrossEncoder(resources.get_transformers(ce_pretrained_model),
+                                   device=device)
 
     def _get_emb(self, sentences):
         """Compute the embedding of sentences."""
