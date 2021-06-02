@@ -73,8 +73,8 @@ def get_best_adv_by_metric(data_record, target_clf, metric_name, lower_better):
     for metrics in data_record["paraphrase_metrics"]:
         if metrics[target_clf] == data_record["label"]:
             continue
-        if best_score is None or ((lower_better and metrics[metric_name] > best_score)
-                                  or (not lower_better and metrics[metric_name] < best_score)):
+        if best_score is None or ((lower_better and metrics[metric_name] < best_score)
+                                  or (not lower_better and metrics[metric_name] > best_score)):
             best_score = metrics[metric_name]
             best_metrics = metrics
     return best_metrics
