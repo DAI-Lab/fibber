@@ -51,7 +51,7 @@ class Benchmark(object):
                  bert_clf_bs=32,
                  load_robust_tuned_clf_desc=None,
                  robust_tuning_steps=0,
-                 best_adv_metric_name="CESemanticSimilarity",
+                 best_adv_metric_name="CESemanticSimilarityMetric",
                  best_adv_metric_lower_better=False):
         """Initialize Benchmark framework.
 
