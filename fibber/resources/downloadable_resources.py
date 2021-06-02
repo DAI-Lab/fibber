@@ -83,7 +83,7 @@ downloadable_resource_urls = {
         "untar": True,
         "unzip": False
     },
-    "": {
+    "stsb-roberta-large": {
         "filename": "stsb-roberta-large.tgz",
         "url": "https://fibber-data.s3.amazonaws.com/stsb-roberta-large.tgz",
         "md5": "e606aedf35a953b739c0537a11eebeb5",

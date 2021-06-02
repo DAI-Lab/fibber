@@ -19,4 +19,4 @@ def test_metric_bundle(gpu_id):
     s1 = "Saturday is the last day in a week"
     s2 = "Sunday is the last day in a week"
     results = metric_bundle.measure_example(s1, s2)
-    assert len(results) == 4
+    assert len(results) == 5

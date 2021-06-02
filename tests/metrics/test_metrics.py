@@ -67,15 +67,15 @@ def test_use_semantic_similarity(gpu_id):
 def test_ce_semantic_similarity(gpu_id):
     io_pairs = [
         (("Sunday is the first day in a week.",
-          "Obama was the president of the United State."), 0.326),
+          "Obama was the president of the United State."), 0.009),
         (("Sunday is the first day in a week",
-          "Saturday is the last day in a week"), 0.619)
+          "Saturday is the last day in a week"), 0.291)
     ]
     batched_io_pairs = [
         (("Sunday is the first day in a week",
           ["Obama was the president of the United State.",
            "Saturday is the last day in a week"]),
-         [0.326, 0.619]),
+         [0.009, 0.291]),
     ]
     ce_semantic_similarity_metric = CESemanticSimilarityMetric(ce_gpu_id=gpu_id)
     metric_test_helper(ce_semantic_similarity_metric, io_pairs, batched_io_pairs, eps=0.01)

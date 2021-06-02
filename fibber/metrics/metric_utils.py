@@ -320,8 +320,8 @@ class MetricBundle(object):
 
         aggregated_result = dict(aggregated_result.mean(skipna=True))
         # hack column order by adding 0
-        aggregated_result["0_dataset_name"] = dataset_name
-        aggregated_result["1_paraphrase_strategy_name"] = paraphrase_strategy_name
-        aggregated_result["2_experiment_name"] = experiment_name
+        aggregated_result["dataset_name"] = dataset_name
+        aggregated_result["paraphrase_strategy_name"] = paraphrase_strategy_name
+        aggregated_result["experiment_name"] = experiment_name
 
         return aggregated_result

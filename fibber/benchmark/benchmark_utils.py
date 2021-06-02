@@ -5,6 +5,27 @@ import pandas as pd
 from fibber import get_root_dir
 
 
+def reorder_columns(results):
+    """Reorder columns in the result table.
+
+    Args:
+        results (DataFrame): a result table
+    Returns:
+        DataFrame
+    """
+    columns = ["dataset_name", "paraphrase_strategy_name", "experiment_name"]
+    if "robust_tuned_clf_desc" in results.columns:
+        columns += ["robust_tuned_clf_desc", "robust_tuning_steps"]
+
+    adv_columns = [column for column in list(results.columns) if column.starts_with("best_adv")]
+    columns += sorted(adv_columns)
+
+    other_columns = [column for column in list(results.columns) if column not in columns]
+    columns += sorted(other_columns)
+
+    return results[columns]
+
+
 def update_detailed_result(aggregated_result, result_dir=None):
     """Read dataset detailed results and add a row to the file. Create a new file if the table
     does not exist.
@@ -24,6 +45,7 @@ def update_detailed_result(aggregated_result, result_dir=None):
         results = pd.DataFrame()
 
     results = results.append(aggregated_result, ignore_index=True)
+    results = reorder_columns(results)
     results.to_csv(result_filename, index=False)
 
 
@@ -51,6 +73,7 @@ def update_attack_robust_result(aggregated_result, robust_tuned_clf_desc,
     aggregated_result["robust_tuned_clf_desc"] = robust_tuned_clf_desc
     aggregated_result["robust_tuning_steps"] = robust_tuning_steps
     results = results.append(aggregated_result, ignore_index=True)
+    results = reorder_columns(results)
     results.to_csv(result_filename, index=False)
 
 
