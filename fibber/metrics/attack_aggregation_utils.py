@@ -23,7 +23,7 @@ def paraphrase_classification_accuracy_agg_fn_constructor(target_clf):
         if data_record["original_text_metrics"][target_clf] != data_record["label"]:
             return 0
         for item in data_record["paraphrase_metrics"]:
-            if (item[target_clf] != data_record["label"]):
+            if item[target_clf] != data_record["label"]:
                 return 0
         return 1
     return agg_fn
