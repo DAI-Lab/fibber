@@ -80,7 +80,7 @@ class Benchmark(object):
         """
         # make output dir
         self._output_dir = output_dir
-        os.makedirs(output_dir, exist_ok=True)
+        os.makedirs(output_dir + "/log", exist_ok=True)
         self._dataset_name = dataset_name
 
         # setup dataset
@@ -213,7 +213,7 @@ class Benchmark(object):
                         + datetime.datetime.now().strftime("%m%d-%H%M%S"))
 
         log.add_file_handler(
-            logger, os.path.join(self._output_dir, "log", "%s.log" % exp_name))
+            logger, os.path.join(self._output_dir, "%s.log" % exp_name))
         log.remove_logger_tf_handler(logger)
 
         paraphrase_strategy.fit(self._trainset)
@@ -289,9 +289,6 @@ def main():
 
     arg_dict = vars(parser.parse_args())
     assert arg_dict["output_dir"] is not None
-
-    os.makedirs(arg_dict["output_dir"], exist_ok=True)
-    os.makedirs(os.path.join(arg_dict["output_dir"], "log"), exist_ok=True)
 
     if arg_dict["robust_tuning"] == "1":
         assert arg_dict["load_robust_tuned_clf_desc"] is None
