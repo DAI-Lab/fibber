@@ -83,7 +83,7 @@ def test_get_best_adv_by_metric():
     assert best_metric[classifier] == 3
 
     best_metric = get_best_adv_by_metric(
-        data_record, classifier, "USESemanticSimilarityMetric")
+        data_record, classifier, "USESemanticSimilarityMetric", lower_better=False)
     assert best_metric["GPT2GrammarQualityMetric"] == 5.1
     assert best_metric["USESemanticSimilarityMetric"] == 0.98
     assert best_metric[classifier] == 2
