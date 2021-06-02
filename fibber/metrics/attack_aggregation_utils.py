@@ -129,7 +129,7 @@ def add_sentence_level_adversarial_attack_metrics(metric_bundle,
 
     for metric_name in metric_bundle.get_metric_names():
         metric_bundle.add_advanced_aggregation_fn(
-            "best_adv_%s" % (target_clf, metric_name),
+            "best_adv_%s" % metric_name,
             get_best_adv_metric_fn_constructor(
                 lambda _data_record, _target_clf: get_best_adv_by_metric(
                     _data_record, _target_clf, best_adv_metric_name, best_adv_metric_lower_better),
