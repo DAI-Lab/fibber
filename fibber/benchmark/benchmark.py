@@ -47,11 +47,12 @@ class Benchmark(object):
                  gpt2_gpu_id=-1,
                  bert_gpu_id=-1,
                  ce_gpu_id=-1,
-                 enable_ce_semantic_similarity=False,
                  bert_clf_steps=20000,
                  bert_clf_bs=32,
                  load_robust_tuned_clf_desc=None,
-                 robust_tuning_steps=0):
+                 robust_tuning_steps=0,
+                 best_adv_metric_name="CESemanticSimilarity",
+                 best_adv_metric_lower_better=False):
         """Initialize Benchmark framework.
 
         Args:
@@ -112,7 +113,6 @@ class Benchmark(object):
             bert_clf_steps=bert_clf_steps,
             bert_clf_bs=bert_clf_bs,
             ce_gpu_id=ce_gpu_id,
-            enable_ce_semantic_similarity=enable_ce_semantic_similarity
         )
 
         if customized_clf:
@@ -130,7 +130,9 @@ class Benchmark(object):
             self._robust_tuning_steps = 0
 
         add_sentence_level_adversarial_attack_metrics(
-            self._metric_bundle, gpt2_ppl_threshold=5, use_sim_threshold=0.85)
+            self._metric_bundle,
+            best_adv_metric_name=best_adv_metric_name,
+            best_adv_metric_lower_better=best_adv_metric_lower_better)
 
     def run_robust_tuning(self,
                           paraphrase_strategy="IdentityStrategy",
@@ -278,7 +280,8 @@ def main():
     parser.add_argument("--use_gpu_id", type=int, default=-1)
     parser.add_argument("--bert_clf_steps", type=int, default=20000)
     parser.add_argument("--ce_gpu_id", type=int, default=-1)
-    parser.add_argument("--use_ce", type=str, default="0")
+    parser.add_argument("--best_adv_metric_name", type=str, default="CESemanticSimilarityMetric")
+    parser.add_argument("--best_adv_lower_better", type=str, default="0")
 
     # add builtin strategies' args to parser.
     for item in built_in_paraphrase_strategies.values():
@@ -302,7 +305,8 @@ def main():
                           load_robust_tuned_clf_desc=arg_dict["load_robust_tuned_clf_desc"],
                           robust_tuning_steps=arg_dict["robust_tuning_steps"],
                           ce_gpu_id=arg_dict["ce_gpu_id"],
-                          enable_ce_semantic_similarity=(arg_dict["use_ce"] == "1"))
+                          best_adv_metric_name=arg_dict["best_adv_metric_name"],
+                          best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"))
 
     log.add_file_handler(
         logger, os.path.join(arg_dict["output_dir"], "log.log"))

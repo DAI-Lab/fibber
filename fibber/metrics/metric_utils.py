@@ -32,7 +32,7 @@ class MetricBundle(object):
                  enable_glove_semantic_similarity=True,
                  enable_gpt2_grammar_quality=True,
                  enable_bert_clf_prediction=False,
-                 enable_ce_semantic_similarity=False,
+                 enable_ce_semantic_similarity=True,
                  **kargs):
         """Initialize various metrics.
 

@@ -110,6 +110,10 @@ STRATEGY_CONFIG = {
         "--bs_stanza_port": 9001,
         "--bs_similarity_metric": "CESemanticSimilarityMetric",
     },
+    "asrs-u": {
+        "--bs_similarity_metric": "USESemanticSimilarityMetric",
+        "--best_adv_metric_name": "USESemanticSimilarityMetric"
+    },
     "asrs-no_enf": {
         "--bs_enforcing_dist": "none",
     },
