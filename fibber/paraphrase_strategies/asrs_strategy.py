@@ -270,12 +270,6 @@ class ASRSStrategy(StrategyBase):
         ("sim_metric", str, "USESemanticSimilarityMetric", "similarity metric")
     ]
 
-    def __repr__(self):
-        return "%s-constraint_%s-criteria_%s" % (
-            self.__class__.__name__,
-            self._strategy_config["enforcing_dist"],
-            self._strategy_config["accept_criteria"])
-
     def fit(self, trainset):
         # load BERT language model.
         logger.info("Load bert language model for ASRSStrategy.")
