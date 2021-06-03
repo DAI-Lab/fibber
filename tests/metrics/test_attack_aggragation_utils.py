@@ -87,4 +87,3 @@ def test_get_best_adv_by_metric():
     assert best_metric["GPT2GrammarQualityMetric"] == 5.1
     assert best_metric["USESemanticSimilarityMetric"] == 0.98
     assert best_metric[classifier] == 2
-

@@ -134,7 +134,7 @@ download_all()
 ```python
 from fibber.fibber import Fibber
 
-# args starting with "bs_" are hyperparameters for the BertSamplingStrategy.
+# args starting with "bs_" are hyperparameters for the ASRSStrategy.
 arg_dict = {
     "use_gpu_id": 0,
     "gpt2_gpu_id": 0,
@@ -152,7 +152,7 @@ arg_dict = {
 # GPU memory. If there's not enough GPU memory on your GPU, consider assign use
 # gpt2, bert, and strategy to different GPUs.
 #
-fibber = Fibber(arg_dict, dataset_name="demo", strategy_name="BertSamplingStrategy",
+fibber = Fibber(arg_dict, dataset_name="demo", strategy_name="ASRSStrategy",
                 trainset=trainset, testset=testset, output_dir="exp-demo")
 ```
 

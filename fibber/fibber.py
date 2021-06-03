@@ -5,7 +5,7 @@ from fibber.datasets import builtin_datasets
 from fibber.datasets.dataset_utils import get_dataset, verify_dataset
 from fibber.metrics import MetricBundle
 from fibber.paraphrase_strategies import (
-    BertSamplingStrategy, IdentityStrategy, RandomStrategy, TextAttackStrategy)
+    ASRSStrategy, IdentityStrategy, RandomStrategy, TextAttackStrategy)
 
 logger = log.setup_custom_logger(__name__)
 
@@ -57,8 +57,8 @@ class Fibber(object):
         if strategy_name == "TextAttackStrategy":
             self._strategy = TextAttackStrategy(
                 arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
-        if strategy_name == "BertSamplingStrategy":
-            self._strategy = BertSamplingStrategy(
+        if strategy_name == "ASRSStrategy":
+            self._strategy = ASRSStrategy(
                 arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
         if self._strategy is None:
             logger.error("unknown strategy name %s." % strategy_name)

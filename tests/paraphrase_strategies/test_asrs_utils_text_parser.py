@@ -1,6 +1,6 @@
 import pytest
 
-from fibber.paraphrase_strategies.bert_sampling_utils_text_parser import TextParser
+from fibber.paraphrase_strategies.asrs_utils_text_parser import TextParser
 
 
 @pytest.fixture()

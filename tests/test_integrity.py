@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from fibber.benchmark import Benchmark
-from fibber.paraphrase_strategies import BertSamplingStrategy, TextAttackStrategy
+from fibber.paraphrase_strategies import ASRSStrategy, TextAttackStrategy
 
 
 @pytest.fixture()
@@ -68,7 +68,7 @@ def test_integrity_bertsampling(gpu_id):
         bert_clf_steps=1000,
         bert_clf_bs=32
     )
-    strategy = BertSamplingStrategy(
+    strategy = ASRSStrategy(
         arg_dict={"bs_lm_steps": 1000},
         dataset_name="mr",
         strategy_gpu_id=gpu_id,

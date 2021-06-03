@@ -98,7 +98,7 @@ STRATEGY_CONFIG = {
         "--robust_tune_num_attack_per_step": 5,
     },
     "asrs": {
-        "--strategy": "BertSamplingStrategy",
+        "--strategy": "ASRSStrategy",
         "--bs_enforcing_dist": "wpe",
         "--bs_wpe_threshold": 0.95,
         "--bs_wpe_weight": 200,
@@ -120,7 +120,7 @@ STRATEGY_CONFIG = {
         "--bs_similarity_metric": "CESemanticSimilarityMetric",
     },
     "asrs-nli": {
-        "--strategy": "BertSamplingStrategy",
+        "--strategy": "ASRSStrategy",
         "--bs_enforcing_dist": "wpe",
         "--bs_wpe_threshold": 1.0,
         "--bs_wpe_weight": 1000,

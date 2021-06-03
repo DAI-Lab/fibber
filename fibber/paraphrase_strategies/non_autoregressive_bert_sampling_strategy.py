@@ -3,8 +3,8 @@ import torch
 from torch.nn import functional as F
 
 from fibber import log
-from fibber.paraphrase_strategies.bert_sampling_utils_lm import get_lm
-from fibber.paraphrase_strategies.bert_sampling_utils_text_parser import TextParser
+from fibber.paraphrase_strategies.asrs_utils_lm import get_lm
+from fibber.paraphrase_strategies.asrs_utils_text_parser import TextParser
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
 logger = log.setup_custom_logger(__name__)
@@ -25,7 +25,7 @@ class NonAutoregressiveBertSamplingStrategy(StrategyBase):
         ("enforce_similarity", str, "1", "enforce the sampling similarity."),
         ("num_decode_iter", int, 10, "number of iterations to decode the sentence."),
         ("clf_weight", float, 1, ""),
-        ("use_weight", float, 10, ""),
+        ("sim_weight", float, 10, ""),
         ("no_enforce_iter", int, 3, ""),
         ("max_mask_rate", float, 0.5, ""),
     ]
@@ -53,7 +53,7 @@ class NonAutoregressiveBertSamplingStrategy(StrategyBase):
             origin, [self._tokenizer.decode(x[1:-1]) for x in batch_tensor_new])
         prev_sim = np.asarray(prev_sim)
         curr_sim = np.asarray(curr_sim)
-        alpha = -self._strategy_config("use_weight") * (
+        alpha = -self._strategy_config("sim_weight") * (
             np.asarray(curr_sim < prev_sim, dtype="float32")
             * np.max(0.90 - curr_sim, 0) ** 2)
 

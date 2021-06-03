@@ -8,7 +8,7 @@ from nltk import sent_tokenize
 
 from fibber import log
 from fibber.datasets.dataset_utils import KeywordsExtractor
-from fibber.paraphrase_strategies.bert_sampling_utils_lm import get_lm
+from fibber.paraphrase_strategies.asrs_utils_lm import get_lm
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
 logger = log.setup_custom_logger(__name__)

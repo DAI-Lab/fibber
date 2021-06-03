@@ -122,9 +122,9 @@ def add_sentence_level_adversarial_attack_metrics(metric_bundle,
     target_clf = metric_bundle.get_target_classifier_name()
 
     metric_bundle.add_advanced_aggregation_fn(
-            "%s_AfterAttackAccuracy" % target_clf,
-            paraphrase_classification_accuracy_agg_fn_constructor(target_clf),
-            DIRECTION_LOWER_BETTER
+        "%s_AfterAttackAccuracy" % target_clf,
+        paraphrase_classification_accuracy_agg_fn_constructor(target_clf),
+        DIRECTION_LOWER_BETTER
     )
 
     for metric_name in metric_bundle.get_metric_names():
