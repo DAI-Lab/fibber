@@ -154,7 +154,7 @@ def main():
 
     args = parser.parse_args()
 
-    if args.robust_train == "1":
+    if args.robust_tuning == "1":
         COMMON_CONFIG["robust_tuning"] = "1"
 
     if args.dataset == "all":
