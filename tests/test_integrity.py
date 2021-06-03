@@ -27,7 +27,7 @@ def test_integrity_identity(gpu_id):
     )
 
     result = benchmark.run_benchmark(paraphrase_strategy="IdentityStrategy")
-    assert result["BertClassifier_AfterAttackAccuracy"] > 0.85
+    assert result["BertClassifier_AfterAttackAccuracy(↓)"] > 0.85
 
 
 @pytest.mark.slow
@@ -52,7 +52,7 @@ def test_integrity_textfooler(gpu_id):
         metric_bundle=benchmark.get_metric_bundle())
     result = benchmark.run_benchmark(paraphrase_strategy=strategy)
 
-    assert result["BertClassifier_AfterAttackAccuracy"] < 0.50
+    assert result["BertClassifier_AfterAttackAccuracy(↓)"] < 0.50
 
 
 @pytest.mark.slow
