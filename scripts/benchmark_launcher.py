@@ -122,7 +122,7 @@ STRATEGY_CONFIG = {
     "asrs-u": {
         "--asrs_sim_metric": "USESemanticSimilarityMetric",
         "--best_adv_metric_name": "USESemanticSimilarityMetric"
-    }
+    },
     "asrs-u-nli": {
         "--asrs_sim_weight": 100,
         "--asrs_ppl_weight": 3,
