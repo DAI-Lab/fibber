@@ -80,7 +80,7 @@ class Benchmark(object):
         """
         # make output dir
         self._output_dir = output_dir
-        os.makedirs(output_dir + "/log", exist_ok=True)
+        os.makedirs(output_dir, exist_ok=True)
         self._dataset_name = dataset_name
 
         # setup dataset
@@ -305,8 +305,6 @@ def main():
                           best_adv_metric_name=arg_dict["best_adv_metric_name"],
                           best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"))
 
-    log.add_file_handler(
-        logger, os.path.join(arg_dict["output_dir"], "log.log"))
     log.remove_logger_tf_handler(logger)
 
     # Get paraphrase strategy
