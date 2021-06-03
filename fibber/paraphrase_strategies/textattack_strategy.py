@@ -66,7 +66,8 @@ class TextAttackStrategy(StrategyBase):
 
     __abbr__ = "ta"
     __hyperparameters__ = [
-        ("recipe", str, "TextFoolerJin2019", "an attacking recipe implemented in TextAttack.")
+        ("recipe", str, "TextFoolerJin2019", "an attacking recipe implemented in TextAttack."),
+        ("time_limit", float, 20, "time limit for each attack.")
     ]
 
     def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle):
@@ -95,7 +96,7 @@ class TextAttackStrategy(StrategyBase):
         attack_text = " ".join(data_record[field_name].split()[:200])
 
         signal.signal(signal.SIGALRM, alarm_handler)
-        signal.alarm(60)
+        signal.alarm(self._strategy_config["time_limit"])
         try:
             att = next(self._recipe.attack_dataset(
                 [(attack_text, data_record["label"])]))
