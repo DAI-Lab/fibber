@@ -270,6 +270,9 @@ class ASRSStrategy(StrategyBase):
         ("sim_metric", str, "CESemanticSimilarityMetric", "similarity metric")
     ]
 
+    def __repr__(self):
+        return self.__class__.__name__ + "-" + self._strategy_config["sim_metric"]
+
     def fit(self, trainset):
         # load BERT language model.
         logger.info("Load bert language model for ASRSStrategy.")
