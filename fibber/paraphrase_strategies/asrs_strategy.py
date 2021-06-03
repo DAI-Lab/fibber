@@ -287,7 +287,7 @@ class ASRSStrategy(StrategyBase):
         self._sim_metric = self._metric_bundle.get_metric(
             self._strategy_config["sim_metric"])
         self._clf_metric = self._metric_bundle.get_target_classifier()
-        self._ppls_metric = self._metric_bundle.get_metric("GPT2GrammarQualityMetric")
+        self._ppl_metric = self._metric_bundle.get_metric("GPT2GrammarQualityMetric")
 
         # load word piece embeddings.
         wpe = get_wordpiece_emb(self._output_dir, self._dataset_name, trainset, self._device)
