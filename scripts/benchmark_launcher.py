@@ -114,7 +114,19 @@ STRATEGY_CONFIG = {
         "--asrs_sim_metric": "CESemanticSimilarityMetric",
         "--robust_tune_num_attack_per_step": 5
     },
+    "asrs-nli": {
+        "--asrs_sim_weight": 100,
+        "--asrs_ppl_weight": 3,
+        "--asrs_clf_weight": 3,
+    },
     "asrs-u": {
+        "--asrs_sim_metric": "USESemanticSimilarityMetric",
+        "--best_adv_metric_name": "USESemanticSimilarityMetric"
+    }
+    "asrs-u-nli": {
+        "--asrs_sim_weight": 100,
+        "--asrs_ppl_weight": 3,
+        "--asrs_clf_weight": 3,
         "--asrs_sim_metric": "USESemanticSimilarityMetric",
         "--best_adv_metric_name": "USESemanticSimilarityMetric"
     }
