@@ -76,6 +76,7 @@ python -m fibber.benchmark.benchmark \
 	--gpt2_gpu 0 \
 	--bert_gpu 0 \
 	--use_gpu 0 \
+	--ce_gpu_id=0 \
 	--bert_clf_steps 20000
 ```
 
@@ -109,6 +110,7 @@ benchmark = Benchmark(
     use_gpu_id=0,
     gpt2_gpu_id=0,
     bert_gpu_id=0,
+    ce_gpu_id=0,
     bert_clf_steps=1000,
     bert_clf_bs=32
 )

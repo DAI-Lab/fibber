@@ -9,6 +9,7 @@ def download_all():
     get_transformers("bert-base-cased")
     get_transformers("bert-base-uncased")
     get_transformers("gpt2-medium")
+    get_transformers("stsb-roberta-large")
     get_universal_sentence_encoder()
     get_corenlp()
     get_stopwords()
@@ -19,6 +20,7 @@ def download_resources_for_demo(demo_path="."):
     get_glove_emb(download_only=True)
     get_transformers("gpt2-medium")
     get_transformers("bert-base-uncased")
+    get_transformers("stsb-roberta-large")
     get_universal_sentence_encoder()
     get_stopwords()
 

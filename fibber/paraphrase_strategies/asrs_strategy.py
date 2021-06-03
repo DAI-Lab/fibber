@@ -246,9 +246,9 @@ class ASRSStrategy(StrategyBase):
         ("top_k", int, 100, "sample from top k words after burnin. Use 0 for all words."),
         ("temperature", float, 1., "the softmax temperature for sampling."),
         ("sim_threshold", float, 0.95, "the threshold for USE similarity."),
-        ("sim_weight", float, 1000, "the smoothing parameter for USE similarity."),
+        ("sim_weight", float, 500, "the smoothing parameter for USE similarity."),
         ("wpe_threshold", float, 1.00, "the threshold for USE similarity."),
-        ("wpe_weight", float, 10000, "the smoothing parameter for USE similarity."),
+        ("wpe_weight", float, 1000, "the smoothing parameter for USE similarity."),
         ("burnin_enforcing_schedule", str, "1",
             ("the schedule decides how much additional "
              "constraint is added. options are [linear, 0, 1].")),
@@ -261,13 +261,13 @@ class ASRSStrategy(StrategyBase):
                                                 "used. options are [linear, 0, 1].")),
         ("seed_option", str, "origin", ("the option for seed sentences in generation. "
                                         "choose from [origin, auto].")),
-        ("split_sentence", str, "0", "split paragraph to sentence. options are [0, 1, auto]."),
+        ("split_sentence", str, "auto", "split paragraph to sentence. options are [0, 1, auto]."),
         ("stanza_port", int, 9000, "stanza port"),
         ("lm_option", str, "finetune", "choose from [pretrain, finetune, adv]."),
         ("lm_steps", int, 5000, "lm training steps."),
-        ("clf_weight", float, 1, "weight for the clf score in the criteria."),
-        ("ppl_weight", float, 10, "the smoothing parameter for gpt2."),
-        ("sim_metric", str, "USESemanticSimilarityMetric", "similarity metric")
+        ("clf_weight", float, 3, "weight for the clf score in the criteria."),
+        ("ppl_weight", float, 5, "the smoothing parameter for gpt2."),
+        ("sim_metric", str, "CESemanticSimilarityMetric", "similarity metric")
     ]
 
     def fit(self, trainset):
@@ -433,7 +433,7 @@ class ASRSStrategy(StrategyBase):
                 tokenizer=self._tokenizer, data_record=data_record, field_name=field_name,
                 origin=data_record[field_name], batch_tensor=batch_tensor,
                 pos_st=pos_st, pos_ed=pos_ed, previous_ids=previous_ids,
-                candidate_ids=candidate_ids, sim_metric=self._usfe_metric,
+                candidate_ids=candidate_ids, sim_metric=self._sim_metric,
                 sim_threshold=self._strategy_config["sim_threshold"],
                 sim_weight=self._strategy_config["sim_weight"],
                 clf_metric=self._clf_metric, clf_weight=self._strategy_config["clf_weight"],

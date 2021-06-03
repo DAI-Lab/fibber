@@ -134,17 +134,20 @@ download_all()
 ```python
 from fibber.fibber import Fibber
 
-# args starting with "bs_" are hyperparameters for the ASRSStrategy.
+# args starting with "asrs_" are hyperparameters for the ASRSStrategy.
 arg_dict = {
     "use_gpu_id": 0,
     "gpt2_gpu_id": 0,
     "bert_gpu_id": 0,
+    "ce_gpu_id": 0,
     "strategy_gpu_id": 0,
-    "bs_block_size": 3,
-    "bs_wpe_weight": 10000,
-    "bs_use_weight": 1000,
-    "bs_gpt2_weight": 10,
-    "bs_clf_weight": 3
+    "asrs_block_size": 3,
+    "asrs_wpe_weight": 10000,
+    "asrs_sim_weight": 500,
+    "asrs_sim_threshold": 0.95,
+    "asrs_ppl_weight": 5,
+    "asrs_clf_weight": 3
+    "asrs_sim_metric": "CESemanticSimilarityMetric"
 }
 
 # create a fibber object.
@@ -230,9 +233,10 @@ In this version, we implement three strategies
 	- This strategy generates exactly 1 paraphrase for each original text regardless of `--num_paraphrases_per_text` flag.
 - RandomStrategy:
 	- The random strategy outputs the random shuffle of words in the original text.
-- TextFoolerStrategy:
-	- Implementation of [Jin et. al, 2019](https://arxiv.org/abs/1907.11932)
-- BertSamplingStrategy:
+- TextAttackStrategy:
+	- We create a wrapper around [TextAttack](https://github.com/QData/TextAttack). To use TextAttack, run `pip install textattack` first.
+- ASRSStrategy:
+	- The implementation for [ASRS](https://arxiv.org/abs/2104.08453)
 
 
 # What's next?
