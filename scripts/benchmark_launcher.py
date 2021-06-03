@@ -117,31 +117,6 @@ STRATEGY_CONFIG = {
     "asrs-u": {
         "--asrs_sim_metric": "USESemanticSimilarityMetric",
         "--best_adv_metric_name": "USESemanticSimilarityMetric"
-    },
-    "asrs-no_enf": {
-        "--asrs_enforcing_dist": "none",
-    },
-    "asrs-no_dec": {
-        "--asrs_accept_criteria": "all",
-    },
-    "asrs-no_clf": {
-        "--asrs_clf_weight": 0,
-    },
-    "asrs-no_block": {
-        "--asrs_window_size": 1,
-    },
-    "asrs-nli": {
-        "--asrs_use_weight": 100,
-        "--asrs_gpt2_weight": 3,
-    },
-    "nabs": {
-        "--strategy": "NonAutoregressiveBertSamplingStrategy",
-        "--naasrs_lm_steps": 40000,
-        "--naasrs_enforce_similarity": "1"
-    },
-    "narrl": {
-        "--strategy": "NARRLStrategy",
-        "--nr_lm_steps": 40000,
     }
 }
 
