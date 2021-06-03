@@ -17,7 +17,7 @@ def reorder_columns(results):
     if "robust_tuned_clf_desc" in results.columns:
         columns += ["robust_tuned_clf_desc", "robust_tuning_steps"]
 
-    accuracy_columns = [column for column in list(results.columns) if "accuracy" in column]
+    accuracy_columns = [column for column in list(results.columns) if "Accuracy" in column]
     columns += sorted(accuracy_columns)
 
     adv_columns = [column for column in list(results.columns) if column.startswith("best_adv")]
