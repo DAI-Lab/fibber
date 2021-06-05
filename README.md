@@ -239,6 +239,22 @@ In this version, we implement three strategies
 	- The implementation for [ASRS](https://arxiv.org/abs/2104.08453)
 
 
+# Citing Fibber
+
+If you use Fibber, please cite the following work:
+
+- *Lei Xu, Kalyan Veeramachaneni.* Attacking Text Classifiers via Sentence Rewriting Sampler.
+
+```
+@article{xu2021attacking,
+  title={Attacking Text Classifiers via Sentence Rewriting Sampler},
+  author={Xu, Lei and Veeramachaneni, Kalyan},
+  journal={arXiv preprint arXiv:2104.08453},
+  year={2021}
+}
+```
+
+
 # What's next?
 
 For more details about **fibber** and all its possibilities
