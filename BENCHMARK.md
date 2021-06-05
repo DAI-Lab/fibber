@@ -29,14 +29,14 @@ Note that mnli has two configurations. Use `mnli` for matched testset, and `mnli
 
 The following table shows the benchmarking result. (Here we show the number of wins.)
 
-| StrategyName         | AfterAttackAccuracy | GPT2GrammarQuality | GloVeSemanticSimilarity | USESemanticSimilarity |
-|----------------------|---------------------|--------------------|-------------------------|-----------------------|
-| IdentityStrategy     | 0                   | 0                  | 0                       | 0                     |
-| RandomStrategy       | 5                   | 0                  | 16                      | 6                     |
-| TextFoolerJin2019    | 25                  | 12                 | 6                       | 11                    |
-| BAEGarg2019          | 13                  | 5                  | 14                      | 13                    |
-| PSOZang2020          | 16                  | 12                 | 6                       | 5                     |
-| BertSamplingStrategy | 33                  | 23                 | 10                      | 17                    |
+| Strategy Name     | After Attack Accuracy | Cross Encoder Similarity | Perplexity Ratio | GloVe Similarity | USE Similarity |
+|-------------------|-----------------------|--------------------------|------------------|------------------|----------------|
+| IdentityStrategy  | 0                     | 0                        | 0                | 0                | 0              |
+| TextFoolerJin2019 | 26                    | 10                       | 3                | 10               | 14             |
+| BERTAttackLi2020  | 18                    | 13                       | 18               | 22               | 21             |
+| BAEGarg2019       | 11                    | 8                        | 8                | 8                | 10             |
+| PSOZang2020       | 9                     | 9                        | 11               | 8                | 8              |
+| ASRSStrategy      | 30                    | 22                       | 22               | 14               | 9              |
 
 For detailed tables, see [Google Sheet](https://docs.google.com/spreadsheets/d/1B_5RiMfndNVhxZLX5ykMqt5SCjpy3MxOovBi_RL41Fw/edit?usp=sharing).
 
