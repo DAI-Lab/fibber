@@ -1,0 +1,7 @@
+fibber.paraphrase\_strategies.asrs\_utils\_wpe module
+=====================================================
+
+.. automodule:: fibber.paraphrase_strategies.asrs_utils_wpe
+   :members:
+   :undoc-members:
+   :show-inheritance:

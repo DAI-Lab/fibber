@@ -1,7 +1,0 @@
-fibber.paraphrase\_strategies.bert\_sampling\_utils\_lm module
-==============================================================
-
-.. automodule:: fibber.paraphrase_strategies.bert_sampling_utils_lm
-   :members:
-   :undoc-members:
-   :show-inheritance:

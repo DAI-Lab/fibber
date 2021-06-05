@@ -1,0 +1,7 @@
+fibber.metrics.ce\_semantic\_similarity\_metric module
+======================================================
+
+.. automodule:: fibber.metrics.ce_semantic_similarity_metric
+   :members:
+   :undoc-members:
+   :show-inheritance:

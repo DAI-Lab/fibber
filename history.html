@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>History &#8212; fibber 0.2.5 documentation</title>
+    <title>History &#8212; fibber 0.3.0 documentation</title>
     
   <link href="_static/css/theme.css" rel="stylesheet" />
-  <link href="_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
 
     
   <link rel="stylesheet"
@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-  <link rel="preload" as="script" href="_static/js/index.1e043a052b0af929e4d8.js">
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
 
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -39,28 +39,38 @@
     <link rel="prev" title="Credits" href="authors.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
+    
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
+    <div class="container-fluid" id="banner"></div>
+
+    
     <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
 
+  <div id="navbar-start">
+    
+    
+
+<a class="navbar-brand" href="index.html">
+  <img src="_static/dai-logo-white-200.png" class="logo" alt="logo">
+</a>
+
 
     
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
       
-      <a class="navbar-brand" href="index.html">
-        <img src="_static/dai-logo-white-200.png" class="logo" alt="logo">
-      </a>
-      
-    
-
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    
-    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
-      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
-        <li class="toctree-l1 nav-item">
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
  <a class="reference internal nav-link" href="readme.html">
   Fibber
  </a>
@@ -102,10 +112,16 @@
  </a>
 </li>
 
-        
-      </ul>
+    
+</ul>
+      </div>
+      
+    </div>
 
-      <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
           <a class="nav-link" href="https://github.com/dai-lab/fibber" rel="noopener" target="_blank" title="GitHub">
             <span><i class="fab fa-github-square"></i></span>
@@ -113,7 +129,10 @@
           </a>
         </li>
       </ul>
+      </div>
+      
     </div>
+  </div>
 </div>
     </nav>
     
@@ -126,8 +145,7 @@
             <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
-</form>
-<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     
   </div>
@@ -138,13 +156,26 @@
 
           
           <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
               
+              <div class="toc-item">
+                
 <div class="tocsection onthispage pt-5 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
 <nav id="bd-toc-nav">
     <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-0-3-0-2021-06-05">
+   Version 0.3.0 - 2021-06-05
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#new-features">
+   New Features
+  </a>
+ </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#version-0-2-5-2021-03-22">
    Version 0.2.5 - 2021-03-22
@@ -156,7 +187,7 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#new-features">
+    <a class="reference internal nav-link" href="#id1">
      New Features
     </a>
    </li>
@@ -168,7 +199,7 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id1">
+    <a class="reference internal nav-link" href="#id2">
      New Features
     </a>
    </li>
@@ -180,7 +211,7 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id2">
+    <a class="reference internal nav-link" href="#id3">
      New Features
     </a>
    </li>
@@ -192,7 +223,7 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id3">
+    <a class="reference internal nav-link" href="#id4">
      New Features
     </a>
    </li>
@@ -204,7 +235,7 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id4">
+    <a class="reference internal nav-link" href="#id5">
      New Features
     </a>
    </li>
@@ -238,9 +269,13 @@
 </ul>
 
 </nav>
-
-
+              </div>
               
+              <div class="toc-item">
+                
+              </div>
+              
+            
           </div>
           
 
@@ -254,6 +289,20 @@
                 
   <div class="section" id="history">
 <h1>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-0-3-0-2021-06-05">
+<h2>Version 0.3.0 - 2021-06-05<a class="headerlink" href="#version-0-3-0-2021-06-05" title="Permalink to this headline">¶</a></h2>
+<p>This release includes the following updates</p>
+</div>
+<div class="section" id="new-features">
+<h2>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Rename BertSamplingStrategy model as ASRSStrategy.</p></li>
+<li><p>Update ASRS to use Cross Encoder as default similarity metric.</p></li>
+<li><p>Add timeout feature to TextAttackStrategy.</p></li>
+<li><p>Update benchmark results.</p></li>
+<li><p>Add paper reference.</p></li>
+</ul>
+</div>
 <div class="section" id="version-0-2-5-2021-03-22">
 <h2>Version 0.2.5 - 2021-03-22<a class="headerlink" href="#version-0-2-5-2021-03-22" title="Permalink to this headline">¶</a></h2>
 <p>This release is an emergency bug fix.</p>
@@ -264,8 +313,8 @@
 <div class="section" id="version-0-2-4-2021-03-03">
 <h2>Version 0.2.4 - 2021-03-03<a class="headerlink" href="#version-0-2-4-2021-03-03" title="Permalink to this headline">¶</a></h2>
 <p>This release includes the following updates</p>
-<div class="section" id="new-features">
-<h3>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h3>New Features<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Improve the doc string and documentation for adversarial training.</p></li>
 <li><p>Add experimental code about non-autoregressive paraphrase strategy.</p></li>
@@ -275,8 +324,8 @@
 <div class="section" id="version-0-2-3-2021-02-17">
 <h2>Version 0.2.3 - 2021-02-17<a class="headerlink" href="#version-0-2-3-2021-02-17" title="Permalink to this headline">¶</a></h2>
 <p>This release adds experimental code to adversarial training.</p>
-<div class="section" id="id1">
-<h3>New Features<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h3>New Features<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Add a default adversarial tuning strategy.</p></li>
 <li><p>Add API in classifiers to support adversarial tuning.</p></li>
@@ -287,8 +336,8 @@
 <div class="section" id="version-0-2-2-2021-02-03">
 <h2>Version 0.2.2 - 2021-02-03<a class="headerlink" href="#version-0-2-2-2021-02-03" title="Permalink to this headline">¶</a></h2>
 <p>This release fixes bugs and adds unit tests.</p>
-<div class="section" id="id2">
-<h3>New Features<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id3">
+<h3>New Features<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Add Sentence BERT metric and corresponding unit test.</p></li>
 <li><p>Fix the bug of the colab demo.</p></li>
@@ -298,8 +347,8 @@
 <div class="section" id="version-0-2-1-2021-01-20">
 <h2>Version 0.2.1 - 2021-01-20<a class="headerlink" href="#version-0-2-1-2021-01-20" title="Permalink to this headline">¶</a></h2>
 <p>This release improves documentation and unit tests.</p>
-<div class="section" id="id3">
-<h3>New Features<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h3>New Features<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Add integrity test for IdentityStrategy, TextAttackStrategy, and BertSamplingStrategy.</p></li>
 <li><p>For IdentityStrategy and TextAttackStrategy, accuracy is verified.</p></li>
@@ -310,8 +359,8 @@
 <div class="section" id="version-0-2-0-2021-01-06">
 <h2>Version 0.2.0 - 2021-01-06<a class="headerlink" href="#version-0-2-0-2021-01-06" title="Permalink to this headline">¶</a></h2>
 <p>This release updates the structure of the project and improve documentation.</p>
-<div class="section" id="id4">
-<h3>New Features<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id5">
+<h3>New Features<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Metric module is redesigned to have a consistant API. (<a class="reference external" href="https://github.com/DAI-Lab/fibber/issues/12">Issue #12</a>)</p></li>
 <li><p>More unit tests are added. Slow unit tests are skipped in CI. (<a class="reference external" href="https://github.com/DAI-Lab/fibber/issues/11">Issue #11</a>)</p></li>
@@ -381,17 +430,24 @@ object.</p></li>
 
       </div>
     </div>
+  
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
 
-    
-  <script src="_static/js/index.1e043a052b0af929e4d8.js"></script>
-
-
-    <footer class="footer mt-5 mt-md-0">
+  <footer class="footer mt-5 mt-md-0">
   <div class="container">
-    <p>
-          &copy; Copyright 2020, MIT Data To AI Lab.<br/>
-        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
-    </p>
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2020, MIT Data To AI Lab.<br/>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+</p>
+    </div>
+    
   </div>
 </footer>
   </body>

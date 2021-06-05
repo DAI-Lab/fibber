@@ -8,6 +8,7 @@ Submodules
    :maxdepth: 4
 
    fibber.robust_tuning_strategy.default_tuning_strategy
+   fibber.robust_tuning_strategy.tuning_strategy_base
 
 Module contents
 ---------------

@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fibber &#8212; fibber 0.2.5 documentation</title>
+    <title>Fibber &#8212; fibber 0.3.0 documentation</title>
     
   <link href="_static/css/theme.css" rel="stylesheet" />
-  <link href="_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
 
     
   <link rel="stylesheet"
@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-  <link rel="preload" as="script" href="_static/js/index.1e043a052b0af929e4d8.js">
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
 
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -39,28 +39,38 @@
     <link rel="next" title="Fibber" href="readme.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
+    
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
+    <div class="container-fluid" id="banner"></div>
+
+    
     <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
 
+  <div id="navbar-start">
+    
+    
+
+<a class="navbar-brand" href="#">
+  <img src="_static/dai-logo-white-200.png" class="logo" alt="logo">
+</a>
+
 
     
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
       
-      <a class="navbar-brand" href="#">
-        <img src="_static/dai-logo-white-200.png" class="logo" alt="logo">
-      </a>
-      
-    
-
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    
-    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
-      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
-        <li class="toctree-l1 nav-item">
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
  <a class="reference internal nav-link" href="readme.html">
   Fibber
  </a>
@@ -102,10 +112,16 @@
  </a>
 </li>
 
-        
-      </ul>
+    
+</ul>
+      </div>
+      
+    </div>
 
-      <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
           <a class="nav-link" href="https://github.com/dai-lab/fibber" rel="noopener" target="_blank" title="GitHub">
             <span><i class="fab fa-github-square"></i></span>
@@ -113,7 +129,10 @@
           </a>
         </li>
       </ul>
+      </div>
+      
     </div>
+  </div>
 </div>
     </nav>
     
@@ -126,8 +145,7 @@
             <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
-</form>
-<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     
   </div>
@@ -138,7 +156,10 @@
 
           
           <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
               
+              <div class="toc-item">
+                
 <div class="tocsection onthispage pt-5 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
@@ -198,6 +219,11 @@
   </a>
  </li>
  <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#citing-fibber">
+   Citing Fibber
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
   <a class="reference internal nav-link" href="#what-s-next">
    What’s next?
   </a>
@@ -212,9 +238,13 @@
 </ul>
 
 </nav>
-
-
+              </div>
               
+              <div class="toc-item">
+                
+              </div>
+              
+            
           </div>
           
 
@@ -332,17 +362,20 @@ getting started with <strong>fibber</strong>.</p>
 <p><strong>(3) Create a Fibber object.</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fibber.fibber</span> <span class="kn">import</span> <span class="n">Fibber</span>
 
-<span class="c1"># args starting with &quot;bs_&quot; are hyperparameters for the BertSamplingStrategy.</span>
+<span class="c1"># args starting with &quot;asrs_&quot; are hyperparameters for the ASRSStrategy.</span>
 <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;use_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="s2">&quot;gpt2_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="s2">&quot;bert_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;ce_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="s2">&quot;strategy_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;bs_block_size&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;bs_wpe_weight&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
-    <span class="s2">&quot;bs_use_weight&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
-    <span class="s2">&quot;bs_gpt2_weight&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-    <span class="s2">&quot;bs_clf_weight&quot;</span><span class="p">:</span> <span class="mi">3</span>
+    <span class="s2">&quot;asrs_block_size&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;asrs_wpe_weight&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
+    <span class="s2">&quot;asrs_sim_weight&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="s2">&quot;asrs_sim_threshold&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="s2">&quot;asrs_ppl_weight&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;asrs_clf_weight&quot;</span><span class="p">:</span> <span class="mi">3</span>
+    <span class="s2">&quot;asrs_sim_metric&quot;</span><span class="p">:</span> <span class="s2">&quot;CESemanticSimilarityMetric&quot;</span>
 <span class="p">}</span>
 
 <span class="c1"># create a fibber object.</span>
@@ -350,7 +383,7 @@ getting started with <strong>fibber</strong>.</p>
 <span class="c1"># GPU memory. If there&#39;s not enough GPU memory on your GPU, consider assign use</span>
 <span class="c1"># gpt2, bert, and strategy to different GPUs.</span>
 <span class="c1">#</span>
-<span class="n">fibber</span> <span class="o">=</span> <span class="n">Fibber</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;demo&quot;</span><span class="p">,</span> <span class="n">strategy_name</span><span class="o">=</span><span class="s2">&quot;BertSamplingStrategy&quot;</span><span class="p">,</span>
+<span class="n">fibber</span> <span class="o">=</span> <span class="n">Fibber</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;demo&quot;</span><span class="p">,</span> <span class="n">strategy_name</span><span class="o">=</span><span class="s2">&quot;ASRSStrategy&quot;</span><span class="p">,</span>
                 <span class="n">trainset</span><span class="o">=</span><span class="n">trainset</span><span class="p">,</span> <span class="n">testset</span><span class="o">=</span><span class="n">testset</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;exp-demo&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -425,13 +458,32 @@ getting started with <strong>fibber</strong>.</p>
 <li><p>The random strategy outputs the random shuffle of words in the original text.</p></li>
 </ul>
 </li>
-<li><p>TextFoolerStrategy:</p>
+<li><p>TextAttackStrategy:</p>
 <ul>
-<li><p>Implementation of <a class="reference external" href="https://arxiv.org/abs/1907.11932">Jin et. al, 2019</a></p></li>
+<li><p>We create a wrapper around <a class="reference external" href="https://github.com/QData/TextAttack">TextAttack</a>. To use TextAttack, run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">textattack</span></code> first.</p></li>
 </ul>
 </li>
-<li><p>BertSamplingStrategy:</p></li>
+<li><p>ASRSStrategy:</p>
+<ul>
+<li><p>The implementation for <a class="reference external" href="https://arxiv.org/abs/2104.08453">ASRS</a></p></li>
 </ul>
+</li>
+</ul>
+</div>
+<div class="section" id="citing-fibber">
+<h1>Citing Fibber<a class="headerlink" href="#citing-fibber" title="Permalink to this headline">¶</a></h1>
+<p>If you use Fibber, please cite the following work:</p>
+<ul class="simple">
+<li><p><em>Lei Xu, Kalyan Veeramachaneni.</em> Attacking Text Classifiers via Sentence Rewriting Sampler.</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@article</span><span class="p">{</span><span class="n">xu2021attacking</span><span class="p">,</span>
+  <span class="n">title</span><span class="o">=</span><span class="p">{</span><span class="n">Attacking</span> <span class="n">Text</span> <span class="n">Classifiers</span> <span class="n">via</span> <span class="n">Sentence</span> <span class="n">Rewriting</span> <span class="n">Sampler</span><span class="p">},</span>
+  <span class="n">author</span><span class="o">=</span><span class="p">{</span><span class="n">Xu</span><span class="p">,</span> <span class="n">Lei</span> <span class="ow">and</span> <span class="n">Veeramachaneni</span><span class="p">,</span> <span class="n">Kalyan</span><span class="p">},</span>
+  <span class="n">journal</span><span class="o">=</span><span class="p">{</span><span class="n">arXiv</span> <span class="n">preprint</span> <span class="n">arXiv</span><span class="p">:</span><span class="mf">2104.08453</span><span class="p">},</span>
+  <span class="n">year</span><span class="o">=</span><span class="p">{</span><span class="mi">2021</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="what-s-next">
 <h1>What’s next?<a class="headerlink" href="#what-s-next" title="Permalink to this headline">¶</a></h1>
@@ -466,17 +518,24 @@ and features, please check the <a class="reference external" href="https://DAI-L
 
       </div>
     </div>
+  
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
 
-    
-  <script src="_static/js/index.1e043a052b0af929e4d8.js"></script>
-
-
-    <footer class="footer mt-5 mt-md-0">
+  <footer class="footer mt-5 mt-md-0">
   <div class="container">
-    <p>
-          &copy; Copyright 2020, MIT Data To AI Lab.<br/>
-        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
-    </p>
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2020, MIT Data To AI Lab.<br/>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+</p>
+    </div>
+    
   </div>
 </footer>
   </body>
