@@ -1,5 +1,14 @@
 # History
 
+## Version 0.3.0 - 2021-06-05
+This release includes the following updates
+
+## New Features
+- Rename BertSamplingStrategy model as ASRSStrategy.
+- Update ASRS to use Cross Encoder as default similarity metric.
+- Add timeout feature to TextAttackStrategy.
+- Update benchmark results.
+- Add paper reference. 
 
 ## Version 0.2.5 - 2021-03-22
 This release is an emergency bug fix.

@@ -7,6 +7,7 @@ import tqdm
 
 from fibber import log
 from fibber.metrics.bert_classifier import BertClassifier
+from fibber.metrics.ce_semantic_similarity_metric import CESemanticSimilarityMetric
 from fibber.metrics.classifier_base import ClassifierBase
 from fibber.metrics.edit_distance_metric import EditDistanceMetric
 from fibber.metrics.glove_semantic_similarity_metric import GloVeSemanticSimilarityMetric
@@ -31,6 +32,7 @@ class MetricBundle(object):
                  enable_glove_semantic_similarity=True,
                  enable_gpt2_grammar_quality=True,
                  enable_bert_clf_prediction=False,
+                 enable_ce_semantic_similarity=True,
                  **kargs):
         """Initialize various metrics.
 
@@ -61,6 +63,8 @@ class MetricBundle(object):
             self.add_metric(GloVeSemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_gpt2_grammar_quality:
             self.add_metric(GPT2GrammarQualityMetric(**kargs), DIRECTION_LOWER_BETTER)
+        if enable_ce_semantic_similarity:
+            self.add_metric(CESemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_bert_clf_prediction:
             self.add_classifier(BertClassifier(**kargs), set_target_clf=True)
 
@@ -316,8 +320,8 @@ class MetricBundle(object):
 
         aggregated_result = dict(aggregated_result.mean(skipna=True))
         # hack column order by adding 0
-        aggregated_result["0_dataset_name"] = dataset_name
-        aggregated_result["1_paraphrase_strategy_name"] = paraphrase_strategy_name
-        aggregated_result["2_experiment_name"] = experiment_name
+        aggregated_result["dataset_name"] = dataset_name
+        aggregated_result["paraphrase_strategy_name"] = paraphrase_strategy_name
+        aggregated_result["experiment_name"] = experiment_name
 
         return aggregated_result

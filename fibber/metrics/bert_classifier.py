@@ -366,8 +366,10 @@ class BertClassifier(ClassifierBase):
     def load_robust_tuned_model(self, desc, step):
         model_dir = os.path.join(get_root_dir(), "bert_clf", self._dataset_name, desc)
         ckpt_path = os.path.join(model_dir, self._model_init + "-%04dk" % (step // 1000))
-        self._model.save_pretrained(ckpt_path)
-        logger.info("BERT classifier saved at %s.", ckpt_path)
+        self._model = BertForSequenceClassification.from_pretrained(ckpt_path)
+        self._model.eval()
+        self._model.to(self._device)
+        logger.info("Load BERT classifier from %s.", ckpt_path)
 
     def save_robust_tuned_model(self, desc, step):
         model_dir = os.path.join(get_root_dir(), "bert_clf", self._dataset_name, desc)

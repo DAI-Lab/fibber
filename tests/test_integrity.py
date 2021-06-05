@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from fibber.benchmark import Benchmark
-from fibber.paraphrase_strategies import BertSamplingStrategy, TextAttackStrategy
+from fibber.paraphrase_strategies import ASRSStrategy, TextAttackStrategy
 
 
 @pytest.fixture()
@@ -27,7 +27,7 @@ def test_integrity_identity(gpu_id):
     )
 
     result = benchmark.run_benchmark(paraphrase_strategy="IdentityStrategy")
-    assert result["3_BertClassifier_AfterAttackAccuracy_USE_0.85_GPT_5.0(↓)"] > 0.85
+    assert result["BertClassifier_AfterAttackAccuracy(↓)"] > 0.85
 
 
 @pytest.mark.slow
@@ -52,7 +52,7 @@ def test_integrity_textfooler(gpu_id):
         metric_bundle=benchmark.get_metric_bundle())
     result = benchmark.run_benchmark(paraphrase_strategy=strategy)
 
-    assert result["3_BertClassifier_AfterAttackAccuracy_USE_0.85_GPT_5.0(↓)"] < 0.50
+    assert result["BertClassifier_AfterAttackAccuracy(↓)"] < 0.50
 
 
 @pytest.mark.slow
@@ -68,7 +68,7 @@ def test_integrity_bertsampling(gpu_id):
         bert_clf_steps=1000,
         bert_clf_bs=32
     )
-    strategy = BertSamplingStrategy(
+    strategy = ASRSStrategy(
         arg_dict={"bs_lm_steps": 1000},
         dataset_name="mr",
         strategy_gpu_id=gpu_id,

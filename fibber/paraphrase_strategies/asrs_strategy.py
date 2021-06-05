@@ -7,9 +7,9 @@ from torch import nn
 from torch.nn import functional as F
 
 from fibber import log
-from fibber.paraphrase_strategies.bert_sampling_utils_lm import get_lm
-from fibber.paraphrase_strategies.bert_sampling_utils_text_parser import TextParser
-from fibber.paraphrase_strategies.bert_sampling_utils_wpe import get_wordpiece_emb
+from fibber.paraphrase_strategies.asrs_utils_lm import get_lm
+from fibber.paraphrase_strategies.asrs_utils_text_parser import TextParser
+from fibber.paraphrase_strategies.asrs_utils_wpe import get_wordpiece_emb
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
 logger = log.setup_custom_logger(__name__)
@@ -42,6 +42,7 @@ def process_text(text, patterns):
 
     Args:
         text (str): the str to be post processed.
+        patterns (list): a list of substitution patterns.
     """
     for pattern in patterns:
         text = re.sub(pattern[0], pattern[1], text)
@@ -97,60 +98,60 @@ def all_accept_criteria(candidate_ids, stats, **kargs):
     return candidate_ids, None
 
 
-def use_criteria_score(origin, paraphrases, use_metric, use_threshold, use_weight):
+def sim_criteria_score(origin, paraphrases, sim_metric, sim_threshold, sim_weight):
     """Estimate the score of a sentence using USE.
 
     Args:
         origin (str): original sentence.
         paraphrases ([str]): a list of paraphrase_list.
-        use_metric (USESemanticSimilarityMetric): a universal sentence encoder metric object.
-        use_threshold (float): the universal sentence encoder similarity threshold.
-        use_weight (float): the weight parameter for the criteria.
+        sim_metric (MetricBase): a similarity metric object.
+        sim_threshold (float): the universal sentence encoder similarity threshold.
+        sim_weight (float): the weight parameter for the criteria.
 
     Returns:
         (np.array): a numpy array of size ``(batch_size,)``. All entries ``<=0``.
     """
-    if use_weight == 0:
+    if sim_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
-    use_semantic_similarity = use_metric.measure_batch(origin, paraphrases)
-    return -use_weight * (
-        np.maximum(use_threshold - np.asarray(use_semantic_similarity), 0) ** 2)
+    use_semantic_similarity = sim_metric.measure_batch(origin, paraphrases)
+    return -sim_weight * (
+        np.maximum(sim_threshold - np.asarray(use_semantic_similarity), 0) ** 2)
 
 
-def gpt2_criteria_score(origin, paraphrases, gpt2_metric, gpt2_weight):
+def ppl_criteria_score(origin, paraphrases, ppl_metric, ppl_weight):
     """Estimate the score of a sentence using USE.
 
     Args:
         origin (str): original sentence.
         paraphrases ([str]): a list of paraphrase_list.
-        gpt2_metric (GPT2GrammarQualityMetric): a GPT2GrammarQualityMetric metric object.
-        gpt2_weight (float): the weight parameter for the criteria.
+        ppl_metric (GPT2GrammarQualityMetric): a GPT2GrammarQualityMetric metric object.
+        ppl_weight (float): the weight parameter for the criteria.
 
     Returns:
         (np.array): a numpy array of size ``(batch_size,)``. All entries ``<=0``.
     """
-    if gpt2_weight == 0:
+    if ppl_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
-    gpt2_ppl_ratio = gpt2_metric.measure_batch(origin, paraphrases)
-    return -gpt2_weight * (np.maximum(gpt2_ppl_ratio, 0) ** 2)
+    ppl_ratio = ppl_metric.measure_batch(origin, paraphrases)
+    return -ppl_weight * (np.maximum(ppl_ratio, 0) ** 2)
 
 
-def bert_criteria_score(origin, paraphrases, data_record, field_name, bert_metric, bert_weight):
-    if bert_weight == 0:
+def clf_criteria_score(origin, paraphrases, data_record, field_name, clf_metric, clf_weight):
+    if clf_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
 
-    dist = bert_metric.predict_dist_batch(origin, paraphrases, data_record, field_name)
+    dist = clf_metric.predict_dist_batch(origin, paraphrases, data_record, field_name)
     label = data_record["label"]
     correct_prob = (dist[:, label]).copy()
     dist[:, label] = -1e8
     incorrect_prob = np.max(dist, axis=1)
-    return -bert_weight * np.maximum(correct_prob - incorrect_prob, 0)
+    return -clf_weight * np.maximum(correct_prob - incorrect_prob, 0)
 
 
 def joint_weighted_criteria(
         tokenizer, data_record, field_name, origin, batch_tensor,
-        pos_st, pos_ed, previous_ids, candidate_ids, use_metric, use_threshold, use_weight,
-        bert_metric, bert_weight, gpt2_metric, gpt2_weight, burnin_weight, stats, state,
+        pos_st, pos_ed, previous_ids, candidate_ids, sim_metric, sim_threshold, sim_weight,
+        clf_metric, clf_weight, ppl_metric, ppl_weight, burnin_weight, stats, state,
         device, **kargs):
     """Accept or reject candidate word using the joint weighted criteria.
 
@@ -166,13 +167,13 @@ def joint_weighted_criteria(
             size ``(batch_size, pos_ed-pos_st)``.
         candidate_ids (torch.Tensor): proposed word ids in this sampling step with
             size ``(batch_size, pos_ed-pos_st)``.
-        use_metric (USESemanticSimilarityMetric): a universal sentence encoder metric object.
-        use_threshold (float): the universal sentence encoder similarity threshold.
-        use_weight (float): the weight for USE criteria score.
-        bert_metric (BertClassifier): a BertClassifier metric.
-        bert_weight (float): the weight for BERT criteria score.
-        gpt2_metric (GPT2GrammarQualityMetric): a GPT2GrammarQualityMetric metric.
-        gpt2_weight (float): the weight for GPT2 criteria score.
+        sim_metric (USESemanticSimilarityMetric): a universal sentence encoder metric object.
+        sim_threshold (float): the universal sentence encoder similarity threshold.
+        sim_weight (float): the weight for USE criteria score.
+        clf_metric (BertClassifier): a BertClassifier metric.
+        clf_weight (float): the weight for BERT criteria score.
+        ppl_metric (GPT2GrammarQualityMetric): a GPT2GrammarQualityMetric metric.
+        ppl_weight (float): the weight for GPT2 criteria score.
         burnin_weight (float): the discount factor.
         stats (dict): a dict to keep track the accept rate.
         state (np.array): the state is criteria score from the previous iteration.
@@ -189,14 +190,14 @@ def joint_weighted_criteria(
     def compute_criteria_score(fill_ids):
         batch_tensor[:, pos_st:pos_ed] = fill_ids
         paraphrases = [tostring(tokenizer, x) for x in batch_tensor.detach().cpu().numpy()]
-        return (gpt2_criteria_score(origin=origin, paraphrases=paraphrases,
-                                    gpt2_metric=gpt2_metric, gpt2_weight=gpt2_weight)
-                + use_criteria_score(origin=origin, paraphrases=paraphrases, use_metric=use_metric,
-                                     use_weight=use_weight, use_threshold=use_threshold)
-                + bert_criteria_score(origin=origin, paraphrases=paraphrases,
-                                      data_record=data_record, field_name=field_name,
-                                      bert_metric=bert_metric,
-                                      bert_weight=bert_weight)) * burnin_weight
+        return (ppl_criteria_score(origin=origin, paraphrases=paraphrases,
+                                   ppl_metric=ppl_metric, ppl_weight=ppl_weight)
+                + sim_criteria_score(origin=origin, paraphrases=paraphrases, sim_metric=sim_metric,
+                                     sim_weight=sim_weight, sim_threshold=sim_threshold)
+                + clf_criteria_score(origin=origin, paraphrases=paraphrases,
+                                     data_record=data_record, field_name=field_name,
+                                     clf_metric=clf_metric,
+                                     clf_weight=clf_weight)) * burnin_weight
 
     if state is not None:
         previous_criteria_score = state
@@ -235,8 +236,8 @@ def wpe_constraint(target_emb, word_embs, batch_tensor, pos,
     return -wpe_weight * dis * dis
 
 
-class BertSamplingStrategy(StrategyBase):
-    __abbr__ = "bs"
+class ASRSStrategy(StrategyBase):
+    __abbr__ = "asrs"
     __hyperparameters__ = [
         ("batch_size", int, 50, "the batch size in sampling."),
         ("window_size", int, 3, "the block sampling window size."),
@@ -244,10 +245,10 @@ class BertSamplingStrategy(StrategyBase):
         ("sampling_steps", int, 200, "number of sampling steps (including) burnin."),
         ("top_k", int, 100, "sample from top k words after burnin. Use 0 for all words."),
         ("temperature", float, 1., "the softmax temperature for sampling."),
-        ("use_threshold", float, 0.95, "the threshold for USE similarity."),
-        ("use_weight", float, 1000, "the smoothing parameter for USE similarity."),
+        ("sim_threshold", float, 0.95, "the threshold for USE similarity."),
+        ("sim_weight", float, 500, "the smoothing parameter for USE similarity."),
         ("wpe_threshold", float, 1.00, "the threshold for USE similarity."),
-        ("wpe_weight", float, 10000, "the smoothing parameter for USE similarity."),
+        ("wpe_weight", float, 1000, "the smoothing parameter for USE similarity."),
         ("burnin_enforcing_schedule", str, "1",
             ("the schedule decides how much additional "
              "constraint is added. options are [linear, 0, 1].")),
@@ -260,23 +261,21 @@ class BertSamplingStrategy(StrategyBase):
                                                 "used. options are [linear, 0, 1].")),
         ("seed_option", str, "origin", ("the option for seed sentences in generation. "
                                         "choose from [origin, auto].")),
-        ("split_sentence", str, "0", "split paragraph to sentence. options are [0, 1, auto]."),
+        ("split_sentence", str, "auto", "split paragraph to sentence. options are [0, 1, auto]."),
         ("stanza_port", int, 9000, "stanza port"),
         ("lm_option", str, "finetune", "choose from [pretrain, finetune, adv]."),
         ("lm_steps", int, 5000, "lm training steps."),
-        ("clf_weight", float, 1, "weight for the clf score in the criteria."),
-        ("gpt2_weight", float, 10, "the smoothing parameter for gpt2."),
+        ("clf_weight", float, 3, "weight for the clf score in the criteria."),
+        ("ppl_weight", float, 5, "the smoothing parameter for gpt2."),
+        ("sim_metric", str, "CESemanticSimilarityMetric", "similarity metric")
     ]
 
     def __repr__(self):
-        return "%s-constraint_%s-criteria_%s" % (
-            self.__class__.__name__,
-            self._strategy_config["enforcing_dist"],
-            self._strategy_config["accept_criteria"])
+        return self.__class__.__name__ + "-" + self._strategy_config["sim_metric"]
 
     def fit(self, trainset):
         # load BERT language model.
-        logger.info("Load bert language model for BertSamplingStrategy.")
+        logger.info("Load bert language model for ASRSStrategy.")
 
         self._tokenizer, lm = get_lm(
             self._strategy_config["lm_option"], self._output_dir, trainset, self._device,
@@ -288,9 +287,10 @@ class BertSamplingStrategy(StrategyBase):
             self._bert_lm.to(self._device)
 
         # Load useful metrics
-        self._use_metric = self._metric_bundle.get_metric("USESemanticSimilarityMetric")
+        self._sim_metric = self._metric_bundle.get_metric(
+            self._strategy_config["sim_metric"])
         self._clf_metric = self._metric_bundle.get_target_classifier()
-        self._gpt2_metric = self._metric_bundle.get_metric("GPT2GrammarQualityMetric")
+        self._ppl_metric = self._metric_bundle.get_metric("GPT2GrammarQualityMetric")
 
         # load word piece embeddings.
         wpe = get_wordpiece_emb(self._output_dir, self._dataset_name, trainset, self._device)
@@ -436,11 +436,11 @@ class BertSamplingStrategy(StrategyBase):
                 tokenizer=self._tokenizer, data_record=data_record, field_name=field_name,
                 origin=data_record[field_name], batch_tensor=batch_tensor,
                 pos_st=pos_st, pos_ed=pos_ed, previous_ids=previous_ids,
-                candidate_ids=candidate_ids, use_metric=self._use_metric,
-                use_threshold=self._strategy_config["use_threshold"],
-                use_weight=self._strategy_config["use_weight"],
-                bert_metric=self._clf_metric, bert_weight=self._strategy_config["clf_weight"],
-                gpt2_metric=self._gpt2_metric, gpt2_weight=self._strategy_config["gpt2_weight"],
+                candidate_ids=candidate_ids, sim_metric=self._sim_metric,
+                sim_threshold=self._strategy_config["sim_threshold"],
+                sim_weight=self._strategy_config["sim_weight"],
+                clf_metric=self._clf_metric, clf_weight=self._strategy_config["clf_weight"],
+                ppl_metric=self._ppl_metric, ppl_weight=self._strategy_config["ppl_weight"],
                 burnin_weight=decision_fn_burnin_weight, stats=self._stats,
                 state=decision_fn_state, device=self._device)
 

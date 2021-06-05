@@ -3,13 +3,13 @@ import datetime
 import os
 
 from fibber import log
-from fibber.benchmark.benchmark_utils import update_detailed_result
+from fibber.benchmark.benchmark_utils import update_attack_robust_result, update_detailed_result
 from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, verify_dataset
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
-    BertSamplingStrategy, IdentityStrategy, NonAutoregressiveBertSamplingStrategy, RandomStrategy,
-    TextAttackStrategy)
+    ASRSStrategy, IdentityStrategy, NARRLStrategy, NonAutoregressiveBertSamplingStrategy,
+    RandomStrategy, TextAttackStrategy)
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.robust_tuning_strategy.default_tuning_strategy import (
     DefaultTuningStrategy, TuningStrategyBase)
@@ -21,8 +21,9 @@ built_in_paraphrase_strategies = {
     "RandomStrategy": RandomStrategy,
     "IdentityStrategy": IdentityStrategy,
     "TextAttackStrategy": TextAttackStrategy,
-    "BertSamplingStrategy": BertSamplingStrategy,
-    "NonAutoregressiveBertSamplingStrategy": NonAutoregressiveBertSamplingStrategy
+    "ASRSStrategy": ASRSStrategy,
+    "NonAutoregressiveBertSamplingStrategy": NonAutoregressiveBertSamplingStrategy,
+    "NARRLStrategy": NARRLStrategy,
 }
 
 built_in_tuning_strategies = {
@@ -45,10 +46,13 @@ class Benchmark(object):
                  use_gpu_id=-1,
                  gpt2_gpu_id=-1,
                  bert_gpu_id=-1,
+                 ce_gpu_id=-1,
                  bert_clf_steps=20000,
                  bert_clf_bs=32,
                  load_robust_tuned_clf_desc=None,
-                 robust_tuning_steps=0):
+                 robust_tuning_steps=0,
+                 best_adv_metric_name="CESemanticSimilarityMetric",
+                 best_adv_metric_lower_better=False):
         """Initialize Benchmark framework.
 
         Args:
@@ -107,7 +111,8 @@ class Benchmark(object):
             bert_gpu_id=bert_gpu_id, dataset_name=dataset_name,
             trainset=self._trainset, testset=testset,
             bert_clf_steps=bert_clf_steps,
-            bert_clf_bs=bert_clf_bs
+            bert_clf_bs=bert_clf_bs,
+            ce_gpu_id=ce_gpu_id,
         )
 
         if customized_clf:
@@ -118,16 +123,24 @@ class Benchmark(object):
                 and load_robust_tuned_clf_desc not in ["null", "None", "none", ""]):
             self._metric_bundle.get_target_classifier().load_robust_tuned_model(
                 load_robust_tuned_clf_desc, robust_tuning_steps)
+            self._robust_tuned_clf_desc = load_robust_tuned_clf_desc
+            self._robust_tuning_steps = robust_tuning_steps
+        else:
+            self._robust_tuned_clf_desc = None
+            self._robust_tuning_steps = 0
 
         add_sentence_level_adversarial_attack_metrics(
-            self._metric_bundle, gpt2_ppl_threshold=5, use_sim_threshold=0.85)
+            self._metric_bundle,
+            best_adv_metric_name=best_adv_metric_name,
+            best_adv_metric_lower_better=best_adv_metric_lower_better)
 
     def run_robust_tuning(self,
                           paraphrase_strategy="IdentityStrategy",
                           tuning_strategy="DefaultTuningStrategy",
                           strategy_gpu_id=-1,
                           num_paraphrases_per_text=50,
-                          tuning_steps=5000):
+                          tuning_steps=5000,
+                          num_sentences_to_rewrite_per_step=20):
         """Using a paraphrase strategy to do adversarial fine tuning for the target classifier.
 
         Args:
@@ -159,7 +172,8 @@ class Benchmark(object):
             paraphrase_strategy=paraphrase_strategy,
             train_set=self._trainset,
             num_paraphrases_per_text=num_paraphrases_per_text,
-            tuning_steps=tuning_steps
+            tuning_steps=tuning_steps,
+            num_sentences_to_rewrite_per_step=num_sentences_to_rewrite_per_step
         )
 
     def run_benchmark(self,
@@ -198,6 +212,10 @@ class Benchmark(object):
             exp_name = (self._dataset_name + "-" + str(paraphrase_strategy) + "-"
                         + datetime.datetime.now().strftime("%m%d-%H%M%S"))
 
+        log.add_file_handler(
+            logger, os.path.join(self._output_dir, "%s.log" % exp_name))
+        log.remove_logger_tf_handler(logger)
+
         paraphrase_strategy.fit(self._trainset)
         tmp_output_filename = os.path.join(
             self._output_dir, exp_name + "-tmp.json")
@@ -214,8 +232,16 @@ class Benchmark(object):
 
         aggregated_result = self._metric_bundle.aggregate_metrics(
             self._dataset_name, str(paraphrase_strategy), exp_name, results)
-        update_detailed_result(aggregated_result,
-                               self._output_dir if not update_global_results else None)
+
+        if self._robust_tuned_clf_desc is None:
+            update_detailed_result(aggregated_result,
+                                   self._output_dir if not update_global_results else None)
+        else:
+            update_attack_robust_result(aggregated_result,
+                                        self._robust_tuned_clf_desc,
+                                        self._robust_tuning_steps,
+                                        self._output_dir if not update_global_results else None)
+
         return aggregated_result
 
     def get_metric_bundle(self):
@@ -246,12 +272,16 @@ def main():
     parser.add_argument("--subsample_testset", type=int, default=1000)
     parser.add_argument("--strategy", type=str, default="RandomStrategy")
     parser.add_argument("--strategy_gpu_id", type=int, default=-1)
+    parser.add_argument("--robust_tune_num_attack_per_step", type=int, default=20)
 
     # metric args
     parser.add_argument("--gpt2_gpu_id", type=int, default=-1)
     parser.add_argument("--bert_gpu_id", type=int, default=-1)
     parser.add_argument("--use_gpu_id", type=int, default=-1)
     parser.add_argument("--bert_clf_steps", type=int, default=20000)
+    parser.add_argument("--ce_gpu_id", type=int, default=-1)
+    parser.add_argument("--best_adv_metric_name", type=str, default="CESemanticSimilarityMetric")
+    parser.add_argument("--best_adv_lower_better", type=str, default="0")
 
     # add builtin strategies' args to parser.
     for item in built_in_paraphrase_strategies.values():
@@ -259,9 +289,6 @@ def main():
 
     arg_dict = vars(parser.parse_args())
     assert arg_dict["output_dir"] is not None
-
-    os.makedirs(arg_dict["output_dir"], exist_ok=True)
-    os.makedirs(os.path.join(arg_dict["output_dir"], "log"), exist_ok=True)
 
     if arg_dict["robust_tuning"] == "1":
         assert arg_dict["load_robust_tuned_clf_desc"] is None
@@ -273,10 +300,11 @@ def main():
                           gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
                           bert_clf_steps=arg_dict["bert_clf_steps"],
                           load_robust_tuned_clf_desc=arg_dict["load_robust_tuned_clf_desc"],
-                          robust_tuning_steps=arg_dict["robust_tuning_steps"])
+                          robust_tuning_steps=arg_dict["robust_tuning_steps"],
+                          ce_gpu_id=arg_dict["ce_gpu_id"],
+                          best_adv_metric_name=arg_dict["best_adv_metric_name"],
+                          best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"))
 
-    log.add_file_handler(
-        logger, os.path.join(arg_dict["output_dir"], "log.log"))
     log.remove_logger_tf_handler(logger)
 
     # Get paraphrase strategy
@@ -287,7 +315,9 @@ def main():
     if arg_dict["robust_tuning"] == "1":
         benchmark.run_robust_tuning(paraphrase_strategy=paraphrase_strategy,
                                     num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"],
-                                    tuning_steps=arg_dict["robust_tuning_steps"])
+                                    tuning_steps=arg_dict["robust_tuning_steps"],
+                                    num_sentences_to_rewrite_per_step=arg_dict[
+                                        "robust_tune_num_attack_per_step"])
     else:
         benchmark.run_benchmark(paraphrase_strategy=paraphrase_strategy,
                                 num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"])

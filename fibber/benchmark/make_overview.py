@@ -3,8 +3,8 @@ import pandas as pd
 from fibber.benchmark.benchmark_utils import load_detailed_result, update_overview_result
 from fibber.metrics.metric_utils import DIRECTION_HIGHER_BETTER, DIRECTION_LOWER_BETTER
 
-DATASET_NAME_COL = "0_dataset_name"
-STRATEGY_NAME_COL = "1_paraphrase_strategy_name"
+DATASET_NAME_COL = "dataset_name"
+STRATEGY_NAME_COL = "paraphrase_strategy_name"
 
 
 def make_overview():

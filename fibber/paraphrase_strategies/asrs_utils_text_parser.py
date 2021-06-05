@@ -92,7 +92,7 @@ class TextParser(object):
         """For each sentence, randomly shuffle phrases in that sentence.
 
         Args:
-            paraphrase (str): a paragraph in English.
+            paragraph (str): a paragraph of text.
             n (int): number of randomly shuffled paragraph to generate.
         Returns:
             ([str]): a list of ``n`` shuffled paragraphs.

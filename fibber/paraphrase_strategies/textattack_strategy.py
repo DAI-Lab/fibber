@@ -1,5 +1,6 @@
 """This module implements the paraphrase strategy using TextFooler."""
 
+import signal
 import sys
 
 from fibber import log
@@ -15,6 +16,15 @@ except ImportError:
     logger.warning("TextAttack is not installed so TextFooler stategy can't be used. "
                    "Install it by `pip install textattack`.")
     ModelWrapper = object
+
+
+class TimeOutException(Exception):
+    pass
+
+
+def alarm_handler(signum, frame):
+    print("ALARM signal received")
+    raise TimeOutException()
 
 
 class CLFModel(ModelWrapper):
@@ -56,7 +66,8 @@ class TextAttackStrategy(StrategyBase):
 
     __abbr__ = "ta"
     __hyperparameters__ = [
-        ("recipe", str, "TextFoolerJin2019", "an attacking recipe implemented in TextAttack.")
+        ("recipe", str, "TextFoolerJin2019", "an attacking recipe implemented in TextAttack."),
+        ("time_limit", float, 20, "time limit for each attack.")
     ]
 
     def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle):
@@ -83,8 +94,20 @@ class TextAttackStrategy(StrategyBase):
         self._model.set_data_record(data_record)
 
         attack_text = " ".join(data_record[field_name].split()[:200])
-        att = next(self._recipe.attack_dataset(
-            [(attack_text, data_record["label"])]))
+
+        signal.signal(signal.SIGALRM, alarm_handler)
+        signal.alarm(self._strategy_config["time_limit"])
+        try:
+            att = next(self._recipe.attack_dataset(
+                [(attack_text, data_record["label"])]))
+        except TimeOutException:
+            logger.warn("Timeout.")
+            att = None
+        except BaseException:
+            logger.warn("TextAttack package failure.")
+            att = None
+        signal.alarm(0)
+
         if isinstance(att, textattack.attack_results.SuccessfulAttackResult):
             return [att.perturbed_result.attacked_text.text]
         else:
