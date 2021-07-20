@@ -263,7 +263,7 @@ class ASRSStrategy(StrategyBase):
         ("burnin_criteria_schedule", str, "1", ("the schedule decides how strict the criteria is "
                                                 "used. options are [linear, 0, 1].")),
         ("seed_option", str, "origin", ("the option for seed sentences in generation. "
-                                        "choose from [origin, auto, dynamic].")),
+                                        "choose from [origin, auto, dynamic_len].")),
         ("dynamic_len_min", int, -3, "change length min."),
         ("dynamic_len_max", int, 3, "change length max."),
         ("split_sentence", str, "auto", "split paragraph to sentence. options are [0, 1, auto]."),
