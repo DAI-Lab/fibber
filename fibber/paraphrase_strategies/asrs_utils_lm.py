@@ -191,12 +191,8 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
         logger.info("Language model <%s> exists.", ckpt_path)
         return BertForMaskedLM.from_pretrained(ckpt_path).eval()
 
-    if filter == -1:
-        lm_model = BertForMaskedLM.from_pretrained(resources.get_transformers(model_init))
-        lm_model.train()
-    else:
-        lm_model = get_lm(output_dir, trainset, -1, device, lm_steps)
-        lm_model.train()
+    lm_model = BertForMaskedLM.from_pretrained(resources.get_transformers(model_init))
+    lm_model.train()
     lm_model.to(device)
 
     dataset = DatasetForBert(trainset, model_init, lm_bs, exclude=filter, masked_lm=True)
