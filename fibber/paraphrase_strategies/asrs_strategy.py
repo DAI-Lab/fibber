@@ -190,7 +190,7 @@ def joint_weighted_criteria(
 
     def compute_criteria_score(fill_ids):
         batch_tensor[:, pos_st:pos_ed] = fill_ids
-        paraphrases = [tostring(tokenizer, x[1:ll-1])
+        paraphrases = [tostring(tokenizer, x[1:ll - 1])
                        for x, ll in zip(batch_tensor.detach().cpu().numpy(), seq_len)]
         return (ppl_criteria_score(origin=origin, paraphrases=paraphrases,
                                    ppl_metric=ppl_metric, ppl_weight=ppl_weight)
@@ -364,7 +364,7 @@ class ASRSStrategy(StrategyBase):
                 if length_change < 0:
                     for j in range(abs(length_change)):
                         pos = np.random.randint(len(seq_t))
-                        seq_t = seq_t[:pos] + seq_t[pos+1:]
+                        seq_t = seq_t[:pos] + seq_t[pos + 1:]
                     seq.append(["[CLS]"] + seq_t + ["[SEP]"])
                     seq_len.append(len(seq_t) + 2)
                 else:
@@ -386,7 +386,7 @@ class ASRSStrategy(StrategyBase):
         attention_mask_paraphrase_text_only = torch.zeros_like(attention_mask)
         for rid, ll in enumerate(seq_len):
             attention_mask[rid, :ll] = 1
-            attention_mask_paraphrase_text_only[rid, 1:ll-1] = 1
+            attention_mask_paraphrase_text_only[rid, 1:ll - 1] = 1
 
         if field_name == "text1":
             context_seq = ["[CLS]"] + self._tokenizer.tokenize(data_record["text0"])
@@ -402,8 +402,8 @@ class ASRSStrategy(StrategyBase):
             context_tensor = None
 
         target_emb = (self._word_embs(torch.tensor([
-                self._tokenizer.convert_tokens_to_ids(self._tokenizer.tokenize(seed))
-                for _ in range(batch_size)]).to(self._device))).sum(dim=1)
+            self._tokenizer.convert_tokens_to_ids(self._tokenizer.tokenize(seed))
+            for _ in range(batch_size)]).to(self._device))).sum(dim=1)
 
         allow_list = F.one_hot(batch_tensor[0] * attention_mask_paraphrase_text_only[0],
                                self._tokenizer.vocab_size).sum(dim=0)
@@ -502,7 +502,7 @@ class ASRSStrategy(StrategyBase):
 
             batch_tensor[:, pos_st:pos_ed] = final_ids
 
-        return [tostring(self._tokenizer, x[1:ll-1])
+        return [tostring(self._tokenizer, x[1:ll - 1])
                 for x, ll in zip(batch_tensor.detach().cpu().numpy(), seq_len)]
 
     def paraphrase_example(self, data_record, field_name, n):
