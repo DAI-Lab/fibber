@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.asrs_utils_text_parser &#8212; fibber 0.3.0 documentation</title>
+    <title>fibber.paraphrase_strategies.asrs_utils_text_parser &#8212; fibber 0.3.1 documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet" />
   <link href="../../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -171,6 +171,7 @@
 <span></span><span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
 <span class="kn">from</span> <span class="nn">stanza.server</span> <span class="kn">import</span> <span class="n">CoreNLPClient</span>
 
@@ -220,8 +221,8 @@
         <span class="k">while</span> <span class="n">is_port_in_use</span><span class="p">(</span><span class="n">port</span><span class="p">):</span>
             <span class="n">port</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_core_nlp_client</span> <span class="o">=</span> <span class="n">CoreNLPClient</span><span class="p">(</span>
-            <span class="n">annotators</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;parse&#39;</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">600000</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="s1">&#39;16G&#39;</span><span class="p">,</span> <span class="n">be_quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">endpoint</span><span class="o">=</span><span class="s2">&quot;http://localhost:</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">port</span><span class="p">)</span>
+            <span class="n">annotators</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;parse&#39;</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">600000</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="s1">&#39;32G&#39;</span><span class="p">,</span> <span class="n">be_quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">endpoint</span><span class="o">=</span><span class="s2">&quot;http://localhost:</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">port</span><span class="p">,</span> <span class="n">server_id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span>
 
     <span class="k">def</span> <span class="nf">_get_parse_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sentence</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate a parsing tree from a sentence.&quot;&quot;&quot;</span>

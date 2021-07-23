@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.asrs_utils_lm &#8212; fibber 0.3.0 documentation</title>
+    <title>fibber.paraphrase_strategies.asrs_utils_lm &#8212; fibber 0.3.1 documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet" />
   <link href="../../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -361,12 +361,8 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Language model &lt;</span><span class="si">%s</span><span class="s2">&gt; exists.&quot;</span><span class="p">,</span> <span class="n">ckpt_path</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">BertForMaskedLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="nb">filter</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-        <span class="n">lm_model</span> <span class="o">=</span> <span class="n">BertForMaskedLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">resources</span><span class="o">.</span><span class="n">get_transformers</span><span class="p">(</span><span class="n">model_init</span><span class="p">))</span>
-        <span class="n">lm_model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">lm_model</span> <span class="o">=</span> <span class="n">get_lm</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">trainset</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">lm_steps</span><span class="p">)</span>
-        <span class="n">lm_model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">lm_model</span> <span class="o">=</span> <span class="n">BertForMaskedLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">resources</span><span class="o">.</span><span class="n">get_transformers</span><span class="p">(</span><span class="n">model_init</span><span class="p">))</span>
+    <span class="n">lm_model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
     <span class="n">lm_model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
     <span class="n">dataset</span> <span class="o">=</span> <span class="n">DatasetForBert</span><span class="p">(</span><span class="n">trainset</span><span class="p">,</span> <span class="n">model_init</span><span class="p">,</span> <span class="n">lm_bs</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="nb">filter</span><span class="p">,</span> <span class="n">masked_lm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

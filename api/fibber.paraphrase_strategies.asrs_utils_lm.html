@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.asrs_utils_lm module &#8212; fibber 0.3.0 documentation</title>
+    <title>fibber.paraphrase_strategies.asrs_utils_lm module &#8212; fibber 0.3.1 documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -550,9 +550,9 @@ more detail.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">MaskedLMOutput</span></code> (if
-<code class="docutils literal notranslate"><span class="pre">return_dict=True</span></code> is passed or when <code class="docutils literal notranslate"><span class="pre">config.return_dict=True</span></code>) or a tuple of <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.FloatTensor</span></code>
-comprising various elements depending on the configuration (<code class="xref py py-class docutils literal notranslate"><span class="pre">BertConfig</span></code>) and inputs.</p>
+<dd class="field-even"><p><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">MaskedLMOutput</span></code> or a tuple of
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.FloatTensor</span></code> (if <code class="docutils literal notranslate"><span class="pre">return_dict=False</span></code> is passed or when <code class="docutils literal notranslate"><span class="pre">config.return_dict=False</span></code>) comprising
+various elements depending on the configuration (<code class="xref py py-class docutils literal notranslate"><span class="pre">BertConfig</span></code>) and inputs.</p>
 <ul>
 <li><p><strong>loss</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.FloatTensor</span></code> of shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">(1,)</span></code>, <cite>optional</cite>, returned when <code class="xref py py-obj docutils literal notranslate"><span class="pre">labels</span></code> is provided) – Masked language modeling (MLM) loss.</p></li>
 <li><p><strong>logits</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.FloatTensor</span></code> of shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">sequence_length,</span> <span class="pre">config.vocab_size)</span></code>) – Prediction scores of the language modeling head (scores for each vocabulary token before SoftMax).</p></li>
@@ -659,9 +659,9 @@ more detail.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">MaskedLMOutput</span></code> (if
-<code class="docutils literal notranslate"><span class="pre">return_dict=True</span></code> is passed or when <code class="docutils literal notranslate"><span class="pre">config.return_dict=True</span></code>) or a tuple of <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.FloatTensor</span></code>
-comprising various elements depending on the configuration (<code class="xref py py-class docutils literal notranslate"><span class="pre">BertConfig</span></code>) and inputs.</p>
+<dd class="field-even"><p><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">MaskedLMOutput</span></code> or a tuple of
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.FloatTensor</span></code> (if <code class="docutils literal notranslate"><span class="pre">return_dict=False</span></code> is passed or when <code class="docutils literal notranslate"><span class="pre">config.return_dict=False</span></code>) comprising
+various elements depending on the configuration (<code class="xref py py-class docutils literal notranslate"><span class="pre">BertConfig</span></code>) and inputs.</p>
 <ul>
 <li><p><strong>loss</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.FloatTensor</span></code> of shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">(1,)</span></code>, <cite>optional</cite>, returned when <code class="xref py py-obj docutils literal notranslate"><span class="pre">labels</span></code> is provided) – Masked language modeling (MLM) loss.</p></li>
 <li><p><strong>logits</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.FloatTensor</span></code> of shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">sequence_length,</span> <span class="pre">config.vocab_size)</span></code>) – Prediction scores of the language modeling head (scores for each vocabulary token before SoftMax).</p></li>
