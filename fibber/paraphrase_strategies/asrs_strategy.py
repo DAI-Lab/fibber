@@ -152,7 +152,7 @@ def joint_weighted_criteria(
         tokenizer, data_record, field_name, origin, batch_tensor,
         pos_st, pos_ed, previous_ids, candidate_ids, sim_metric, sim_threshold, sim_weight,
         clf_metric, clf_weight, ppl_metric, ppl_weight, burnin_weight, stats, state,
-        device, **kargs):
+        device, seq_len, **kargs):
     """Accept or reject candidate word using the joint weighted criteria.
 
     Args:
@@ -177,6 +177,7 @@ def joint_weighted_criteria(
         burnin_weight (float): the discount factor.
         stats (dict): a dict to keep track the accept rate.
         state (np.array): the state is criteria score from the previous iteration.
+        seq_len (np.array): the valid length for each sentence in the batch.
         device (torch.Device): the device that batch_tensor is on.
     Returns:
         (np.array, np.array)
@@ -189,7 +190,8 @@ def joint_weighted_criteria(
 
     def compute_criteria_score(fill_ids):
         batch_tensor[:, pos_st:pos_ed] = fill_ids
-        paraphrases = [tostring(tokenizer, x) for x in batch_tensor.detach().cpu().numpy()]
+        paraphrases = [tostring(tokenizer, x[1:ll - 1])
+                       for x, ll in zip(batch_tensor.detach().cpu().numpy(), seq_len)]
         return (ppl_criteria_score(origin=origin, paraphrases=paraphrases,
                                    ppl_metric=ppl_metric, ppl_weight=ppl_weight)
                 + sim_criteria_score(origin=origin, paraphrases=paraphrases, sim_metric=sim_metric,
@@ -227,8 +229,9 @@ def allow_list_constraint(allow_list, **kargs):
 
 
 def wpe_constraint(target_emb, word_embs, batch_tensor, pos,
-                   wpe_threshold, wpe_weight, **kargs):
-    current_emb = (word_embs(batch_tensor[:, 1:-1]).sum(dim=1)
+                   wpe_threshold, wpe_weight, attention_mask_paraphrase_text_only, **kargs):
+    current_emb = ((word_embs(batch_tensor)
+                    * attention_mask_paraphrase_text_only[:, :, None]).sum(dim=1)
                    - word_embs(batch_tensor[:, pos]))
     candidate_emb = current_emb[:, None, :] + word_embs.weight.data[None, :, :]
     dis = F.cosine_similarity(candidate_emb, target_emb[:, None, :], dim=2)
@@ -260,7 +263,9 @@ class ASRSStrategy(StrategyBase):
         ("burnin_criteria_schedule", str, "1", ("the schedule decides how strict the criteria is "
                                                 "used. options are [linear, 0, 1].")),
         ("seed_option", str, "origin", ("the option for seed sentences in generation. "
-                                        "choose from [origin, auto].")),
+                                        "choose from [origin, auto, dynamic_len].")),
+        ("dynamic_len_min", int, -3, "change length min."),
+        ("dynamic_len_max", int, 3, "change length max."),
         ("split_sentence", str, "auto", "split paragraph to sentence. options are [0, 1, auto]."),
         ("stanza_port", int, 9000, "stanza port"),
         ("lm_option", str, "finetune", "choose from [pretrain, finetune, adv]."),
@@ -336,17 +341,52 @@ class ASRSStrategy(StrategyBase):
             seq = ["[CLS]"] + self._tokenizer.tokenize(seed) + ["[SEP]"]
             batch_tensor = torch.tensor(
                 [self._tokenizer.convert_tokens_to_ids(seq)] * batch_size).to(self._device)
-            tensor_len = len(seq)
+            seq_len = [len(seq)] * batch_size
         elif self._strategy_config["seed_option"] == "auto":
             seeds = self._text_parser.phrase_level_shuffle(seed, batch_size)
             seq = [self._tokenizer.tokenize(x) for x in seeds]
-            tensor_len = max([len(x) for x in seq])
-            seq = [["[CLS]"] + x + ["[MASK]"] * (tensor_len - len(x)) + ["[SEP]"] for x in seq]
-            tensor_len += 2
+            seq_len = ([len(x) + 2 for x in seq])
+            max_len = max(seq_len)
+            seq = [["[CLS]"] + x + ["[SEP]"] + ["[PAD]"] * (max_len - len(x) - 2) for x in seq]
+            batch_tensor = torch.tensor(
+                [self._tokenizer.convert_tokens_to_ids(x) for x in seq]).to(self._device)
+        elif self._strategy_config["seed_option"] == "dynamic_len":
+            seq_raw = self._tokenizer.tokenize(seed)
+            seq = []
+            seq_len = []
+            for i in range(batch_size):
+                seq_t = seq_raw[:]
+                length_change = np.random.randint(self._strategy_config["dynamic_len_min"],
+                                                  self._strategy_config["dynamic_len_max"] + 1)
+                # if shrink length, make sure at least 3 words in the sentence.
+                if length_change < 0 and len(seq_raw) + length_change < 3:
+                    length_change = 3 - len(seq_raw)
+                if length_change < 0:
+                    for j in range(abs(length_change)):
+                        pos = np.random.randint(len(seq_t))
+                        seq_t = seq_t[:pos] + seq_t[pos + 1:]
+                    seq.append(["[CLS]"] + seq_t + ["[SEP]"])
+                    seq_len.append(len(seq_t) + 2)
+                else:
+                    for j in range(length_change):
+                        pos = np.random.randint(len(seq_t))
+                        seq_t = seq_t[:pos] + [np.random.choice(seq_raw)] + seq_t[pos:]
+                    seq.append(["[CLS]"] + seq_t + ["[SEP]"])
+                    seq_len.append(len(seq_t) + 2)
+                assert len(seq[-1]) == 2 + len(seq_raw) + length_change
+                assert seq_len[-1] == len(seq[-1])
+            max_len = max(seq_len)
+            seq = [x + ["[PAD]"] * (max_len - len(x)) for x in seq]
             batch_tensor = torch.tensor(
                 [self._tokenizer.convert_tokens_to_ids(x) for x in seq]).to(self._device)
         else:
             assert 0
+
+        attention_mask = torch.zeros_like(batch_tensor)
+        attention_mask_paraphrase_text_only = torch.zeros_like(attention_mask)
+        for rid, ll in enumerate(seq_len):
+            attention_mask[rid, :ll] = 1
+            attention_mask_paraphrase_text_only[rid, 1:ll - 1] = 1
 
         if field_name == "text1":
             context_seq = ["[CLS]"] + self._tokenizer.tokenize(data_record["text0"])
@@ -355,21 +395,31 @@ class ASRSStrategy(StrategyBase):
             ).to(self._device)
             context_len = len(context_seq)
             batch_tensor[:, 0] = self._tokenizer.sep_token_id
+            attention_mask = torch.cat([
+                torch.ones_like(context_tensor),
+                attention_mask], dim=1)
         else:
             context_tensor = None
 
-        target_emb = self._word_embs(batch_tensor[:, 1:-1]).sum(dim=1)
+        target_emb = (self._word_embs(torch.tensor([
+            self._tokenizer.convert_tokens_to_ids(self._tokenizer.tokenize(seed))
+            for _ in range(batch_size)]).to(self._device))).sum(dim=1)
 
-        allow_list = F.one_hot(batch_tensor[0][1:-1], self._tokenizer.vocab_size).sum(dim=0)
+        allow_list = F.one_hot(batch_tensor[0] * attention_mask_paraphrase_text_only[0],
+                               self._tokenizer.vocab_size).sum(dim=0)
+        allow_list[0] = 0
 
         decision_fn_state = None
 
         for ii in range(sampling_steps):
-            pos_st = np.random.randint(1, tensor_len - 1)
-            pos_ed = min(pos_st + self._strategy_config["window_size"], tensor_len - 1)
+            pos_st = np.random.randint(1, max(seq_len) - 1)
+            pos_ed = min(pos_st + self._strategy_config["window_size"], max(seq_len) - 1)
 
             previous_ids = batch_tensor[:, pos_st:pos_ed].clone()
-            batch_tensor[:, pos_st:pos_ed] = self._tokenizer.mask_token_id
+            batch_tensor[:, pos_st:pos_ed] = (
+                self._tokenizer.mask_token_id
+                * attention_mask_paraphrase_text_only[:, pos_st:pos_ed]
+                + previous_ids * (1 - attention_mask_paraphrase_text_only[:, pos_st:pos_ed]))
 
             sample_order = np.arange(pos_st, pos_ed)
             np.random.shuffle(sample_order)
@@ -381,10 +431,12 @@ class ASRSStrategy(StrategyBase):
                         torch.ones_like(batch_tensor)], dim=1)
                     logits_lm = self._bert_lm(
                         batch_tensor_tmp,
-                        token_type_ids=tok_type_tensor_tmp)[0][:, context_len + pos]
+                        token_type_ids=tok_type_tensor_tmp,
+                        attention_mask=attention_mask)[0][:, context_len + pos]
                     logits_lm[:, self._tokenizer.sep_token_id] = -1e8
                 else:
-                    logits_lm = self._bert_lm(batch_tensor)[0][:, pos]
+                    logits_lm = self._bert_lm(batch_tensor,
+                                              attention_mask=attention_mask)[0][:, pos]
 
                 logits_enforcing = self._enforcing_dist_fn(
                     # for wpe constraint
@@ -395,7 +447,8 @@ class ASRSStrategy(StrategyBase):
                     wpe_threshold=self._strategy_config["wpe_threshold"],
                     wpe_weight=self._strategy_config["wpe_weight"],
                     # for naive constraint
-                    allow_list=allow_list
+                    allow_list=allow_list,
+                    attention_mask_paraphrase_text_only=attention_mask_paraphrase_text_only
                 )
 
                 if ii < burnin_steps:
@@ -416,7 +469,9 @@ class ASRSStrategy(StrategyBase):
 
                 candidate_ids = sample_word_from_logits(
                     logits_joint, top_k=top_k, temperature=self._strategy_config["temperature"])
-                batch_tensor[:, pos] = candidate_ids
+                batch_tensor[:, pos] = (candidate_ids * attention_mask_paraphrase_text_only[:, pos]
+                                        + batch_tensor[:, pos]
+                                        * (1 - attention_mask_paraphrase_text_only[:, pos]))
 
             candidate_ids = batch_tensor[:, pos_st:pos_ed].clone()
 
@@ -442,11 +497,13 @@ class ASRSStrategy(StrategyBase):
                 clf_metric=self._clf_metric, clf_weight=self._strategy_config["clf_weight"],
                 ppl_metric=self._ppl_metric, ppl_weight=self._strategy_config["ppl_weight"],
                 burnin_weight=decision_fn_burnin_weight, stats=self._stats,
-                state=decision_fn_state, device=self._device)
+                state=decision_fn_state, device=self._device,
+                seq_len=seq_len)
 
             batch_tensor[:, pos_st:pos_ed] = final_ids
 
-        return [tostring(self._tokenizer, x[1:-1]) for x in batch_tensor.detach().cpu().numpy()]
+        return [tostring(self._tokenizer, x[1:ll - 1])
+                for x, ll in zip(batch_tensor.detach().cpu().numpy(), seq_len)]
 
     def paraphrase_example(self, data_record, field_name, n):
         if self._strategy_config["lm_option"] == "adv":

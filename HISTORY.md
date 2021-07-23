@@ -1,5 +1,13 @@
 # History
 
+## Version 0.3.1 - 2021-07-20
+This release includes the following updates
+
+## New Features
+- Add `dynamic_len` seed option to ASRS, so the paraphrase can have different length.
+- Fix bug in `asrs_utils_lm`
+
+
 ## Version 0.3.0 - 2021-06-05
 This release includes the following updates
 
@@ -8,7 +16,8 @@ This release includes the following updates
 - Update ASRS to use Cross Encoder as default similarity metric.
 - Add timeout feature to TextAttackStrategy.
 - Update benchmark results.
-- Add paper reference. 
+- Add paper reference.
+
 
 ## Version 0.2.5 - 2021-03-22
 This release is an emergency bug fix.
