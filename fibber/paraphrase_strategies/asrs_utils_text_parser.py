@@ -1,6 +1,7 @@
 import random
 import re
 import socket
+import time
 
 from stanza.server import CoreNLPClient
 
@@ -50,8 +51,8 @@ class TextParser(object):
         while is_port_in_use(port):
             port += 1
         self._core_nlp_client = CoreNLPClient(
-            annotators=['parse'], timeout=600000, memory='16G', be_quiet=True,
-            endpoint="http://localhost:%d" % port)
+            annotators=['parse'], timeout=600000, memory='32G', be_quiet=True,
+            endpoint="http://localhost:%d" % port, server_id=int(time.time()))
 
     def _get_parse_tree(self, sentence):
         """Generate a parsing tree from a sentence."""
