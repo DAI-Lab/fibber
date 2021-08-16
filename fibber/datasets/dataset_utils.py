@@ -82,6 +82,9 @@ def get_dataset(dataset_name):
         else:
             test_filename = os.path.join(data_dir, "mnli/dev_mismatched.json")
 
+    elif dataset_name in ["qnli", "sst2"]:
+        train_filename = os.path.join(data_dir, dataset_name, "train.json")
+        test_filename = os.path.join(data_dir, dataset_name, "dev.json")
     else:
         train_filename = os.path.join(data_dir, dataset_name, "train.json")
         test_filename = os.path.join(data_dir, dataset_name, "test.json")

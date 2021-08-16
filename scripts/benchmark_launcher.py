@@ -63,6 +63,16 @@ DATASET_CONFIG = {
         "--output_dir": "exp-mnli_mis",
         "--bert_clf_steps": 20000
     },
+    "sst2": {
+        "--dataset": "sst2",
+        "--output_dir": "exp-sst2",
+        "--bert_clf_steps": 20000
+    },
+    "qnli": {
+        "--dataset": "qnli",
+        "--output_dir": "exp-qnli",
+        "--bert_clf_steps": 20000
+    },
 }
 
 STRATEGY_CONFIG = {
