@@ -102,6 +102,16 @@ STRATEGY_CONFIG = {
         "--ta_recipe": "BAEGarg2019",
         "--robust_tune_num_attack_per_step": 5
     },
+    "gsa": {
+        "--strategy": "TextAttackStrategy",
+        "--ta_recipe": "Kuleshov2017",
+        "--robust_tune_num_attack_per_step": 5
+    },
+    "pwws": {
+        "--strategy": "TextAttackStrategy",
+        "--ta_recipe": "PWWSRen2019",
+        "--robust_tune_num_attack_per_step": 5
+    },
     "asrs": {
         "--strategy": "ASRSStrategy",
         "--asrs_enforcing_dist": "wpe",
