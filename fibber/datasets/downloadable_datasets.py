@@ -52,8 +52,8 @@ downloadable_dataset_urls = {
     },
     "processed-datasets": {
         "filename": "datasets.tgz",
-        "url": "https://fibber-data.s3.amazonaws.com/datasets_v0.2.tgz",
-        "md5": "81b1eda8421764a0b648cb83425f53a3",
+        "url": "https://fibber-data.s3.amazonaws.com/datasets_v0.3.tgz",
+        "md5": "910846005ada814bcda2125435c24fd1",
         "untar": True,
         "unzip": False,
     },
