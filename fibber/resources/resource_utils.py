@@ -72,6 +72,31 @@ def get_glove_emb(download_only=False):
     return load_glove_model(os.path.join(data_dir, "glove.6B.300d.txt"), 300)
 
 
+def get_counter_fitted_vector(download_only=False):
+    """Download default pretrained counter fitted embeddings and return a dict.
+
+    See https://github.com/nmrksic/counter-fitting
+
+    Args:
+        download_only (bool): set True to only download. (Returns None)
+
+    Returns:
+        (dict): a dict of GloVe word embedding model.
+            "emb_table": a numpy array of size(N, 300)
+            "id2tok": a list of strings.
+            "tok2id": a dict that maps word (string) to its id.
+    """
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "common")
+    if not os.path.exists(os.path.join(data_dir, "counter-fitted-vectors.txt")):
+        download_file(subdir=os.path.join(data_dir),
+                      **downloadable_resource_urls["counter-fitted-vectors"])
+
+    if download_only:
+        return None
+    return load_glove_model(os.path.join(data_dir, "counter-fitted-vectors.txt"), 300)
+
+
 def get_stopwords():
     """Download default stopword words.
 

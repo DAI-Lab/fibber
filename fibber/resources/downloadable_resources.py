@@ -89,5 +89,12 @@ downloadable_resource_urls = {
         "md5": "e606aedf35a953b739c0537a11eebeb5",
         "untar": True,
         "unzip": False
+    },
+    "counter-fitted-vectors": {
+        "filename": "counter-fitted-vectors.zip",
+        "url": "https://fibber-data.s3.amazonaws.com/counter-fitted-vectors.zip",
+        "md5": "2515d2a6502d3e7c9b12cfd0e2318bd1",
+        "untar": False,
+        "unzip": True
     }
 }
