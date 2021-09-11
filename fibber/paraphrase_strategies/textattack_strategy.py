@@ -2,6 +2,7 @@
 
 import signal
 import sys
+import traceback
 
 from fibber import log
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
@@ -67,7 +68,7 @@ class TextAttackStrategy(StrategyBase):
     __abbr__ = "ta"
     __hyperparameters__ = [
         ("recipe", str, "TextFoolerJin2019", "an attacking recipe implemented in TextAttack."),
-        ("time_limit", float, 20, "time limit for each attack.")
+        ("time_limit", float, 60, "time limit for each attack.")
     ]
 
     def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle):
@@ -105,6 +106,7 @@ class TextAttackStrategy(StrategyBase):
             att = None
         except BaseException:
             logger.warn("TextAttack package failure.")
+            traceback.print_exc()
             att = None
         signal.alarm(0)
 

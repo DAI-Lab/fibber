@@ -12,6 +12,7 @@ from transformers import BertForSequenceClassification, BertTokenizerFast
 
 from fibber import get_root_dir, log, resources
 from fibber.datasets import DatasetForBert
+from fibber.metrics.bert_classifier_utils_lmag import lmag_fix_sentences
 from fibber.metrics.bert_classifier_utils_sem import (
     load_or_build_sem_wordmap, sem_fix_sentences, sem_transform_dataset)
 from fibber.metrics.classifier_base import ClassifierBase
@@ -240,7 +241,7 @@ class BertClassifier(ClassifierBase):
                  bert_clf_optimizer="adamw", bert_clf_weight_decay=0.001,
                  bert_clf_period_summary=100, bert_clf_period_val=500,
                  bert_clf_period_save=5000, bert_clf_val_steps=10,
-                 bert_clf_enable_sem=False, **kargs):
+                 bert_clf_enable_sem=False, bert_clf_enable_lmag=False, **kargs):
         super(BertClassifier, self).__init__()
 
         if trainset["cased"]:
@@ -267,6 +268,13 @@ class BertClassifier(ClassifierBase):
             self._sem_word_map = load_or_build_sem_wordmap(dataset_name, trainset, self._device)
         else:
             self._sem_word_map = None
+
+        self._enable_lmag = bert_clf_enable_lmag
+        if bert_clf_enable_lmag:
+            from fibber.paraphrase_strategies.asrs_utils_lm import get_lm
+            _, self._lm = get_lm("finetune", "exp-%s/" % dataset_name, trainset, self._device)
+            self._lm = self._lm.eval().to(self._device)
+            self._lmag_repeat = 10
 
         self._model_init = model_init
         self._dataset_name = dataset_name
@@ -305,6 +313,14 @@ class BertClassifier(ClassifierBase):
         """
         if self._enable_sem:
             paraphrase_list = sem_fix_sentences(paraphrase_list, self._sem_word_map)
+        if self._enable_lmag:
+            context = None
+            if "text1" in data_record:
+                assert paraphrase_field == "text1"
+                context = [data_record["text0"]] * len(paraphrase_list)
+
+            paraphrase_list = lmag_fix_sentences(
+                paraphrase_list, context, self._tokenizer, self._lm, self._model, self._device)
 
         if paraphrase_field == "text0":
             batch_input = self._tokenizer(text=paraphrase_list, padding=True, max_length=200,
@@ -314,13 +330,26 @@ class BertClassifier(ClassifierBase):
             batch_input = self._tokenizer(text=[data_record["text0"]] * len(paraphrase_list),
                                           text_pair=paraphrase_list,
                                           padding=True, max_length=200,
+
                                           truncation=True)
         with torch.no_grad():
-            res = F.log_softmax(self._model(
+            logits = self._model(
                 input_ids=torch.tensor(batch_input["input_ids"]).to(self._device),
-                token_type_ids=torch.tensor(batch_input["token_type_ids"]).to(self._device),
+                token_type_ids=torch.tensor(batch_input["token_type_ids"]).to(
+                    self._device),
                 attention_mask=torch.tensor(batch_input["attention_mask"]).to(self._device)
-            )[0], dim=1).detach().cpu().numpy()
+            )[0]
+            if self._enable_lmag:
+                res = F.log_softmax(
+                    torch.sum(
+                        F.one_hot(
+                            logits.view(len(paraphrase_list) // self._lmag_repeat,
+                                        self._lmag_repeat, -1).argmax(dim=-1),
+                            logits.size(-1)),
+                        dim=1).float(),
+                    dim=1).detach().cpu().numpy()
+            else:
+                res = F.log_softmax(logits, dim=1).detach().cpu().numpy()
         return res
 
     def predict_dist_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):

@@ -15,6 +15,9 @@ DEFENSE_CONFIG = {
     "sem": {
         "--bert_clf_enable_sem": "1"
     },
+    "lmag": {
+        "--bert_clf_enable_lmag": "1"
+    }
 }
 
 GPU_CONFIG = {

@@ -53,7 +53,8 @@ class Benchmark(object):
                  robust_tuning_steps=0,
                  best_adv_metric_name="CESemanticSimilarityMetric",
                  best_adv_metric_lower_better=False,
-                 bert_clf_enable_sem=False):
+                 bert_clf_enable_sem=False,
+                 bert_clf_enable_lmag=False):
         """Initialize Benchmark framework.
 
         Args:
@@ -115,7 +116,8 @@ class Benchmark(object):
             bert_clf_steps=bert_clf_steps,
             bert_clf_bs=bert_clf_bs,
             ce_gpu_id=ce_gpu_id,
-            bert_clf_enable_sem=bert_clf_enable_sem
+            bert_clf_enable_sem=bert_clf_enable_sem,
+            bert_clf_enable_lmag=bert_clf_enable_lmag
         )
 
         if customized_clf:
@@ -263,6 +265,7 @@ def main():
 
     # BERT classifier related args
     parser.add_argument("--bert_clf_enable_sem", type=str, default="0")
+    parser.add_argument("--bert_clf_enable_lmag", type=str, default="0")
 
     # option on robust training vs attack
     parser.add_argument("--robust_tuning", type=str, default="0",
@@ -310,7 +313,8 @@ def main():
                           ce_gpu_id=arg_dict["ce_gpu_id"],
                           best_adv_metric_name=arg_dict["best_adv_metric_name"],
                           best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"),
-                          bert_clf_enable_sem=(arg_dict["bert_clf_enable_sem"] == "1"))
+                          bert_clf_enable_sem=(arg_dict["bert_clf_enable_sem"] == "1"),
+                          bert_clf_enable_lmag=(arg_dict["bert_clf_enable_lmag"] == "1"))
 
     log.remove_logger_tf_handler(logger)
 
