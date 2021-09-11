@@ -52,7 +52,8 @@ class Benchmark(object):
                  load_robust_tuned_clf_desc=None,
                  robust_tuning_steps=0,
                  best_adv_metric_name="CESemanticSimilarityMetric",
-                 best_adv_metric_lower_better=False):
+                 best_adv_metric_lower_better=False,
+                 bert_clf_enable_sem=False):
         """Initialize Benchmark framework.
 
         Args:
@@ -77,6 +78,7 @@ class Benchmark(object):
                 attacked. -1 for CPU.
             bert_clf_steps (int): number of steps to train the BERT text classifier.
             bert_clf_bs (int): the batch size to train the BERT classifier.
+            bert_clf_enable_sem (bool): use SEM on BERT classifier.
         """
         # make output dir
         self._output_dir = output_dir
@@ -113,6 +115,7 @@ class Benchmark(object):
             bert_clf_steps=bert_clf_steps,
             bert_clf_bs=bert_clf_bs,
             ce_gpu_id=ce_gpu_id,
+            bert_clf_enable_sem=bert_clf_enable_sem
         )
 
         if customized_clf:
@@ -258,6 +261,9 @@ def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
 def main():
     parser = argparse.ArgumentParser()
 
+    # BERT classifier related args
+    parser.add_argument("--bert_clf_enable_sem", type=str, default="0")
+
     # option on robust training vs attack
     parser.add_argument("--robust_tuning", type=str, default="0",
                         help="use 1 for robust training. (make a separate run to attack).\\"
@@ -303,7 +309,8 @@ def main():
                           robust_tuning_steps=arg_dict["robust_tuning_steps"],
                           ce_gpu_id=arg_dict["ce_gpu_id"],
                           best_adv_metric_name=arg_dict["best_adv_metric_name"],
-                          best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"))
+                          best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"),
+                          bert_clf_enable_sem=(arg_dict["bert_clf_enable_sem"] == "1"))
 
     log.remove_logger_tf_handler(logger)
 

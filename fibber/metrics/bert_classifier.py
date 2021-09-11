@@ -12,6 +12,8 @@ from transformers import BertForSequenceClassification, BertTokenizerFast
 
 from fibber import get_root_dir, log, resources
 from fibber.datasets import DatasetForBert
+from fibber.metrics.bert_classifier_utils_sem import (
+    load_or_build_sem_wordmap, sem_fix_sentences, sem_transform_dataset)
 from fibber.metrics.classifier_base import ClassifierBase
 
 logger = log.setup_custom_logger(__name__)
@@ -96,6 +98,8 @@ def load_or_train_bert_clf(model_init,
                            bert_clf_period_val,
                            bert_clf_period_save,
                            bert_clf_val_steps,
+                           bert_clf_enable_sem,
+                           bert_clf_sem_word_map,
                            device):
     """Train BERT classification model on a dataset.
 
@@ -118,12 +122,17 @@ def load_or_train_bert_clf(model_init,
             summary.
         bert_clf_period_save (int): the period in steps to save current model.
         bert_clf_val_steps (int): number of batched in each validation.
+        bert_clf_enable_sem (bool): whether to use sem to preprocess input.
+        bert_clf_sem_word_map (dict): sem word map.
         device (torch.Device): the device to run the model.
 
     Returns:
         (transformers.BertForSequenceClassification): a torch BERT model.
     """
-    model_dir = os.path.join(get_root_dir(), "bert_clf", dataset_name)
+    if bert_clf_enable_sem:
+        model_dir = os.path.join(get_root_dir(), "bert_clf_sem", dataset_name)
+    else:
+        model_dir = os.path.join(get_root_dir(), "bert_clf", dataset_name)
     ckpt_path = os.path.join(model_dir, model_init + "-%04dk" %
                              (bert_clf_steps // 1000))
 
@@ -144,6 +153,9 @@ def load_or_train_bert_clf(model_init,
     logger.info("Num labels: %s", num_labels)
 
     summary = SummaryWriter(os.path.join(model_dir, "summary"))
+
+    trainset = sem_transform_dataset(trainset, bert_clf_sem_word_map)
+    testset = sem_transform_dataset(testset, bert_clf_sem_word_map)
 
     dataloader = torch.utils.data.DataLoader(
         DatasetForBert(trainset, model_init, bert_clf_bs), batch_size=None, num_workers=2)
@@ -227,8 +239,8 @@ class BertClassifier(ClassifierBase):
                  bert_clf_steps=20000, bert_clf_bs=32, bert_clf_lr=0.00002,
                  bert_clf_optimizer="adamw", bert_clf_weight_decay=0.001,
                  bert_clf_period_summary=100, bert_clf_period_val=500,
-                 bert_clf_period_save=5000, bert_clf_val_steps=10, **kargs):
-
+                 bert_clf_period_save=5000, bert_clf_val_steps=10,
+                 bert_clf_enable_sem=False, **kargs):
         super(BertClassifier, self).__init__()
 
         if trainset["cased"]:
@@ -250,6 +262,12 @@ class BertClassifier(ClassifierBase):
             logger.info("BERT metric is running on GPU %d.", bert_gpu_id)
             self._device = torch.device("cuda:%d" % bert_gpu_id)
 
+        self._enable_sem = bert_clf_enable_sem
+        if bert_clf_enable_sem:
+            self._sem_word_map = load_or_build_sem_wordmap(dataset_name, trainset, self._device)
+        else:
+            self._sem_word_map = None
+
         self._model_init = model_init
         self._dataset_name = dataset_name
         self._model = load_or_train_bert_clf(
@@ -266,6 +284,8 @@ class BertClassifier(ClassifierBase):
             bert_clf_period_val=bert_clf_period_val,
             bert_clf_period_save=bert_clf_period_save,
             bert_clf_val_steps=bert_clf_val_steps,
+            bert_clf_enable_sem=bert_clf_enable_sem,
+            bert_clf_sem_word_map=self._sem_word_map,
             device=self._device)
         self._fine_tune_sche = None
         self._fine_tune_opt = None
@@ -283,6 +303,9 @@ class BertClassifier(ClassifierBase):
         Returns:
             (np.array): a numpy array of size ``(batch_size * num_labels)``.
         """
+        if self._enable_sem:
+            paraphrase_list = sem_fix_sentences(paraphrase_list, self._sem_word_map)
+
         if paraphrase_field == "text0":
             batch_input = self._tokenizer(text=paraphrase_list, padding=True, max_length=200,
                                           truncation=True)

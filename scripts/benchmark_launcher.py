@@ -10,6 +10,13 @@ COMMON_CONFIG = {
     "--robust_tuning_steps": 5000,
 }
 
+DEFENSE_CONFIG = {
+    "none": {},
+    "sem": {
+        "--bert_clf_enable_sem": "1"
+    },
+}
+
 GPU_CONFIG = {
     "single": {
         "--bert_gpu_id": 0,
@@ -171,6 +178,7 @@ def main():
                         default="all")
     parser.add_argument("--robust_desc", type=str, default=None)
     parser.add_argument("--robust_tuning", type=str, default="0")
+    parser.add_argument("--defense", type=str, default="none")
 
     args = parser.parse_args()
 
@@ -195,6 +203,7 @@ def main():
             command += to_command(COMMON_CONFIG)
             command += to_command(GPU_CONFIG[args.gpu])
             command += to_command(DATASET_CONFIG[dataset])
+            command += to_command(DEFENSE_CONFIG[args.defense])
             if strategy[:4] == "asrs":
                 strategy_config_tmp = copy.copy(STRATEGY_CONFIG["asrs"])
                 if strategy != "asrs":
