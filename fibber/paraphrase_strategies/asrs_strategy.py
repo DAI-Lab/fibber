@@ -199,7 +199,7 @@ def joint_weighted_criteria(
                 + clf_criteria_score(origin=origin, paraphrases=paraphrases,
                                      data_record=data_record, field_name=field_name,
                                      clf_metric=clf_metric,
-                                     clf_weight=clf_weight)) * burnin_weight
+                                     clf_weight=clf_weight))
 
     if state is not None:
         previous_criteria_score = state
@@ -208,7 +208,7 @@ def joint_weighted_criteria(
 
     candidate_criteria_score = compute_criteria_score(candidate_ids)
 
-    alpha = np.exp(candidate_criteria_score - previous_criteria_score)
+    alpha = np.exp((candidate_criteria_score - previous_criteria_score) * burnin_weight)
 
     accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
 
