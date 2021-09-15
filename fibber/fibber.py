@@ -105,7 +105,7 @@ class Fibber(object):
 
         data_record = np.random.choice(dataset["data"])
 
-        paraphrases, metrics = self.paraphrase(data_record, field_name=field, n=n)
+        _, paraphrases, metrics = self.paraphrase(data_record, field_name=field, n=n)
 
         return data_record[field], paraphrases, metrics
 

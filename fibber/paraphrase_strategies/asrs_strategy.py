@@ -485,7 +485,7 @@ class ASRSStrategy(StrategyBase):
                 else:
                     assert 0
             else:
-                pass
+                decision_fn_burnin_weight = 1
 
             final_ids, decision_fn_state = self._decision_fn(
                 tokenizer=self._tokenizer, data_record=data_record, field_name=field_name,
