@@ -186,7 +186,7 @@ def joint_weighted_criteria(
             a 1-D float array of criteria score.
     """
     if burnin_weight == 0:
-        return candidate_ids, None
+        return all_accept_criteria(candidate_ids, stats)
 
     def compute_criteria_score(fill_ids):
         batch_tensor[:, pos_st:pos_ed] = fill_ids
