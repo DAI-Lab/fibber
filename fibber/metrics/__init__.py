@@ -1,6 +1,7 @@
 from fibber.metrics.bert_classifier import BertClassifier
 from fibber.metrics.ce_semantic_similarity_metric import CESemanticSimilarityMetric
 from fibber.metrics.edit_distance_metric import EditDistanceMetric
+from fibber.metrics.fasttext_classifier import FasttextClassifier
 from fibber.metrics.glove_semantic_similarity_metric import GloVeSemanticSimilarityMetric
 from fibber.metrics.gpt2_grammar_quality_metric import GPT2GrammarQualityMetric
 from fibber.metrics.metric_base import MetricBase
@@ -15,4 +16,5 @@ __all__ = [
     "MetricBase",
     "USESemanticSimilarityMetric",
     "CESemanticSimilarityMetric",
+    "FasttextClassifier",
     "MetricBundle"]

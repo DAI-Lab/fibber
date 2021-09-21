@@ -10,6 +10,7 @@ from fibber.metrics.bert_classifier import BertClassifier
 from fibber.metrics.ce_semantic_similarity_metric import CESemanticSimilarityMetric
 from fibber.metrics.classifier_base import ClassifierBase
 from fibber.metrics.edit_distance_metric import EditDistanceMetric
+from fibber.metrics.fasttext_classifier import FasttextClassifier
 from fibber.metrics.glove_semantic_similarity_metric import GloVeSemanticSimilarityMetric
 from fibber.metrics.gpt2_grammar_quality_metric import GPT2GrammarQualityMetric
 from fibber.metrics.metric_base import MetricBase
@@ -33,6 +34,8 @@ class MetricBundle(object):
                  enable_gpt2_grammar_quality=True,
                  enable_bert_clf_prediction=False,
                  enable_ce_semantic_similarity=True,
+                 enable_fasttext_clf_prediction=False,
+                 target_clf="bert",
                  **kargs):
         """Initialize various metrics.
 
@@ -45,6 +48,11 @@ class MetricBundle(object):
             enable_gpt2_grammar_quality (bool): whether to use GPT2 to compute sentence quality.
             enable_bert_clf_prediction (bool): whether to include BERT classifier prediction in
                 metrics.
+            enable_ce_semantic_similarity (bool): whether to use Cross Encoder to measure sentence
+                similarity.
+            enable_fasttext_clf_prediction (bool): whether to include Fasttext classifier prediction
+                in metrics.
+            target_clf (str): choose from "bert", "fasttext".
             kargs: arguments for metrics. kargs will be passed to all metrics.
         """
         super(MetricBundle, self).__init__()
@@ -66,7 +74,10 @@ class MetricBundle(object):
         if enable_ce_semantic_similarity:
             self.add_metric(CESemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
         if enable_bert_clf_prediction:
-            self.add_classifier(BertClassifier(**kargs), set_target_clf=True)
+            self.add_classifier(BertClassifier(**kargs), set_target_clf=(target_clf == "bert"))
+        if enable_fasttext_clf_prediction:
+            self.add_classifier(FasttextClassifier(**kargs),
+                                set_target_clf=(target_clf == "fasttext"))
 
     def add_metric(self, metric, direction):
         """Add a customized metric to metric bundle.
