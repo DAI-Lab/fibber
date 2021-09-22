@@ -10,5 +10,6 @@ __all__ = [
     "builtin_datasets"]
 
 builtin_datasets = [
-    "ag", "ag_no_title", "mr", "imdb", "yelp", "snli", "mnli", "mnli_mis", "qnli", "sst2"
+    "ag", "ag_no_title", "mr", "imdb", "yelp", "snli", "mnli", "mnli_mis", "qnli", "sst2",
+    "expert_layman"
 ]

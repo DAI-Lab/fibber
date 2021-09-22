@@ -147,7 +147,7 @@ arg_dict = {
     "asrs_sim_threshold": 0.95,
     "asrs_ppl_weight": 5,
     "asrs_clf_weight": 3
-    "asrs_sim_metric": "CESemanticSimilarityMetric"
+    "asrs_sim_metric": "CESimilarityMetric"
 }
 
 # create a fibber object.
@@ -189,29 +189,29 @@ The output is a tuple of (str, list, list).
 # Evaluation metrics of these 5 paraphrase_list.
 
   {'EditingDistance': 8,
-   'USESemanticSimilarityMetric': 0.9523628950119019,
-   'GloVeSemanticSimilarityMetric': 0.9795315341042675,
-   'GPT2GrammarQualityMetric': 1.492070198059082,
+   'USESimilarityMetric': 0.9523628950119019,
+   'GloVeSimilarityMetric': 0.9795315341042675,
+   'GPT2PerplexityMetric': 1.492070198059082,
    'BertClassifier': 0},
   {'EditingDistance': 9,
-   'USESemanticSimilarityMetric': 0.9372092485427856,
-   'GloVeSemanticSimilarityMetric': 0.9575780832312993,
-   'GPT2GrammarQualityMetric': 0.9813404679298401,
+   'USESimilarityMetric': 0.9372092485427856,
+   'GloVeSimilarityMetric': 0.9575780832312993,
+   'GPT2PerplexityMetric': 0.9813404679298401,
    'BertClassifier': 1},
   {'EditingDistance': 11,
-   'USESemanticSimilarityMetric': 0.9265919327735901,
-   'GloVeSemanticSimilarityMetric': 0.9710499628056698,
-   'GPT2GrammarQualityMetric': 1.325406551361084,
+   'USESimilarityMetric': 0.9265919327735901,
+   'GloVeSimilarityMetric': 0.9710499628056698,
+   'GPT2PerplexityMetric': 1.325406551361084,
    'BertClassifier': 0},
   {'EditingDistance': 7,
-   'USESemanticSimilarityMetric': 0.8913971185684204,
-   'GloVeSemanticSimilarityMetric': 0.9800737898362042,
-   'GPT2GrammarQualityMetric': 1.2504483461380005,
+   'USESimilarityMetric': 0.8913971185684204,
+   'GloVeSimilarityMetric': 0.9800737898362042,
+   'GPT2PerplexityMetric': 1.2504483461380005,
    'BertClassifier': 1},
   {'EditingDistance': 8,
-   'USESemanticSimilarityMetric': 0.9124080538749695,
-   'GloVeSemanticSimilarityMetric': 0.9744155151490856,
-   'GPT2GrammarQualityMetric': 1.1626977920532227,
+   'USESimilarityMetric': 0.9124080538749695,
+   'GloVeSimilarityMetric': 0.9744155151490856,
+   'GPT2PerplexityMetric': 1.1626977920532227,
    'BertClassifier': 0}]
 ```
 

@@ -39,7 +39,7 @@ class Fibber(object):
             verify_dataset(testset)
 
         self._metric_bundle = MetricBundle(
-            enable_bert_clf_prediction=True,
+            enable_bert_classifier=True,
             use_gpu_id=arg_dict["use_gpu_id"],
             gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
             bert_gpu_id=arg_dict["bert_gpu_id"],

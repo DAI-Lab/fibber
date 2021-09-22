@@ -263,18 +263,19 @@ class DatasetForBert(torch.utils.data.IterableDataset):
           For padding positions, token type is 0.
         * The forth tensor an int tensor of size ``(batch_size,)``, representing the
           classification label.
-        * (optional) If ``masked_lm == True``, or ``dynamic_masked_lm == True``
-          the fifth tensor is a tensor of size
+        * (optional) If ``masked_lm == True`` the fifth tensor is a tensor of size
           ``(batch_size, L)``. Each entry in this tensor is either -100 if the position is
           not masked, or the correct word if the position is masked. Note that, a masked
           position is not always a ``[MASK]`` token in the first tensor. With 80%
           probability, it is a ``[MASK]``. With 10% probability, it is the original word.
           And with 10% probability, it is a random word.
+        * (optional) If ``autoregressive_lm == True`` the fifth tensor is a tensor of size
+          ``(batch_size, L)``. Each entry in this tensor is either -100 if it's [CLS], [PAD].
         * (optional) if ``include_raw_text == True``, the last item is a list of str.
     """
 
     def __init__(self, dataset, model_init, batch_size, exclude=-1,
-                 masked_lm=False, masked_lm_ratio=0.2, dynamic_masked_lm=False,
+                 masked_lm=False, masked_lm_ratio=0.2, autoregressive_lm=False,
                  include_raw_text=False, kw_and_padding=False, split_sentences=False,
                  num_keywords=0, seed=0):
         """Initialize.
@@ -288,9 +289,6 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 Use -1 (default) to include all categories.
             masked_lm (bool): whether to randomly replace words with mask tokens.
             masked_lm_ratio (float): the ratio of random masks. Ignored when masked_lm is False.
-            dynamic_masked_lm (bool): whether to generate dynamic masked language model. lm ratio
-                will be randomly sampled. ``dynamic_masked_lm`` and ``masked_lm`` should not be
-                set True at the same time.
             kw_and_padding (bool): use keywords as the first sentence, and the field to paraphrase
                 as the second sentence. Add a padding symbol at the beginning of the first
                 sentence to input sentence embedding later.
@@ -313,10 +311,10 @@ class DatasetForBert(torch.utils.data.IterableDataset):
         self._masked_lm_ratio = masked_lm_ratio
         self._mask_tok_id = self._tokenizer.mask_token_id
 
-        if dynamic_masked_lm and masked_lm:
-            raise RuntimeError("Cannot have dynamic_masked_lm and masked_lm both True.")
+        self._autoregressive_lm = autoregressive_lm
+        if self._autoregressive_lm and self._masked_lm:
+            raise RuntimeError("masked_lm and autoregressive_lm are used at the same time.")
 
-        self._dynamic_masked_lm = dynamic_masked_lm
         self._include_raw_text = include_raw_text
         self._kw_and_padding = kw_and_padding
         if kw_and_padding:
@@ -402,19 +400,15 @@ class DatasetForBert(torch.utils.data.IterableDataset):
             labels = np.asarray(labels)
             tok_types = np.asarray(tok_types)
 
-            if not self._masked_lm and not self._dynamic_masked_lm:
+            if not self._masked_lm and not self._autoregressive_lm:
                 ret = [torch.tensor(x) for x in [texts, masks, tok_types, labels]]
                 if self._include_raw_text:
                     ret.append(raw_text)
                 yield tuple(ret)
-            else:
+            elif self._masked_lm:
                 rand_t = self._rng.rand(self._batch_size, max_text_len)
 
-                if self._masked_lm:
-                    mask_pos_threshold = np.asarray([self._masked_lm_ratio] * self._batch_size)
-                elif self._dynamic_masked_lm:
-                    mask_pos_threshold = self._rng.rand(self._batch_size)
-                masked_pos = (rand_t < mask_pos_threshold[:, None]) * masks
+                masked_pos = (rand_t < self._masked_lm_ratio) * masks
 
                 # No mask on cls and sep.
                 masked_pos[:, 0] = 0
@@ -441,3 +435,18 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                     ret.append(raw_text)
 
                 yield tuple(ret)
+            elif self._autoregressive_lm:
+                lm_labels = texts * masks - 100 * (1 - masks)
+                # do not predict CLS
+                lm_labels[:, 0] = -100
+
+                # if use keywords, do not predict the first sentence
+                if self._kw_and_padding:
+                    for id, l0 in enumerate(l0s):
+                        lm_labels[id, :l0] = -100
+
+                ret = [torch.tensor(x) for x in [texts, masks, tok_types, labels, lm_labels]]
+                if self._include_raw_text:
+                    ret.append(raw_text)
+            else:
+                raise RuntimeError("unexpected branch.")

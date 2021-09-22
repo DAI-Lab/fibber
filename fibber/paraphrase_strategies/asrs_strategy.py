@@ -7,7 +7,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from fibber import log
-from fibber.paraphrase_strategies.asrs_utils_lm import get_lm
+from fibber.metrics.bert_lm_utils import get_lm
 from fibber.paraphrase_strategies.asrs_utils_text_parser import TextParser
 from fibber.paraphrase_strategies.asrs_utils_wpe import get_wordpiece_emb
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
@@ -124,7 +124,7 @@ def ppl_criteria_score(origin, paraphrases, ppl_metric, ppl_weight):
     Args:
         origin (str): original sentence.
         paraphrases ([str]): a list of paraphrase_list.
-        ppl_metric (GPT2GrammarQualityMetric): a GPT2GrammarQualityMetric metric object.
+        ppl_metric (GPT2PerplexityMetric): a GPT2PerplexityMetric metric object.
         ppl_weight (float): the weight parameter for the criteria.
 
     Returns:
@@ -167,12 +167,12 @@ def joint_weighted_criteria(
             size ``(batch_size, pos_ed-pos_st)``.
         candidate_ids (torch.Tensor): proposed word ids in this sampling step with
             size ``(batch_size, pos_ed-pos_st)``.
-        sim_metric (USESemanticSimilarityMetric): a universal sentence encoder metric object.
+        sim_metric (USESimilarityMetric): a universal sentence encoder metric object.
         sim_threshold (float): the universal sentence encoder similarity threshold.
         sim_weight (float): the weight for USE criteria score.
         clf_metric (BertClassifier): a BertClassifier metric.
         clf_weight (float): the weight for BERT criteria score.
-        ppl_metric (GPT2GrammarQualityMetric): a GPT2GrammarQualityMetric metric.
+        ppl_metric (GPT2PerplexityMetric): a GPT2PerplexityMetric metric.
         ppl_weight (float): the weight for GPT2 criteria score.
         burnin_weight (float): the discount factor.
         stats (dict): a dict to keep track the accept rate.
@@ -272,7 +272,7 @@ class ASRSStrategy(StrategyBase):
         ("lm_steps", int, 5000, "lm training steps."),
         ("clf_weight", float, 3, "weight for the clf score in the criteria."),
         ("ppl_weight", float, 5, "the smoothing parameter for gpt2."),
-        ("sim_metric", str, "CESemanticSimilarityMetric", "similarity metric")
+        ("sim_metric", str, "CESimilarityMetric", "similarity metric")
     ]
 
     def __repr__(self):
@@ -283,7 +283,7 @@ class ASRSStrategy(StrategyBase):
         logger.info("Load bert language model for ASRSStrategy.")
 
         self._tokenizer, lm = get_lm(
-            self._strategy_config["lm_option"], self._output_dir, trainset, self._device,
+            self._strategy_config["lm_option"], self._dataset_name, trainset, self._device,
             self._strategy_config["lm_steps"])
         if isinstance(lm, list):
             self._bert_lms = lm
@@ -295,7 +295,7 @@ class ASRSStrategy(StrategyBase):
         self._sim_metric = self._metric_bundle.get_metric(
             self._strategy_config["sim_metric"])
         self._clf_metric = self._metric_bundle.get_target_classifier()
-        self._ppl_metric = self._metric_bundle.get_metric("GPT2GrammarQualityMetric")
+        self._ppl_metric = self._metric_bundle.get_metric("GPT2PerplexityMetric")
 
         # load word piece embeddings.
         wpe = get_wordpiece_emb(self._output_dir, self._dataset_name, trainset, self._device)

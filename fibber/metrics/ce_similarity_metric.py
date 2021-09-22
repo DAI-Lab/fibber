@@ -8,7 +8,7 @@ from fibber.metrics.metric_base import MetricBase
 logger = log.setup_custom_logger(__name__)
 
 
-class CESemanticSimilarityMetric(MetricBase):
+class CESimilarityMetric(MetricBase):
     """This metric computes the semantic similarity of two sentences using Cross Encoder model.
 
     By default the we use stsb-roberta-large model.
@@ -18,7 +18,7 @@ class CESemanticSimilarityMetric(MetricBase):
 
     def __init__(self, ce_pretrained_model="stsb-roberta-large", ce_gpu_id=-1, **kargs):
         """Initialize ce model."""
-        super(CESemanticSimilarityMetric, self).__init__()
+        super(CESimilarityMetric, self).__init__()
 
         if ce_gpu_id == -1:
             logger.warning("CE metric is running on CPU.")
@@ -28,8 +28,6 @@ class CESemanticSimilarityMetric(MetricBase):
             device = "cuda:%d" % ce_gpu_id
 
         logger.info("load ce model.")
-
-        # TODO: use resources utils to manage model.
 
         self._model = CrossEncoder(resources.get_transformers(ce_pretrained_model),
                                    device=device)

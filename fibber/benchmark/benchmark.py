@@ -48,7 +48,7 @@ class Benchmark(object):
                  bert_clf_bs=32,
                  load_robust_tuned_clf_desc=None,
                  robust_tuning_steps=0,
-                 best_adv_metric_name="CESemanticSimilarityMetric",
+                 best_adv_metric_name="CESimilarityMetric",
                  best_adv_metric_lower_better=False,
                  bert_clf_enable_sem=False,
                  bert_clf_enable_lmag=False):
@@ -106,7 +106,7 @@ class Benchmark(object):
 
         # setup metric bundle
         self._metric_bundle = MetricBundle(
-            enable_bert_clf_prediction=enable_bert_clf,
+            enable_bert_classifier=enable_bert_clf,
             use_gpu_id=use_gpu_id, gpt2_gpu_id=gpt2_gpu_id,
             bert_gpu_id=bert_gpu_id, dataset_name=dataset_name,
             trainset=self._trainset, testset=testset,
@@ -286,7 +286,7 @@ def main():
     parser.add_argument("--use_gpu_id", type=int, default=-1)
     parser.add_argument("--bert_clf_steps", type=int, default=20000)
     parser.add_argument("--ce_gpu_id", type=int, default=-1)
-    parser.add_argument("--best_adv_metric_name", type=str, default="CESemanticSimilarityMetric")
+    parser.add_argument("--best_adv_metric_name", type=str, default="CESimilarityMetric")
     parser.add_argument("--best_adv_lower_better", type=str, default="0")
 
     # add builtin strategies' args to parser.

@@ -35,13 +35,13 @@ def config_tf_gpu(gpu_id):
             tf.config.experimental.set_memory_growth(device, True)
 
 
-class USESemanticSimilarityMetric(MetricBase):
+class USESimilarityMetric(MetricBase):
     """This metric uses universal sentence encoder to measure the semantic similarity of
     two sentences."""
 
     def __init__(self, use_gpu_id=-1, **kargs):
         """Initialize universal sentence encoder."""
-        super(USESemanticSimilarityMetric, self).__init__()
+        super(USESimilarityMetric, self).__init__()
         logger.info("load universal sentence encoder")
         config_tf_gpu(use_gpu_id)
         if use_gpu_id == -1:

@@ -24,7 +24,9 @@ install_requires = [
     'nltk>=3.0',
     'rake_nltk>=1.0.4',
     'stanza>=1.1.0',
-    'sentence-transformers>=0.3.0'
+    'sentence-transformers>=0.3.0',
+    'rake_nltk>=1.0.4',
+    'fasttext>=0.9.0'
 ]
 
 setup_requires = [

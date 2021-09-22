@@ -7,14 +7,17 @@ import tqdm
 
 from fibber import log
 from fibber.metrics.bert_classifier import BertClassifier
-from fibber.metrics.ce_semantic_similarity_metric import CESemanticSimilarityMetric
+from fibber.metrics.bert_perplexity_metric import BertPerplexityMetric
+from fibber.metrics.ce_similarity_metric import CESimilarityMetric
 from fibber.metrics.classifier_base import ClassifierBase
 from fibber.metrics.edit_distance_metric import EditDistanceMetric
 from fibber.metrics.fasttext_classifier import FasttextClassifier
-from fibber.metrics.glove_semantic_similarity_metric import GloVeSemanticSimilarityMetric
-from fibber.metrics.gpt2_grammar_quality_metric import GPT2GrammarQualityMetric
+from fibber.metrics.glove_similarity_metric import GloVeSimilarityMetric
+from fibber.metrics.gpt2_perplexity_metric import GPT2PerplexityMetric
 from fibber.metrics.metric_base import MetricBase
-from fibber.metrics.use_semantic_similarity_metric import USESemanticSimilarityMetric
+from fibber.metrics.ref_bleu_metric import RefBleuMetric
+from fibber.metrics.self_bleu_metric import SelfBleuMetric
+from fibber.metrics.use_similarity_metric import USESimilarityMetric
 
 logger = log.setup_custom_logger(__name__)
 
@@ -29,28 +32,31 @@ class MetricBundle(object):
 
     def __init__(self,
                  enable_edit_distance=True,
-                 enable_use_semantic_similarity=True,
-                 enable_glove_semantic_similarity=True,
-                 enable_gpt2_grammar_quality=True,
-                 enable_bert_clf_prediction=False,
-                 enable_ce_semantic_similarity=True,
-                 enable_fasttext_clf_prediction=False,
+                 enable_use_similarity=True,
+                 enable_glove_similarity=True,
+                 enable_gpt2_perplexity=True,
+                 enable_bert_classifier=False,
+                 enable_ce_similarity=True,
+                 enable_fasttext_classifier=False,
+                 enable_bert_perplexity=False,
+                 enable_self_bleu=False,
+                 enalbe_ref_bleu=False,
                  target_clf="bert",
                  **kargs):
         """Initialize various metrics.
 
         Args:
             enable_edit_distance (bool): whether to use editing distance in the bundle.
-            enable_use_semantic_similarity (bool): whether to use Universal sentence encoder to
+            enable_use_similarity (bool): whether to use Universal sentence encoder to
                 compute sentence similarity
-            enable_glove_semantic_similarity (bool): whether to use Glove embeddings to compute
+            enable_glove_similarity (bool): whether to use Glove embeddings to compute
                 sentence similarity.
-            enable_gpt2_grammar_quality (bool): whether to use GPT2 to compute sentence quality.
-            enable_bert_clf_prediction (bool): whether to include BERT classifier prediction in
+            enable_gpt2_perplexity (bool): whether to use GPT2 to compute sentence quality.
+            enable_bert_classifier (bool): whether to include BERT classifier prediction in
                 metrics.
-            enable_ce_semantic_similarity (bool): whether to use Cross Encoder to measure sentence
+            enable_ce_similarity (bool): whether to use Cross Encoder to measure sentence
                 similarity.
-            enable_fasttext_clf_prediction (bool): whether to include Fasttext classifier prediction
+            enable_fasttext_classifier (bool): whether to include Fasttext classifier prediction
                 in metrics.
             target_clf (str): choose from "bert", "fasttext".
             kargs: arguments for metrics. kargs will be passed to all metrics.
@@ -64,20 +70,26 @@ class MetricBundle(object):
         self._advanced_aggregation_fn = {}
 
         if enable_edit_distance:
-            self.add_metric(EditDistanceMetric(**kargs), DIRECTION_HIGHER_BETTER)
-        if enable_use_semantic_similarity:
-            self.add_metric(USESemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
-        if enable_glove_semantic_similarity:
-            self.add_metric(GloVeSemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
-        if enable_gpt2_grammar_quality:
-            self.add_metric(GPT2GrammarQualityMetric(**kargs), DIRECTION_LOWER_BETTER)
-        if enable_ce_semantic_similarity:
-            self.add_metric(CESemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
-        if enable_bert_clf_prediction:
+            self.add_metric(EditDistanceMetric(**kargs), DIRECTION_UNKNOWN)
+        if enable_use_similarity:
+            self.add_metric(USESimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
+        if enable_glove_similarity:
+            self.add_metric(GloVeSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
+        if enable_gpt2_perplexity:
+            self.add_metric(GPT2PerplexityMetric(**kargs), DIRECTION_LOWER_BETTER)
+        if enable_ce_similarity:
+            self.add_metric(CESimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
+        if enable_bert_classifier:
             self.add_classifier(BertClassifier(**kargs), set_target_clf=(target_clf == "bert"))
-        if enable_fasttext_clf_prediction:
+        if enable_fasttext_classifier:
             self.add_classifier(FasttextClassifier(**kargs),
                                 set_target_clf=(target_clf == "fasttext"))
+        if enable_bert_perplexity:
+            self.add_metric(BertPerplexityMetric(**kargs), DIRECTION_LOWER_BETTER)
+        if enable_self_bleu:
+            self.add_metric(SelfBleuMetric(**kargs), DIRECTION_UNKNOWN)
+        if enalbe_ref_bleu:
+            self.add_metric(RefBleuMetric(**kargs), DIRECTION_HIGHER_BETTER)
 
     def add_metric(self, metric, direction):
         """Add a customized metric to metric bundle.

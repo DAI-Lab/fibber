@@ -4,11 +4,10 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import tqdm
-from torch import nn
 from torch.utils.tensorboard import SummaryWriter
 from transformers import BertForMaskedLM, BertTokenizerFast
 
-from fibber import log, resources
+from fibber import get_root_dir, log, resources
 from fibber.datasets import DatasetForBert
 from fibber.metrics.bert_classifier import get_optimizer
 
@@ -49,6 +48,7 @@ def compute_lm_loss(lm_model, seq, mask, tok_type, lm_label, stats):
     Returns:
         (torch.Scalar) a scalar loss value.
     """
+    assert not lm_model.is_decoder
     lm_hid = lm_model.bert(seq, mask, tok_type)[0]
     lm_hid = torch.masked_select(lm_hid, lm_label.gt(0).unsqueeze(2)).view(-1, lm_hid.size(2))
     logits = lm_model.cls(lm_hid)
@@ -69,7 +69,7 @@ def compute_lm_loss(lm_model, seq, mask, tok_type, lm_label, stats):
 
 def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
                  lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
-                 lm_period_summary=100, lm_period_save=5000):
+                 lm_period_summary=100, lm_period_save=5000, as_masked_lm=True):
     """Returns a finetuned BERT language model on a given dataset.
 
     The language model will be stored at ``<output_dir>/lm_all`` if filter is -1, or
@@ -90,14 +90,23 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
         lm_decay (float): weight decay for the optimizer.
         lm_period_summary (int): number of steps to write training summary.
         lm_period_save (int): number of steps to save the finetuned model.
+        as_masked_lm (bool): use BERT as a masked language model. If False, use as auto-regressive.
     Returns:
         (BertForMaskedLM): a finetuned language model.
     """
-    if filter == -1:
-        output_dir_t = os.path.join(output_dir, "lm_all")
-    else:
-        output_dir_t = os.path.join(output_dir, "lm_filter_%d" % filter)
 
+    if as_masked_lm:
+        if filter == -1:
+            folder = "masked_lm_all"
+        else:
+            folder = "masked_lm_filter_%d" % filter
+    else:
+        if filter == -1:
+            folder = "autoregressive_lm_all"
+        else:
+            folder = "autoregressive_lm_filter_%d" % filter
+
+    output_dir_t = os.path.join(output_dir, folder)
     summary = SummaryWriter(output_dir_t + "/summary")
 
     if trainset["cased"]:
@@ -110,13 +119,19 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
 
     if os.path.exists(ckpt_path):
         logger.info("Language model <%s> exists.", ckpt_path)
-        return BertForMaskedLM.from_pretrained(ckpt_path).eval()
+        return BertForMaskedLM.from_pretrained(ckpt_path, is_decoder=not as_masked_lm).eval()
 
-    lm_model = BertForMaskedLM.from_pretrained(resources.get_transformers(model_init))
+    lm_model = BertForMaskedLM.from_pretrained(resources.get_transformers(model_init),
+                                               is_decoder=not as_masked_lm)
     lm_model.train()
     lm_model.to(device)
 
-    dataset = DatasetForBert(trainset, model_init, lm_bs, exclude=filter, masked_lm=True)
+    if as_masked_lm:
+        dataset = DatasetForBert(trainset, model_init, lm_bs, exclude=filter, masked_lm=True)
+    else:
+        dataset = DatasetForBert(trainset, model_init, lm_bs, exclude=filter,
+                                 autoregressive_lm=True)
+
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=None, num_workers=2)
 
@@ -134,11 +149,9 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
         seq = seq.to(device)
         mask = mask.to(device)
         tok_type = tok_type.to(device)
-        label = label.to(device)
         lm_label = lm_label.to(device)
 
-        lm_loss = compute_lm_loss(
-            lm_model, seq, mask, tok_type, lm_label, stats)
+        lm_loss = compute_lm_loss(lm_model, seq, mask, tok_type, lm_label, stats)
         lm_loss.backward()
 
         opt.step()
@@ -161,7 +174,7 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
     return lm_model
 
 
-def get_lm(lm_option, output_dir, trainset, device, lm_steps=5000, lm_bs=32,
+def get_lm(lm_option, dataset_name, trainset, device, lm_steps=5000, lm_bs=32,
            lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
            lm_period_summary=100, lm_period_save=5000, **kwargs):
     """Returns a BERT language model or a list of language models on a given dataset.
@@ -175,13 +188,12 @@ def get_lm(lm_option, output_dir, trainset, device, lm_steps=5000, lm_bs=32,
     The re
 
     Args:
-        lm_option (str): choose from `["pretrain", "finetune", "adv", "nartune"]`.
+        lm_option (str): choose from `["pretrain", "finetune", "adv"]`.
             pretrain means the pretrained BERT model without fine-tuning on current
             dataset.
             finetune means fine-tuning the BERT model on current dataset.
             adv means adversarial tuning on current dataset.
-            nartune means tuning the
-        output_dir (str): a directory to store pretrained language model.
+        dataset_name (str): a directory to store pretrained language model.
         trainset (DatasetForBert): the training set for finetune the language model.
         device (torch.Device): a device to train the model.
         lm_steps (int): finetuning steps.
@@ -207,6 +219,8 @@ def get_lm(lm_option, output_dir, trainset, device, lm_steps=5000, lm_bs=32,
         resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
     tokenizer.do_lower_case = True if "uncased" in model_init else False
 
+    output_dir = os.path.join(get_root_dir(), "bert_lm", dataset_name)
+
     if lm_option == "pretrain":
         bert_lm = BertForMaskedLM.from_pretrained(
             resources.get_transformers(model_init))
@@ -223,6 +237,11 @@ def get_lm(lm_option, output_dir, trainset, device, lm_steps=5000, lm_bs=32,
                 lm_steps=lm_steps, lm_bs=lm_bs, lm_opt=lm_opt, lm_lr=lm_lr, lm_decay=lm_decay,
                 lm_period_summary=lm_period_summary, lm_period_save=lm_period_save)
             bert_lm.append(lm)
+    elif lm_option == "ppl":
+        bert_lm = fine_tune_lm(
+            output_dir, trainset, -1, device,
+            lm_steps=lm_steps, lm_bs=lm_bs, lm_opt=lm_opt, lm_lr=lm_lr, lm_decay=lm_decay,
+            lm_period_summary=lm_period_summary, lm_period_save=lm_period_save, as_masked_lm=False)
     else:
         raise RuntimeError("unsupported lm_option")
 

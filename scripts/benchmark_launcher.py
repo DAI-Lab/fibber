@@ -141,7 +141,7 @@ STRATEGY_CONFIG = {
         "--asrs_split_sentence": "auto",
         "--asrs_lm_option": "finetune",
         "--asrs_stanza_port": 9001,
-        "--asrs_sim_metric": "CESemanticSimilarityMetric",
+        "--asrs_sim_metric": "CESimilarityMetric",
         "--robust_tune_num_attack_per_step": 5
     },
     "asrs-nli": {
@@ -150,15 +150,15 @@ STRATEGY_CONFIG = {
         "--asrs_clf_weight": 3,
     },
     "asrs-u": {
-        "--asrs_sim_metric": "USESemanticSimilarityMetric",
-        "--best_adv_metric_name": "USESemanticSimilarityMetric"
+        "--asrs_sim_metric": "USESimilarityMetric",
+        "--best_adv_metric_name": "USESimilarityMetric"
     },
     "asrs-u-nli": {
         "--asrs_sim_weight": 100,
         "--asrs_ppl_weight": 3,
         "--asrs_clf_weight": 3,
-        "--asrs_sim_metric": "USESemanticSimilarityMetric",
-        "--best_adv_metric_name": "USESemanticSimilarityMetric"
+        "--asrs_sim_metric": "USESimilarityMetric",
+        "--best_adv_metric_name": "USESimilarityMetric"
     }
 }
 

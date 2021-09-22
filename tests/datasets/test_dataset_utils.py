@@ -43,8 +43,8 @@ def test_keywords_extractor():
 
 def test_dataset_with_kw_and_padding(mock_dataset):
     dataset = DatasetForBert(
-        mock_dataset, "bert-base-uncased", 1, masked_lm=False,
-        include_raw_text=False, dynamic_masked_lm=True, kw_and_padding=True, num_keywords=3)
+        mock_dataset, "bert-base-uncased", 1, masked_lm=True,
+        include_raw_text=False, kw_and_padding=True, num_keywords=3)
 
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=None, num_workers=1)
     dataloader_iter = iter(dataloader)

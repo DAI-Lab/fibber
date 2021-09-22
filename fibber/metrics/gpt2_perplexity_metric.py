@@ -37,14 +37,14 @@ def make_batch(toks_list):
     return ids, mask
 
 
-class GPT2GrammarQualityMetric(MetricBase):
+class GPT2PerplexityMetric(MetricBase):
     """This metric computes the perplexity of paraphrased text divided by the perplexity of
     original text. The perplexity is measured using GPT2 model.
     """
 
     def __init__(self, gpt2_pretrained_model="gpt2-medium", gpt2_gpu_id=-1, **kargs):
         """Initialize GPT2 model."""
-        super(GPT2GrammarQualityMetric, self).__init__()
+        super(GPT2PerplexityMetric, self).__init__()
 
         logger.info("load gpt2 model.")
         self._tokenizer = GPT2TokenizerFast.from_pretrained(

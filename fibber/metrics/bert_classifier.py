@@ -155,8 +155,9 @@ def load_or_train_bert_clf(model_init,
 
     summary = SummaryWriter(os.path.join(model_dir, "summary"))
 
-    trainset = sem_transform_dataset(trainset, bert_clf_sem_word_map)
-    testset = sem_transform_dataset(testset, bert_clf_sem_word_map)
+    if bert_clf_enable_sem:
+        trainset = sem_transform_dataset(trainset, bert_clf_sem_word_map)
+        testset = sem_transform_dataset(testset, bert_clf_sem_word_map)
 
     dataloader = torch.utils.data.DataLoader(
         DatasetForBert(trainset, model_init, bert_clf_bs), batch_size=None, num_workers=2)
@@ -271,8 +272,8 @@ class BertClassifier(ClassifierBase):
 
         self._enable_lmag = bert_clf_enable_lmag
         if bert_clf_enable_lmag:
-            from fibber.paraphrase_strategies.asrs_utils_lm import get_lm
-            _, self._lm = get_lm("finetune", "exp-%s/" % dataset_name, trainset, self._device)
+            from fibber.metrics.bert_lm_utils import get_lm
+            _, self._lm = get_lm("finetune", dataset_name, trainset, self._device)
             self._lm = self._lm.eval().to(self._device)
             self._lmag_repeat = 10
 
@@ -330,7 +331,6 @@ class BertClassifier(ClassifierBase):
             batch_input = self._tokenizer(text=[data_record["text0"]] * len(paraphrase_list),
                                           text_pair=paraphrase_list,
                                           padding=True, max_length=200,
-
                                           truncation=True)
         with torch.no_grad():
             logits = self._model(

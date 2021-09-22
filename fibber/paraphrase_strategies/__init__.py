@@ -6,4 +6,4 @@ from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.paraphrase_strategies.textattack_strategy import TextAttackStrategy
 
 __all__ = ["IdentityStrategy", "RandomStrategy", "StrategyBase", "ASRSStrategy",
-           "TextAttackStrategy",  "CheatStrategy"]
+           "TextAttackStrategy", "CheatStrategy"]
