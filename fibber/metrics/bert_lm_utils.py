@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 import tqdm
 from torch.utils.tensorboard import SummaryWriter
-from transformers import BertForMaskedLM, BertTokenizerFast
+from transformers import BertConfig, BertForMaskedLM, BertLMHeadModel, BertTokenizerFast
 
 from fibber import get_root_dir, log, resources
 from fibber.datasets import DatasetForBert
@@ -16,8 +16,8 @@ logger = log.setup_custom_logger(__name__)
 
 def write_summary(stats, summary, global_step):
     """Save langauge model training summary."""
-    summary.add_scalar("attack/loss_lm", np.mean(stats["lm_loss"]), global_step)
-    summary.add_scalar("attack/error_lm", 1 - stats["lm_correct"] / stats["lm_total"],
+    summary.add_scalar("loss_lm", np.mean(stats["lm_loss"]), global_step)
+    summary.add_scalar("error_lm", 1 - stats["lm_correct"] / stats["lm_total"],
                        global_step)
 
 
@@ -48,7 +48,6 @@ def compute_lm_loss(lm_model, seq, mask, tok_type, lm_label, stats):
     Returns:
         (torch.Scalar) a scalar loss value.
     """
-    assert not lm_model.is_decoder
     lm_hid = lm_model.bert(seq, mask, tok_type)[0]
     lm_hid = torch.masked_select(lm_hid, lm_label.gt(0).unsqueeze(2)).view(-1, lm_hid.size(2))
     logits = lm_model.cls(lm_hid)
@@ -119,19 +118,25 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
 
     if os.path.exists(ckpt_path):
         logger.info("Language model <%s> exists.", ckpt_path)
-        return BertForMaskedLM.from_pretrained(ckpt_path, is_decoder=not as_masked_lm).eval()
-
-    lm_model = BertForMaskedLM.from_pretrained(resources.get_transformers(model_init),
-                                               is_decoder=not as_masked_lm)
-    lm_model.train()
-    lm_model.to(device)
+        if as_masked_lm:
+            return BertForMaskedLM.from_pretrained(ckpt_path).eval()
+        else:
+            config = BertConfig.from_pretrained(resources.get_transformers(model_init))
+            config.is_decoder = True
+            return BertLMHeadModel.from_pretrained(ckpt_path, config=config).eval()
 
     if as_masked_lm:
         dataset = DatasetForBert(trainset, model_init, lm_bs, exclude=filter, masked_lm=True)
+        lm_model = BertForMaskedLM.from_pretrained(resources.get_transformers(model_init))
     else:
         dataset = DatasetForBert(trainset, model_init, lm_bs, exclude=filter,
                                  autoregressive_lm=True)
-
+        config = BertConfig.from_pretrained(resources.get_transformers(model_init))
+        config.is_decoder = True
+        lm_model = BertLMHeadModel.from_pretrained(resources.get_transformers(model_init),
+                                                   config=config)
+    lm_model.train()
+    lm_model.to(device)
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=None, num_workers=2)
 

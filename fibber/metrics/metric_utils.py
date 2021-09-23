@@ -40,7 +40,7 @@ class MetricBundle(object):
                  enable_fasttext_classifier=False,
                  enable_bert_perplexity=False,
                  enable_self_bleu=False,
-                 enalbe_ref_bleu=False,
+                 enable_ref_bleu=False,
                  target_clf="bert",
                  **kargs):
         """Initialize various metrics.
@@ -88,7 +88,7 @@ class MetricBundle(object):
             self.add_metric(BertPerplexityMetric(**kargs), DIRECTION_LOWER_BETTER)
         if enable_self_bleu:
             self.add_metric(SelfBleuMetric(**kargs), DIRECTION_UNKNOWN)
-        if enalbe_ref_bleu:
+        if enable_ref_bleu:
             self.add_metric(RefBleuMetric(**kargs), DIRECTION_HIGHER_BETTER)
 
     def add_metric(self, metric, direction):

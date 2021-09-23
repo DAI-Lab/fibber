@@ -102,6 +102,7 @@ class Benchmark(object):
             ce_gpu_id=ce_gpu_id,
             enable_ce_similarity=False,
             enable_glove_similarity=False,
+            enable_self_bleu=True,
             enable_ref_bleu=True,
             enable_bert_perplexity=True,
             enable_fasttext_classifier=True,

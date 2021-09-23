@@ -28,4 +28,4 @@ class SelfBleuMetric(MetricBase):
         """
         ref = word_tokenize(origin)
         hypo = word_tokenize(paraphrase)
-        return bleu_score([ref], hypo)
+        return bleu_score.sentence_bleu([ref], hypo)

@@ -448,5 +448,6 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 ret = [torch.tensor(x) for x in [texts, masks, tok_types, labels, lm_labels]]
                 if self._include_raw_text:
                     ret.append(raw_text)
+                yield tuple(ret)
             else:
                 raise RuntimeError("unexpected branch.")

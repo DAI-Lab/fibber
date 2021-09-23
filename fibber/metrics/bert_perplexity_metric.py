@@ -31,6 +31,7 @@ class BertPerplexityMetric(MetricBase):
 
         logger.info("load bert perplexity model.")
         self._tokenizer, self._model = get_lm("ppl", dataset_name, trainset, self._device)
+        self._model.to(self._device)
 
     def _get_ppl(self, sentences, data_record, paraphrase_field, use_mean):
         """Compute the perplexity of sentences."""

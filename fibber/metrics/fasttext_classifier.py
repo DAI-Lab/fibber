@@ -2,6 +2,7 @@ import os
 import tempfile
 
 import fasttext
+import numpy as np
 
 from fibber import get_root_dir, log
 from fibber.metrics.classifier_base import ClassifierBase
@@ -45,6 +46,7 @@ class FasttextClassifier(ClassifierBase):
 
         if os.path.exists(model_filename):
             self._model = fasttext.load_model(model_filename)
+            self._n_class = len(trainset["label_mapping"])
         else:
             tmp_dir = tempfile.gettempdir()
             fasttext_train_filename = os.path.join(tmp_dir, "%s.train" % dataset_name)
@@ -75,7 +77,7 @@ class FasttextClassifier(ClassifierBase):
         """
         labels, probs = self._model.predict(paraphrase, k=self._n_class)
         ret = np.zeros(self._n_class)
-        for l, p in zip(labels, probs):
-            idx = int(item[len("__label__"):])
-            ret[idx] = p
+        for label, prob in zip(labels, probs):
+            idx = int(label[len("__label__"):])
+            ret[idx] = prob
         return ret
