@@ -21,19 +21,19 @@ DEFENSE_CONFIG = {
 }
 
 GPU_CONFIG = {
-    "single": {
+    "0": {
         "--bert_gpu_id": 0,
         "--use_gpu_id": 0,
         "--gpt2_gpu_id": 0,
         "--strategy_gpu_id": 0,
         "--ce_gpu_id": 0
     },
-    "multi": {
-        "--bert_gpu_id": 0,
-        "--use_gpu_id": 0,
+    "1": {
+        "--bert_gpu_id": 1,
+        "--use_gpu_id": 1,
         "--gpt2_gpu_id": 1,
         "--ce_gpu_id": 1,
-        "--strategy_gpu_id": 2,
+        "--strategy_gpu_id": 1,
     }
 }
 
@@ -98,8 +98,8 @@ STRATEGY_CONFIG = {
         "--robust_tune_num_attack_per_step": 20
     },
     "pso": {
-        "--strategy": "TextAttackStrategy",
-        "--ta_recipe": "PSOZang2020",
+        "--strategy": "OpenAttackStrategy",
+        "--ta_recipe": "PSOAttacker",
         "--robust_tune_num_attack_per_step": 5
     },
     "bertattack": {
@@ -175,7 +175,7 @@ def to_command(args):
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--gpu", choices=["single", "multi"], default="single")
+    parser.add_argument("--gpu", choices=list(GPU_CONFIG.keys()), default="0")
     parser.add_argument("--dataset", choices=list(DATASET_CONFIG.keys()) + ["all"], default="all")
     parser.add_argument("--strategy", choices=list(STRATEGY_CONFIG.keys()) + ["all"],
                         default="all")
