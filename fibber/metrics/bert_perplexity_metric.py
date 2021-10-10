@@ -33,7 +33,7 @@ class BertPerplexityMetric(MetricBase):
         self._tokenizer, self._model = get_lm("ppl", dataset_name, trainset, self._device)
         self._model.to(self._device)
 
-    def _get_ppl(self, sentences, data_record, paraphrase_field, use_mean):
+    def _get_ppl(self, sentences, data_record, paraphrase_field):
         """Compute the perplexity of sentences."""
         if paraphrase_field == "text0":
             batch_input = self._tokenizer(text=sentences, padding=True, max_length=200,
@@ -63,7 +63,7 @@ class BertPerplexityMetric(MetricBase):
         return ppl
 
     def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0",
-                      use_ratio=False, use_mean=True):
+                      use_ratio=False):
         """Measure the metric on a batch of paraphrase_list.
 
         Args:
@@ -76,15 +76,14 @@ class BertPerplexityMetric(MetricBase):
             (list): a list containing the USE similarity metric for each paraphrase.
         """
         if use_ratio:
-            res = self._get_ppl([origin, paraphrase_list], data_record, paraphrase_field,
-                                use_mean=use_mean)
+            res = self._get_ppl([origin] + paraphrase_list, data_record, paraphrase_field)
             res = res[1:] / res[0]
         else:
-            res = self._get_ppl(paraphrase_list, data_record, paraphrase_field, use_mean=use_mean)
+            res = self._get_ppl(paraphrase_list, data_record, paraphrase_field)
         return [float(x) for x in res]
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0",
-                        use_ratio=False, use_mean=True):
+                        use_ratio=False):
         """Compute the perplexity ratio.
 
         Args:
@@ -94,4 +93,4 @@ class BertPerplexityMetric(MetricBase):
             paraphrase_field: ignored.
         """
         return self.measure_batch(origin, [paraphrase], data_record, paraphrase_field,
-                                  use_ratio=use_ratio, use_mean=use_mean)
+                                  use_ratio=use_ratio)[0]

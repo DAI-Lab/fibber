@@ -103,13 +103,18 @@ STRATEGY_CONFIG = {
         "--robust_tune_num_attack_per_step": 5
     },
     "bertattack": {
-        "--strategy": "TextAttackStrategy",
-        "--ta_recipe": "BERTAttackLi2020",
+        "--strategy": "OpenAttackStrategy",
+        "--oa_recipe": "BERTAttacker",
         "--robust_tune_num_attack_per_step": 5
     },
     "bae": {
-        "--strategy": "TextAttackStrategy",
-        "--ta_recipe": "BAEGarg2019",
+        "--strategy": "OpenAttackStrategy",
+        "--oa_recipe": "BAEAttacker",
+        "--robust_tune_num_attack_per_step": 5
+    },
+    "scpn": {
+        "--strategy": "OpenAttackStrategy",
+        "--oa_recipe": "SCPNAttacker",
         "--robust_tune_num_attack_per_step": 5
     },
     "gsa": {
@@ -137,8 +142,8 @@ STRATEGY_CONFIG = {
         "--asrs_accept_criteria": "joint_weighted_criteria",
         "--asrs_burnin_enforcing_schedule": "1",
         "--asrs_burnin_criteria_schedule": "1",
-        "--asrs_seed_option": "origin",
-        "--asrs_split_sentence": "auto",
+        "--asrs_seed_option": "dynamic_len",
+        "--asrs_split_sentence": "1",
         "--asrs_lm_option": "finetune",
         "--asrs_stanza_port": 9001,
         "--asrs_sim_metric": "CESimilarityMetric",

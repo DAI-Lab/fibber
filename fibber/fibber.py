@@ -40,6 +40,9 @@ class Fibber(object):
 
         self._metric_bundle = MetricBundle(
             enable_bert_classifier=True,
+            enable_bert_perplexity=True,
+            enable_glove_similarity=False,
+            bert_ppl_gpu_id=arg_dict["bert_ppl_gpu_id"],
             use_gpu_id=arg_dict["use_gpu_id"],
             gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
             bert_gpu_id=arg_dict["bert_gpu_id"],

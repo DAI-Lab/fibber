@@ -184,7 +184,7 @@ class Benchmark(object):
                       strategy_gpu_id=-1,
                       num_paraphrases_per_text=50,
                       exp_name=None,
-                      update_global_results=True):
+                      update_global_results=False):
         """Run the benchmark.
 
         Args:

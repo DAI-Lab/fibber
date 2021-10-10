@@ -133,7 +133,7 @@ def ppl_criteria_score(origin, paraphrases, ppl_metric, ppl_weight):
     if ppl_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
     ppl_ratio = ppl_metric.measure_batch(origin, paraphrases)
-    return -ppl_weight * (np.maximum(ppl_ratio, 0) ** 2)
+    return -ppl_weight * (np.maximum(np.asarray(ppl_ratio) - 1, 0) ** 2)
 
 
 def clf_criteria_score(origin, paraphrases, data_record, field_name, clf_metric, clf_weight):
@@ -152,7 +152,7 @@ def joint_weighted_criteria(
         tokenizer, data_record, field_name, origin, batch_tensor,
         pos_st, pos_ed, previous_ids, candidate_ids, sim_metric, sim_threshold, sim_weight,
         clf_metric, clf_weight, ppl_metric, ppl_weight, burnin_weight, stats, state,
-        device, seq_len, **kargs):
+        device, seq_len, log_prob_previous_ids, log_prob_candidate_ids, **kargs):
     """Accept or reject candidate word using the joint weighted criteria.
 
     Args:
@@ -208,9 +208,18 @@ def joint_weighted_criteria(
 
     candidate_criteria_score = compute_criteria_score(candidate_ids)
 
-    alpha = np.exp((candidate_criteria_score - previous_criteria_score) * burnin_weight)
+    alpha = np.exp((candidate_criteria_score - previous_criteria_score
+                    + log_prob_previous_ids - log_prob_candidate_ids) * burnin_weight)
 
     accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
+
+    # if accept[0] and abs(alpha[0] - 1) > 1e-4:
+    #     print(tostring(tokenizer, batch_tensor[0]),
+    #           tostring(tokenizer, previous_ids[0]),
+    #           tostring(tokenizer, candidate_ids[0]),
+    #           alpha[0],
+    #           clf_metric.predict_example(None, tostring(tokenizer, batch_tensor[0, 1:-1])),
+    #           sep="\t")
 
     stats["accept"] += np.sum(accept)
     stats["all"] += len(accept)
@@ -221,18 +230,18 @@ def joint_weighted_criteria(
 
 
 def none_constraint(**kargs):
-    return 0
+    return 0.
 
 
 def allow_list_constraint(allow_list, **kargs):
     return -1e6 * (1 - allow_list)
 
 
-def wpe_constraint(target_emb, word_embs, batch_tensor, pos,
+def wpe_constraint(target_emb, word_embs, batch_tensor, pos_st, pos_ed,
                    wpe_threshold, wpe_weight, attention_mask_paraphrase_text_only, **kargs):
-    current_emb = ((word_embs(batch_tensor)
-                    * attention_mask_paraphrase_text_only[:, :, None]).sum(dim=1)
-                   - word_embs(batch_tensor[:, pos]))
+    current_emb = word_embs(batch_tensor) * attention_mask_paraphrase_text_only[:, :, None]
+    current_emb[:, pos_st, pos_ed] = 0
+    current_emb = current_emb.sum(dim=1)
     candidate_emb = current_emb[:, None, :] + word_embs.weight.data[None, :, :]
     dis = F.cosine_similarity(candidate_emb, target_emb[:, None, :], dim=2)
     dis = (wpe_threshold - dis).clamp_(min=0)
@@ -421,54 +430,69 @@ class ASRSStrategy(StrategyBase):
                 * attention_mask_paraphrase_text_only[:, pos_st:pos_ed]
                 + previous_ids * (1 - attention_mask_paraphrase_text_only[:, pos_st:pos_ed]))
 
+            if field_name == "text1":
+                batch_tensor_tmp = torch.cat([context_tensor, batch_tensor], dim=1)
+                tok_type_tensor_tmp = torch.cat([
+                    torch.zeros_like(context_tensor),
+                    torch.ones_like(batch_tensor)], dim=1)
+                logits_lm = self._bert_lm(
+                    batch_tensor_tmp,
+                    token_type_ids=tok_type_tensor_tmp,
+                    attention_mask=attention_mask)[0][:, context_len + pos_st:context_len + pos_ed]
+            else:
+                logits_lm = self._bert_lm(
+                    batch_tensor, attention_mask=attention_mask)[0][:, pos_st:pos_ed]
+            logits_lm[:, :, self._tokenizer.sep_token_id] = -1e8
+
+            logits_enforcing = self._enforcing_dist_fn(
+                # for wpe constraint
+                target_emb=target_emb,
+                word_embs=self._word_embs,
+                batch_tensor=batch_tensor,
+                pos_st=pos_st,
+                pos_ed=pos_ed,
+                wpe_threshold=self._strategy_config["wpe_threshold"],
+                wpe_weight=self._strategy_config["wpe_weight"],
+                # for naive constraint
+                allow_list=allow_list,
+                attention_mask_paraphrase_text_only=attention_mask_paraphrase_text_only
+            )
+
+            log_prob_previous_ids = 0
+            log_prob_candidate_ids = 0
+
             sample_order = np.arange(pos_st, pos_ed)
             np.random.shuffle(sample_order)
             for pos in sample_order:
-                if field_name == "text1":
-                    batch_tensor_tmp = torch.cat([context_tensor, batch_tensor], dim=1)
-                    tok_type_tensor_tmp = torch.cat([
-                        torch.zeros_like(context_tensor),
-                        torch.ones_like(batch_tensor)], dim=1)
-                    logits_lm = self._bert_lm(
-                        batch_tensor_tmp,
-                        token_type_ids=tok_type_tensor_tmp,
-                        attention_mask=attention_mask)[0][:, context_len + pos]
-                    logits_lm[:, self._tokenizer.sep_token_id] = -1e8
-                else:
-                    logits_lm = self._bert_lm(batch_tensor,
-                                              attention_mask=attention_mask)[0][:, pos]
-
-                logits_enforcing = self._enforcing_dist_fn(
-                    # for wpe constraint
-                    target_emb=target_emb,
-                    word_embs=self._word_embs,
-                    batch_tensor=batch_tensor,
-                    pos=pos,
-                    wpe_threshold=self._strategy_config["wpe_threshold"],
-                    wpe_weight=self._strategy_config["wpe_weight"],
-                    # for naive constraint
-                    allow_list=allow_list,
-                    attention_mask_paraphrase_text_only=attention_mask_paraphrase_text_only
-                )
-
                 if ii < burnin_steps:
                     if self._strategy_config["burnin_enforcing_schedule"] == "0":
-                        logits_joint = logits_lm
+                        logits_joint = logits_lm[:, pos - pos_st]
                     elif self._strategy_config["burnin_enforcing_schedule"] == "1":
-                        logits_joint = logits_lm + logits_enforcing
+                        logits_joint = logits_lm[:, pos - pos_st] + logits_enforcing
                     elif self._strategy_config["burnin_enforcing_schedule"] == "linear":
-                        logits_joint = logits_lm + (
-                            ii / burnin_steps) * logits_enforcing
+                        logits_joint = logits_lm[:, pos - pos_st] + (
+                            (ii + 1) / burnin_steps) * logits_enforcing
                     else:
                         assert 0
                 else:
-                    logits_joint = logits_lm + logits_enforcing
+                    logits_joint = logits_lm[:, pos - pos_st] + logits_enforcing
 
-                top_k = self._strategy_config["top_k"] if (
-                    ii >= burnin_steps) else 0
+                logits_joint = F.log_softmax(logits_joint, dim=1)
+
+                top_k = self._strategy_config["top_k"] if (ii >= burnin_steps) else 0
 
                 candidate_ids = sample_word_from_logits(
                     logits_joint, top_k=top_k, temperature=self._strategy_config["temperature"])
+
+                log_prob_previous_ids = log_prob_previous_ids + (
+                    torch.gather(
+                        logits_joint, dim=1, index=previous_ids[:, pos - pos_st].unsqueeze(1)
+                    ).squeeze(1) * attention_mask_paraphrase_text_only[:, pos])
+                log_prob_candidate_ids = log_prob_candidate_ids + (
+                    torch.gather(
+                        logits_joint, dim=1, index=candidate_ids.unsqueeze(1)).squeeze(1)
+                    * attention_mask_paraphrase_text_only[:, pos])
+
                 batch_tensor[:, pos] = (candidate_ids * attention_mask_paraphrase_text_only[:, pos]
                                         + batch_tensor[:, pos]
                                         * (1 - attention_mask_paraphrase_text_only[:, pos]))
@@ -481,7 +505,7 @@ class ASRSStrategy(StrategyBase):
                 elif self._strategy_config["burnin_criteria_schedule"] == "1":
                     decision_fn_burnin_weight = 1
                 elif self._strategy_config["burnin_criteria_schedule"] == "linear":
-                    decision_fn_burnin_weight = ii / burnin_steps
+                    decision_fn_burnin_weight = (ii + 1) / burnin_steps
                 else:
                     assert 0
             else:
@@ -498,7 +522,9 @@ class ASRSStrategy(StrategyBase):
                 ppl_metric=self._ppl_metric, ppl_weight=self._strategy_config["ppl_weight"],
                 burnin_weight=decision_fn_burnin_weight, stats=self._stats,
                 state=decision_fn_state, device=self._device,
-                seq_len=seq_len)
+                seq_len=seq_len,
+                log_prob_candidate_ids=log_prob_candidate_ids.detach().cpu().numpy(),
+                log_prob_previous_ids=log_prob_previous_ids.detach().cpu().numpy())
 
             batch_tensor[:, pos_st:pos_ed] = final_ids
 
