@@ -54,10 +54,11 @@ class BertPerplexityMetric(MetricBase):
                     self._device),
                 attention_mask=attention_mask
             )[0]
-            logpw = torch.gather(torch.log_softmax(logits, dim=-1), dim=2,
-                                 index=input_ids.unsqueeze(2)).squeeze(2)
-            logpw[:, 0] = 0
-            ppl = torch.exp(-(logpw * attention_mask).sum(dim=1) / (attention_mask.sum(dim=1) - 1))
+            logpw = torch.gather(torch.log_softmax(logits[:, :-1], dim=-1), dim=2,
+                                 index=input_ids[:, 1:].unsqueeze(2)).squeeze(2)
+
+            ppl = torch.exp(-(logpw * attention_mask[:, 1:]).sum(dim=1)
+                            / (attention_mask.sum(dim=1) - 1))
             ppl = ppl.detach().cpu().numpy()
 
         return ppl
@@ -71,7 +72,7 @@ class BertPerplexityMetric(MetricBase):
             paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
             paraphrase_field (str): the field name to paraphrase.
-
+            use_ratio (bool): whether to return ppl ratio.
         Returns:
             (list): a list containing the USE similarity metric for each paraphrase.
         """
@@ -91,6 +92,7 @@ class BertPerplexityMetric(MetricBase):
             paraphrase (str): paraphrased text.
             data_record: ignored.
             paraphrase_field: ignored.
+            use_ratio (bool): whether to return ppl ratio.
         """
         return self.measure_batch(origin, [paraphrase], data_record, paraphrase_field,
                                   use_ratio=use_ratio)[0]

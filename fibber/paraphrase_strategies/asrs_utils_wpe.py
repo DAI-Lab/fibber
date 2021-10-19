@@ -7,6 +7,7 @@ from nltk import word_tokenize
 from torch import nn
 from transformers import BertTokenizer
 
+from fibber import get_root_dir
 from fibber import log, resources
 from fibber.resources import get_glove_emb, get_stopwords
 
@@ -71,8 +72,9 @@ def get_wordpiece_emb(output_dir, dataset_name, trainset, device,
     Returns:
         (np.array): a array of size (300, N) where N is the vocabulary size for a bert-base model.
     """
-    filename = output_dir + "/wordpiece_emb-%s-%04d.pt" % (
-        dataset_name, steps)
+    filename = os.path.join(get_root_dir(), "wordpiece_emb")
+    os.makedirs(filename, exist_ok=True)
+    filename = os.path.join(filename, "wordpiece_emb-%s-%04d.pt" % (dataset_name, steps))
     if os.path.exists(filename):
         state_dict = torch.load(filename)
         logger.info("load wordpiece embeddings from %s", filename)

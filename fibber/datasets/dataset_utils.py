@@ -437,8 +437,9 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 yield tuple(ret)
             elif self._autoregressive_lm:
                 lm_labels = texts * masks - 100 * (1 - masks)
-                # do not predict CLS
-                lm_labels[:, 0] = -100
+                # shift lm labels
+                lm_labels[:, :-1] = lm_labels[:, 1:]
+                lm_labels[:, -1] = -100
 
                 # if use keywords, do not predict the first sentence
                 if self._kw_and_padding:
