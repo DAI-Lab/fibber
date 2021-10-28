@@ -28,4 +28,5 @@ class SelfBleuMetric(MetricBase):
         """
         ref = word_tokenize(origin)
         hypo = word_tokenize(paraphrase)
-        return bleu_score.sentence_bleu([ref], hypo)
+        chencherry = bleu_score.SmoothingFunction()
+        return bleu_score.sentence_bleu([ref], hypo, smoothing_function=chencherry.method1)

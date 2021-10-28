@@ -179,9 +179,9 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
     return lm_model
 
 
-def get_lm(lm_option, dataset_name, trainset, device, lm_steps=5000, lm_bs=32,
+def get_lm(lm_option, dataset_name, trainset, device, filter=-1, lm_steps=5000, lm_bs=32,
            lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
-           lm_period_summary=100, lm_period_save=5000, **kwargs):
+           lm_period_summary=100, lm_period_save=5000):
     """Returns a BERT language model or a list of language models on a given dataset.
 
     The language model will be stored at ``<output_dir>/lm_all`` if lm_option is finetune.
@@ -227,15 +227,17 @@ def get_lm(lm_option, dataset_name, trainset, device, lm_steps=5000, lm_bs=32,
     output_dir = os.path.join(get_root_dir(), "bert_lm", dataset_name)
 
     if lm_option == "pretrain":
+        assert filter == -1
         bert_lm = BertForMaskedLM.from_pretrained(
             resources.get_transformers(model_init))
     elif lm_option == "finetune":
         bert_lm = fine_tune_lm(
-            output_dir, trainset, -1, device,
+            output_dir, trainset, filter, device,
             lm_steps=lm_steps, lm_bs=lm_bs, lm_opt=lm_opt, lm_lr=lm_lr, lm_decay=lm_decay,
             lm_period_summary=lm_period_summary, lm_period_save=lm_period_save)
     elif lm_option == "adv":
         bert_lm = []
+        assert filter == -1
         for i in range(len(trainset["label_mapping"])):
             lm = fine_tune_lm(
                 output_dir, trainset, i, device,
@@ -244,7 +246,7 @@ def get_lm(lm_option, dataset_name, trainset, device, lm_steps=5000, lm_bs=32,
             bert_lm.append(lm)
     elif lm_option == "ppl":
         bert_lm = fine_tune_lm(
-            output_dir, trainset, -1, device,
+            output_dir, trainset, filter, device,
             lm_steps=lm_steps, lm_bs=lm_bs, lm_opt=lm_opt, lm_lr=lm_lr, lm_decay=lm_decay,
             lm_period_summary=lm_period_summary, lm_period_save=lm_period_save, as_masked_lm=False)
     else:

@@ -18,7 +18,7 @@ class BertPerplexityMetric(MetricBase):
     original text. The perplexity is measured using BERT model.
     """
 
-    def __init__(self, dataset_name, trainset, bert_ppl_gpu_id=-1, **kargs):
+    def __init__(self, dataset_name, trainset, bert_ppl_gpu_id=-1, bert_ppl_filter=-1, **kargs):
         """Initialize Bert perplexity model."""
         super(BertPerplexityMetric, self).__init__()
 
@@ -30,8 +30,16 @@ class BertPerplexityMetric(MetricBase):
             self._device = torch.device("cuda:%d" % bert_ppl_gpu_id)
 
         logger.info("load bert perplexity model.")
-        self._tokenizer, self._model = get_lm("ppl", dataset_name, trainset, self._device)
+        self._tokenizer, self._model = get_lm("ppl", dataset_name, trainset, self._device,
+                                              filter=bert_ppl_filter)
         self._model.to(self._device)
+        self._data_filter = bert_ppl_filter
+        self._name_suffix = ""
+        if self._data_filter != -1:
+            self._name_suffix = "-exclude-" + trainset["label_mapping"][self._data_filter]
+
+    def __repr__(self):
+        return self.__class__.__name__ + self._name_suffix
 
     def _get_ppl(self, sentences, data_record, paraphrase_field):
         """Compute the perplexity of sentences."""

@@ -39,6 +39,7 @@ class MetricBundle(object):
                  enable_ce_similarity=True,
                  enable_fasttext_classifier=False,
                  enable_bert_perplexity=False,
+                 enable_bert_perplexity_per_class=False,
                  enable_self_bleu=False,
                  enable_ref_bleu=False,
                  target_clf="bert",
@@ -86,6 +87,11 @@ class MetricBundle(object):
                                 set_target_clf=(target_clf == "fasttext"))
         if enable_bert_perplexity:
             self.add_metric(BertPerplexityMetric(**kargs), DIRECTION_LOWER_BETTER)
+        if enable_bert_perplexity_per_class:
+            n_labels = len(kargs["trainset"]["label_mapping"])
+            for i in range(n_labels):
+                self.add_metric(BertPerplexityMetric(bert_ppl_filter=i, **kargs),
+                                DIRECTION_LOWER_BETTER)
         if enable_self_bleu:
             self.add_metric(SelfBleuMetric(**kargs), DIRECTION_UNKNOWN)
         if enable_ref_bleu:

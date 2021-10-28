@@ -32,4 +32,5 @@ class RefBleuMetric(MetricBase):
             logger.warning("Ref not found in data, Ref Blue is set to 0.")
             return 0
         hypo = word_tokenize(paraphrase)
-        return bleu_score.sentence_bleu([ref], hypo)
+        chencherry = bleu_score.SmoothingFunction()
+        return bleu_score.sentence_bleu([ref], hypo, smoothing_function=chencherry.method1)
