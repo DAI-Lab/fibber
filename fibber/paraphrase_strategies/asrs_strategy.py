@@ -344,8 +344,8 @@ class ASRSStrategy(StrategyBase):
             "accept": 0
         }
 
-    def _parallel_sequential_generation(self, seed, batch_size, burnin_steps, sampling_steps,
-                                        field_name, data_record):
+    def _parallel_sequential_generation(self, original_text, seed, batch_size, burnin_steps,
+                                        sampling_steps, field_name, data_record):
         if self._strategy_config["seed_option"] == "origin":
             seq = ["[CLS]"] + self._tokenizer.tokenize(seed) + ["[SEP]"]
             batch_tensor = torch.tensor(
@@ -411,7 +411,7 @@ class ASRSStrategy(StrategyBase):
             context_tensor = None
 
         target_emb = (self._word_embs(torch.tensor([
-            self._tokenizer.convert_tokens_to_ids(self._tokenizer.tokenize(seed))
+            self._tokenizer.convert_tokens_to_ids(self._tokenizer.tokenize(original_text))
             for _ in range(batch_size)]).to(self._device))).sum(dim=1)
 
         allow_list = F.one_hot(batch_tensor[0] * attention_mask_paraphrase_text_only[0],
@@ -553,6 +553,7 @@ class ASRSStrategy(StrategyBase):
             if self._strategy_config["split_sentence"] == "0":
                 batch = self._parallel_sequential_generation(
                     clipped_text,
+                    clipped_text if "seed" not in data_record else data_record["seed"],
                     batch_size if id != n_batches - 1 else last_batch_size,
                     burnin_steps,
                     sampling_steps,
@@ -585,7 +586,9 @@ class ASRSStrategy(StrategyBase):
                 batch_res = [""] * (batch_size if id != n_batches - 1 else last_batch_size)
                 for text in splitted_text:
                     batch = self._parallel_sequential_generation(
-                        text, batch_size if id != n_batches - 1 else last_batch_size,
+                        text,
+                        text,
+                        batch_size if id != n_batches - 1 else last_batch_size,
                         burnin_steps,
                         sampling_steps,
                         field_name, data_record)

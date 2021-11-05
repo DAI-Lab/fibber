@@ -38,6 +38,14 @@ class BertPerplexityMetric(MetricBase):
         if self._data_filter != -1:
             self._name_suffix = "-exclude-" + trainset["label_mapping"][self._data_filter]
 
+    @property
+    def lm_model(self):
+        return self._model
+
+    @property
+    def tokenizer(self):
+        return self._tokenizer
+
     def __repr__(self):
         return self.__class__.__name__ + self._name_suffix
 

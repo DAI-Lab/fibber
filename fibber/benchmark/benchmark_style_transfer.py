@@ -1,13 +1,14 @@
 import argparse
 import datetime
 import os
+import copy
 
 from fibber import log
 from fibber.benchmark.benchmark_utils import update_detailed_result
 from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, verify_dataset
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
 from fibber.metrics.metric_utils import MetricBundle
-from fibber.paraphrase_strategies import CheatStrategy, IdentityStrategy
+from fibber.paraphrase_strategies import CheatStrategy, IdentityStrategy, SSRSStrategy
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
 logger = log.setup_custom_logger(__name__)
@@ -16,6 +17,7 @@ log.remove_logger_tf_handler(logger)
 built_in_paraphrase_strategies = {
     "IdentityStrategy": IdentityStrategy,
     "CheatStrategy": CheatStrategy,
+    "SSRSStrategy": SSRSStrategy
 }
 
 DATASET_NAME_COL = "0_dataset_name"
@@ -37,9 +39,7 @@ class Benchmark(object):
                  bert_ppl_gpu_id=-1,
                  ce_gpu_id=-1,
                  bert_clf_steps=20000,
-                 bert_clf_bs=32,
-                 best_adv_metric_name="RefBleuMetric",
-                 best_adv_metric_lower_better=False):
+                 bert_clf_bs=32):
         """Initialize Benchmark framework.
 
         Args:
@@ -100,11 +100,11 @@ class Benchmark(object):
             bert_clf_steps=bert_clf_steps,
             bert_clf_bs=bert_clf_bs,
             ce_gpu_id=ce_gpu_id,
-            enable_ce_similarity=False,
+            enable_ce_similarity=True,
             enable_glove_similarity=False,
             enable_self_bleu=True,
-            enable_ref_bleu=True,
-            enable_bert_perplexity=True,
+            enable_ref_bleu=False,
+            enable_bert_perplexity_per_class=True,
             enable_fasttext_classifier=True,
             target_clf="fasttext"
         )
@@ -115,8 +115,8 @@ class Benchmark(object):
 
         add_sentence_level_adversarial_attack_metrics(
             self._metric_bundle,
-            best_adv_metric_name=best_adv_metric_name,
-            best_adv_metric_lower_better=best_adv_metric_lower_better)
+            best_adv_metric_name=None,
+            best_adv_metric_lower_better=None)
 
     def run_benchmark(self,
                       paraphrase_strategy="IdentityStrategy",
@@ -172,11 +172,21 @@ class Benchmark(object):
         results = self._metric_bundle.measure_dataset(
             results=results, output_filename=output_filename)
 
-        aggregated_result = self._metric_bundle.aggregate_metrics(
-            self._dataset_name, str(paraphrase_strategy), exp_name, results)
+        for label_idx, label_name in enumerate(results["label_mapping"]):
+            sub_results = copy.deepcopy(results)
+            sub_results["data"] = [data_record for data_record in sub_results["data"]
+                                   if data_record["label"] == label_idx]
 
-        update_detailed_result(aggregated_result,
-                               self._output_dir if not update_global_results else None)
+            if label_name == "expert":
+                suffix = "-E2L"
+            elif label_name == "layman":
+                suffix = "-L2E"
+
+            aggregated_result = self._metric_bundle.aggregate_metrics(
+                self._dataset_name + suffix, str(paraphrase_strategy), exp_name, sub_results)
+
+            update_detailed_result(aggregated_result,
+                                   self._output_dir if not update_global_results else None)
 
         return aggregated_result
 
@@ -199,9 +209,8 @@ def main():
     parser.add_argument("--output_dir", type=str, default=None)
     parser.add_argument("--num_paraphrases_per_text", type=int, default=20)
     parser.add_argument("--subsample_testset", type=int, default=1000)
-    parser.add_argument("--strategy", type=str, default="RandomStrategy")
+    parser.add_argument("--strategy", type=str, default="CheatStrategy")
     parser.add_argument("--strategy_gpu_id", type=int, default=-1)
-    parser.add_argument("--robust_tune_num_attack_per_step", type=int, default=20)
 
     # metric args
     parser.add_argument("--gpt2_gpu_id", type=int, default=-1)
@@ -210,8 +219,6 @@ def main():
     parser.add_argument("--use_gpu_id", type=int, default=-1)
     parser.add_argument("--bert_clf_steps", type=int, default=20000)
     parser.add_argument("--ce_gpu_id", type=int, default=-1)
-    parser.add_argument("--best_adv_metric_name", type=str, default="RefBleuMetric")
-    parser.add_argument("--best_adv_lower_better", type=str, default="0")
 
     # add builtin strategies' args to parser.
     for item in built_in_paraphrase_strategies.values():
@@ -227,9 +234,7 @@ def main():
                           bert_ppl_gpu_id=arg_dict["bert_ppl_gpu_id"],
                           gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
                           bert_clf_steps=arg_dict["bert_clf_steps"],
-                          ce_gpu_id=arg_dict["ce_gpu_id"],
-                          best_adv_metric_name=arg_dict["best_adv_metric_name"],
-                          best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"))
+                          ce_gpu_id=arg_dict["ce_gpu_id"],)
 
     log.remove_logger_tf_handler(logger)
 

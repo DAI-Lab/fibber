@@ -103,8 +103,8 @@ def get_best_adv_metric_fn_constructor(get_best_adv_fn, metric_name, target_clf)
 
 
 def add_sentence_level_adversarial_attack_metrics(metric_bundle,
-                                                  best_adv_metric_name,
-                                                  best_adv_metric_lower_better):
+                                                  best_adv_metric_name=None,
+                                                  best_adv_metric_lower_better=None):
     """Add advanced aggregation functions related to adversarial attack to a specific metric
     bundle.
 
@@ -130,12 +130,14 @@ def add_sentence_level_adversarial_attack_metrics(metric_bundle,
             DIRECTION_LOWER_BETTER
         )
 
-    for metric_name in metric_bundle.get_metric_names():
-        metric_bundle.add_advanced_aggregation_fn(
-            "best_adv_%s" % metric_name,
-            get_best_adv_metric_fn_constructor(
-                lambda _data_record, _target_clf: get_best_adv_by_metric(
-                    _data_record, _target_clf, best_adv_metric_name, best_adv_metric_lower_better),
-                metric_name, metric_bundle.get_target_classifier_name()),
-            metric_bundle.get_metric_direction(metric_name)
-        )
+    if best_adv_metric_name is not None:
+        for metric_name in metric_bundle.get_metric_names():
+            metric_bundle.add_advanced_aggregation_fn(
+                "best_adv_%s" % metric_name,
+                get_best_adv_metric_fn_constructor(
+                    lambda _data_record, _target_clf: get_best_adv_by_metric(
+                        _data_record, _target_clf,
+                        best_adv_metric_name, best_adv_metric_lower_better),
+                    metric_name, metric_bundle.get_target_classifier_name()),
+                metric_bundle.get_metric_direction(metric_name)
+            )

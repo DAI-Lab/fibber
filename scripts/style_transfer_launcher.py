@@ -3,8 +3,8 @@ import copy
 import subprocess
 
 COMMON_CONFIG = {
-    "--subsample_testset": 0,
-    "--num_paraphrases_per_text": 50,
+    "--subsample_testset": 500,
+    "--num_paraphrases_per_text": 20,
 }
 
 GPU_CONFIG = {
@@ -32,8 +32,18 @@ STRATEGY_CONFIG = {
     },
     "cheat": {
         "--strategy": "CheatStrategy"
+    },
+    "ssrs": {
+        "--strategy": "SSRSStrategy",
+        "--ssrs_sampling_steps": 200,
+        "--ssrs_burnin_steps": 100,
+        "--ssrs_window_size": 3,
+        "--ssrs_sim_threshold": 0.7,
+        "--ssrs_sim_weight": 100,
+        "--ssrs_ppl_weight": 10,
     }
 }
+
 
 
 def to_command(args):
