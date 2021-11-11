@@ -149,6 +149,9 @@ STRATEGY_CONFIG = {
         "--asrs_sim_metric": "CESimilarityMetric",
         "--robust_tune_num_attack_per_step": 5
     },
+    "fu": {
+        "--strategy": "FudgeStrategy",
+    },
     "asrs-nli": {
         "--asrs_sim_weight": 100,
         "--asrs_ppl_weight": 3,
@@ -191,7 +194,7 @@ def main():
     args = parser.parse_args()
 
     if args.robust_tuning == "1":
-        COMMON_CONFIG["robust_tuning"] = "1"
+        COMMON_CONFIG["--robust_tuning"] = "1"
 
     if args.dataset == "all":
         dataset_list = list(DATASET_CONFIG.keys())

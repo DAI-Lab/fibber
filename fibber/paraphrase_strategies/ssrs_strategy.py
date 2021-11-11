@@ -1,16 +1,12 @@
 import math
-import re
 
 import numpy as np
 import torch
-from torch import nn
-from torch.nn import functional as F
 
 from fibber import log
 from fibber.metrics.bert_lm_utils import get_lm
+from fibber.paraphrase_strategies.asrs_strategy import all_accept_criteria, tostring
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
-from fibber.paraphrase_strategies.asrs_strategy import (tostring, sample_word_from_logits,
-                                                        all_accept_criteria)
 
 logger = log.setup_custom_logger(__name__)
 
@@ -89,9 +85,9 @@ def joint_weighted_criteria(
             origin=origin, paraphrases=paraphrases, sim_metric=sim_metric, sim_weight=sim_weight,
             sim_threshold=sim_threshold)
         clf_score = clf_criteria_score(origin=origin, paraphrases=paraphrases,
-                                     data_record=data_record, field_name=field_name,
-                                     clf_metric=clf_metric,
-                                     clf_weight=clf_weight)
+                                       data_record=data_record, field_name=field_name,
+                                       clf_metric=clf_metric,
+                                       clf_weight=clf_weight)
         # print("ppl", np.mean(ppl_score), np.std(ppl_score))
         # print("sim", np.mean(sim_score), np.std(sim_score))
         # print("clf", np.mean(clf_score), np.std(clf_score))
@@ -217,8 +213,8 @@ class SSRSStrategy(StrategyBase):
                     w_st = max(p - half_window, 1)
                     w_ed = min(p + half_window + 1, actual_len - 1)
                     input_ids_tmp[j, :p] = input_ids[j, :p]
-                    input_ids_tmp[j, p+1:] = input_ids[j, p:]
-                    input_ids_tmp[j, w_st:w_ed+1] = self._tokenizer.mask_token_id
+                    input_ids_tmp[j, p + 1:] = input_ids[j, p:]
+                    input_ids_tmp[j, w_st:w_ed + 1] = self._tokenizer.mask_token_id
                     attention_mask_tmp[j, :actual_len + 1] = 1
                     op_info.append((op, p, w_st, w_ed))
                 elif op == "D":
@@ -226,8 +222,8 @@ class SSRSStrategy(StrategyBase):
                     w_st = max(p - half_window, 1)
                     w_ed = min(p + half_window, actual_len - 3)
                     input_ids_tmp[j, :p] = input_ids[j, :p]
-                    input_ids_tmp[j, p:-2] = input_ids[j, p+1:]
-                    input_ids_tmp[j, w_st:w_ed+1] = self._tokenizer.mask_token_id
+                    input_ids_tmp[j, p:-2] = input_ids[j, p + 1:]
+                    input_ids_tmp[j, w_st:w_ed + 1] = self._tokenizer.mask_token_id
                     attention_mask_tmp[j, :actual_len - 1] = 1
                     op_info.append((op, p, w_st, w_ed))
                 elif op == "R":
@@ -254,16 +250,16 @@ class SSRSStrategy(StrategyBase):
                 op, p, w_st, w_ed = op_info[j]
                 if op == "I":
                     toks = (list(input_ids[j, 1:w_st])
-                            + list(input_ids_tmp[j, w_st:w_ed+1])
-                            + list(input_ids[j, w_ed:actual_len_list[j]-1]))
+                            + list(input_ids_tmp[j, w_st:w_ed + 1])
+                            + list(input_ids[j, w_ed:actual_len_list[j] - 1]))
                 elif op == "D":
                     toks = (list(input_ids[j, 1:w_st])
                             + list(input_ids_tmp[j, w_st:w_ed + 1])
-                            + list(input_ids[j, w_ed+2:actual_len_list[j]-1]))
+                            + list(input_ids[j, w_ed + 2:actual_len_list[j] - 1]))
                 elif op == "R":
                     toks = (list(input_ids[j, 1:w_st])
                             + list(input_ids_tmp[j, w_st:w_ed + 1])
-                            + list(input_ids[j, w_ed+1:actual_len_list[j]-1]))
+                            + list(input_ids[j, w_ed + 1:actual_len_list[j] - 1]))
                 else:
                     assert 0
                 candidate_sents.append(tostring(self._tokenizer, toks))

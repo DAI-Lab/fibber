@@ -1,7 +1,7 @@
 import argparse
+import copy
 import datetime
 import os
-import copy
 
 from fibber import log
 from fibber.benchmark.benchmark_utils import update_detailed_result

@@ -7,8 +7,7 @@ from nltk import word_tokenize
 from torch import nn
 from transformers import BertTokenizer
 
-from fibber import get_root_dir
-from fibber import log, resources
+from fibber import get_root_dir, log, resources
 from fibber.resources import get_glove_emb, get_stopwords
 
 logger = log.setup_custom_logger(__name__)

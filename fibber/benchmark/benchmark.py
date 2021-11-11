@@ -8,7 +8,8 @@ from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, ve
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
-    ASRSStrategy, IdentityStrategy, OpenAttackStrategy, RandomStrategy, TextAttackStrategy)
+    ASRSStrategy, FudgeStrategy, IdentityStrategy, OpenAttackStrategy, RandomStrategy,
+    TextAttackStrategy)
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.robust_tuning_strategy.default_tuning_strategy import (
     DefaultTuningStrategy, TuningStrategyBase)
@@ -21,7 +22,8 @@ built_in_paraphrase_strategies = {
     "IdentityStrategy": IdentityStrategy,
     "TextAttackStrategy": TextAttackStrategy,
     "ASRSStrategy": ASRSStrategy,
-    "OpenAttackStrategy": OpenAttackStrategy
+    "OpenAttackStrategy": OpenAttackStrategy,
+    "FudgeStrategy": FudgeStrategy,
 }
 
 built_in_tuning_strategies = {
@@ -107,9 +109,13 @@ class Benchmark(object):
 
         # setup metric bundle
         self._metric_bundle = MetricBundle(
-            enable_bert_classifier=enable_bert_clf,
+            enable_bert_classifier=True,
+            enable_fasttext_classifier=False,
+            enable_glove_similarity=False,
+            target_clf="bert",
             use_gpu_id=use_gpu_id, gpt2_gpu_id=gpt2_gpu_id,
             bert_gpu_id=bert_gpu_id, dataset_name=dataset_name,
+            bert_ppl_gpu_id=bert_gpu_id, enable_bert_perplexity=True,
             trainset=self._trainset, testset=testset,
             bert_clf_steps=bert_clf_steps,
             bert_clf_bs=bert_clf_bs,
