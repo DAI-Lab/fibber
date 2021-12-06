@@ -81,7 +81,8 @@ class GPT2PerplexityMetric(MetricBase):
         ppl = ppl.detach().cpu().numpy()
         return ppl
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0"):
+    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0",
+                      use_ratio=False):
         """Measure the metric on a batch of paraphrase_list.
 
         Args:
@@ -89,15 +90,20 @@ class GPT2PerplexityMetric(MetricBase):
             paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
             paraphrase_field (str): the field name to paraphrase.
+            use_ratio (bool): returns the perplexity ratio.
 
         Returns:
             (list): a list containing the USE similarity metric for each paraphrase.
         """
-        ppls = self._get_ppl([origin] + paraphrase_list)
-        res = ppls[1:] / ppls[0]
+        if use_ratio:
+            ppls = self._get_ppl([origin] + paraphrase_list)
+            res = ppls[1:] / ppls[0]
+        else:
+            ppls = self._get_ppl(paraphrase_list)
         return [float(x) for x in res]
 
-    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0",
+                        use_ratio=False):
         """Compute the perplexity ratio.
 
         Args:
@@ -105,6 +111,13 @@ class GPT2PerplexityMetric(MetricBase):
             paraphrase (str): paraphrased text.
             data_record: ignored.
             paraphrase_field: ignored.
+            use_ratio (bool): returns the perplexity ratio.
+
         """
-        ppl = self._get_ppl([origin, paraphrase])
-        return float(ppl[1] / ppl[0])
+        if use_ratio:
+            ppl = self._get_ppl([origin, paraphrase])
+            res = float(ppl[1] / ppl[0])
+        else:
+            res = float(self._get_ppl([paraphrase])[0])
+
+        return res

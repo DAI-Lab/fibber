@@ -8,7 +8,6 @@ from torch.nn import functional as F
 
 from fibber import log
 from fibber.metrics.bert_lm_utils import get_lm
-from fibber.paraphrase_strategies.asrs_utils_text_parser import TextParser
 from fibber.paraphrase_strategies.asrs_utils_wpe import get_wordpiece_emb
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
@@ -132,7 +131,7 @@ def ppl_criteria_score(origin, paraphrases, ppl_metric, ppl_weight):
     """
     if ppl_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
-    ppl_ratio = ppl_metric.measure_batch(origin, paraphrases)
+    ppl_ratio = ppl_metric.measure_batch(origin, paraphrases, use_ratio=True)
     return -ppl_weight * (np.maximum(np.asarray(ppl_ratio) - 1, 0) ** 2)
 
 
@@ -272,11 +271,9 @@ class ASRSStrategy(StrategyBase):
         ("burnin_criteria_schedule", str, "1", ("the schedule decides how strict the criteria is "
                                                 "used. options are [linear, 0, 1].")),
         ("seed_option", str, "origin", ("the option for seed sentences in generation. "
-                                        "choose from [origin, auto, dynamic_len].")),
+                                        "choose from [origin, dynamic_len].")),
         ("dynamic_len_min", int, -3, "change length min."),
         ("dynamic_len_max", int, 3, "change length max."),
-        ("split_sentence", str, "auto", "split paragraph to sentence. options are [0, 1, auto]."),
-        ("stanza_port", int, 9000, "stanza port"),
         ("lm_option", str, "finetune", "choose from [pretrain, finetune, adv]."),
         ("lm_steps", int, 5000, "lm training steps."),
         ("clf_weight", float, 3, "weight for the clf score in the criteria."),
@@ -304,7 +301,7 @@ class ASRSStrategy(StrategyBase):
         self._sim_metric = self._metric_bundle.get_metric(
             self._strategy_config["sim_metric"])
         self._clf_metric = self._metric_bundle.get_target_classifier()
-        self._ppl_metric = self._metric_bundle.get_metric("GPT2PerplexityMetric")
+        self._ppl_metric = self._metric_bundle.get_metric("BertPerplexityMetric")
 
         # load word piece embeddings.
         wpe = get_wordpiece_emb(self._output_dir, self._dataset_name, trainset, self._device)
@@ -332,13 +329,6 @@ class ASRSStrategy(StrategyBase):
         else:
             assert 0
 
-        # load text parser
-        if (self._strategy_config["seed_option"] != "origin"
-                or self._strategy_config["split_sentence"] != "0"):
-            self._text_parser = TextParser(self._strategy_config["stanza_port"])
-        else:
-            self._text_parser = None
-
         self._stats = {
             "all": 0,
             "accept": 0
@@ -351,14 +341,6 @@ class ASRSStrategy(StrategyBase):
             batch_tensor = torch.tensor(
                 [self._tokenizer.convert_tokens_to_ids(seq)] * batch_size).to(self._device)
             seq_len = [len(seq)] * batch_size
-        elif self._strategy_config["seed_option"] == "auto":
-            seeds = self._text_parser.phrase_level_shuffle(seed, batch_size)
-            seq = [self._tokenizer.tokenize(x) for x in seeds]
-            seq_len = ([len(x) + 2 for x in seq])
-            max_len = max(seq_len)
-            seq = [["[CLS]"] + x + ["[SEP]"] + ["[PAD]"] * (max_len - len(x) - 2) for x in seq]
-            batch_tensor = torch.tensor(
-                [self._tokenizer.convert_tokens_to_ids(x) for x in seq]).to(self._device)
         elif self._strategy_config["seed_option"] == "dynamic_len":
             seq_raw = self._tokenizer.tokenize(seed)
             seq = []
@@ -536,7 +518,7 @@ class ASRSStrategy(StrategyBase):
             self._bert_lm = self._bert_lms[data_record["label"]]
             self._bert_lm.to(self._device)
 
-        clipped_text = " ".join(data_record[field_name].split()[:200])
+        clipped_text = data_record[field_name]
         clipped_text = process_text(clipped_text, PRE_PROCESSING_PATTERN)
         batch_size = self._strategy_config["batch_size"]
 
@@ -550,53 +532,14 @@ class ASRSStrategy(StrategyBase):
             burnin_steps = self._strategy_config["burnin_steps"]
             sampling_steps = self._strategy_config["sampling_steps"]
 
-            if self._strategy_config["split_sentence"] == "0":
-                batch = self._parallel_sequential_generation(
-                    clipped_text,
-                    clipped_text if "seed" not in data_record else data_record["seed"],
-                    batch_size if id != n_batches - 1 else last_batch_size,
-                    burnin_steps,
-                    sampling_steps,
-                    field_name, data_record)
-                sentences += batch
-            elif self._strategy_config["split_sentence"] in ["1", "auto"]:
-                splitted_text_ori = self._text_parser.split_paragraph_to_sentences(
-                    clipped_text)
-
-                if self._strategy_config["split_sentence"] == "auto":
-                    splitted_text = []
-                    current_text = ""
-                    for s in splitted_text_ori:
-                        current_text += " " + s
-                        if len(current_text.split()) > AUTO_SENTENCE_LEN_THRESHOLD:
-                            splitted_text.append(current_text)
-                            current_text = ""
-                    if len(current_text.split()) > 0:
-                        splitted_text.append(current_text)
-
-                    burnin_steps = self._strategy_config["burnin_steps"] // len(splitted_text)
-                    sampling_steps = self._strategy_config["sampling_steps"] // len(splitted_text)
-                elif self._strategy_config["split_sentence"] == "1":
-                    splitted_text = splitted_text_ori
-                    burnin_steps = self._strategy_config["burnin_steps"] // len(splitted_text)
-                    sampling_steps = self._strategy_config["sampling_steps"] // len(splitted_text)
-                else:
-                    assert 0
-
-                batch_res = [""] * (batch_size if id != n_batches - 1 else last_batch_size)
-                for text in splitted_text:
-                    batch = self._parallel_sequential_generation(
-                        text,
-                        text,
-                        batch_size if id != n_batches - 1 else last_batch_size,
-                        burnin_steps,
-                        sampling_steps,
-                        field_name, data_record)
-
-                    batch_res = [(x + " " + y).strip() for (x, y) in zip(batch_res, batch)]
-                sentences += batch_res
-            else:
-                assert 0
+            batch = self._parallel_sequential_generation(
+                clipped_text,
+                clipped_text if "seed" not in data_record else data_record["seed"],
+                batch_size if id != n_batches - 1 else last_batch_size,
+                burnin_steps,
+                sampling_steps,
+                field_name, data_record)
+            sentences += batch
 
         assert len(sentences) == n
 

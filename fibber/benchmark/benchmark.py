@@ -127,8 +127,8 @@ class Benchmark(object):
             ce_gpu_id=ce_gpu_id,
             bert_clf_enable_sem=bert_clf_enable_sem,
             bert_clf_enable_lmag=bert_clf_enable_lmag,
-            enable_ce_similarity=False,
-            enable_gpt2_perplexity=False
+            enable_ce_similarity=True,
+            enable_gpt2_perplexity=True
         )
 
         if customized_clf:
