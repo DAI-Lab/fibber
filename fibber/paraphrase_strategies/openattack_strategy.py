@@ -60,7 +60,7 @@ class OpenAttackStrategy(StrategyBase):
         """Generate paraphrased sentences."""
         self._victim.set_data_record(data_record)
 
-        attack_text = " ".join(data_record[field_name].split()[:200])
+        attack_text = " ".join(data_record[field_name])
         attack_eval = oa.AttackEval(self._attacker, self._victim)
         res = next(attack_eval.ieval([{"x": attack_text, "y": data_record["label"]}]))
         return [res["result"]] if res["success"] else [attack_text]

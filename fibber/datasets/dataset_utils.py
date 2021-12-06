@@ -47,9 +47,7 @@ import os
 import numpy as np
 import torch
 import tqdm
-from nltk import sent_tokenize
-from rake_nltk import Rake
-from transformers import BertTokenizerFast
+from transformers import BertTokenizer
 
 from fibber import get_root_dir, log, resources
 from fibber.datasets.downloadable_datasets import downloadable_dataset_urls
@@ -134,7 +132,7 @@ def text_md5(x):
     return m.hexdigest()
 
 
-def subsample_dataset(dataset, n):
+def subsample_dataset(dataset, n, offset=0):
     """Sub-sample a dataset to `n` examples.
 
     Data is selected evenly and randomly from each category. Data in each category is sorted by
@@ -149,6 +147,7 @@ def subsample_dataset(dataset, n):
     Args:
         dataset (dict): a dataset dict.
         n (int): the size of the sub-sampled dataset.
+        offset (int): dataset offset.
 
     Returns:
         (dict): a sub-sampled dataset as a dict.
@@ -157,6 +156,7 @@ def subsample_dataset(dataset, n):
         return copy.deepcopy(dataset)
 
     bins = [[] for i in dataset["label_mapping"]]
+    offset = offset // len(bins)
 
     subset = dict([(k, v) for k, v in dataset.items() if k != "data"])
 
@@ -172,7 +172,7 @@ def subsample_dataset(dataset, n):
     for i in range(len(bins)):
         bins[i] = sorted(bins[i], key=lambda x: x[1])
         m = n // len(bins) + (1 if i < n % len(bins) else 0)
-        for j in range(m):
+        for j in range(offset, offset + m):
             data_list.append(copy.deepcopy(dataset["data"][bins[i][j][0]]))
 
     subset["data"] = data_list
@@ -208,31 +208,19 @@ def verify_dataset(dataset):
         assert item > 0, "empty class"
 
 
-class KeywordsExtractor(object):
-    def __init__(self, max_length=3):
-        self._extractor = Rake(max_length=max_length)
+def clip_sentence(dataset, model_init, max_len):
+    """Inplace clipping sentences."""
+    tokenizer = BertTokenizer.from_pretrained(
+        resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
+    for data_record in dataset["data"]:
+        s0 = tokenizer.tokenize(data_record["text0"])
+        s0 = s0[:max_len]
+        data_record["text0"] = tokenizer.convert_tokens_to_string(s0)
 
-    def extract_keywords(self, text, n=5, keep_order=True):
-        """Extract keywords from text.
-
-        Args:
-            text (str): a paragraph of text.
-            n (int): maximum number of keywords.
-            keep_order (bool): if true, keep the order of the words appearing in the text.
-                if false, ordered by importance.
-
-        Returns:
-            [str]: a list of strs representing keywords. keywords will be lowercased.
-        """
-        self._extractor.extract_keywords_from_text(text)
-        keywords = self._extractor.get_ranked_phrases()[:n]
-        if len(keywords) == 0:
-            return []
-
-        if keep_order:
-            keywords = list(
-                zip(*sorted([(x, text.lower().find(x)) for x in keywords], key=lambda x: x[1])))[0]
-        return list(keywords)
+        if "text1" in data_record:
+            s1 = tokenizer.tokenize(data_record["text1"])
+            s1 = s1[:(max_len - len(s0))]
+            data_record["text1"] = tokenizer.convert_tokens_to_string(s1)
 
 
 class DatasetForBert(torch.utils.data.IterableDataset):
@@ -275,9 +263,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
     """
 
     def __init__(self, dataset, model_init, batch_size, exclude=-1,
-                 masked_lm=False, masked_lm_ratio=0.2, autoregressive_lm=False,
-                 include_raw_text=False, kw_and_padding=False, split_sentences=False,
-                 num_keywords=0, seed=0):
+                 masked_lm=False, masked_lm_ratio=0.2, autoregressive_lm=False, seed=0):
         """Initialize.
 
         Args:
@@ -289,19 +275,10 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 Use -1 (default) to include all categories.
             masked_lm (bool): whether to randomly replace words with mask tokens.
             masked_lm_ratio (float): the ratio of random masks. Ignored when masked_lm is False.
-            kw_and_padding (bool): use keywords as the first sentence, and the field to paraphrase
-                as the second sentence. Add a padding symbol at the beginning of the first
-                sentence to input sentence embedding later.
-            split_sentences (bool): split paragraph to sentence.
-            include_raw_text (bool): whether to return the raw text.
             seed: random seed.
         """
-        self._buckets = [30, 50, 100, 200]
-        self._max_len = self._buckets[-1]
-        self._data = [[] for i in range(len(self._buckets))]
-
         self._batch_size = batch_size
-        self._tokenizer = BertTokenizerFast.from_pretrained(
+        self._tokenizer = BertTokenizer.from_pretrained(
             resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
 
         self._seed = seed
@@ -315,62 +292,9 @@ class DatasetForBert(torch.utils.data.IterableDataset):
         if self._autoregressive_lm and self._masked_lm:
             raise RuntimeError("masked_lm and autoregressive_lm are used at the same time.")
 
-        self._include_raw_text = include_raw_text
-        self._kw_and_padding = kw_and_padding
-        if kw_and_padding:
-            self._kw_extractor = KeywordsExtractor()
-            self._num_keywords = num_keywords
-
-        field_name = dataset["paraphrase_field"]
-
-        counter = 0
-        logger.info("DatasetForBert is processing data.")
-
-        if split_sentences:
-            data_record_list = []
-            for item in tqdm.tqdm(dataset["data"]):
-                for sent in sent_tokenize(item[field_name]):
-                    item_tmp = copy.copy(item)
-                    item_tmp[field_name] = sent
-                    data_record_list.append(item_tmp)
-        else:
-            data_record_list = dataset["data"]
-
-        for item in tqdm.tqdm(data_record_list):
-            y = item["label"]
-            s0 = "[CLS] " + item["text0"] + " [SEP]"
-            if "text1" in item:
-                s1 = item["text1"] + " [SEP]"
-            else:
-                s1 = ""
-
-            if kw_and_padding:
-                s1 = item[field_name]
-                s0 = " , ".join(self._kw_extractor.extract_keywords(
-                    item[field_name], n=num_keywords, keep_order=True))
-
-                s0 = "[CLS] [PAD] " + s0 + "[SEP]"
-                s1 = s1 + " [SEP]"
-
-            if y == exclude:
-                continue
-
-            counter += 1
-
-            s0_ids = self._tokenizer.convert_tokens_to_ids(
-                self._tokenizer.tokenize(s0))
-            s1_ids = self._tokenizer.convert_tokens_to_ids(
-                self._tokenizer.tokenize(s1))
-            text_ids = (s0_ids + s1_ids)[:self._max_len]
-
-            for bucket_id in range(len(self._buckets)):
-                if self._buckets[bucket_id] >= len(text_ids):
-                    self._data[bucket_id].append((text_ids, y, len(s0_ids), len(s1_ids), s0 + s1))
-                    break
-
-        logger.info("Load %d documents. with filter %d.", counter, exclude)
-        self._bucket_prob = np.asarray([len(x) for x in self._data])
-        self._bucket_prob = self._bucket_prob / np.sum(self._bucket_prob)
+        self._data = dataset["data"]
+        if exclude != -1:
+            self._data = [item for item in self._data if item["label"] != exclude]
 
     def __iter__(self):
         worker_info = torch.utils.data.get_worker_info()
@@ -380,43 +304,36 @@ class DatasetForBert(torch.utils.data.IterableDataset):
             self._rng = np.random.RandomState(worker_info.id + self._seed)
 
         while True:
-            bucket_id = self._rng.choice(len(self._bucket_prob), p=self._bucket_prob)
-            ids = self._rng.choice(len(self._data[bucket_id]), self._batch_size)
+            data_records = self._rng.choice(self._data, self._batch_size)
 
-            texts, labels, l0s, l1s, raw_text = zip(*[self._data[bucket_id][id] for id in ids])
+            if "text1" in data_records[0]:
+                batch_input = self._tokenizer(
+                    [item["text0"] for item in data_records],
+                    [item["text1"] for item in data_records],
+                    return_tensors="np",
+                    padding=True)
+            else:
+                batch_input = self._tokenizer(
+                    [item["text0"] for item in data_records],
+                    return_tensors="np",
+                    padding=True)
 
-            text_len = [len(x) for x in texts]
-            max_text_len = max(text_len)
-
-            # tok_list is copied by list add.
-            texts = [x + [self._pad_tok_id] * (max_text_len - len(x)) for x in texts]
-            masks = [[1] * x + [0] * (max_text_len - x) for x in text_len]
-            tok_types = [([0] * l0 + [1] * l1 + [0] * (max_text_len - l0 - l1)
-                          )[:max_text_len]
-                         for (l0, l1) in zip(l0s, l1s)]
-
-            texts = np.asarray(texts)
-            masks = np.asarray(masks)
-            labels = np.asarray(labels)
-            tok_types = np.asarray(tok_types)
+            texts = batch_input["input_ids"]
+            masks = batch_input["attention_mask"]
+            tok_types = batch_input["token_type_ids"]
+            labels = np.asarray([item["label"] for item in data_records])
+            max_text_len = len(texts[0])
 
             if not self._masked_lm and not self._autoregressive_lm:
                 ret = [torch.tensor(x) for x in [texts, masks, tok_types, labels]]
-                if self._include_raw_text:
-                    ret.append(raw_text)
                 yield tuple(ret)
             elif self._masked_lm:
                 rand_t = self._rng.rand(self._batch_size, max_text_len)
-
                 masked_pos = (rand_t < self._masked_lm_ratio) * masks
 
                 # No mask on cls and sep.
                 masked_pos[:, 0] = 0
                 masked_pos *= np.asarray(texts != self._tokenizer.sep_token_id, dtype="int")
-                # if use keywords, do not mask the first sentence
-                if self._kw_and_padding:
-                    for id, l0 in enumerate(l0s):
-                        masked_pos[id, :l0] = 0
 
                 if np.sum(masked_pos) == 0:
                     continue
@@ -430,10 +347,6 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 texts = masked_pos * filling + (1 - masked_pos) * texts
 
                 ret = [torch.tensor(x) for x in [texts, masks, tok_types, labels, lm_labels]]
-
-                if self._include_raw_text:
-                    ret.append(raw_text)
-
                 yield tuple(ret)
             elif self._autoregressive_lm:
                 lm_labels = texts * masks - 100 * (1 - masks)
@@ -441,14 +354,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 lm_labels[:, :-1] = lm_labels[:, 1:]
                 lm_labels[:, -1] = -100
 
-                # if use keywords, do not predict the first sentence
-                if self._kw_and_padding:
-                    for id, l0 in enumerate(l0s):
-                        lm_labels[id, :l0] = -100
-
                 ret = [torch.tensor(x) for x in [texts, masks, tok_types, labels, lm_labels]]
-                if self._include_raw_text:
-                    ret.append(raw_text)
                 yield tuple(ret)
             else:
                 raise RuntimeError("unexpected branch.")

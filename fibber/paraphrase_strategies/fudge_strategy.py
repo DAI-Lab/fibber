@@ -13,7 +13,6 @@ from fibber.paraphrase_strategies.strategy_base import StrategyBase
 def make_input_output_pair(tokenizer, x):
     """Tokenize the text, then construct input and output for GPT2."""
     toks = tokenizer.encode(x, add_special_tokens=True)
-    toks = np.asarray(toks[:200])
 
     (len(toks)) // 2
     output = toks[:]

@@ -12,7 +12,7 @@ logger = log.setup_custom_logger(__name__)
 
 def change_to_fasttext_format(dataset, filename):
     """Change Fibber's dataset to fast text's format and save to a file."""
-    with open(filename, "w") as f:
+    with open(filename, "w", encoding="utf8") as f:
         for item in dataset["data"]:
             if "text1" in item:
                 logger.error("FastText does not support text1.")

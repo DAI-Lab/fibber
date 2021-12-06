@@ -27,15 +27,11 @@ def lmag_fix_sentences(sentences, context, tokenizer, lm, clf, device, bs=50, re
         if context is not None:
             batch_input_small = tokenizer(context_t[st // rep:ed // rep],
                                           sentences_t[st // rep:ed // rep],
-                                          padding=True, max_length=200,
-                                          truncation=True)
-            batch_input = tokenizer(context[st:ed], sentences[st:ed],
-                                    padding=True, max_length=200, truncation=True)
+                                          padding=True)
+            batch_input = tokenizer(context[st:ed], sentences[st:ed], padding=True)
         else:
-            batch_input_small = tokenizer(sentences_t[st // rep:ed // rep],
-                                          padding=True, max_length=200, truncation=True)
-            batch_input = tokenizer(sentences[st:ed], padding=True, max_length=200,
-                                    truncation=True)
+            batch_input_small = tokenizer(sentences_t[st // rep:ed // rep], padding=True)
+            batch_input = tokenizer(sentences[st:ed], padding=True)
 
         input_ids = torch.tensor(batch_input_small["input_ids"])
         token_type_ids = torch.tensor(batch_input_small["token_type_ids"])

@@ -10,7 +10,7 @@ from fibber.metrics.edit_distance_metric import EditDistanceMetric
 from fibber.metrics.metric_utils import DIRECTION_HIGHER_BETTER, DIRECTION_LOWER_BETTER
 
 
-def paraphrase_classification_accuracy_agg_fn_constructor(target_clf):
+def paraphrase_classification_accuracy_agg_fn_constructor(target_clf, type):
     """This function makes a aggregation function for the target classification metric.
 
     The aggregation function outputs the after attack accuracy of the BERT classifier.
@@ -19,13 +19,22 @@ def paraphrase_classification_accuracy_agg_fn_constructor(target_clf):
         target_clf (str): the metric name of the target classifier.
     """
 
-    def agg_fn(data_record):
-        if data_record["original_text_metrics"][target_clf] != data_record["label"]:
-            return 0
-        for item in data_record["paraphrase_metrics"]:
-            if item[target_clf] != data_record["label"]:
+    if type == "worst":
+        def agg_fn(data_record):
+            if data_record["original_text_metrics"][target_clf] != data_record["label"]:
                 return 0
-        return 1
+            for item in data_record["paraphrase_metrics"]:
+                if item[target_clf] != data_record["label"]:
+                    return 0
+            return 1
+    elif type == "avg":
+        def agg_fn(data_record):
+            tmp = []
+            for item in data_record["paraphrase_metrics"]:
+                tmp.append(item[target_clf] != data_record["label"])
+            return np.mean(tmp)
+    else:
+        assert 0
     return agg_fn
 
 
@@ -104,7 +113,8 @@ def get_best_adv_metric_fn_constructor(get_best_adv_fn, metric_name, target_clf)
 
 def add_sentence_level_adversarial_attack_metrics(metric_bundle,
                                                   best_adv_metric_name=None,
-                                                  best_adv_metric_lower_better=None):
+                                                  best_adv_metric_lower_better=None,
+                                                  clf_agg_type="worst"):
     """Add advanced aggregation functions related to adversarial attack to a specific metric
     bundle.
 
@@ -126,7 +136,7 @@ def add_sentence_level_adversarial_attack_metrics(metric_bundle,
         if clf_name == target_clf:
             name += "_targeted"
         metric_bundle.add_advanced_aggregation_fn(
-            name, paraphrase_classification_accuracy_agg_fn_constructor(clf_name),
+            name, paraphrase_classification_accuracy_agg_fn_constructor(clf_name, clf_agg_type),
             DIRECTION_LOWER_BETTER
         )
 

@@ -63,8 +63,6 @@ class USESimilarityMetric(MetricBase):
         Returns:
             (list): a list containing the USE similarity metric for each paraphrase.
         """
-        origin = " ".join(origin.split()[:200])
-        paraphrase_list = [" ".join(x.split()[:200]) for x in paraphrase_list]
         embs = self.model([origin] + paraphrase_list).numpy()
 
         norm = np.linalg.norm(embs, axis=1)
@@ -82,7 +80,5 @@ class USESimilarityMetric(MetricBase):
             data_record: ignored.
             paraphrase_field: ignored.
         """
-        origin = " ".join(origin.split()[:200])
-        paraphrase = " ".join(paraphrase.split()[:200])
         embs = self.model([origin, paraphrase]).numpy()
         return float(np.sum(embs[0] * embs[1]) / np.linalg.norm(embs[0]) / np.linalg.norm(embs[1]))

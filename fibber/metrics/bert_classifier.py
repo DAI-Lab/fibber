@@ -324,14 +324,12 @@ class BertClassifier(ClassifierBase):
                 paraphrase_list, context, self._tokenizer, self._lm, self._model, self._device)
 
         if paraphrase_field == "text0":
-            batch_input = self._tokenizer(text=paraphrase_list, padding=True, max_length=200,
-                                          truncation=True)
+            batch_input = self._tokenizer(text=paraphrase_list, padding=True)
         else:
             assert paraphrase_field == "text1"
             batch_input = self._tokenizer(text=[data_record["text0"]] * len(paraphrase_list),
                                           text_pair=paraphrase_list,
-                                          padding=True, max_length=200,
-                                          truncation=True)
+                                          padding=True)
         with torch.no_grad():
             logits = self._model(
                 input_ids=torch.tensor(batch_input["input_ids"]).to(self._device),
@@ -397,8 +395,7 @@ class BertClassifier(ClassifierBase):
         elif len(text1_list) != len(text0_list):
             raise RuntimeError("data records are not consistent.")
 
-        batch_input = self._tokenizer(text=text0_list, text_pair=text1_list,
-                                      padding=True, max_length=200, truncation=True)
+        batch_input = self._tokenizer(text=text0_list, text_pair=text1_list, padding=True)
 
         loss, logits = self._model(
             input_ids=torch.tensor(batch_input["input_ids"]).to(self._device),

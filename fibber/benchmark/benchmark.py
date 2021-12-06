@@ -4,7 +4,8 @@ import os
 
 from fibber import log
 from fibber.benchmark.benchmark_utils import update_attack_robust_result, update_detailed_result
-from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, verify_dataset
+from fibber.datasets import (
+    builtin_datasets, clip_sentence, get_dataset, subsample_dataset, verify_dataset)
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
@@ -97,6 +98,10 @@ class Benchmark(object):
             verify_dataset(trainset)
             verify_dataset(testset)
 
+        model_init = "bert-base-%s" % ("cased" if trainset["cased"] else "uncased")
+        clip_sentence(trainset, model_init, max_len=128)
+        clip_sentence(testset, model_init, max_len=128)
+
         if attack_set is None:
             attack_set = testset
 
@@ -109,7 +114,7 @@ class Benchmark(object):
 
         # setup metric bundle
         self._metric_bundle = MetricBundle(
-            enable_bert_classifier=True,
+            enable_bert_classifier=enable_bert_clf,
             enable_fasttext_classifier=False,
             enable_glove_similarity=False,
             target_clf="bert",
@@ -121,7 +126,9 @@ class Benchmark(object):
             bert_clf_bs=bert_clf_bs,
             ce_gpu_id=ce_gpu_id,
             bert_clf_enable_sem=bert_clf_enable_sem,
-            bert_clf_enable_lmag=bert_clf_enable_lmag
+            bert_clf_enable_lmag=bert_clf_enable_lmag,
+            enable_ce_similarity=False,
+            enable_gpt2_perplexity=False
         )
 
         if customized_clf:

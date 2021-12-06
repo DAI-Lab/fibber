@@ -155,8 +155,8 @@ class StrategyBase(object):
                     data_record, paraphrase_set["paraphrase_field"], n)[:n])
             results["data"].append(data_record)
 
-            # save tmp output every 30 seconds
-            if datetime.datetime.now().timestamp() - last_tmp_output_save_time > 30:
+            # save tmp output every 600 seconds
+            if datetime.datetime.now().timestamp() - last_tmp_output_save_time > 600:
                 with open(tmp_output_filename, "w") as f:
                     json.dump(results, f, indent=2)
                 last_tmp_output_save_time = datetime.datetime.now().timestamp()

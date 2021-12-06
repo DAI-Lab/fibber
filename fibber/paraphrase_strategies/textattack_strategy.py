@@ -94,7 +94,7 @@ class TextAttackStrategy(StrategyBase):
         """Generate paraphrased sentences."""
         self._model.set_data_record(data_record)
 
-        attack_text = " ".join(data_record[field_name].split()[:200])
+        attack_text = data_record[field_name]
 
         signal.signal(signal.SIGALRM, alarm_handler)
         signal.alarm(self._strategy_config["time_limit"])

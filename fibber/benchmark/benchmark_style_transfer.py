@@ -31,6 +31,7 @@ class Benchmark(object):
                  output_dir, dataset_name,
                  trainset=None, testset=None, attack_set=None,
                  subsample_attack_set=0,
+                 subsample_offset=0,
                  customized_clf=None,
                  enable_bert_clf=True,
                  use_gpu_id=-1,
@@ -85,7 +86,7 @@ class Benchmark(object):
             attack_set = testset
 
         if subsample_attack_set != 0:
-            attack_set = subsample_dataset(attack_set, subsample_attack_set)
+            attack_set = subsample_dataset(attack_set, subsample_attack_set, subsample_offset)
 
         self._trainset = trainset
         self._testset = testset
@@ -103,10 +104,10 @@ class Benchmark(object):
             enable_ce_similarity=True,
             enable_glove_similarity=False,
             enable_self_bleu=True,
-            enable_ref_bleu=False,
+            enable_ref_bleu=True,
             enable_bert_perplexity_per_class=True,
-            enable_fasttext_classifier=True,
-            target_clf="fasttext"
+            enable_fasttext_classifier=False,
+            target_clf="bert"
         )
 
         if customized_clf:
@@ -115,6 +116,7 @@ class Benchmark(object):
 
         add_sentence_level_adversarial_attack_metrics(
             self._metric_bundle,
+            clf_agg_type="avg",
             best_adv_metric_name=None,
             best_adv_metric_lower_better=None)
 
@@ -152,7 +154,7 @@ class Benchmark(object):
         # get experiment name
         if exp_name is None:
             exp_name = (self._dataset_name + "-" + str(paraphrase_strategy) + "-"
-                        + datetime.datetime.now().strftime("%m%d-%H%M%S"))
+                        + datetime.datetime.now().strftime("%m%d-%H%M%S-%f"))
 
         log.add_file_handler(
             logger, os.path.join(self._output_dir, "%s.log" % exp_name))
@@ -177,10 +179,14 @@ class Benchmark(object):
             sub_results["data"] = [data_record for data_record in sub_results["data"]
                                    if data_record["label"] == label_idx]
 
-            if label_name == "expert":
-                suffix = "-E2L"
-            elif label_name == "layman":
-                suffix = "-L2E"
+            assert len(results["label_mapping"]) == 2
+            if label_idx == 0:
+                suffix = "-%s2%s" % (results["label_mapping"][0][0],
+                                     results["label_mapping"][1][0])
+            else:
+                suffix = "-%s2%s" % (results["label_mapping"][1][0],
+                                     results["label_mapping"][0][0])
+            suffix = suffix.upper()
 
             aggregated_result = self._metric_bundle.aggregate_metrics(
                 self._dataset_name + suffix, str(paraphrase_strategy), exp_name, sub_results)
@@ -209,6 +215,7 @@ def main():
     parser.add_argument("--output_dir", type=str, default=None)
     parser.add_argument("--num_paraphrases_per_text", type=int, default=20)
     parser.add_argument("--subsample_testset", type=int, default=1000)
+    parser.add_argument("--subsample_offset", type=int, default=0)
     parser.add_argument("--strategy", type=str, default="CheatStrategy")
     parser.add_argument("--strategy_gpu_id", type=int, default=-1)
 
@@ -229,6 +236,7 @@ def main():
 
     benchmark = Benchmark(arg_dict["output_dir"], arg_dict["dataset"],
                           subsample_attack_set=arg_dict["subsample_testset"],
+                          subsample_offset=arg_dict["subsample_offset"],
                           use_gpu_id=arg_dict["use_gpu_id"],
                           bert_gpu_id=arg_dict["bert_gpu_id"],
                           bert_ppl_gpu_id=arg_dict["bert_ppl_gpu_id"],

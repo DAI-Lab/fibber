@@ -52,14 +52,11 @@ class BertPerplexityMetric(MetricBase):
     def _get_ppl(self, sentences, data_record, paraphrase_field):
         """Compute the perplexity of sentences."""
         if paraphrase_field == "text0":
-            batch_input = self._tokenizer(text=sentences, padding=True, max_length=200,
-                                          truncation=True)
+            batch_input = self._tokenizer(text=sentences, padding=True)
         else:
             assert paraphrase_field == "text1"
             batch_input = self._tokenizer(text=[data_record["text0"]] * len(sentences),
-                                          text_pair=sentences,
-                                          padding=True, max_length=200,
-                                          truncation=True)
+                                          text_pair=sentences, padding=True)
 
         with torch.no_grad():
             input_ids = torch.tensor(batch_input["input_ids"]).to(self._device)

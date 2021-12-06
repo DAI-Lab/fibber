@@ -27,10 +27,13 @@ class RefBleuMetric(MetricBase):
             paraphrase_field: ignored.
         """
         try:
-            ref = word_tokenize(data_record["ref"])
+            ref = data_record["ref"]
+            if not isinstance(ref, list):
+                ref = [ref]
+            ref = [word_tokenize(item) for item in ref]
         except BaseException:
             logger.warning("Ref not found in data, Ref Blue is set to 0.")
             return 0
         hypo = word_tokenize(paraphrase)
         chencherry = bleu_score.SmoothingFunction()
-        return bleu_score.sentence_bleu([ref], hypo, smoothing_function=chencherry.method1)
+        return bleu_score.sentence_bleu(ref, hypo, smoothing_function=chencherry.method1)
