@@ -146,7 +146,7 @@ arg_dict = {
     "asrs_sim_weight": 500,
     "asrs_sim_threshold": 0.95,
     "asrs_ppl_weight": 5,
-    "asrs_clf_weight": 3
+    "asrs_clf_weight": 3,
     "asrs_sim_metric": "CESimilarityMetric"
 }
 
