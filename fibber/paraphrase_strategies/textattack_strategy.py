@@ -10,6 +10,7 @@ from fibber.paraphrase_strategies.strategy_base import StrategyBase
 logger = log.setup_custom_logger(__name__)
 
 try:
+    sys.path.append("./TextAttack")
     import textattack
     from textattack import attack_recipes
     from textattack.models.wrappers.model_wrapper import ModelWrapper
@@ -36,12 +37,20 @@ class CLFModel(ModelWrapper):
         self._field_name = field_name
         self._tokenizer = clf_metric._tokenizer
         self._data_record = None
+        self._counter = 0
 
     def __call__(self, text_list):
+        self._counter += len(text_list)
         ret = self.model.predict_dist_batch(
             self._data_record[self._field_name], text_list,
             data_record=self._data_record, paraphrase_field=self._field_name)
         return ret
+
+    def reset_counter(self):
+        self._counter = 0
+
+    def get_counter(self):
+        return self._counter
 
     def set_data_record(self, data_record):
         self._data_record = data_record
@@ -94,13 +103,14 @@ class TextAttackStrategy(StrategyBase):
         """Generate paraphrased sentences."""
         self._model.set_data_record(data_record)
 
+        self._model.reset_counter()
+
         attack_text = data_record[field_name]
 
         signal.signal(signal.SIGALRM, alarm_handler)
         signal.alarm(self._strategy_config["time_limit"])
         try:
-            att = next(self._recipe.attack_dataset(
-                [(attack_text, data_record["label"])]))
+            att = self._recipe.attack(attack_text, data_record["label"])
         except TimeOutException:
             logger.warn("Timeout.")
             att = None
@@ -110,7 +120,8 @@ class TextAttackStrategy(StrategyBase):
             att = None
         signal.alarm(0)
 
+        clf_count = self._model.get_counter()
         if isinstance(att, textattack.attack_results.SuccessfulAttackResult):
-            return [att.perturbed_result.attacked_text.text]
+            return [att.perturbed_result.attacked_text.text], clf_count
         else:
-            return [data_record[field_name]]
+            return [data_record[field_name]], clf_count

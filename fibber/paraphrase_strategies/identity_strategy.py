@@ -7,4 +7,4 @@ class IdentityStrategy(StrategyBase):
     __abbr__ = "id"
 
     def paraphrase_example(self, data_record, field_name, n):
-        return [data_record[field_name]]
+        return [data_record[field_name]], 0

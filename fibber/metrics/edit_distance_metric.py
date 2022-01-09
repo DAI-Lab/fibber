@@ -44,6 +44,10 @@ class EditDistanceMetric(MetricBase):
             return len(origin) + len(paraphrase)
 
         f = np.zeros((len(origin) + 1, len(paraphrase) + 1), dtype='int')
+        for i in range(len(origin) + 1):
+            f[i, 0] = i
+        for i in range(len(paraphrase) + 1):
+            f[0, i] = i
         for i in range(len(origin)):
             for j in range(len(paraphrase)):
                 f[i + 1][j + 1] = min(f[i, j + 1] + 1, f[i + 1, j] + 1, f[i, j] + 1)

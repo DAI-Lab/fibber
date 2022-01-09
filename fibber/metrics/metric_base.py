@@ -39,5 +39,16 @@ class MetricBase(object):
             ret.append(self.measure_example(origin, paraphrase, data_record, paraphrase_field))
         return ret
 
+    def measure_multiple_examples(self, origin_list, paraphrase_list,
+                                  data_record_list=None, paraphrase_field="text0"):
+        assert len(origin_list) == len(paraphrase_list)
+        ret = []
+        for i in range(len(origin_list)):
+            ret.append(self.measure_example(
+                origin_list[i], paraphrase_list[i],
+                data_record_list[i] if data_record_list is not None else None,
+                paraphrase_field))
+        return ret
+
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         raise NotImplementedError()

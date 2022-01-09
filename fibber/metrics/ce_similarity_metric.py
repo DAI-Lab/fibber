@@ -49,7 +49,13 @@ class CESimilarityMetric(MetricBase):
             (list): a list containing the USE similarity metric for each paraphrase.
         """
         return [float(x) for x in self._model.predict(
-            [(origin, paraphrase) for paraphrase in paraphrase_list])]
+            [[origin, paraphrase] for paraphrase in paraphrase_list])]
+
+    def measure_multiple_examples(self, origin_list, paraphrase_list,
+                                  data_record_list=None, paraphrase_field="text0"):
+        assert len(origin_list) == len(paraphrase_list)
+        return [float(x) for x in self._model.predict(
+            [[origin, paraphrase] for origin, paraphrase in zip(origin_list, paraphrase_list)])]
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the perplexity ratio.
@@ -60,4 +66,4 @@ class CESimilarityMetric(MetricBase):
             data_record: ignored.
             paraphrase_field: ignored.
         """
-        return float(self._model.predict([(origin, paraphrase)])[0])
+        return float(self._model.predict([[origin, paraphrase]])[0])

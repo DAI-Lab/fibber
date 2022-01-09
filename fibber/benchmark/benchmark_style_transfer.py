@@ -5,10 +5,10 @@ import os
 
 from fibber import log
 from fibber.benchmark.benchmark_utils import update_detailed_result
-from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, verify_dataset
+from fibber.datasets import builtin_datasets, get_dataset, subsample_dataset, verify_dataset, clip_sentence
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
 from fibber.metrics.metric_utils import MetricBundle
-from fibber.paraphrase_strategies import CheatStrategy, IdentityStrategy, SSRSStrategy
+from fibber.paraphrase_strategies import CheatStrategy, IdentityStrategy, SSRSStrategy, SSRSv2Strategy
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
 logger = log.setup_custom_logger(__name__)
@@ -17,7 +17,8 @@ log.remove_logger_tf_handler(logger)
 built_in_paraphrase_strategies = {
     "IdentityStrategy": IdentityStrategy,
     "CheatStrategy": CheatStrategy,
-    "SSRSStrategy": SSRSStrategy
+    "SSRSStrategy": SSRSStrategy,
+    "SSRSv2Strategy": SSRSv2Strategy
 }
 
 DATASET_NAME_COL = "0_dataset_name"
@@ -82,6 +83,10 @@ class Benchmark(object):
             verify_dataset(trainset)
             verify_dataset(testset)
 
+        model_init = "bert-base-%s" % ("cased" if trainset["cased"] else "uncased")
+        clip_sentence(trainset, model_init, max_len=128)
+        clip_sentence(testset, model_init, max_len=128)
+
         if attack_set is None:
             attack_set = testset
 
@@ -101,12 +106,13 @@ class Benchmark(object):
             bert_clf_steps=bert_clf_steps,
             bert_clf_bs=bert_clf_bs,
             ce_gpu_id=ce_gpu_id,
-            enable_ce_similarity=True,
+            enable_ce_similarity=False,
             enable_glove_similarity=False,
             enable_self_bleu=True,
             enable_ref_bleu=True,
             enable_bert_perplexity_per_class=True,
             enable_fasttext_classifier=False,
+            enable_gpt2_perplexity=False,
             target_clf="bert"
         )
 

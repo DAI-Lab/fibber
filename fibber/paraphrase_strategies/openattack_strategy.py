@@ -2,7 +2,6 @@
 
 import numpy as np
 import OpenAttack as oa
-
 from fibber import log
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
@@ -14,6 +13,7 @@ class MyClassifier(oa.Classifier):
         self.model = clf_metric
         self._field_name = field_name
         self._data_record = None
+        self._counter = 0
 
     def get_pred(self, input_):
         return self.get_prob(input_).argmax(axis=1)
@@ -21,8 +21,15 @@ class MyClassifier(oa.Classifier):
     def set_data_record(self, data_record):
         self._data_record = data_record.copy()
 
+    def reset_counter(self):
+        self._counter = 0
+
+    def get_counter(self):
+        return self._counter
+
     # access to the classification probability scores with respect input sentences
     def get_prob(self, input_):
+        self._counter += len(input_)
         ret = self.model.predict_dist_batch(
             self._data_record[self._field_name], input_,
             data_record=self._data_record, paraphrase_field=self._field_name)
@@ -59,8 +66,9 @@ class OpenAttackStrategy(StrategyBase):
     def paraphrase_example(self, data_record, field_name, n):
         """Generate paraphrased sentences."""
         self._victim.set_data_record(data_record)
+        self._victim.reset_counter()
 
-        attack_text = " ".join(data_record[field_name])
+        attack_text = data_record[field_name]
         attack_eval = oa.AttackEval(self._attacker, self._victim)
         res = next(attack_eval.ieval([{"x": attack_text, "y": data_record["label"]}]))
-        return [res["result"]] if res["success"] else [attack_text]
+        return [res["result"]] if res["success"] else [attack_text], self._victim.get_counter()

@@ -33,8 +33,7 @@ PRE_PROCESSING_PATTERN = [
     (r"'ve\s", r" have "),
 ]
 
-AUTO_SENTENCE_LEN_THRESHOLD = 50  # 50 words
-
+asrs_clf_counter = 0
 
 def process_text(text, patterns):
     """Processing the text using regex patterns.
@@ -110,11 +109,10 @@ def sim_criteria_score(origin, paraphrases, sim_metric, sim_threshold, sim_weigh
     Returns:
         (np.array): a numpy array of size ``(batch_size,)``. All entries ``<=0``.
     """
-    if sim_weight == 0:
-        return np.zeros(len(paraphrases), dtype="float32")
     use_semantic_similarity = sim_metric.measure_batch(origin, paraphrases)
-    return -sim_weight * (
-        np.maximum(sim_threshold - np.asarray(use_semantic_similarity), 0) ** 2)
+    return (-sim_weight * (
+        np.maximum(sim_threshold - np.asarray(use_semantic_similarity), 0) ** 2),
+        use_semantic_similarity)
 
 
 def ppl_criteria_score(origin, paraphrases, ppl_metric, ppl_weight):
@@ -129,13 +127,13 @@ def ppl_criteria_score(origin, paraphrases, ppl_metric, ppl_weight):
     Returns:
         (np.array): a numpy array of size ``(batch_size,)``. All entries ``<=0``.
     """
-    if ppl_weight == 0:
-        return np.zeros(len(paraphrases), dtype="float32")
     ppl_ratio = ppl_metric.measure_batch(origin, paraphrases, use_ratio=True)
-    return -ppl_weight * (np.maximum(np.asarray(ppl_ratio) - 1, 0) ** 2)
+    return (-ppl_weight * (np.maximum(np.asarray(ppl_ratio) - 1, 0) ** 2),
+            ppl_ratio)
 
 
 def clf_criteria_score(origin, paraphrases, data_record, field_name, clf_metric, clf_weight):
+    global asrs_clf_counter
     if clf_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
 
@@ -144,7 +142,9 @@ def clf_criteria_score(origin, paraphrases, data_record, field_name, clf_metric,
     correct_prob = (dist[:, label]).copy()
     dist[:, label] = -1e8
     incorrect_prob = np.max(dist, axis=1)
-    return -clf_weight * np.maximum(correct_prob - incorrect_prob, 0)
+    asrs_clf_counter += len(paraphrases)
+    return (-clf_weight * np.maximum(correct_prob - incorrect_prob, 0),
+            incorrect_prob > correct_prob)
 
 
 def joint_weighted_criteria(
@@ -191,38 +191,34 @@ def joint_weighted_criteria(
         batch_tensor[:, pos_st:pos_ed] = fill_ids
         paraphrases = [tostring(tokenizer, x[1:ll - 1])
                        for x, ll in zip(batch_tensor.detach().cpu().numpy(), seq_len)]
-        return (ppl_criteria_score(origin=origin, paraphrases=paraphrases,
-                                   ppl_metric=ppl_metric, ppl_weight=ppl_weight)
-                + sim_criteria_score(origin=origin, paraphrases=paraphrases, sim_metric=sim_metric,
-                                     sim_weight=sim_weight, sim_threshold=sim_threshold)
-                + clf_criteria_score(origin=origin, paraphrases=paraphrases,
-                                     data_record=data_record, field_name=field_name,
-                                     clf_metric=clf_metric,
-                                     clf_weight=clf_weight))
+        ppl_score, ppl_ratio = ppl_criteria_score(origin=origin, paraphrases=paraphrases,
+                                                  ppl_metric=ppl_metric, ppl_weight=ppl_weight)
+        sim_score, sim_value = sim_criteria_score(origin=origin, paraphrases=paraphrases, sim_metric=sim_metric,
+                                                  sim_weight=sim_weight, sim_threshold=sim_threshold)
+        clf_score, is_incorrect = clf_criteria_score(origin=origin, paraphrases=paraphrases,
+                                                     data_record=data_record, field_name=field_name,
+                                                     clf_metric=clf_metric,
+                                                     clf_weight=clf_weight)
+        return ppl_score + sim_score + clf_score, is_incorrect
 
     if state is not None:
-        previous_criteria_score = state
+        previous_criteria_score = state[0]
+        previous_is_incorrect = state[1]
     else:
-        previous_criteria_score = compute_criteria_score(previous_ids)
+        previous_criteria_score, previous_is_incorrect = compute_criteria_score(previous_ids)
 
-    candidate_criteria_score = compute_criteria_score(candidate_ids)
+    candidate_criteria_score, candidate_is_incorrect = compute_criteria_score(candidate_ids)
 
     alpha = np.exp((candidate_criteria_score - previous_criteria_score
                     + log_prob_previous_ids - log_prob_candidate_ids) * burnin_weight)
 
     accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
 
-    # if accept[0] and abs(alpha[0] - 1) > 1e-4:
-    #     print(tostring(tokenizer, batch_tensor[0]),
-    #           tostring(tokenizer, previous_ids[0]),
-    #           tostring(tokenizer, candidate_ids[0]),
-    #           alpha[0],
-    #           clf_metric.predict_example(None, tostring(tokenizer, batch_tensor[0, 1:-1])),
-    #           sep="\t")
-
     stats["accept"] += np.sum(accept)
     stats["all"] += len(accept)
-    state = candidate_criteria_score * accept + previous_criteria_score * (1 - accept)
+    state = (candidate_criteria_score * accept + previous_criteria_score * (1 - accept),
+             candidate_is_incorrect * accept + previous_is_incorrect * (1 - accept))
+
     accept = torch.tensor(accept).to(device)
     ids = candidate_ids * accept.reshape(-1, 1) + previous_ids * (1 - accept.reshape(-1, 1))
     return ids, state
@@ -335,7 +331,7 @@ class ASRSStrategy(StrategyBase):
         }
 
     def _parallel_sequential_generation(self, original_text, seed, batch_size, burnin_steps,
-                                        sampling_steps, field_name, data_record):
+                                        sampling_steps, field_name, data_record, early_stop=False):
         if self._strategy_config["seed_option"] == "origin":
             seq = ["[CLS]"] + self._tokenizer.tokenize(seed) + ["[SEP]"]
             batch_tensor = torch.tensor(
@@ -509,11 +505,16 @@ class ASRSStrategy(StrategyBase):
                 log_prob_previous_ids=log_prob_previous_ids.detach().cpu().numpy())
 
             batch_tensor[:, pos_st:pos_ed] = final_ids
+            if early_stop and np.sum(decision_fn_state[1]) >= 3:
+                break
 
         return [tostring(self._tokenizer, x[1:ll - 1])
                 for x, ll in zip(batch_tensor.detach().cpu().numpy(), seq_len)]
 
-    def paraphrase_example(self, data_record, field_name, n):
+    def paraphrase_example(self, data_record, field_name, n, early_stop=False):
+        global asrs_clf_counter
+        asrs_clf_counter = 0
+
         if self._strategy_config["lm_option"] == "adv":
             self._bert_lm = self._bert_lms[data_record["label"]]
             self._bert_lm.to(self._device)
@@ -538,7 +539,8 @@ class ASRSStrategy(StrategyBase):
                 batch_size if id != n_batches - 1 else last_batch_size,
                 burnin_steps,
                 sampling_steps,
-                field_name, data_record)
+                field_name, data_record,
+                early_stop=early_stop)
             sentences += batch
 
         assert len(sentences) == n
@@ -548,4 +550,4 @@ class ASRSStrategy(StrategyBase):
 
         logger.info("Aggregated accept rate: %.2lf%%.",
                     self._stats["accept"] / self._stats["all"] * 100)
-        return sentences[:n]
+        return sentences[:n], asrs_clf_counter

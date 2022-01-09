@@ -36,7 +36,7 @@ class DefaultTuningStrategy(TuningStrategyBase):
                              train_set,
                              num_paraphrases_per_text,
                              tuning_steps,
-                             tuning_batch_size=32,
+                             tuning_batch_size=64,
                              num_sentences_to_rewrite_per_step=20,
                              num_updates_per_step=5,
                              period_save=1000):
@@ -74,30 +74,23 @@ class DefaultTuningStrategy(TuningStrategyBase):
             global_step += 1
 
             # use paraphrase strategy to augment training data.
-            for i in range(num_sentences_to_rewrite_per_step):
-                data_record_t = self._rng.choice(train_set["data"])
-                paraphrase_list = paraphrase_strategy.paraphrase_example(
-                    data_record_t,
-                    paraphrase_field,
-                    num_paraphrases_per_text)
+            data_record_list_tmp = list(self._rng.choice(train_set["data"],
+                                                         num_sentences_to_rewrite_per_step))
+            paraphrase_list = paraphrase_strategy.paraphrase_multiple_examples(
+                data_record_list_tmp, paraphrase_field)
 
-                if i == 0:
-                    logger.info(paraphrase_list[0])
+            predict_logp_list = classifier.predict_dist_multiple_examples(
+                None, paraphrase_list, data_record_list_tmp, paraphrase_field)
 
-                predict_label_list = classifier.measure_batch(
-                    data_record_t[paraphrase_field], paraphrase_list, data_record_t,
-                    paraphrase_field)
+            for (paraphrase, data_record, predict_logp) in zip(
+                        paraphrase_list, data_record_list_tmp, predict_logp_list):
+                data_record_new = copy.deepcopy(data_record)
+                data_record_new[paraphrase_field] = paraphrase
+                predict_label = np.argmax(predict_logp)
 
-                for (paraphrase, predict_label) in zip(paraphrase_list, predict_label_list):
-
-                    data_record_new = copy.deepcopy(data_record_t)
-                    data_record_new[paraphrase_field] = paraphrase
+                if predict_label != data_record["label"]:
                     data_record_list.append(data_record_new)
-
-                    if predict_label != data_record_t["label"]:
-                        incorrect_set.add(len(data_record_list) - 1)
-                    # else:
-                    #     correct_set.add(len(data_record_list) - 1)1
+                    incorrect_set.add(len(data_record_list) - 1)
 
             correct_cnt = 0
             tot_cnt = 0

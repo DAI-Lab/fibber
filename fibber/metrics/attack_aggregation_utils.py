@@ -111,6 +111,15 @@ def get_best_adv_metric_fn_constructor(get_best_adv_fn, metric_name, target_clf)
     return agg_fn
 
 
+def query_count_fn_constructor(target_clf):
+    def agg_fn(data_record):
+        if data_record["original_text_metrics"][target_clf] == data_record["label"]:
+            return data_record["clf_count"]
+        else:
+            return math.nan
+    return agg_fn
+
+
 def add_sentence_level_adversarial_attack_metrics(metric_bundle,
                                                   best_adv_metric_name=None,
                                                   best_adv_metric_lower_better=None,
@@ -130,6 +139,12 @@ def add_sentence_level_adversarial_attack_metrics(metric_bundle,
     )
 
     target_clf = metric_bundle.get_target_classifier_name()
+
+    metric_bundle.add_advanced_aggregation_fn(
+        "AverageQuery",
+        query_count_fn_constructor(target_clf),
+        DIRECTION_LOWER_BETTER
+    )
 
     for clf_name in metric_bundle.get_classifier_names():
         name = "%s_Accuracy" % clf_name

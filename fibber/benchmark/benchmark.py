@@ -10,10 +10,11 @@ from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversari
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
     ASRSStrategy, FudgeStrategy, IdentityStrategy, OpenAttackStrategy, RandomStrategy,
-    TextAttackStrategy)
+    TextAttackStrategy, ASRSv2Strategy)
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.robust_tuning_strategy.default_tuning_strategy import (
     DefaultTuningStrategy, TuningStrategyBase)
+from fibber.robust_tuning_strategy.naive_tuning_strategy import NaiveTuningStrategy
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
@@ -23,12 +24,14 @@ built_in_paraphrase_strategies = {
     "IdentityStrategy": IdentityStrategy,
     "TextAttackStrategy": TextAttackStrategy,
     "ASRSStrategy": ASRSStrategy,
+    "ASRSv2Strategy": ASRSv2Strategy,
     "OpenAttackStrategy": OpenAttackStrategy,
     "FudgeStrategy": FudgeStrategy,
 }
 
 built_in_tuning_strategies = {
-    "DefaultTuningStrategy": DefaultTuningStrategy
+    "DefaultTuningStrategy": DefaultTuningStrategy,
+    "NaiveTuningStrategy": NaiveTuningStrategy
 }
 
 DATASET_NAME_COL = "0_dataset_name"
@@ -99,7 +102,7 @@ class Benchmark(object):
             verify_dataset(testset)
 
         model_init = "bert-base-%s" % ("cased" if trainset["cased"] else "uncased")
-        clip_sentence(trainset, model_init, max_len=128)
+        # clip_sentence(trainset, model_init, max_len=128)
         clip_sentence(testset, model_init, max_len=128)
 
         if attack_set is None:
@@ -127,9 +130,12 @@ class Benchmark(object):
             ce_gpu_id=ce_gpu_id,
             bert_clf_enable_sem=bert_clf_enable_sem,
             bert_clf_enable_lmag=bert_clf_enable_lmag,
-            enable_ce_similarity=True,
-            enable_gpt2_perplexity=True
+            enable_ce_similarity=False,
+            enable_gpt2_perplexity=False
         )
+
+        # self._metric_bundle.get_target_classifier().enable_ppl_filter(
+        #     self._metric_bundle.get_metric("BertPerplexityMetric"))
 
         if customized_clf:
             self._metric_bundle.add_classifier(str(customized_clf), customized_clf)
@@ -226,7 +232,7 @@ class Benchmark(object):
         # get experiment name
         if exp_name is None:
             exp_name = (self._dataset_name + "-" + str(paraphrase_strategy) + "-"
-                        + datetime.datetime.now().strftime("%m%d-%H%M%S"))
+                        + datetime.datetime.now().strftime("%m%d-%H%M%S%f"))
 
         log.add_file_handler(
             logger, os.path.join(self._output_dir, "%s.log" % exp_name))
@@ -300,7 +306,7 @@ def main():
     parser.add_argument("--use_gpu_id", type=int, default=-1)
     parser.add_argument("--bert_clf_steps", type=int, default=20000)
     parser.add_argument("--ce_gpu_id", type=int, default=-1)
-    parser.add_argument("--best_adv_metric_name", type=str, default="CESimilarityMetric")
+    parser.add_argument("--best_adv_metric_name", type=str, default="USESimilarityMetric")
     parser.add_argument("--best_adv_lower_better", type=str, default="0")
 
     # add builtin strategies' args to parser.
@@ -337,6 +343,7 @@ def main():
     if arg_dict["robust_tuning"] == "1":
         benchmark.run_robust_tuning(paraphrase_strategy=paraphrase_strategy,
                                     num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"],
+                                    tuning_strategy="DefaultTuningStrategy",
                                     tuning_steps=arg_dict["robust_tuning_steps"],
                                     num_sentences_to_rewrite_per_step=arg_dict[
                                         "robust_tune_num_attack_per_step"])

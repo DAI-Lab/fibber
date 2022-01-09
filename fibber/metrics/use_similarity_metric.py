@@ -70,6 +70,15 @@ class USESimilarityMetric(MetricBase):
         assert abs(sim[0] - 1) < 1e-4
         return [float(x) for x in sim[1:]]
 
+    def measure_multiple_examples(self, origin_list, paraphrase_list,
+                                  data_record_list=None, paraphrase_field="text0"):
+        assert len(origin_list) == len(paraphrase_list)
+        embs = self.model(origin_list + paraphrase_list).numpy()
+        norm = np.linalg.norm(embs, axis=1)
+        embs = embs / norm[:, None]
+        sim = (embs[:len(origin_list)] * embs[len(origin_list):]).sum(axis=1)
+        return [float(x) for x in sim]
+
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the cosine similarity between the embedding of original text and paraphrased
         text.

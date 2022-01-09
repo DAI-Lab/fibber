@@ -99,7 +99,19 @@ class GPT2PerplexityMetric(MetricBase):
             ppls = self._get_ppl([origin] + paraphrase_list)
             res = ppls[1:] / ppls[0]
         else:
-            ppls = self._get_ppl(paraphrase_list)
+            res = self._get_ppl(paraphrase_list)
+        return [float(x) for x in res]
+
+    def measure_multiple_examples(self, origin_list, paraphrase_list,
+                                  data_record_list=None, paraphrase_field="text0",
+                                  use_ratio=False):
+        assert len(origin_list) == len(paraphrase_list)
+        if use_ratio:
+            ppls = self._get_ppl(origin_list + paraphrase_list)
+            res = ppls[len(origin_list):] / ppls[:len(origin_list)]
+        else:
+            res = self._get_ppl(paraphrase_list)
+        print(res)
         return [float(x) for x in res]
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0",

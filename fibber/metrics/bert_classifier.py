@@ -298,6 +298,10 @@ class BertClassifier(ClassifierBase):
             device=self._device)
         self._fine_tune_sche = None
         self._fine_tune_opt = None
+        self._ppl_filter_metric = None
+
+    def enable_ppl_filter(self, ppl_metric):
+        self._ppl_filter_metric = ppl_metric
 
     def predict_dist_batch(self, origin, paraphrase_list, data_record=None,
                            paraphrase_field="text0"):
@@ -312,6 +316,8 @@ class BertClassifier(ClassifierBase):
         Returns:
             (np.array): a numpy array of size ``(batch_size * num_labels)``.
         """
+        if self._ppl_filter_metric is not None:
+            paraphrase_list = self._ppl_filter_metric.perplexity_filter(paraphrase_list)
         if self._enable_sem:
             paraphrase_list = sem_fix_sentences(paraphrase_list, self._sem_word_map)
         if self._enable_lmag:
@@ -348,6 +354,31 @@ class BertClassifier(ClassifierBase):
                     dim=1).detach().cpu().numpy()
             else:
                 res = F.log_softmax(logits, dim=1).detach().cpu().numpy()
+        return res
+
+    def predict_dist_multiple_examples(self, origin_list, paraphrase_list,
+                                       data_record_list=None, paraphrase_field="text0"):
+        if self._enable_sem or self._enable_lmag:
+            raise RuntimeError
+
+        if self._ppl_filter_metric is not None:
+            paraphrase_list = self._ppl_filter_metric.perplexity_filter(paraphrase_list)
+
+        if paraphrase_field == "text0":
+            batch_input = self._tokenizer(text=paraphrase_list, padding=True)
+        else:
+            assert paraphrase_field == "text1"
+            batch_input = self._tokenizer(text=[item["text0"] for item in data_record_list],
+                                          text_pair=paraphrase_list,
+                                          padding=True)
+        with torch.no_grad():
+            logits = self._model(
+                input_ids=torch.tensor(batch_input["input_ids"]).to(self._device),
+                token_type_ids=torch.tensor(batch_input["token_type_ids"]).to(
+                    self._device),
+                attention_mask=torch.tensor(batch_input["attention_mask"]).to(self._device)
+            )[0]
+            res = F.log_softmax(logits, dim=1).detach().cpu().numpy()
         return res
 
     def predict_dist_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):

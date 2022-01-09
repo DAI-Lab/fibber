@@ -16,4 +16,4 @@ class RandomStrategy(StrategyBase):
             np.random.shuffle(tokens)
             ret.append(" ".join(tokens))
 
-        return ret
+        return ret, 0

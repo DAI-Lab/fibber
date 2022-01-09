@@ -52,6 +52,17 @@ class ClassifierBase(MetricBase):
                 self.predict_dist_example(origin, paraphrase, data_record, paraphrase_field))
         return np.asarray(ret)
 
+    def predict_dist_multiple_examples(self, origin_list, paraphrase_list,
+                                       data_record_list=None, paraphrase_field="text0"):
+        ret = []
+        for i in range(len(origin_list)):
+            ret.append(
+                self.predict_dist_example(
+                    origin_list[i], paraphrase_list[i],
+                    data_record_list[i] if data_record_list is not None else None,
+                    paraphrase_field))
+        return np.asarray(ret)
+
     def predict_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Predict class label for one example.
 
@@ -82,6 +93,12 @@ class ClassifierBase(MetricBase):
         return np.argmax(
             self.predict_dist_batch(origin, paraphrase_list, data_record, paraphrase_field),
             axis=1)
+
+    def predict_multiple_examples(self, origin_list, paraphrase_list,
+                                  data_record_list=None, paraphrase_field="text0"):
+        return np.argmax(
+            self.predict_dist_multiple_examples(origin_list, paraphrase_list,
+                                                data_record_list, paraphrase_field), axis=1)
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Predict class label for one example.
@@ -115,6 +132,11 @@ class ClassifierBase(MetricBase):
          """
         return [int(x) for x in
                 self.predict_batch(origin, paraphrase_list, data_record, paraphrase_field)]
+
+    def measure_multiple_examples(self, origin_list, paraphrase_list,
+                                  data_record_list=None, paraphrase_field="text0"):
+        return [int(x) for x in self.predict_multiple_examples(
+            origin_list, paraphrase_list, data_record_list, paraphrase_field)]
 
     def robust_tune_step(self, data_record_list):
         raise NotImplementedError

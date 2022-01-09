@@ -68,7 +68,8 @@ def compute_lm_loss(lm_model, seq, mask, tok_type, lm_label, stats):
 
 def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
                  lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
-                 lm_period_summary=100, lm_period_save=5000, as_masked_lm=True):
+                 lm_period_summary=100, lm_period_save=5000, as_masked_lm=True,
+                 only_one_sentence=False):
     """Returns a finetuned BERT language model on a given dataset.
 
     The language model will be stored at ``<output_dir>/lm_all`` if filter is -1, or
@@ -126,11 +127,12 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
             return BertLMHeadModel.from_pretrained(ckpt_path, config=config).eval()
 
     if as_masked_lm:
-        dataset = DatasetForBert(trainset, model_init, lm_bs, exclude=filter, masked_lm=True)
+        dataset = DatasetForBert(trainset, model_init, lm_bs, exclude=filter, masked_lm=True,
+                                 only_one_sentence=only_one_sentence)
         lm_model = BertForMaskedLM.from_pretrained(resources.get_transformers(model_init))
     else:
         dataset = DatasetForBert(trainset, model_init, lm_bs, exclude=filter,
-                                 autoregressive_lm=True)
+                                 autoregressive_lm=True, only_one_sentence=only_one_sentence)
         config = BertConfig.from_pretrained(resources.get_transformers(model_init))
         config.is_decoder = True
         lm_model = BertLMHeadModel.from_pretrained(resources.get_transformers(model_init),
@@ -248,7 +250,8 @@ def get_lm(lm_option, dataset_name, trainset, device, filter=-1, lm_steps=5000, 
         bert_lm = fine_tune_lm(
             output_dir, trainset, filter, device,
             lm_steps=lm_steps, lm_bs=lm_bs, lm_opt=lm_opt, lm_lr=lm_lr, lm_decay=lm_decay,
-            lm_period_summary=lm_period_summary, lm_period_save=lm_period_save, as_masked_lm=False)
+            lm_period_summary=lm_period_summary, lm_period_save=lm_period_save, as_masked_lm=False,
+            only_one_sentence=True)
     else:
         raise RuntimeError("unsupported lm_option")
 

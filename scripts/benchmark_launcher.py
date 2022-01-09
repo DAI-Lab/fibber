@@ -7,7 +7,7 @@ COMMON_CONFIG = {
     "--num_paraphrases_per_text": 50,
     "--robust_tuning": "0",
     # ignored when robut_tuning is 0 and load_robust_tuned_clf is not set
-    "--robust_tuning_steps": 5000,
+    "--robust_tuning_steps": 3000,
 }
 
 DEFENSE_CONFIG = {
@@ -34,13 +34,34 @@ GPU_CONFIG = {
         "--gpt2_gpu_id": 1,
         "--ce_gpu_id": 1,
         "--strategy_gpu_id": 1,
+    },
+    "2": {
+        "--bert_gpu_id": 2,
+        "--use_gpu_id": 2,
+        "--gpt2_gpu_id": 2,
+        "--ce_gpu_id": 2,
+        "--strategy_gpu_id": 2,
+    },
+    "3": {
+        "--bert_gpu_id": 3,
+        "--use_gpu_id": 3,
+        "--gpt2_gpu_id": 3,
+        "--ce_gpu_id": 3,
+        "--strategy_gpu_id": 3,
+    },
+    "mix": {
+        "--bert_gpu_id": 3,
+        "--use_gpu_id": 3,
+        "--gpt2_gpu_id": 3,
+        "--ce_gpu_id": 3,
+        "--strategy_gpu_id": 0,
     }
 }
 
 DATASET_CONFIG = {
-    "ag_no_title": {
+    "ag": {
         "--dataset": "ag_no_title",
-        "--output_dir": "exp-ag_no_title",
+        "--output_dir": "exp-ag",
         "--bert_clf_steps": 20000
     },
     "mr": {
@@ -48,49 +69,46 @@ DATASET_CONFIG = {
         "--output_dir": "exp-mr",
         "--bert_clf_steps": 5000
     },
-    "imdb": {
-        "--dataset": "imdb",
-        "--output_dir": "exp-imdb",
-        "--bert_clf_steps": 5000
-    },
-    "yelp": {
-        "--dataset": "yelp",
-        "--output_dir": "exp-yelp",
-        "--bert_clf_steps": 20000
-    },
+    # "imdb": {
+    #     "--dataset": "imdb",
+    #     "--output_dir": "exp-imdb",
+    #     "--bert_clf_steps": 5000
+    # },
+    # "yelp": {
+    #     "--dataset": "yelp",
+    #     "--output_dir": "exp-yelp",
+    #     "--bert_clf_steps": 20000
+    # },
     "snli": {
         "--dataset": "snli",
         "--output_dir": "exp-snli",
-        "--bert_clf_steps": 20000
-    },
-    "mnli": {
-        "--dataset": "mnli",
-        "--output_dir": "exp-mnli",
-        "--bert_clf_steps": 20000
-    },
-    "mnli_mis": {
-        "--dataset": "mnli_mis",
-        "--output_dir": "exp-mnli_mis",
         "--bert_clf_steps": 20000
     },
     "sst2": {
         "--dataset": "sst2",
         "--output_dir": "exp-sst2",
         "--bert_clf_steps": 20000
-    },
-    "qnli": {
-        "--dataset": "qnli",
-        "--output_dir": "exp-qnli",
-        "--bert_clf_steps": 20000
-    },
+    }
+    # "mnli": {
+    #     "--dataset": "mnli",
+    #     "--output_dir": "exp-mnli",
+    #     "--bert_clf_steps": 20000
+    # },
+    # "mnli_mis": {
+    #     "--dataset": "mnli_mis",
+    #     "--output_dir": "exp-mnli_mis",
+    #     "--bert_clf_steps": 20000
+    # },
+    # "qnli": {
+    #     "--dataset": "qnli",
+    #     "--output_dir": "exp-qnli",
+    #     "--bert_clf_steps": 20000
+    # },
 }
 
 STRATEGY_CONFIG = {
     "identity": {
         "--strategy": "IdentityStrategy"
-    },
-    "random": {
-        "--strategy": "RandomStrategy"
     },
     "textfooler": {
         "--strategy": "TextAttackStrategy",
@@ -99,18 +117,28 @@ STRATEGY_CONFIG = {
     },
     "pso": {
         "--strategy": "OpenAttackStrategy",
-        "--ta_recipe": "PSOAttacker",
+        "--oa_recipe": "PSOAttacker",
         "--robust_tune_num_attack_per_step": 5
     },
     "bertattack": {
+        "--strategy": "TextAttackStrategy",
+        "--ta_recipe": "BERTAttackLi2020",
+        "--robust_tune_num_attack_per_step": 5
+    },
+    "bertattack-oa": {
         "--strategy": "OpenAttackStrategy",
         "--oa_recipe": "BERTAttacker",
         "--robust_tune_num_attack_per_step": 5
     },
     "bae": {
-        "--strategy": "OpenAttackStrategy",
-        "--oa_recipe": "BAEAttacker",
+        "--strategy": "TextAttackStrategy",
+        "--ta_recipe": "BAEGarg2019",
         "--robust_tune_num_attack_per_step": 5
+    },
+    "clare": {
+        "--strategy": "TextAttackStrategy",
+        "--ta_recipe": "CLARE2020",
+        "--robust_tune_num_attack_per_step": 16
     },
     "scpn": {
         "--strategy": "OpenAttackStrategy",
@@ -132,29 +160,33 @@ STRATEGY_CONFIG = {
         "--asrs_enforcing_dist": "wpe",
         "--asrs_wpe_threshold": 1.0,
         "--asrs_wpe_weight": 1000,
-        "--asrs_sim_threshold": 0.95,
+        "--asrs_sim_threshold": 1.0,
         "--asrs_sim_weight": 500,
-        "--asrs_ppl_weight": 5,
-        "--asrs_sampling_steps": 200,
-        "--asrs_burnin_steps": 100,
+        "--asrs_ppl_weight": 100,
+        "--asrs_sampling_steps": 50,
+        "--asrs_burnin_steps": 0,
         "--asrs_clf_weight": 3,
         "--asrs_window_size": 3,
         "--asrs_accept_criteria": "joint_weighted_criteria",
         "--asrs_burnin_enforcing_schedule": "1",
         "--asrs_burnin_criteria_schedule": "1",
         "--asrs_seed_option": "dynamic_len",
-        "--asrs_split_sentence": "1",
         "--asrs_lm_option": "finetune",
-        "--asrs_stanza_port": 9001,
         "--asrs_sim_metric": "CESimilarityMetric",
         "--robust_tune_num_attack_per_step": 5
+    },
+    "asrs-adv-train": {
+        "--asrs_sampling_steps": 50,
+        "--asrs_burnin_steps": 25,
+        "--asrs_sim_metric": "USESimilarityMetric",
+        "--robust_tune_num_attack_per_step": 16
     },
     "fu": {
         "--strategy": "FudgeStrategy",
     },
     "asrs-nli": {
         "--asrs_sim_weight": 100,
-        "--asrs_ppl_weight": 3,
+        "--asrs_ppl_weight": 50,
         "--asrs_clf_weight": 3,
     },
     "asrs-u": {
@@ -163,11 +195,82 @@ STRATEGY_CONFIG = {
     },
     "asrs-u-nli": {
         "--asrs_sim_weight": 100,
-        "--asrs_ppl_weight": 3,
+        "--asrs_ppl_weight": 50,
         "--asrs_clf_weight": 3,
         "--asrs_sim_metric": "USESimilarityMetric",
         "--best_adv_metric_name": "USESimilarityMetric"
-    }
+    },
+    "asrsv2": {
+        "--strategy": "ASRSv2Strategy",
+        "--asrs2_enforcing_dist": "wpe",
+        "--asrs2_wpe_threshold": 1.0,
+        "--asrs2_wpe_weight": 5,
+        "--asrs2_sim_threshold": 0.95,
+        "--asrs2_sim_weight": 10,
+        "--asrs2_ppl_weight": 5,
+        "--asrs2_sampling_steps": 200,
+        "--asrs2_clf_weight": 10,
+        "--asrs2_window_size": 3,
+        "--asrs2_accept_criteria": "joint_weighted_criteria",
+        "--asrs2_lm_option": "finetune",
+        "--asrs2_sim_metric": "USESimilarityMetric",
+        "--asrs2_early_stop": "half",
+        "--robust_tune_num_attack_per_step": 16
+    },
+
+    "asrsv2A": {
+        "--strategy": "ASRSv2Strategy",
+        "--asrs2_enforcing_dist": "wpe",
+        "--asrs2_wpe_threshold": 1.0,
+        "--asrs2_wpe_weight": 5,
+        "--asrs2_sim_threshold": 0.90,
+        "--asrs2_sim_weight": 20,
+        "--asrs2_ppl_weight": 5,
+        "--asrs2_sampling_steps": 200,
+        "--asrs2_clf_weight": 10,
+        "--asrs2_window_size": 3,
+        "--asrs2_accept_criteria": "joint_weighted_criteria",
+        "--asrs2_lm_option": "finetune",
+        "--asrs2_sim_metric": "USESimilarityMetric",
+        "--asrs2_early_stop": "half",
+        "--robust_tune_num_attack_per_step": 16
+    },
+
+    "asrsv2-1": {
+        "--strategy": "ASRSv2Strategy",
+        "--asrs2_enforcing_dist": "wpe",
+        "--asrs2_wpe_threshold": 1.0,
+        "--asrs2_wpe_weight": 1,
+        "--asrs2_sim_threshold": 0.8,
+        "--asrs2_sim_weight": 50,
+        "--asrs2_ppl_weight": 5,
+        "--asrs2_sampling_steps": 100,
+        "--asrs2_clf_weight": 5,
+        "--asrs2_window_size": 3,
+        "--asrs2_accept_criteria": "joint_weighted_criteria",
+        "--asrs2_lm_option": "finetune",
+        "--asrs2_sim_metric": "USESimilarityMetric",
+        "--asrs2_early_stop": "all",
+        "--robust_tune_num_attack_per_step": 32
+    },
+
+    "asrsv2-2": {
+        "--strategy": "ASRSv2Strategy",
+        "--asrs2_enforcing_dist": "wpe",
+        "--asrs2_wpe_threshold": 1.0,
+        "--asrs2_wpe_weight": 5,
+        "--asrs2_sim_threshold": 0.9,
+        "--asrs2_sim_weight": 50,
+        "--asrs2_ppl_weight": 3,
+        "--asrs2_sampling_steps": 100,
+        "--asrs2_clf_weight": 10,
+        "--asrs2_window_size": 3,
+        "--asrs2_accept_criteria": "joint_weighted_criteria",
+        "--asrs2_lm_option": "finetune",
+        "--asrs2_sim_metric": "USESimilarityMetric",
+        "--asrs2_early_stop": "all",
+        "--robust_tune_num_attack_per_step": 32
+    },
 }
 
 

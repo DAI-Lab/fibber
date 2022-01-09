@@ -212,7 +212,8 @@ def clip_sentence(dataset, model_init, max_len):
     """Inplace clipping sentences."""
     tokenizer = BertTokenizer.from_pretrained(
         resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
-    for data_record in dataset["data"]:
+    logger.info("clipping the dataset to %d tokens.", max_len)
+    for data_record in tqdm.tqdm(dataset["data"]):
         s0 = tokenizer.tokenize(data_record["text0"])
         s0 = s0[:max_len]
         data_record["text0"] = tokenizer.convert_tokens_to_string(s0)
@@ -263,7 +264,8 @@ class DatasetForBert(torch.utils.data.IterableDataset):
     """
 
     def __init__(self, dataset, model_init, batch_size, exclude=-1,
-                 masked_lm=False, masked_lm_ratio=0.2, autoregressive_lm=False, seed=0):
+                 masked_lm=False, masked_lm_ratio=0.2, autoregressive_lm=False,
+                 only_one_sentence=False, seed=0):
         """Initialize.
 
         Args:
@@ -287,12 +289,14 @@ class DatasetForBert(torch.utils.data.IterableDataset):
         self._masked_lm = masked_lm
         self._masked_lm_ratio = masked_lm_ratio
         self._mask_tok_id = self._tokenizer.mask_token_id
+        self._only_one_sentence = only_one_sentence
 
         self._autoregressive_lm = autoregressive_lm
         if self._autoregressive_lm and self._masked_lm:
             raise RuntimeError("masked_lm and autoregressive_lm are used at the same time.")
 
         self._data = dataset["data"]
+        self._field_name = dataset["paraphrase_field"]
         if exclude != -1:
             self._data = [item for item in self._data if item["label"] != exclude]
 
@@ -306,7 +310,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
         while True:
             data_records = self._rng.choice(self._data, self._batch_size)
 
-            if "text1" in data_records[0]:
+            if "text1" in data_records[0] and not self._only_one_sentence:
                 batch_input = self._tokenizer(
                     [item["text0"] for item in data_records],
                     [item["text1"] for item in data_records],
@@ -314,7 +318,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                     padding=True)
             else:
                 batch_input = self._tokenizer(
-                    [item["text0"] for item in data_records],
+                    [item[self._field_name] for item in data_records],
                     return_tensors="np",
                     padding=True)
 
