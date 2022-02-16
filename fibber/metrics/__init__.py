@@ -1,4 +1,3 @@
-from fibber.metrics.transformer_classifier import TransformerClassifier
 from fibber.metrics.bert_perplexity_metric import BertPerplexityMetric
 from fibber.metrics.ce_similarity_metric import CESimilarityMetric
 from fibber.metrics.edit_distance_metric import EditDistanceMetric
@@ -9,6 +8,7 @@ from fibber.metrics.metric_base import MetricBase
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.metrics.ref_bleu_metric import RefBleuMetric
 from fibber.metrics.self_bleu_metric import SelfBleuMetric
+from fibber.metrics.transformer_classifier import TransformerClassifier
 from fibber.metrics.use_similarity_metric import USESimilarityMetric
 
 __all__ = [

@@ -144,7 +144,8 @@ def joint_weighted_criteria(
     else:
         previous_criteria_score, previous_is_incorrect = compute_criteria_score(prev_paraphrases)
 
-    candidate_criteria_score, candidate_is_incorrect = compute_criteria_score(candidate_paraphrases)
+    candidate_criteria_score, candidate_is_incorrect = compute_criteria_score(
+        candidate_paraphrases)
 
     candidate_criteria_score -= previous_is_incorrect * (1 - candidate_is_incorrect) * 1e8
 
@@ -184,7 +185,7 @@ def assign_cadidates(paraphrases_with_mask, candidate_words, tokenizer):
         while True:
             try:
                 mask_index = tokens.index("[MASK]")
-            except:
+            except BaseException:
                 ret.append(tokenizer.convert_tokens_to_string(tokens))
                 break
             tokens[mask_index] = candidate_words[p]

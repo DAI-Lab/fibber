@@ -356,7 +356,6 @@ class TransformerClassifier(ClassifierBase):
 
         return res_hard
 
-
     def predict_dist_multiple_examples(self, origin_list, paraphrase_list,
                                        data_record_list=None, paraphrase_field="text0",
                                        return_raw_logits=False):

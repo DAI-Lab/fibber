@@ -26,7 +26,8 @@ install_requires = [
     'stanza>=1.1.0',
     'sentence-transformers>=0.3.0',
     'rake_nltk>=1.0.4',
-    'fasttext>=0.9.0'
+    'fasttext>=0.9.0',
+    'expiringdict>=1.2.0'
 ]
 
 setup_requires = [

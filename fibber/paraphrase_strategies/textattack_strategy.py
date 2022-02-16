@@ -5,10 +5,10 @@ import sys
 import traceback
 
 import numpy as np
+from nltk import word_tokenize
 
 from fibber import log
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
-from nltk import word_tokenize
 
 logger = log.setup_custom_logger(__name__)
 

@@ -83,7 +83,7 @@ class DefaultTuningStrategy(TuningStrategyBase):
                 None, paraphrase_list, data_record_list_tmp, paraphrase_field)
 
             for (paraphrase, data_record, predict_logp) in zip(
-                        paraphrase_list, data_record_list_tmp, predict_logp_list):
+                    paraphrase_list, data_record_list_tmp, predict_logp_list):
                 data_record_new = copy.deepcopy(data_record)
                 data_record_new[paraphrase_field] = paraphrase
                 predict_label = np.argmax(predict_logp)

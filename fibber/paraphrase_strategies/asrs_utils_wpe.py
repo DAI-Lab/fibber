@@ -8,7 +8,7 @@ from torch import nn
 from transformers import BertTokenizer
 
 from fibber import get_root_dir, log, resources
-from fibber.resources import get_counter_fitted_vector, get_stopwords
+from fibber.resources import get_counter_fitted_vector
 
 logger = log.setup_custom_logger(__name__)
 

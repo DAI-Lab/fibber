@@ -35,6 +35,7 @@ PRE_PROCESSING_PATTERN = [
 
 asrs_clf_counter = 0
 
+
 def process_text(text, patterns):
     """Processing the text using regex patterns.
 

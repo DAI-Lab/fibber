@@ -6,7 +6,6 @@ import pandas as pd
 import tqdm
 
 from fibber import log
-from fibber.metrics.transformer_classifier import TransformerClassifier
 from fibber.metrics.bert_perplexity_metric import BertPerplexityMetric
 from fibber.metrics.ce_similarity_metric import CESimilarityMetric
 from fibber.metrics.classifier_base import ClassifierBase
@@ -17,6 +16,7 @@ from fibber.metrics.gpt2_perplexity_metric import GPT2PerplexityMetric
 from fibber.metrics.metric_base import MetricBase
 from fibber.metrics.ref_bleu_metric import RefBleuMetric
 from fibber.metrics.self_bleu_metric import SelfBleuMetric
+from fibber.metrics.transformer_classifier import TransformerClassifier
 from fibber.metrics.use_similarity_metric import USESimilarityMetric
 
 logger = log.setup_custom_logger(__name__)

@@ -1,8 +1,7 @@
-import math
-import re
 
 import numpy as np
 import torch
+from nltk import word_tokenize
 from torch import nn
 from torch.nn import functional as F
 
@@ -10,7 +9,6 @@ from fibber import log
 from fibber.metrics.bert_lm_utils import get_lm
 from fibber.paraphrase_strategies.asrs_utils_wpe import get_wordpiece_emb
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
-from nltk import word_tokenize
 
 logger = log.setup_custom_logger(__name__)
 
@@ -19,6 +17,7 @@ REDFLAG_WORDS = ["not", "no", "'t", "t", "nobody", "nothing",
                  "but", "however", "nevertheless", "too", "only",
                  "fuck", "fucking", "fucked", "idiot", "ass", "bitch",
                  "nigga", "niggas", "nigger"]
+
 
 def roll_back(record, adv, clf_metric):
     s1 = word_tokenize(record["text0"])
@@ -255,7 +254,8 @@ def joint_weighted_criteria(
     else:
         previous_criteria_score, previous_is_incorrect = compute_criteria_score(prev_paraphrases)
 
-    candidate_criteria_score, candidate_is_incorrect = compute_criteria_score(candidate_paraphrases)
+    candidate_criteria_score, candidate_is_incorrect = compute_criteria_score(
+        candidate_paraphrases)
 
     candidate_criteria_score -= previous_is_incorrect * (1 - candidate_is_incorrect) * 1e8
 
@@ -322,7 +322,7 @@ def assign_candidates(paraphrases_with_mask, candidate_words, tokenizer, masked_
         while True:
             try:
                 mask_index = tokens.index("[MASK]")
-            except:
+            except BaseException:
                 ret.append(tokenizer.convert_tokens_to_string(tokens))
                 filled_in_part.append(tokenizer.convert_tokens_to_string(
                     tokens[masked_index[idx][0]:masked_index[idx][1]]))
@@ -481,7 +481,6 @@ class ASRSv2Strategy(StrategyBase):
                 masked_part_text.append(self._tokenizer.convert_tokens_to_string(toks[st:ed]))
                 masked_index.append((st, st + len(masked_part)))
 
-
             if field_name == "text1":
                 batch_input = self._tokenizer(
                     context, paraphrases_with_mask, padding=True,
@@ -539,7 +538,8 @@ class ASRSv2Strategy(StrategyBase):
             if (ii + 1) % 10 == 0:
                 for kk in range(len(paraphrases)):
                     if decision_fn_state[1][kk]:
-                        paraphrases[kk] = roll_back(data_record_list[kk], paraphrases[kk], self._clf_metric)
+                        paraphrases[kk] = roll_back(
+                            data_record_list[kk], paraphrases[kk], self._clf_metric)
                 # for kk in range(len(paraphrases)):
                 #     paraphrases[kk] = roll_back(data_record_list[kk], paraphrases[kk], self._clf_metric)
                 if (self._strategy_config["early_stop"] == "half"
@@ -549,7 +549,6 @@ class ASRSv2Strategy(StrategyBase):
                         and np.sum(decision_fn_state[1]) >= 5):
                     break
                 decision_fn_state = None
-
 
         logger.info("Aggregated accept rate: %.2lf%%. Success rate: %.2lf%%",
                     self._stats["accept"] / self._stats["all"] * 100,

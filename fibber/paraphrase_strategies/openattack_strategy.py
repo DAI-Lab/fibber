@@ -2,6 +2,7 @@
 
 import numpy as np
 import OpenAttack as oa
+
 from fibber import log
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
