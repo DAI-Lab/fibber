@@ -45,10 +45,10 @@ class Fibber(object):
             bert_ppl_gpu_id=arg_dict["bert_ppl_gpu_id"],
             use_gpu_id=arg_dict["use_gpu_id"],
             gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
-            bert_gpu_id=arg_dict["transformer_clf_gpu_id"],
+            transformer_gpu_id=arg_dict["transformer_clf_gpu_id"],
             dataset_name=dataset_name,
             trainset=trainset, testset=testset,
-            bert_clf_steps=bert_clf_steps)
+            transformer_clf_steps=bert_clf_steps)
 
         strategy_gpu_id = arg_dict["strategy_gpu_id"]
         if strategy_name == "RandomStrategy":
@@ -84,7 +84,7 @@ class Fibber(object):
             * a list of str as paraphrased sentences.
             * a list of dict as corresponding metrics.
         """
-        paraphrases = self._strategy.paraphrase_example(data_record, field_name, n)
+        paraphrases, _ = self._strategy.paraphrase_example(data_record, field_name, n)
         metrics = []
         for item in paraphrases:
             metrics.append(self._metric_bundle.measure_example(

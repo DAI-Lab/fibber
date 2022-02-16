@@ -1,3 +1,4 @@
+from fibber.paraphrase_strategies.asrs2_strategy import ASRSv2Strategy
 from fibber.paraphrase_strategies.asrs_strategy import ASRSStrategy
 from fibber.paraphrase_strategies.cheat_strategy import CheatStrategy
 from fibber.paraphrase_strategies.fudge_strategy import FudgeStrategy
@@ -11,4 +12,4 @@ from fibber.paraphrase_strategies.textattack_strategy import TextAttackStrategy
 
 __all__ = ["IdentityStrategy", "RandomStrategy", "StrategyBase", "ASRSStrategy",
            "TextAttackStrategy", "CheatStrategy", "OpenAttackStrategy", "SSRSStrategy",
-           "FudgeStrategy", "SSRSv2Strategy"]
+           "FudgeStrategy", "SSRSv2Strategy", "ASRSv2Strategy"]

@@ -22,12 +22,12 @@ def test_integrity_identity(gpu_id):
         use_gpu_id=gpu_id,
         gpt2_gpu_id=gpu_id,
         transformer_clf_gpu_id=gpu_id,
-        bert_clf_steps=1000,
-        bert_clf_bs=32
+        transformer_clf_steps=5000,
+        transformer_clf_bs=32
     )
 
     result = benchmark.run_benchmark(paraphrase_strategy="IdentityStrategy")
-    assert result["BertClassifier_AfterAttackAccuracy(↓)"] > 0.85
+    assert result["bert-base-uncased-Classifier_Accuracy_targeted(↓)"] > 0.85
 
 
 @pytest.mark.slow
@@ -40,8 +40,8 @@ def test_integrity_textfooler(gpu_id):
         use_gpu_id=gpu_id,
         gpt2_gpu_id=gpu_id,
         transformer_clf_gpu_id=gpu_id,
-        bert_clf_steps=1000,
-        bert_clf_bs=32
+        transformer_clf_steps=5000,
+        transformer_clf_bs=32
     )
 
     strategy = TextAttackStrategy(
@@ -52,7 +52,7 @@ def test_integrity_textfooler(gpu_id):
         metric_bundle=benchmark.get_metric_bundle())
     result = benchmark.run_benchmark(paraphrase_strategy=strategy)
 
-    assert result["BertClassifier_AfterAttackAccuracy(↓)"] < 0.50
+    assert result["bert-base-uncased-Classifier_Accuracy_targeted(↓)"] < 0.50
 
 
 @pytest.mark.slow
@@ -65,8 +65,8 @@ def test_integrity_bertsampling(gpu_id):
         use_gpu_id=gpu_id,
         gpt2_gpu_id=gpu_id,
         transformer_clf_gpu_id=gpu_id,
-        bert_clf_steps=1000,
-        bert_clf_bs=32
+        transformer_clf_steps=5000,
+        transformer_clf_bs=32
     )
     strategy = ASRSStrategy(
         arg_dict={"bs_lm_steps": 1000},

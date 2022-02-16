@@ -56,7 +56,7 @@ class Benchmark(object):
                  transformer_clf_bs=32,
                  load_robust_tuned_clf_desc=None,
                  robust_tuning_steps=0,
-                 best_adv_metric_name="CESimilarityMetric",
+                 best_adv_metric_name="USESimilarityMetric",
                  best_adv_metric_lower_better=False,
                  transformer_clf_enable_sem=False,
                  transformer_clf_enable_lmag=False,

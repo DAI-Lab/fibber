@@ -27,7 +27,7 @@ def make_data_record(label, origin_predict, paraphrase_ppl_list,
 
 def test_paraphrase_classification_accuracy_agg_fn_constructor():
     classifier = "FooClassifier"
-    agg_fn = paraphrase_classification_accuracy_agg_fn_constructor(classifier)
+    agg_fn = paraphrase_classification_accuracy_agg_fn_constructor(classifier, "worst")
 
     data_record = make_data_record(label=1, origin_predict=0,
                                    paraphrase_ppl_list=[],

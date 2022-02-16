@@ -177,7 +177,7 @@ def get_transformers(name):
 def get_bert_clf_demo():
     """Download the pretrained classifier for demo dataset."""
     data_dir = get_root_dir()
-    data_dir = os.path.join(data_dir, "bert_clf")
+    data_dir = os.path.join(data_dir, "transformer_clf")
     if not os.path.exists(os.path.join(data_dir, "demo")):
         download_file(subdir=data_dir,
                       **downloadable_resource_urls["bert-base-uncased-clf-demo"])
