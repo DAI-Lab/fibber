@@ -13,5 +13,6 @@ __all__ = [
 
 builtin_datasets = [
     "ag", "ag_no_title", "mr", "imdb", "yelp", "snli", "mnli", "mnli_mis", "qnli", "sst2",
-    "expert_layman", "GYAFC_Corpus"
+    "expert_layman", "GYAFC_Corpus", "hate", "fake_review_cg", "fake_review_yelp", "fake_news",
+    "trec", "fn_short"
 ]

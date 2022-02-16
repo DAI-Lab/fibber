@@ -4,8 +4,11 @@ import signal
 import sys
 import traceback
 
+import numpy as np
+
 from fibber import log
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
+from nltk import word_tokenize
 
 logger = log.setup_custom_logger(__name__)
 
@@ -29,13 +32,24 @@ def alarm_handler(signum, frame):
     raise TimeOutException()
 
 
+class DefaultTokenizer(object):
+    def batch_encode(self, texts):
+        return [self.encode(item) for item in texts]
+
+    def encode(self, text):
+        return word_tokenize(text)
+
+
 class CLFModel(ModelWrapper):
     """A classifier wrapper for textattack package."""
 
     def __init__(self, clf_metric, field_name):
         self.model = clf_metric
         self._field_name = field_name
-        self._tokenizer = clf_metric._tokenizer
+        if hasattr(clf_metric, "_tokenizer"):
+            self._tokenizer = clf_metric._tokenizer
+        else:
+            self._tokenizer = DefaultTokenizer()
         self._data_record = None
         self._counter = 0
 
@@ -44,7 +58,12 @@ class CLFModel(ModelWrapper):
         ret = self.model.predict_dist_batch(
             self._data_record[self._field_name], text_list,
             data_record=self._data_record, paraphrase_field=self._field_name)
-        return ret
+        ret_hard = np.zeros_like(ret)
+
+        for i in range(len(text_list)):
+            ret_hard[i, np.argmax(ret[i])] = 1
+
+        return ret_hard
 
     def reset_counter(self):
         self._counter = 0

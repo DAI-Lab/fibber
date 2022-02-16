@@ -14,6 +14,11 @@ from nltk import word_tokenize
 
 logger = log.setup_custom_logger(__name__)
 
+REDFLAG_WORDS = ["not", "no", "'t", "t", "nobody", "nothing",
+                 "never", "few", "little", "hardly", "seldom",
+                 "but", "however", "nevertheless", "too", "only",
+                 "fuck", "fucking", "fucked", "idiot", "ass", "bitch",
+                 "nigga", "niggas", "nigger"]
 
 def roll_back(record, adv, clf_metric):
     s1 = word_tokenize(record["text0"])
@@ -216,7 +221,19 @@ def joint_weighted_criteria(
         origin_list, prev_paraphrases, candidate_paraphrases,
         data_record_list, field_name, sim_metric, sim_threshold, sim_weight,
         clf_metric, clf_weight, ppl_metric, ppl_weight, stats, state,
-        log_prob_trans_forward, log_prob_trans_backward, edit_metric, **kargs):
+        log_prob_trans_forward, log_prob_trans_backward, edit_metric,
+        masked_part_text, filled_in_text, **kargs):
+
+    # masked_part_text = ["It was " + item for item in masked_part_text]
+    # filled_in_text = ["It was " + item for item in filled_in_text]
+    # dist1 = clf_metric.predict_dist_multiple_examples(origin_list, masked_part_text,
+    #                                                   data_record_list, field_name)
+    # dist2 = clf_metric.predict_dist_multiple_examples(origin_list, filled_in_text,
+    #                                                   data_record_list, field_name)
+    # dist1 = np.exp(dist1)
+    # dist2 = np.exp(dist2)
+    # check_ok = (np.max(np.abs(dist1 - dist2), axis=1) < 0.1)
+    check_ok = 1
 
     def compute_criteria_score(paraphrases):
         ppl_score, ppl_ratio = ppl_criteria_score(origin_list=origin_list, paraphrases=paraphrases,
@@ -245,7 +262,9 @@ def joint_weighted_criteria(
     alpha = np.exp((candidate_criteria_score - previous_criteria_score
                     + log_prob_trans_backward - log_prob_trans_forward))
 
-    accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
+    accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32") * check_ok
+    # accept = np.asarray(candidate_criteria_score > previous_criteria_score)
+
     # for i in range(len(alpha)):
     #     if previous_is_incorrect[i] and candidate_is_incorrect[i]:
     #         e1 = edit_metric.measure_example(origin_list[i], prev_paraphrases[i])
@@ -259,6 +278,7 @@ def joint_weighted_criteria(
 
     ret = [candidate_paraphrases[idx] if is_acc else prev_paraphrases[idx]
            for idx, is_acc in enumerate(accept)]
+    stats["success"] = np.sum(state[1])
     return ret, state
 
 
@@ -293,20 +313,23 @@ def count_mask(data, tokenizer):
     return counter
 
 
-def assign_cadidates(paraphrases_with_mask, candidate_words, tokenizer):
+def assign_candidates(paraphrases_with_mask, candidate_words, tokenizer, masked_index):
     ret = []
+    filled_in_part = []
     p = 0
-    for paraphrase in paraphrases_with_mask:
+    for idx, paraphrase in enumerate(paraphrases_with_mask):
         tokens = tokenizer.tokenize(paraphrase)
         while True:
             try:
                 mask_index = tokens.index("[MASK]")
             except:
                 ret.append(tokenizer.convert_tokens_to_string(tokens))
+                filled_in_part.append(tokenizer.convert_tokens_to_string(
+                    tokens[masked_index[idx][0]:masked_index[idx][1]]))
                 break
             tokens[mask_index] = candidate_words[p]
             p += 1
-    return ret
+    return ret, filled_in_part
 
 
 def smart_mask(toks_raw, st, ed, op):
@@ -318,7 +341,7 @@ def smart_mask(toks_raw, st, ed, op):
     ret = []
     counter = 0
     for tok in toks:
-        if tok.isalpha() and tok.lower() == tok:
+        if tok.isalpha() and (tok.lower() == tok) and (tok.lower() not in REDFLAG_WORDS):
             ret.append("[MASK]")
             counter += 1
         else:
@@ -405,6 +428,14 @@ class ASRSv2Strategy(StrategyBase):
         else:
             assert 0
 
+        self._redflag_vocab = np.zeros(self._tokenizer.vocab_size)
+        self._redflag_vocab[self._tokenizer.sep_token_id] = 1
+        self._redflag_vocab[self._tokenizer.cls_token_id] = 1
+        self._redflag_vocab[self._tokenizer.mask_token_id] = 1
+        for item in self._tokenizer.convert_tokens_to_ids(REDFLAG_WORDS):
+            self._redflag_vocab[item] = 1
+        self._redflag_vocab = torch.tensor(self._redflag_vocab).to(self._device)
+
         self._stats = {
             "all": 0,
             "accept": 0
@@ -425,9 +456,12 @@ class ASRSv2Strategy(StrategyBase):
                                            tokenizer=self._tokenizer, device=self._device)
 
         decision_fn_state = None
+
         for ii in range(sampling_steps):
             paraphrases_tokenized = [self._tokenizer.tokenize(sent) for sent in paraphrases]
             paraphrases_with_mask = []
+            masked_part_text = []
+            masked_index = []
             n_masks = []
             for toks in paraphrases_tokenized:
                 st = np.random.randint(max(len(toks) - window_size, 1))
@@ -444,6 +478,9 @@ class ASRSv2Strategy(StrategyBase):
                 paraphrases_with_mask.append(
                     self._tokenizer.convert_tokens_to_string(
                         toks[:st] + masked_part + toks[ed:]))
+                masked_part_text.append(self._tokenizer.convert_tokens_to_string(toks[st:ed]))
+                masked_index.append((st, st + len(masked_part)))
+
 
             if field_name == "text1":
                 batch_input = self._tokenizer(
@@ -458,9 +495,7 @@ class ASRSv2Strategy(StrategyBase):
             logits_for_masked_toks = torch.masked_select(
                 logits_lm, (batch_input.input_ids == self._tokenizer.mask_token_id).unsqueeze(2)
             ).view(-1, logits_lm.size(2))
-            logits_for_masked_toks[:, self._tokenizer.sep_token_id] = -1e8
-            logits_for_masked_toks[:, self._tokenizer.mask_token_id] = -1e8
-            logits_for_masked_toks[:, self._tokenizer.cls_token_id] = -1e8
+            logits_for_masked_toks -= 1e8 * self._redflag_vocab
 
             logits_enforcing = self._enforcing_dist_fn(
                 target_emb=target_emb,
@@ -478,9 +513,9 @@ class ASRSv2Strategy(StrategyBase):
                 logits_joint, top_k=self._strategy_config["top_k"],
                 temperature=self._strategy_config["temperature"])
 
-            candidate_paraphrases = assign_cadidates(
+            candidate_paraphrases, filled_in_text = assign_candidates(
                 paraphrases_with_mask, self._tokenizer.convert_ids_to_tokens(candidate_ids),
-                self._tokenizer)
+                self._tokenizer, masked_index=masked_index)
             log_prob_previous_ids = 0
             log_prob_candidate_ids = 0
 
@@ -497,26 +532,28 @@ class ASRSv2Strategy(StrategyBase):
                 stats=self._stats, state=decision_fn_state,
                 log_prob_trans_forward=log_prob_candidate_ids,
                 log_prob_trans_backward=log_prob_previous_ids,
-                edit_metric=self._edit_metric)
+                edit_metric=self._edit_metric,
+                masked_part_text=masked_part_text,
+                filled_in_text=filled_in_text)
 
-            if (self._strategy_config["early_stop"] == "half"
-                    and np.sum(decision_fn_state[1]) >= len(data_record_list) * 0.5):
-                break
-            if (self._strategy_config["early_stop"] == "one"
-                    and np.sum(decision_fn_state[1]) >= 1):
-                break
-
-            if ii % 10 == 0:
-                # for kk in range(len(paraphrases)):
-                #     if decision_fn_state[1][kk]:
-                #         paraphrases[kk] = roll_back(data_record_list[kk], paraphrases[kk], self._clf_metric)
+            if (ii + 1) % 10 == 0:
                 for kk in range(len(paraphrases)):
-                    paraphrases[kk] = roll_back(data_record_list[kk], paraphrases[kk], self._clf_metric)
+                    if decision_fn_state[1][kk]:
+                        paraphrases[kk] = roll_back(data_record_list[kk], paraphrases[kk], self._clf_metric)
+                # for kk in range(len(paraphrases)):
+                #     paraphrases[kk] = roll_back(data_record_list[kk], paraphrases[kk], self._clf_metric)
+                if (self._strategy_config["early_stop"] == "half"
+                        and np.sum(decision_fn_state[1]) >= len(data_record_list) * 0.5):
+                    break
+                if (self._strategy_config["early_stop"] == "5"
+                        and np.sum(decision_fn_state[1]) >= 5):
+                    break
                 decision_fn_state = None
+
 
         logger.info("Aggregated accept rate: %.2lf%%. Success rate: %.2lf%%",
                     self._stats["accept"] / self._stats["all"] * 100,
-                    np.sum(decision_fn_state[1]) / len(data_record_list) * 100)
+                    self._stats["success"])
 
         # for paraphrase, data_record, is_not_correct in zip(paraphrases, data_record_list, decision_fn_state[1]):
         #     predict = self._clf_metric.predict_example(data_record[field_name], paraphrase,

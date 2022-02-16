@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import tqdm
 import transformers
 from torch.utils.tensorboard import SummaryWriter
-from transformers import BertForSequenceClassification, BertTokenizerFast
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from fibber import get_root_dir, log, resources
 from fibber.datasets import DatasetForBert
@@ -139,14 +139,14 @@ def load_or_train_bert_clf(model_init,
 
     if os.path.exists(ckpt_path):
         logger.info("Load BERT classifier from %s.", ckpt_path)
-        model = BertForSequenceClassification.from_pretrained(ckpt_path)
+        model = AutoModelForSequenceClassification.from_pretrained(ckpt_path)
         model.eval()
         model.to(device)
         return model
 
     num_labels = len(trainset["label_mapping"])
 
-    model = BertForSequenceClassification.from_pretrained(
+    model = AutoModelForSequenceClassification.from_pretrained(
         resources.get_transformers(model_init), num_labels=num_labels).to(device)
     model.train()
 
@@ -241,21 +241,25 @@ class BertClassifier(ClassifierBase):
                  bert_clf_steps=20000, bert_clf_bs=32, bert_clf_lr=0.00002,
                  bert_clf_optimizer="adamw", bert_clf_weight_decay=0.001,
                  bert_clf_period_summary=100, bert_clf_period_val=500,
-                 bert_clf_period_save=5000, bert_clf_val_steps=10,
-                 bert_clf_enable_sem=False, bert_clf_enable_lmag=False, **kargs):
+                 bert_clf_period_save=20000, bert_clf_val_steps=10,
+                 bert_clf_enable_sem=False, bert_clf_enable_lmag=False,
+                 bert_clf_model_init="bert-base", **kargs):
         super(BertClassifier, self).__init__()
 
-        if trainset["cased"]:
-            model_init = "bert-base-cased"
-            logger.info(
-                "Use cased model in BERT classifier prediction metric.")
+        if bert_clf_model_init == "bert-base":
+            if trainset["cased"]:
+                model_init = "bert-base-cased"
+                logger.info(
+                    "Use cased model in BERT classifier prediction metric.")
+            else:
+                model_init = "bert-base-uncased"
+                logger.info(
+                    "Use uncased model in BERT classifier prediction metric.")
         else:
-            model_init = "bert-base-uncased"
-            logger.info(
-                "Use uncased model in BERT classifier prediction metric.")
+            model_init = bert_clf_model_init
+        self._tokenizer = AutoTokenizer.from_pretrained(
+            resources.get_transformers(model_init))
 
-        self._tokenizer = BertTokenizerFast.from_pretrained(
-            resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
 
         if bert_gpu_id == -1:
             logger.warning("BERT metric is running on CPU.")
@@ -330,19 +334,15 @@ class BertClassifier(ClassifierBase):
                 paraphrase_list, context, self._tokenizer, self._lm, self._model, self._device)
 
         if paraphrase_field == "text0":
-            batch_input = self._tokenizer(text=paraphrase_list, padding=True)
+            batch_input = self._tokenizer(
+                text=paraphrase_list, padding=True, return_tensors="pt").to(self._device)
         else:
             assert paraphrase_field == "text1"
             batch_input = self._tokenizer(text=[data_record["text0"]] * len(paraphrase_list),
                                           text_pair=paraphrase_list,
-                                          padding=True)
+                                          padding=True, return_tensors="pt").to(self._device)
         with torch.no_grad():
-            logits = self._model(
-                input_ids=torch.tensor(batch_input["input_ids"]).to(self._device),
-                token_type_ids=torch.tensor(batch_input["token_type_ids"]).to(
-                    self._device),
-                attention_mask=torch.tensor(batch_input["attention_mask"]).to(self._device)
-            )[0]
+            logits = self._model(**batch_input)[0]
             if self._enable_lmag:
                 res = F.log_softmax(
                     torch.sum(
@@ -354,10 +354,20 @@ class BertClassifier(ClassifierBase):
                     dim=1).detach().cpu().numpy()
             else:
                 res = F.log_softmax(logits, dim=1).detach().cpu().numpy()
-        return res
+
+        # return res
+
+        res_hard = np.zeros_like(res)
+
+        for i in range(len(paraphrase_list)):
+            res_hard[i, np.argmax(res[i])] = 1
+
+        return res_hard
+
 
     def predict_dist_multiple_examples(self, origin_list, paraphrase_list,
-                                       data_record_list=None, paraphrase_field="text0"):
+                                       data_record_list=None, paraphrase_field="text0",
+                                       return_raw_logits=False):
         if self._enable_sem or self._enable_lmag:
             raise RuntimeError
 
@@ -365,20 +375,19 @@ class BertClassifier(ClassifierBase):
             paraphrase_list = self._ppl_filter_metric.perplexity_filter(paraphrase_list)
 
         if paraphrase_field == "text0":
-            batch_input = self._tokenizer(text=paraphrase_list, padding=True)
+            batch_input = self._tokenizer(
+                text=paraphrase_list, padding=True, return_tensors="pt").to(self._device)
         else:
             assert paraphrase_field == "text1"
             batch_input = self._tokenizer(text=[item["text0"] for item in data_record_list],
                                           text_pair=paraphrase_list,
-                                          padding=True)
+                                          padding=True, return_tensors="pt").to(self._device)
         with torch.no_grad():
-            logits = self._model(
-                input_ids=torch.tensor(batch_input["input_ids"]).to(self._device),
-                token_type_ids=torch.tensor(batch_input["token_type_ids"]).to(
-                    self._device),
-                attention_mask=torch.tensor(batch_input["attention_mask"]).to(self._device)
-            )[0]
-            res = F.log_softmax(logits, dim=1).detach().cpu().numpy()
+            logits = self._model(**batch_input)[0]
+            if not return_raw_logits:
+                res = F.log_softmax(logits, dim=1).detach().cpu().numpy()
+            else:
+                res = logits.detach().cpu().numpy()
         return res
 
     def predict_dist_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
@@ -426,13 +435,12 @@ class BertClassifier(ClassifierBase):
         elif len(text1_list) != len(text0_list):
             raise RuntimeError("data records are not consistent.")
 
-        batch_input = self._tokenizer(text=text0_list, text_pair=text1_list, padding=True)
+        batch_input = self._tokenizer(text=text0_list, text_pair=text1_list, padding=True,
+                                      return_tensors="pt").to(self._device)
 
         loss, logits = self._model(
-            input_ids=torch.tensor(batch_input["input_ids"]).to(self._device),
-            token_type_ids=torch.tensor(batch_input["token_type_ids"]).to(self._device),
-            attention_mask=torch.tensor(batch_input["attention_mask"]).to(self._device),
-            labels=torch.tensor(labels).to(self._device)
+            labels=torch.tensor(labels).to(self._device),
+            **batch_input
         )[:2]
 
         self._fine_tune_opt.zero_grad()

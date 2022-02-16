@@ -58,7 +58,9 @@ class Benchmark(object):
                  best_adv_metric_name="CESimilarityMetric",
                  best_adv_metric_lower_better=False,
                  bert_clf_enable_sem=False,
-                 bert_clf_enable_lmag=False):
+                 bert_clf_enable_lmag=False,
+                 victim="bert",
+                 bert_clf_model_init="bert-base"):
         """Initialize Benchmark framework.
 
         Args:
@@ -102,7 +104,7 @@ class Benchmark(object):
             verify_dataset(testset)
 
         model_init = "bert-base-%s" % ("cased" if trainset["cased"] else "uncased")
-        # clip_sentence(trainset, model_init, max_len=128)
+        clip_sentence(trainset, model_init, max_len=128)
         clip_sentence(testset, model_init, max_len=128)
 
         if attack_set is None:
@@ -118,9 +120,9 @@ class Benchmark(object):
         # setup metric bundle
         self._metric_bundle = MetricBundle(
             enable_bert_classifier=enable_bert_clf,
-            enable_fasttext_classifier=False,
+            enable_fasttext_classifier=(victim=="fasttext"),
             enable_glove_similarity=False,
-            target_clf="bert",
+            target_clf=victim,
             use_gpu_id=use_gpu_id, gpt2_gpu_id=gpt2_gpu_id,
             bert_gpu_id=bert_gpu_id, dataset_name=dataset_name,
             bert_ppl_gpu_id=bert_gpu_id, enable_bert_perplexity=True,
@@ -131,7 +133,8 @@ class Benchmark(object):
             bert_clf_enable_sem=bert_clf_enable_sem,
             bert_clf_enable_lmag=bert_clf_enable_lmag,
             enable_ce_similarity=False,
-            enable_gpt2_perplexity=False
+            enable_gpt2_perplexity=False,
+            bert_clf_model_init=bert_clf_model_init
         )
 
         # self._metric_bundle.get_target_classifier().enable_ppl_filter(
@@ -280,6 +283,10 @@ def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
 def main():
     parser = argparse.ArgumentParser()
 
+    # target clf
+    parser.add_argument("--victim", type=str, default="bert")
+    parser.add_argument("--bert_clf_model_init", type=str, default="bert-base")
+
     # BERT classifier related args
     parser.add_argument("--bert_clf_enable_sem", type=str, default="0")
     parser.add_argument("--bert_clf_enable_lmag", type=str, default="0")
@@ -331,7 +338,9 @@ def main():
                           best_adv_metric_name=arg_dict["best_adv_metric_name"],
                           best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"),
                           bert_clf_enable_sem=(arg_dict["bert_clf_enable_sem"] == "1"),
-                          bert_clf_enable_lmag=(arg_dict["bert_clf_enable_lmag"] == "1"))
+                          bert_clf_enable_lmag=(arg_dict["bert_clf_enable_lmag"] == "1"),
+                          victim=arg_dict["victim"],
+                          bert_clf_model_init=arg_dict["bert_clf_model_init"])
 
     log.remove_logger_tf_handler(logger)
 

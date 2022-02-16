@@ -3,11 +3,14 @@ import copy
 import subprocess
 
 COMMON_CONFIG = {
-    "--subsample_testset": 1000,
+    "--subsample_testset": 400,
     "--num_paraphrases_per_text": 50,
     "--robust_tuning": "0",
     # ignored when robut_tuning is 0 and load_robust_tuned_clf is not set
     "--robust_tuning_steps": 3000,
+    # "--victim": "fasttext",
+    "--victim": "bert",
+    # "--bert_clf_model_init": "roberta-large"
 }
 
 DEFENSE_CONFIG = {
@@ -75,7 +78,7 @@ DATASET_CONFIG = {
     #     "--bert_clf_steps": 5000
     # },
     # "yelp": {
-    #     "--dataset": "yelp",
+    #     "--dataset": "yelp",l
     #     "--output_dir": "exp-yelp",
     #     "--bert_clf_steps": 20000
     # },
@@ -88,7 +91,7 @@ DATASET_CONFIG = {
         "--dataset": "sst2",
         "--output_dir": "exp-sst2",
         "--bert_clf_steps": 20000
-    }
+    },
     # "mnli": {
     #     "--dataset": "mnli",
     #     "--output_dir": "exp-mnli",
@@ -104,6 +107,36 @@ DATASET_CONFIG = {
     #     "--output_dir": "exp-qnli",
     #     "--bert_clf_steps": 20000
     # },
+    "fr": {
+        "--dataset": "fake_review_cg",
+        "--output_dir": "exp-fr",
+        "--bert_clf_steps": 20000
+    },
+    "fry": {
+        "--dataset": "fake_review_yelp",
+        "--output_dir": "exp-fry",
+        "--bert_clf_steps": 20000
+    },
+    "fn": {
+        "--dataset": "fake_news",
+        "--output_dir": "exp-fn",
+        "--bert_clf_steps": 20000
+    },
+    "hate": {
+        "--dataset": "hate",
+        "--output_dir": "exp-hate",
+        "--bert_clf_steps": 20000
+    },
+    "trec": {
+        "--dataset": "trec",
+        "--output_dir": "exp-trec",
+        "--bert_clf_steps": 5000
+    },
+    "fn_short": {
+        "--dataset": "fn_short",
+        "--output_dir": "exp-fn_short",
+        "--bert_clf_steps": 20000
+    }
 }
 
 STRATEGY_CONFIG = {
@@ -206,28 +239,10 @@ STRATEGY_CONFIG = {
         "--asrs2_wpe_threshold": 1.0,
         "--asrs2_wpe_weight": 5,
         "--asrs2_sim_threshold": 0.95,
-        "--asrs2_sim_weight": 10,
-        "--asrs2_ppl_weight": 5,
-        "--asrs2_sampling_steps": 200,
-        "--asrs2_clf_weight": 10,
-        "--asrs2_window_size": 3,
-        "--asrs2_accept_criteria": "joint_weighted_criteria",
-        "--asrs2_lm_option": "finetune",
-        "--asrs2_sim_metric": "USESimilarityMetric",
-        "--asrs2_early_stop": "half",
-        "--robust_tune_num_attack_per_step": 16
-    },
-
-    "asrsv2A": {
-        "--strategy": "ASRSv2Strategy",
-        "--asrs2_enforcing_dist": "wpe",
-        "--asrs2_wpe_threshold": 1.0,
-        "--asrs2_wpe_weight": 5,
-        "--asrs2_sim_threshold": 0.90,
         "--asrs2_sim_weight": 20,
         "--asrs2_ppl_weight": 5,
         "--asrs2_sampling_steps": 200,
-        "--asrs2_clf_weight": 10,
+        "--asrs2_clf_weight": 2,
         "--asrs2_window_size": 3,
         "--asrs2_accept_criteria": "joint_weighted_criteria",
         "--asrs2_lm_option": "finetune",
@@ -235,41 +250,90 @@ STRATEGY_CONFIG = {
         "--asrs2_early_stop": "half",
         "--robust_tune_num_attack_per_step": 16
     },
-
-    "asrsv2-1": {
-        "--strategy": "ASRSv2Strategy",
-        "--asrs2_enforcing_dist": "wpe",
-        "--asrs2_wpe_threshold": 1.0,
-        "--asrs2_wpe_weight": 1,
-        "--asrs2_sim_threshold": 0.8,
-        "--asrs2_sim_weight": 50,
-        "--asrs2_ppl_weight": 5,
-        "--asrs2_sampling_steps": 100,
-        "--asrs2_clf_weight": 5,
-        "--asrs2_window_size": 3,
-        "--asrs2_accept_criteria": "joint_weighted_criteria",
-        "--asrs2_lm_option": "finetune",
-        "--asrs2_sim_metric": "USESimilarityMetric",
-        "--asrs2_early_stop": "all",
-        "--robust_tune_num_attack_per_step": 32
-    },
-
-    "asrsv2-2": {
+    "asrsv2-s1": {
         "--strategy": "ASRSv2Strategy",
         "--asrs2_enforcing_dist": "wpe",
         "--asrs2_wpe_threshold": 1.0,
         "--asrs2_wpe_weight": 5,
-        "--asrs2_sim_threshold": 0.9,
-        "--asrs2_sim_weight": 50,
-        "--asrs2_ppl_weight": 3,
-        "--asrs2_sampling_steps": 100,
-        "--asrs2_clf_weight": 10,
+        "--asrs2_sim_threshold": 1.,
+        "--asrs2_sim_weight": 20,
+        "--asrs2_ppl_weight": 5,
+        "--asrs2_sampling_steps": 200,
+        "--asrs2_clf_weight": 2,
         "--asrs2_window_size": 3,
         "--asrs2_accept_criteria": "joint_weighted_criteria",
         "--asrs2_lm_option": "finetune",
         "--asrs2_sim_metric": "USESimilarityMetric",
-        "--asrs2_early_stop": "all",
-        "--robust_tune_num_attack_per_step": 32
+        "--asrs2_early_stop": "half",
+        "--robust_tune_num_attack_per_step": 16
+    },
+    "asrsv2-w1": {
+        "--strategy": "ASRSv2Strategy",
+        "--asrs2_enforcing_dist": "wpe",
+        "--asrs2_wpe_threshold": 1.0,
+        "--asrs2_wpe_weight": 5,
+        "--asrs2_sim_threshold": 0.95,
+        "--asrs2_sim_weight": 20,
+        "--asrs2_ppl_weight": 5,
+        "--asrs2_sampling_steps": 200,
+        "--asrs2_clf_weight": 2,
+        "--asrs2_window_size": 1,
+        "--asrs2_accept_criteria": "joint_weighted_criteria",
+        "--asrs2_lm_option": "finetune",
+        "--asrs2_sim_metric": "USESimilarityMetric",
+        "--asrs2_early_stop": "half",
+        "--robust_tune_num_attack_per_step": 16
+    },
+    "asrsv2-w2": {
+        "--strategy": "ASRSv2Strategy",
+        "--asrs2_enforcing_dist": "wpe",
+        "--asrs2_wpe_threshold": 1.0,
+        "--asrs2_wpe_weight": 5,
+        "--asrs2_sim_threshold": 0.95,
+        "--asrs2_sim_weight": 20,
+        "--asrs2_ppl_weight": 5,
+        "--asrs2_sampling_steps": 200,
+        "--asrs2_clf_weight": 2,
+        "--asrs2_window_size": 2,
+        "--asrs2_accept_criteria": "joint_weighted_criteria",
+        "--asrs2_lm_option": "finetune",
+        "--asrs2_sim_metric": "USESimilarityMetric",
+        "--asrs2_early_stop": "half",
+        "--robust_tune_num_attack_per_step": 16
+    },
+    "asrsv2-w4": {
+        "--strategy": "ASRSv2Strategy",
+        "--asrs2_enforcing_dist": "wpe",
+        "--asrs2_wpe_threshold": 1.0,
+        "--asrs2_wpe_weight": 5,
+        "--asrs2_sim_threshold": 0.95,
+        "--asrs2_sim_weight": 20,
+        "--asrs2_ppl_weight": 5,
+        "--asrs2_sampling_steps": 200,
+        "--asrs2_clf_weight": 2,
+        "--asrs2_window_size": 4,
+        "--asrs2_accept_criteria": "joint_weighted_criteria",
+        "--asrs2_lm_option": "finetune",
+        "--asrs2_sim_metric": "USESimilarityMetric",
+        "--asrs2_early_stop": "half",
+        "--robust_tune_num_attack_per_step": 16
+    },
+    "asrsv2CE": {
+        "--strategy": "ASRSv2Strategy",
+        "--asrs2_enforcing_dist": "wpe",
+        "--asrs2_wpe_threshold": 1.0,
+        "--asrs2_wpe_weight": 5,
+        "--asrs2_sim_threshold": 0.95,
+        "--asrs2_sim_weight": 20,
+        "--asrs2_ppl_weight": 5,
+        "--asrs2_sampling_steps": 200,
+        "--asrs2_clf_weight": 2,
+        "--asrs2_window_size": 3,
+        "--asrs2_accept_criteria": "joint_weighted_criteria",
+        "--asrs2_lm_option": "finetune",
+        "--asrs2_sim_metric": "CESimilarityMetric",
+        "--asrs2_early_stop": "half",
+        "--robust_tune_num_attack_per_step": 16
     },
 }
 

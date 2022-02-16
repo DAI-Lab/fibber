@@ -55,10 +55,10 @@ class ClassifierBase(MetricBase):
     def predict_dist_multiple_examples(self, origin_list, paraphrase_list,
                                        data_record_list=None, paraphrase_field="text0"):
         ret = []
-        for i in range(len(origin_list)):
+        for i in range(len(paraphrase_list)):
             ret.append(
                 self.predict_dist_example(
-                    origin_list[i], paraphrase_list[i],
+                    None if origin_list is None else origin_list[i], paraphrase_list[i],
                     data_record_list[i] if data_record_list is not None else None,
                     paraphrase_field))
         return np.asarray(ret)

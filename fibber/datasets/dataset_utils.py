@@ -47,7 +47,7 @@ import os
 import numpy as np
 import torch
 import tqdm
-from transformers import BertTokenizer
+from transformers import AutoTokenizer
 
 from fibber import get_root_dir, log, resources
 from fibber.datasets.downloadable_datasets import downloadable_dataset_urls
@@ -97,6 +97,14 @@ def get_dataset(dataset_name):
 
     with open(test_filename) as f:
         testset = json.load(f)
+
+    if "paraphrase_field" not in trainset:
+        trainset["paraphrase_field"] = "text0"
+        logger.warning("paraphrase_field not in trainset, use text0.")
+
+    if "paraphrase_field" not in testset:
+        testset["paraphrase_field"] = "text0"
+        logger.warning("paraphrase_field not in testset, use text0.")
 
     logger.info("%s training set has %d records.", dataset_name, len(trainset["data"]))
     logger.info("%s test set has %d records.", dataset_name, len(testset["data"]))
@@ -172,7 +180,7 @@ def subsample_dataset(dataset, n, offset=0):
     for i in range(len(bins)):
         bins[i] = sorted(bins[i], key=lambda x: x[1])
         m = n // len(bins) + (1 if i < n % len(bins) else 0)
-        for j in range(offset, offset + m):
+        for j in range(offset, min(offset + m, len(bins[i]))):
             data_list.append(copy.deepcopy(dataset["data"][bins[i][j][0]]))
 
     subset["data"] = data_list
@@ -210,8 +218,8 @@ def verify_dataset(dataset):
 
 def clip_sentence(dataset, model_init, max_len):
     """Inplace clipping sentences."""
-    tokenizer = BertTokenizer.from_pretrained(
-        resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
+    tokenizer = AutoTokenizer.from_pretrained(
+        resources.get_transformers(model_init))
     logger.info("clipping the dataset to %d tokens.", max_len)
     for data_record in tqdm.tqdm(dataset["data"]):
         s0 = tokenizer.tokenize(data_record["text0"])
@@ -280,7 +288,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
             seed: random seed.
         """
         self._batch_size = batch_size
-        self._tokenizer = BertTokenizer.from_pretrained(
+        self._tokenizer = AutoTokenizer.from_pretrained(
             resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
 
         self._seed = seed
@@ -324,7 +332,10 @@ class DatasetForBert(torch.utils.data.IterableDataset):
 
             texts = batch_input["input_ids"]
             masks = batch_input["attention_mask"]
-            tok_types = batch_input["token_type_ids"]
+            if "token_type_ids" in batch_input:
+                tok_types = batch_input["token_type_ids"]
+            else:
+                tok_types = np.zeros_like(masks)
             labels = np.asarray([item["label"] for item in data_records])
             max_text_len = len(texts[0])
 

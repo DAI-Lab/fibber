@@ -80,4 +80,4 @@ class FasttextClassifier(ClassifierBase):
         for label, prob in zip(labels, probs):
             idx = int(label[len("__label__"):])
             ret[idx] = prob
-        return ret
+        return np.log(ret + 1e-12)

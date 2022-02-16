@@ -8,7 +8,7 @@ from torch import nn
 from transformers import BertTokenizer
 
 from fibber import get_root_dir, log, resources
-from fibber.resources import get_glove_emb, get_stopwords
+from fibber.resources import get_counter_fitted_vector, get_stopwords
 
 logger = log.setup_custom_logger(__name__)
 
@@ -18,13 +18,13 @@ class WordPieceDataset(torch.utils.data.Dataset):
         self._tokenizer = BertTokenizer.from_pretrained(
             resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
 
-        self._glove = get_glove_emb()
-        stopwords = get_stopwords()
-
-        for word in stopwords:
-            word = word.lower().strip()
-            if word in self._glove["tok2id"]:
-                self._glove["emb_table"][self._glove["tok2id"][word], :] = 0
+        self._glove = get_counter_fitted_vector()
+        # stopwords = get_stopwords()
+        #
+        # for word in stopwords:
+        #     word = word.lower().strip()
+        #     if word in self._glove["tok2id"]:
+        #         self._glove["emb_table"][self._glove["tok2id"][word], :] = 0
 
         data = []
         logger.info("processing data for wordpiece embedding training")
@@ -54,7 +54,7 @@ class WordPieceDataset(torch.utils.data.Dataset):
 
 
 def get_wordpiece_emb(output_dir, dataset_name, trainset, device,
-                      steps=500, bs=1000, lr=1, lr_halve_steps=100):
+                      steps=5000, bs=1000, lr=1, lr_halve_steps=1000):
     """Transfer GloVe embeddings to BERT vocabulary.
 
     The transfered embeddings will be stored at ``<output_dir>/wordpiece_emb*``.
@@ -71,7 +71,7 @@ def get_wordpiece_emb(output_dir, dataset_name, trainset, device,
     Returns:
         (np.array): a array of size (300, N) where N is the vocabulary size for a bert-base model.
     """
-    filename = os.path.join(get_root_dir(), "wordpiece_emb")
+    filename = os.path.join(get_root_dir(), "wordpiece_emb_conterfited")
     os.makedirs(filename, exist_ok=True)
     filename = os.path.join(filename, "wordpiece_emb-%s-%04d.pt" % (dataset_name, steps))
     if os.path.exists(filename):
@@ -95,10 +95,14 @@ def get_wordpiece_emb(output_dir, dataset_name, trainset, device,
     scheduler = torch.optim.lr_scheduler.StepLR(
         opt, step_size=lr_halve_steps, gamma=0.5)
 
+    linear.weight.data.zero_()
+    cc = 0
     for w, wid in dataset._tokenizer.vocab.items():
         if w.lower() in dataset._glove["tok2id"]:
+            cc += 1
             linear.weight.data[:, wid] = torch.tensor(
                 dataset._glove["emb_table"][dataset._glove["tok2id"][w.lower()]]).to(device)
+    logger.info("Overlap bert and counter fitted vectors: %d", cc)
 
     logger.info("train word piece embeddings")
     pbar = tqdm.tqdm(total=steps)
