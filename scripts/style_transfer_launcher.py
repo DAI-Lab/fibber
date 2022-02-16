@@ -9,7 +9,7 @@ COMMON_CONFIG = {
 
 GPU_CONFIG = {
     "single": {
-        "--bert_gpu_id": 0,
+        "--transformer_clf_gpu_id": 0,
         "--use_gpu_id": 0,
         "--gpt2_gpu_id": 0,
         "--strategy_gpu_id": 0,

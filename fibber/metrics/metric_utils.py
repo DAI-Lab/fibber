@@ -6,7 +6,7 @@ import pandas as pd
 import tqdm
 
 from fibber import log
-from fibber.metrics.bert_classifier import BertClassifier
+from fibber.metrics.transformer_classifier import TransformerClassifier
 from fibber.metrics.bert_perplexity_metric import BertPerplexityMetric
 from fibber.metrics.ce_similarity_metric import CESimilarityMetric
 from fibber.metrics.classifier_base import ClassifierBase
@@ -34,15 +34,15 @@ class MetricBundle(object):
                  enable_edit_distance=True,
                  enable_use_similarity=True,
                  enable_glove_similarity=True,
-                 enable_gpt2_perplexity=True,
-                 enable_bert_classifier=False,
-                 enable_ce_similarity=True,
+                 enable_gpt2_perplexity=False,
+                 enable_transformer_classifier=True,
+                 enable_ce_similarity=False,
                  enable_fasttext_classifier=False,
-                 enable_bert_perplexity=False,
+                 enable_bert_perplexity=True,
                  enable_bert_perplexity_per_class=False,
                  enable_self_bleu=False,
                  enable_ref_bleu=False,
-                 target_clf="bert",
+                 target_clf="transformer",
                  **kargs):
         """Initialize various metrics.
 
@@ -53,13 +53,13 @@ class MetricBundle(object):
             enable_glove_similarity (bool): whether to use Glove embeddings to compute
                 sentence similarity.
             enable_gpt2_perplexity (bool): whether to use GPT2 to compute sentence quality.
-            enable_bert_classifier (bool): whether to include BERT classifier prediction in
+            enable_transformer_classifier (bool): whether to include BERT classifier prediction in
                 metrics.
             enable_ce_similarity (bool): whether to use Cross Encoder to measure sentence
                 similarity.
             enable_fasttext_classifier (bool): whether to include Fasttext classifier prediction
                 in metrics.
-            target_clf (str): choose from "bert", "fasttext".
+            target_clf (str): choose from "trasformer", "fasttext".
             kargs: arguments for metrics. kargs will be passed to all metrics.
         """
         super(MetricBundle, self).__init__()
@@ -80,8 +80,9 @@ class MetricBundle(object):
             self.add_metric(GPT2PerplexityMetric(**kargs), DIRECTION_LOWER_BETTER)
         if enable_ce_similarity:
             self.add_metric(CESimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
-        if enable_bert_classifier:
-            self.add_classifier(BertClassifier(**kargs), set_target_clf=(target_clf == "bert"))
+        if enable_transformer_classifier:
+            self.add_classifier(TransformerClassifier(**kargs),
+                                set_target_clf=(target_clf == "transformer"))
         if enable_fasttext_classifier:
             self.add_classifier(FasttextClassifier(**kargs),
                                 set_target_clf=(target_clf == "fasttext"))

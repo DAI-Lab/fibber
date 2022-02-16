@@ -99,7 +99,7 @@ class Benchmark(object):
 
         # setup metric bundle
         self._metric_bundle = MetricBundle(
-            enable_bert_classifier=enable_bert_clf,
+            enable_transformer_classifier=enable_bert_clf,
             use_gpu_id=use_gpu_id, gpt2_gpu_id=gpt2_gpu_id,
             bert_gpu_id=bert_gpu_id, bert_ppl_gpu_id=bert_ppl_gpu_id,
             dataset_name=dataset_name, trainset=self._trainset, testset=testset,
@@ -227,7 +227,7 @@ def main():
 
     # metric args
     parser.add_argument("--gpt2_gpu_id", type=int, default=-1)
-    parser.add_argument("--bert_gpu_id", type=int, default=-1)
+    parser.add_argument("--transformer_clf_gpu_id", type=int, default=-1)
     parser.add_argument("--bert_ppl_gpu_id", type=int, default=-1)
     parser.add_argument("--use_gpu_id", type=int, default=-1)
     parser.add_argument("--bert_clf_steps", type=int, default=20000)
@@ -244,7 +244,7 @@ def main():
                           subsample_attack_set=arg_dict["subsample_testset"],
                           subsample_offset=arg_dict["subsample_offset"],
                           use_gpu_id=arg_dict["use_gpu_id"],
-                          bert_gpu_id=arg_dict["bert_gpu_id"],
+                          bert_gpu_id=arg_dict["transformer_clf_gpu_id"],
                           bert_ppl_gpu_id=arg_dict["bert_ppl_gpu_id"],
                           gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
                           bert_clf_steps=arg_dict["bert_clf_steps"],

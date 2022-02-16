@@ -6,7 +6,7 @@ import tqdm
 from transformers import GPT2LMHeadModel, GPT2TokenizerFast
 
 from fibber import resources
-from fibber.metrics.bert_classifier import get_optimizer
+from fibber.metrics.transformer_classifier import get_optimizer
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
 

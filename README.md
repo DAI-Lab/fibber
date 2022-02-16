@@ -138,7 +138,7 @@ from fibber.fibber import Fibber
 arg_dict = {
     "use_gpu_id": 0,
     "gpt2_gpu_id": 0,
-    "bert_gpu_id": 0,
+    "transformer_clf_gpu_id": 0,
     "ce_gpu_id": 0,
     "strategy_gpu_id": 0,
     "asrs_block_size": 3,

@@ -8,56 +8,53 @@ COMMON_CONFIG = {
     "--robust_tuning": "0",
     # ignored when robut_tuning is 0 and load_robust_tuned_clf is not set
     "--robust_tuning_steps": 3000,
-    # "--victim": "fasttext",
-    "--victim": "bert",
-    # "--bert_clf_model_init": "roberta-large"
+    # "--target_classifier": "fasttext",
+    "--target_classifier": "transformer",
+    # "--transformer_clf_model_init": "roberta-large"
 }
 
 DEFENSE_CONFIG = {
     "none": {},
     "sem": {
-        "--bert_clf_enable_sem": "1"
+        "--transformer_clf_enable_sem": "1"
     },
     "lmag": {
-        "--bert_clf_enable_lmag": "1"
+        "--transformer_clf_enable_lmag": "1"
     }
 }
 
 GPU_CONFIG = {
     "0": {
-        "--bert_gpu_id": 0,
+        "--transformer_clf_gpu_id": 0,
+        "--bert_ppl_gpu_id": 0,
         "--use_gpu_id": 0,
         "--gpt2_gpu_id": 0,
         "--strategy_gpu_id": 0,
         "--ce_gpu_id": 0
     },
     "1": {
-        "--bert_gpu_id": 1,
+        "--transformer_clf_gpu_id": 1,
+        "--bert_ppl_gpu_id": 1,
         "--use_gpu_id": 1,
         "--gpt2_gpu_id": 1,
         "--ce_gpu_id": 1,
         "--strategy_gpu_id": 1,
     },
     "2": {
-        "--bert_gpu_id": 2,
+        "--transformer_clf_gpu_id": 2,
+        "--bert_ppl_gpu_id": 2,
         "--use_gpu_id": 2,
         "--gpt2_gpu_id": 2,
         "--ce_gpu_id": 2,
         "--strategy_gpu_id": 2,
     },
     "3": {
-        "--bert_gpu_id": 3,
+        "--transformer_clf_gpu_id": 3,
+        "--bert_ppl_gpu_id": 3,
         "--use_gpu_id": 3,
         "--gpt2_gpu_id": 3,
         "--ce_gpu_id": 3,
         "--strategy_gpu_id": 3,
-    },
-    "mix": {
-        "--bert_gpu_id": 3,
-        "--use_gpu_id": 3,
-        "--gpt2_gpu_id": 3,
-        "--ce_gpu_id": 3,
-        "--strategy_gpu_id": 0,
     }
 }
 
@@ -65,77 +62,77 @@ DATASET_CONFIG = {
     "ag": {
         "--dataset": "ag_no_title",
         "--output_dir": "exp-ag",
-        "--bert_clf_steps": 20000
+        "--transformer_clf_steps": 20000
     },
     "mr": {
         "--dataset": "mr",
         "--output_dir": "exp-mr",
-        "--bert_clf_steps": 5000
+        "--transformer_clf_steps": 5000
     },
     # "imdb": {
     #     "--dataset": "imdb",
     #     "--output_dir": "exp-imdb",
-    #     "--bert_clf_steps": 5000
+    #     "--transformer_clf_steps": 5000
     # },
     # "yelp": {
     #     "--dataset": "yelp",l
     #     "--output_dir": "exp-yelp",
-    #     "--bert_clf_steps": 20000
+    #     "--transformer_clf_steps": 20000
     # },
     "snli": {
         "--dataset": "snli",
         "--output_dir": "exp-snli",
-        "--bert_clf_steps": 20000
+        "--transformer_clf_steps": 20000
     },
     "sst2": {
         "--dataset": "sst2",
         "--output_dir": "exp-sst2",
-        "--bert_clf_steps": 20000
+        "--transformer_clf_steps": 20000
     },
     # "mnli": {
     #     "--dataset": "mnli",
     #     "--output_dir": "exp-mnli",
-    #     "--bert_clf_steps": 20000
+    #     "--transformer_clf_steps": 20000
     # },
     # "mnli_mis": {
     #     "--dataset": "mnli_mis",
     #     "--output_dir": "exp-mnli_mis",
-    #     "--bert_clf_steps": 20000
+    #     "--transformer_clf_steps": 20000
     # },
     # "qnli": {
     #     "--dataset": "qnli",
     #     "--output_dir": "exp-qnli",
-    #     "--bert_clf_steps": 20000
+    #     "--transformer_clf_steps": 20000
     # },
     "fr": {
         "--dataset": "fake_review_cg",
         "--output_dir": "exp-fr",
-        "--bert_clf_steps": 20000
+        "--transformer_clf_steps": 20000
     },
     "fry": {
         "--dataset": "fake_review_yelp",
         "--output_dir": "exp-fry",
-        "--bert_clf_steps": 20000
+        "--transformer_clf_steps": 20000
     },
     "fn": {
         "--dataset": "fake_news",
         "--output_dir": "exp-fn",
-        "--bert_clf_steps": 20000
+        "--transformer_clf_steps": 20000
     },
     "hate": {
         "--dataset": "hate",
         "--output_dir": "exp-hate",
-        "--bert_clf_steps": 20000
+        "--transformer_clf_steps": 20000
     },
     "trec": {
         "--dataset": "trec",
         "--output_dir": "exp-trec",
-        "--bert_clf_steps": 5000
+        "--transformer_clf_steps": 5000
     },
     "fn_short": {
         "--dataset": "fn_short",
         "--output_dir": "exp-fn_short",
-        "--bert_clf_steps": 20000
+        "--transformer_clf_steps": 20000
     }
 }
 

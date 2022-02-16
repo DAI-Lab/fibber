@@ -1,4 +1,4 @@
-"""This metric outputs the BERT classifier prediction of the paraphrased text."""
+"""This metric outputs a transformer-based classifier prediction of the paraphrased text."""
 
 import os
 
@@ -41,12 +41,12 @@ def get_optimizer(optimizer_name, lr, decay, train_step, params, warmup=1000):
     elif optimizer_name == "adamw":
         opt = torch.optim.AdamW(params=params, lr=lr, weight_decay=decay)
     else:
-        assert 0, "unkown optimizer"
+        raise RuntimeError("unknown optimizer")
 
-    sche = transformers.get_linear_schedule_with_warmup(
+    schedule = transformers.get_linear_schedule_with_warmup(
         opt, num_warmup_steps=warmup, num_training_steps=train_step)
 
-    return opt, sche
+    return opt, schedule
 
 
 def run_evaluate(model, dataloader_iter, eval_steps, summary, global_step, device):
@@ -86,59 +86,50 @@ def run_evaluate(model, dataloader_iter, eval_steps, summary, global_step, devic
     model.train()
 
 
-def load_or_train_bert_clf(model_init,
-                           dataset_name,
-                           trainset,
-                           testset,
-                           bert_clf_steps,
-                           bert_clf_bs,
-                           bert_clf_lr,
-                           bert_clf_optimizer,
-                           bert_clf_weight_decay,
-                           bert_clf_period_summary,
-                           bert_clf_period_val,
-                           bert_clf_period_save,
-                           bert_clf_val_steps,
-                           bert_clf_enable_sem,
-                           bert_clf_sem_word_map,
-                           device):
-    """Train BERT classification model on a dataset.
+def load_or_train_transformer_clf(
+        model_init, dataset_name, trainset, testset,
+        transformer_clf_steps, transformer_clf_bs, transformer_clf_lr, transformer_clf_optimizer,
+        transformer_clf_weight_decay, transformer_clf_period_summary, transformer_clf_period_val,
+        transformer_clf_period_save, transformer_clf_val_steps,
+        transformer_clf_enable_sem, transformer_clf_sem_word_map, device):
+    """Train transformer-based classification model on a dataset.
 
-    The trained model will be stored at ``<fibber_root_dir>/bert_clf/<dataset_name>/``. If there's
-    a saved model, load and return the model. Otherwise, train the model using the given data.
+    The trained model will be stored at ``<fibber_root_dir>/transformer_clf/<dataset_name>/``.
+    If there's a saved model, load and return the model. Otherwise, train the model using the
+    given data.
 
     Args:
-        model_init (str): pretrained model name. Choose from ``["bert-base-cased",
-            "bert-base-uncased", "bert-large-cased", "bert-large-uncased"]``.
+        model_init (str): pretrained model name. e.g. ``["bert-base-cased",
+            "bert-base-uncased", "bert-large-cased", "bert-large-uncased", "roberta-large"]``.
         dataset_name (str): the name of the dataset. This is also the dir to save trained model.
         trainset (dict): a fibber dataset.
         testset (dict): a fibber dataset.
-        bert_clf_steps (int): steps to train a classifier.
-        bert_clf_bs (int): the batch size.
-        bert_clf_lr (float): the learning rate.
-        bert_clf_optimizer (str): the optimizer name.
-        bert_clf_weight_decay (float): the weight decay.
-        bert_clf_period_summary (int): the period in steps to write training summary.
-        bert_clf_period_val (int): the period in steps to run validation and write validation
-            summary.
-        bert_clf_period_save (int): the period in steps to save current model.
-        bert_clf_val_steps (int): number of batched in each validation.
-        bert_clf_enable_sem (bool): whether to use sem to preprocess input.
-        bert_clf_sem_word_map (dict): sem word map.
+        transformer_clf_steps (int): steps to train a classifier.
+        transformer_clf_bs (int): the batch size.
+        transformer_clf_lr (float): the learning rate.
+        transformer_clf_optimizer (str): the optimizer name.
+        transformer_clf_weight_decay (float): the weight decay.
+        transformer_clf_period_summary (int): the period in steps to write training summary.
+        transformer_clf_period_val (int): the period in steps to run validation and write
+            validation summary.
+        transformer_clf_period_save (int): the period in steps to save current model.
+        transformer_clf_val_steps (int): number of batched in each validation.
+        transformer_clf_enable_sem (bool): whether to use sem to preprocess input.
+        transformer_clf_sem_word_map (dict): sem word map.
         device (torch.Device): the device to run the model.
 
     Returns:
-        (transformers.BertForSequenceClassification): a torch BERT model.
+        a torch transformer model.
     """
-    if bert_clf_enable_sem:
-        model_dir = os.path.join(get_root_dir(), "bert_clf_sem", dataset_name)
+    if transformer_clf_enable_sem:
+        model_dir = os.path.join(get_root_dir(), "transformer_clf_sem", dataset_name)
     else:
-        model_dir = os.path.join(get_root_dir(), "bert_clf", dataset_name)
+        model_dir = os.path.join(get_root_dir(), "transformer_clf", dataset_name)
     ckpt_path = os.path.join(model_dir, model_init + "-%04dk" %
-                             (bert_clf_steps // 1000))
+                             (transformer_clf_steps // 1000))
 
     if os.path.exists(ckpt_path):
-        logger.info("Load BERT classifier from %s.", ckpt_path)
+        logger.info("Load transformer classifier from %s.", ckpt_path)
         model = AutoModelForSequenceClassification.from_pretrained(ckpt_path)
         model.eval()
         model.to(device)
@@ -155,25 +146,26 @@ def load_or_train_bert_clf(model_init,
 
     summary = SummaryWriter(os.path.join(model_dir, "summary"))
 
-    if bert_clf_enable_sem:
-        trainset = sem_transform_dataset(trainset, bert_clf_sem_word_map)
-        testset = sem_transform_dataset(testset, bert_clf_sem_word_map)
+    if transformer_clf_enable_sem:
+        trainset = sem_transform_dataset(trainset, transformer_clf_sem_word_map)
+        testset = sem_transform_dataset(testset, transformer_clf_sem_word_map)
 
     dataloader = torch.utils.data.DataLoader(
-        DatasetForBert(trainset, model_init, bert_clf_bs), batch_size=None, num_workers=2)
+        DatasetForBert(trainset, model_init, transformer_clf_bs), batch_size=None, num_workers=2)
 
     dataloader_val = torch.utils.data.DataLoader(
-        DatasetForBert(testset, model_init, bert_clf_bs), batch_size=None, num_workers=1)
+        DatasetForBert(testset, model_init, transformer_clf_bs), batch_size=None, num_workers=1)
     dataloader_val_iter = iter(dataloader_val)
 
     params = model.parameters()
 
-    opt, sche = get_optimizer(
-        bert_clf_optimizer, bert_clf_lr, bert_clf_weight_decay, bert_clf_steps, params)
+    opt, schedule = get_optimizer(
+        transformer_clf_optimizer, transformer_clf_lr, transformer_clf_weight_decay,
+        transformer_clf_steps, params)
 
     global_step = 0
     correct_train, count_train = 0, 0
-    for seq, mask, tok_type, label in tqdm.tqdm(dataloader, total=bert_clf_steps):
+    for seq, mask, tok_type, label in tqdm.tqdm(dataloader, total=transformer_clf_steps):
         global_step += 1
         seq = seq.to(device)
         mask = mask.to(device)
@@ -190,30 +182,30 @@ def load_or_train_bert_clf(model_init,
         opt.zero_grad()
         loss.backward()
         opt.step()
-        sche.step()
+        schedule.step()
 
-        if global_step % bert_clf_period_summary == 0:
+        if global_step % transformer_clf_period_summary == 0:
             summary.add_scalar("clf_train/loss", loss, global_step)
             summary.add_scalar("clf_train/error_rate", 1 - correct_train / count_train,
                                global_step)
             correct_train, count_train = 0, 0
 
-        if global_step % bert_clf_period_val == 0:
+        if global_step % transformer_clf_period_val == 0:
             run_evaluate(model, dataloader_val_iter,
-                         bert_clf_val_steps, summary, global_step, device)
+                         transformer_clf_val_steps, summary, global_step, device)
 
-        if global_step % bert_clf_period_save == 0 or global_step == bert_clf_steps:
+        if global_step % transformer_clf_period_save == 0 or global_step == transformer_clf_steps:
             ckpt_path = os.path.join(model_dir, model_init + "-%04dk" % (global_step // 1000))
             model.save_pretrained(ckpt_path)
-            logger.info("BERT classifier saved at %s.", ckpt_path)
+            logger.info("transformer classifier saved at %s.", ckpt_path)
 
-        if global_step >= bert_clf_steps:
+        if global_step >= transformer_clf_steps:
             break
     model.eval()
     return model
 
 
-class BertClassifier(ClassifierBase):
+class TransformerClassifier(ClassifierBase):
     """BERT classifier prediction on paraphrase_list.
 
     This metric is special, it does not compare the original and paraphrased sentence.
@@ -224,58 +216,55 @@ class BertClassifier(ClassifierBase):
         dataset_name (str): the name of the dataset.
         trainset (dict): a fibber dataset.
         testset (dict): a fibber dataset.
-        bert_gpu_id (int): the gpu id for BERT model. Set -1 to use CPU.
-        bert_clf_steps (int): steps to train a classifier.
-        bert_clf_bs (int): the batch size.
-        bert_clf_lr (float): the learning rate.
-        bert_clf_optimizer (str): the optimizer name.
-        bert_clf_weight_decay (float): the weight decay in the optimizer.
-        bert_clf_period_summary (int): the period in steps to write training summary.
-        bert_clf_period_val (int): the period in steps to run validation and write validation
+        transformer_clf_gpu_id (int): the gpu id for BERT model. Set -1 to use CPU.
+        transformer_clf_steps (int): steps to train a classifier.
+        transformer_clf_bs (int): the batch size.
+        transformer_clf_lr (float): the learning rate.
+        transformer_clf_optimizer (str): the optimizer name.
+        transformer_clf_weight_decay (float): the weight decay in the optimizer.
+        transformer_clf_period_summary (int): the period in steps to write training summary.
+        transformer_clf_period_val (int): the period in steps to run validation and write validation
             summary.
-        bert_clf_period_save (int): the period in steps to save current model.
-        bert_clf_val_steps (int): number of batched in each validation.
+        transformer_clf_period_save (int): the period in steps to save current model.
+        transformer_clf_val_steps (int): number of batched in each validation.
     """
 
-    def __init__(self, dataset_name, trainset, testset, bert_gpu_id=-1,
-                 bert_clf_steps=20000, bert_clf_bs=32, bert_clf_lr=0.00002,
-                 bert_clf_optimizer="adamw", bert_clf_weight_decay=0.001,
-                 bert_clf_period_summary=100, bert_clf_period_val=500,
-                 bert_clf_period_save=20000, bert_clf_val_steps=10,
-                 bert_clf_enable_sem=False, bert_clf_enable_lmag=False,
-                 bert_clf_model_init="bert-base", **kargs):
-        super(BertClassifier, self).__init__()
+    def __init__(self, dataset_name, trainset, testset, transformer_clf_gpu_id=-1,
+                 transformer_clf_steps=20000, transformer_clf_bs=32, transformer_clf_lr=0.00002,
+                 transformer_clf_optimizer="adamw", transformer_clf_weight_decay=0.001,
+                 transformer_clf_period_summary=100, transformer_clf_period_val=500,
+                 transformer_clf_period_save=20000, transformer_clf_val_steps=10,
+                 transformer_clf_enable_sem=False, transformer_clf_enable_lmag=False,
+                 transformer_clf_model_init="bert-base", **kargs):
+        super(TransformerClassifier, self).__init__()
 
-        if bert_clf_model_init == "bert-base":
+        if transformer_clf_model_init in ["bert-base", "bert-large"]:
             if trainset["cased"]:
                 model_init = "bert-base-cased"
-                logger.info(
-                    "Use cased model in BERT classifier prediction metric.")
             else:
                 model_init = "bert-base-uncased"
-                logger.info(
-                    "Use uncased model in BERT classifier prediction metric.")
         else:
-            model_init = bert_clf_model_init
-        self._tokenizer = AutoTokenizer.from_pretrained(
-            resources.get_transformers(model_init))
+            model_init = transformer_clf_model_init
 
+        logger.info("Use %s classifier.", model_init)
 
-        if bert_gpu_id == -1:
-            logger.warning("BERT metric is running on CPU.")
+        self._tokenizer = AutoTokenizer.from_pretrained(resources.get_transformers(model_init))
+
+        if transformer_clf_gpu_id == -1:
+            logger.warning("Transformer clf metric is running on CPU.")
             self._device = torch.device("cpu")
         else:
-            logger.info("BERT metric is running on GPU %d.", bert_gpu_id)
-            self._device = torch.device("cuda:%d" % bert_gpu_id)
+            logger.info("Transformer clf metric is running on GPU %d.", transformer_clf_gpu_id)
+            self._device = torch.device("cuda:%d" % transformer_clf_gpu_id)
 
-        self._enable_sem = bert_clf_enable_sem
-        if bert_clf_enable_sem:
+        self._enable_sem = transformer_clf_enable_sem
+        if transformer_clf_enable_sem:
             self._sem_word_map = load_or_build_sem_wordmap(dataset_name, trainset, self._device)
         else:
             self._sem_word_map = None
 
-        self._enable_lmag = bert_clf_enable_lmag
-        if bert_clf_enable_lmag:
+        self._enable_lmag = transformer_clf_enable_lmag
+        if transformer_clf_enable_lmag:
             from fibber.metrics.bert_lm_utils import get_lm
             _, self._lm = get_lm("finetune", dataset_name, trainset, self._device)
             self._lm = self._lm.eval().to(self._device)
@@ -283,26 +272,29 @@ class BertClassifier(ClassifierBase):
 
         self._model_init = model_init
         self._dataset_name = dataset_name
-        self._model = load_or_train_bert_clf(
+        self._model = load_or_train_transformer_clf(
             model_init=model_init,
             dataset_name=dataset_name,
             trainset=trainset,
             testset=testset,
-            bert_clf_steps=bert_clf_steps,
-            bert_clf_lr=bert_clf_lr,
-            bert_clf_bs=bert_clf_bs,
-            bert_clf_optimizer=bert_clf_optimizer,
-            bert_clf_weight_decay=bert_clf_weight_decay,
-            bert_clf_period_summary=bert_clf_period_summary,
-            bert_clf_period_val=bert_clf_period_val,
-            bert_clf_period_save=bert_clf_period_save,
-            bert_clf_val_steps=bert_clf_val_steps,
-            bert_clf_enable_sem=bert_clf_enable_sem,
-            bert_clf_sem_word_map=self._sem_word_map,
+            transformer_clf_steps=transformer_clf_steps,
+            transformer_clf_lr=transformer_clf_lr,
+            transformer_clf_bs=transformer_clf_bs,
+            transformer_clf_optimizer=transformer_clf_optimizer,
+            transformer_clf_weight_decay=transformer_clf_weight_decay,
+            transformer_clf_period_summary=transformer_clf_period_summary,
+            transformer_clf_period_val=transformer_clf_period_val,
+            transformer_clf_period_save=transformer_clf_period_save,
+            transformer_clf_val_steps=transformer_clf_val_steps,
+            transformer_clf_enable_sem=transformer_clf_enable_sem,
+            transformer_clf_sem_word_map=self._sem_word_map,
             device=self._device)
-        self._fine_tune_sche = None
+        self._fine_tune_schedule = None
         self._fine_tune_opt = None
         self._ppl_filter_metric = None
+
+    def __repr__(self):
+        return self._model_init + "-Classifier"
 
     def enable_ppl_filter(self, ppl_metric):
         self._ppl_filter_metric = ppl_metric
@@ -406,16 +398,16 @@ class BertClassifier(ClassifierBase):
 
     def robust_tune_init(self, bert_clf_optimizer, bert_clf_lr, bert_clf_weight_decay,
                          bert_clf_steps, **kwargs):
-        if self._fine_tune_sche is not None or self._fine_tune_opt is not None:
+        if self._fine_tune_schedule is not None or self._fine_tune_opt is not None:
             logger.error("fine tuning has been initialized.")
             raise RuntimeError("fine tuning has been initialized.")
 
         params = self._model.parameters()
-        self._fine_tune_opt, self._fine_tune_sche = get_optimizer(
+        self._fine_tune_opt, self._fine_tune_schedule = get_optimizer(
             bert_clf_optimizer, bert_clf_lr, bert_clf_weight_decay, bert_clf_steps, params)
 
     def robust_tune_step(self, data_record_list):
-        if self._fine_tune_sche is None or self._fine_tune_opt is None:
+        if self._fine_tune_schedule is None or self._fine_tune_opt is None:
             logger.error("fine tuning not initialized.")
             raise RuntimeError("fine tuning not initialized.")
 
@@ -446,21 +438,21 @@ class BertClassifier(ClassifierBase):
         self._fine_tune_opt.zero_grad()
         loss.backward()
         self._fine_tune_opt.step()
-        self._fine_tune_sche.step()
+        self._fine_tune_schedule.step()
 
         self._model.eval()
         return logits.argmax(axis=1).detach().cpu().numpy(), float(loss.detach().cpu().numpy())
 
     def load_robust_tuned_model(self, desc, step):
-        model_dir = os.path.join(get_root_dir(), "bert_clf", self._dataset_name, desc)
+        model_dir = os.path.join(get_root_dir(), "transformer_clf", self._dataset_name, desc)
         ckpt_path = os.path.join(model_dir, self._model_init + "-%04dk" % (step // 1000))
-        self._model = BertForSequenceClassification.from_pretrained(ckpt_path)
+        self._model = AutoModelForSequenceClassification.from_pretrained(ckpt_path)
         self._model.eval()
         self._model.to(self._device)
-        logger.info("Load BERT classifier from %s.", ckpt_path)
+        logger.info("Load transformer-based classifier from %s.", ckpt_path)
 
     def save_robust_tuned_model(self, desc, step):
-        model_dir = os.path.join(get_root_dir(), "bert_clf", self._dataset_name, desc)
+        model_dir = os.path.join(get_root_dir(), "transformer_clf", self._dataset_name, desc)
         ckpt_path = os.path.join(model_dir, self._model_init + "-%04dk" % (step // 1000))
         self._model.save_pretrained(ckpt_path)
-        logger.info("BERT classifier saved at %s.", ckpt_path)
+        logger.info("Transformer-based classifier saved at %s.", ckpt_path)

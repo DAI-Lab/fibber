@@ -3,7 +3,7 @@ import pytest
 import torch
 
 from fibber.datasets.dataset_utils import get_demo_dataset
-from fibber.metrics.bert_classifier import BertClassifier
+from fibber.metrics.transformer_classifier import TransformerClassifier
 from fibber.resources.resource_utils import get_bert_clf_demo
 
 
@@ -18,14 +18,14 @@ def gpu_id():
 def bert_classifier_on_demo(gpu_id):
     get_bert_clf_demo()
     trainset, testset = get_demo_dataset()
-    bert_classifier = BertClassifier(
-        "demo", trainset, testset, bert_gpu_id=gpu_id, bert_clf_steps=5000)
+    bert_classifier = TransformerClassifier(
+        "demo", trainset, testset, transformer_clf_gpu_id=gpu_id, transformer_clf_steps=5000)
     return bert_classifier
 
 
 @pytest.mark.slow
 def test_bert_classifier(bert_classifier_on_demo):
-    assert isinstance(bert_classifier_on_demo, BertClassifier)
+    assert isinstance(bert_classifier_on_demo, TransformerClassifier)
 
     io_pairs = [
         ("This is a bad movie", 0),

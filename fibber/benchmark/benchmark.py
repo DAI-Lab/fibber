@@ -46,21 +46,22 @@ class Benchmark(object):
                  trainset=None, testset=None, attack_set=None,
                  subsample_attack_set=0,
                  customized_clf=None,
-                 enable_bert_clf=True,
+                 enable_transformer_clf=True,
                  use_gpu_id=-1,
                  gpt2_gpu_id=-1,
-                 bert_gpu_id=-1,
+                 bert_ppl_gpu_id=-1,
+                 transformer_clf_gpu_id=-1,
                  ce_gpu_id=-1,
-                 bert_clf_steps=20000,
-                 bert_clf_bs=32,
+                 transformer_clf_steps=20000,
+                 transformer_clf_bs=32,
                  load_robust_tuned_clf_desc=None,
                  robust_tuning_steps=0,
                  best_adv_metric_name="CESimilarityMetric",
                  best_adv_metric_lower_better=False,
-                 bert_clf_enable_sem=False,
-                 bert_clf_enable_lmag=False,
-                 victim="bert",
-                 bert_clf_model_init="bert-base"):
+                 transformer_clf_enable_sem=False,
+                 transformer_clf_enable_lmag=False,
+                 target_classifier="transformer",
+                 transformer_clf_model_init="bert-base"):
         """Initialize Benchmark framework.
 
         Args:
@@ -75,17 +76,17 @@ class Benchmark(object):
                 ``testset``.
             subsample_attack_set (int): subsample the attack set. 0 to use the whole attack set.
             customized_clf (MetricBase): an classifier object.
-            enable_bert_clf (bool): whether to enable bert classifier in metrics. You can disable
+            enable_transformer_clf (bool): whether to enable bert classifier in metrics. You can disable
                 it when you are attacking your own classifier.
             use_gpu_id (int): the gpu to run universal sentence encoder to compute metrics.
                 -1 for CPU.
             gpt2_gpu_id (int): the gpu to run the GPT2-medium language model to compute metrics.
                 -1 for CPU.
-            bert_gpu_id (int): the gpu to run the BERT text classifier, which is the model being
+            transformer_clf_gpu_id (int): the gpu to run the BERT text classifier, which is the model being
                 attacked. -1 for CPU.
-            bert_clf_steps (int): number of steps to train the BERT text classifier.
-            bert_clf_bs (int): the batch size to train the BERT classifier.
-            bert_clf_enable_sem (bool): use SEM on BERT classifier.
+            transformer_clf_steps (int): number of steps to train the BERT text classifier.
+            transformer_clf_bs (int): the batch size to train the BERT classifier.
+            transformer_clf_enable_sem (bool): use SEM on BERT classifier.
         """
         # make output dir
         self._output_dir = output_dir
@@ -119,22 +120,22 @@ class Benchmark(object):
 
         # setup metric bundle
         self._metric_bundle = MetricBundle(
-            enable_bert_classifier=enable_bert_clf,
-            enable_fasttext_classifier=(victim=="fasttext"),
+            enable_transformer_classifier=enable_transformer_clf,
+            enable_fasttext_classifier=(target_classifier == "fasttext"),
             enable_glove_similarity=False,
-            target_clf=victim,
+            target_clf=target_classifier,
             use_gpu_id=use_gpu_id, gpt2_gpu_id=gpt2_gpu_id,
-            bert_gpu_id=bert_gpu_id, dataset_name=dataset_name,
-            bert_ppl_gpu_id=bert_gpu_id, enable_bert_perplexity=True,
+            transformer_clf_gpu_id=transformer_clf_gpu_id, dataset_name=dataset_name,
+            bert_ppl_gpu_id=bert_ppl_gpu_id, enable_bert_perplexity=True,
             trainset=self._trainset, testset=testset,
-            bert_clf_steps=bert_clf_steps,
-            bert_clf_bs=bert_clf_bs,
+            transformer_clf_steps=transformer_clf_steps,
+            transformer_clf_bs=transformer_clf_bs,
             ce_gpu_id=ce_gpu_id,
-            bert_clf_enable_sem=bert_clf_enable_sem,
-            bert_clf_enable_lmag=bert_clf_enable_lmag,
+            transformer_clf_enable_sem=transformer_clf_enable_sem,
+            transformer_clf_enable_lmag=transformer_clf_enable_lmag,
             enable_ce_similarity=False,
             enable_gpt2_perplexity=False,
-            bert_clf_model_init=bert_clf_model_init
+            transformer_clf_model_init=transformer_clf_model_init
         )
 
         # self._metric_bundle.get_target_classifier().enable_ppl_filter(
@@ -284,12 +285,12 @@ def main():
     parser = argparse.ArgumentParser()
 
     # target clf
-    parser.add_argument("--victim", type=str, default="bert")
-    parser.add_argument("--bert_clf_model_init", type=str, default="bert-base")
+    parser.add_argument("--target_classifier", type=str, default="bert")
+    parser.add_argument("--transformer_clf_model_init", type=str, default="bert-base")
 
     # BERT classifier related args
-    parser.add_argument("--bert_clf_enable_sem", type=str, default="0")
-    parser.add_argument("--bert_clf_enable_lmag", type=str, default="0")
+    parser.add_argument("--transformer_clf_enable_sem", type=str, default="0")
+    parser.add_argument("--transformer_clf_enable_lmag", type=str, default="0")
 
     # option on robust training vs attack
     parser.add_argument("--robust_tuning", type=str, default="0",
@@ -309,9 +310,10 @@ def main():
 
     # metric args
     parser.add_argument("--gpt2_gpu_id", type=int, default=-1)
-    parser.add_argument("--bert_gpu_id", type=int, default=-1)
+    parser.add_argument("--bert_ppl_gpu_id", type=int, default=-1)
+    parser.add_argument("--transformer_clf_gpu_id", type=int, default=-1)
     parser.add_argument("--use_gpu_id", type=int, default=-1)
-    parser.add_argument("--bert_clf_steps", type=int, default=20000)
+    parser.add_argument("--transformer_clf_steps", type=int, default=20000)
     parser.add_argument("--ce_gpu_id", type=int, default=-1)
     parser.add_argument("--best_adv_metric_name", type=str, default="USESimilarityMetric")
     parser.add_argument("--best_adv_lower_better", type=str, default="0")
@@ -326,21 +328,23 @@ def main():
     if arg_dict["robust_tuning"] == "1":
         assert arg_dict["load_robust_tuned_clf_desc"] is None
 
-    benchmark = Benchmark(arg_dict["output_dir"], arg_dict["dataset"],
-                          subsample_attack_set=arg_dict["subsample_testset"],
-                          use_gpu_id=arg_dict["use_gpu_id"],
-                          bert_gpu_id=arg_dict["bert_gpu_id"],
-                          gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
-                          bert_clf_steps=arg_dict["bert_clf_steps"],
-                          load_robust_tuned_clf_desc=arg_dict["load_robust_tuned_clf_desc"],
-                          robust_tuning_steps=arg_dict["robust_tuning_steps"],
-                          ce_gpu_id=arg_dict["ce_gpu_id"],
-                          best_adv_metric_name=arg_dict["best_adv_metric_name"],
-                          best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"),
-                          bert_clf_enable_sem=(arg_dict["bert_clf_enable_sem"] == "1"),
-                          bert_clf_enable_lmag=(arg_dict["bert_clf_enable_lmag"] == "1"),
-                          victim=arg_dict["victim"],
-                          bert_clf_model_init=arg_dict["bert_clf_model_init"])
+    benchmark = Benchmark(
+        arg_dict["output_dir"], arg_dict["dataset"],
+        subsample_attack_set=arg_dict["subsample_testset"],
+        use_gpu_id=arg_dict["use_gpu_id"],
+        transformer_clf_gpu_id=arg_dict["transformer_clf_gpu_id"],
+        gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
+        bert_ppl_gpu_id=arg_dict["bert_ppl_gpu_id"],
+        transformer_clf_steps=arg_dict["transformer_clf_steps"],
+        load_robust_tuned_clf_desc=arg_dict["load_robust_tuned_clf_desc"],
+        robust_tuning_steps=arg_dict["robust_tuning_steps"],
+        ce_gpu_id=arg_dict["ce_gpu_id"],
+        best_adv_metric_name=arg_dict["best_adv_metric_name"],
+        best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"),
+        transformer_clf_enable_sem=(arg_dict["transformer_clf_enable_sem"] == "1"),
+        transformer_clf_enable_lmag=(arg_dict["transformer_clf_enable_lmag"] == "1"),
+        target_classifier=arg_dict["target_classifier"],
+        transformer_clf_model_init=arg_dict["transformer_clf_model_init"])
 
     log.remove_logger_tf_handler(logger)
 

@@ -21,7 +21,7 @@ def test_integrity_identity(gpu_id):
         subsample_attack_set=100,
         use_gpu_id=gpu_id,
         gpt2_gpu_id=gpu_id,
-        bert_gpu_id=gpu_id,
+        transformer_clf_gpu_id=gpu_id,
         bert_clf_steps=1000,
         bert_clf_bs=32
     )
@@ -39,7 +39,7 @@ def test_integrity_textfooler(gpu_id):
         subsample_attack_set=100,
         use_gpu_id=gpu_id,
         gpt2_gpu_id=gpu_id,
-        bert_gpu_id=gpu_id,
+        transformer_clf_gpu_id=gpu_id,
         bert_clf_steps=1000,
         bert_clf_bs=32
     )
@@ -64,7 +64,7 @@ def test_integrity_bertsampling(gpu_id):
         subsample_attack_set=1,
         use_gpu_id=gpu_id,
         gpt2_gpu_id=gpu_id,
-        bert_gpu_id=gpu_id,
+        transformer_clf_gpu_id=gpu_id,
         bert_clf_steps=1000,
         bert_clf_bs=32
     )
