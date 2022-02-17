@@ -50,91 +50,22 @@ STRATEGY_CONFIG = {
     "identity": {
         "--strategy": "IdentityStrategy"
     },
-    # "cheat": {
-    #     "--strategy": "CheatStrategy"
-    # },
+    "cheat": {
+        "--strategy": "CheatStrategy"
+    },
     "ssrs": {
-        "--strategy": "SSRSStrategy",
+        "--strategy": "SSRSv2Strategy",
+        "--ssrs_sim_threshold": 0.8,
+        "--ssrs_sim_weight": 20,
+        "--ssrs_ppl_weight": 3,
         "--ssrs_sampling_steps": 100,
-        "--ssrs_burnin_steps": 50,
+        "--ssrs_clf_weight": 3,
         "--ssrs_window_size": 3,
-        "--ssrs_sim_threshold": 0.7,
-        "--ssrs_sim_weight": 500,
-        "--ssrs_ppl_weight": 1,
-        "--ssrs_clf_weight": 10,
-        "--ssrs_bleu_weight": 50,
-        "--ssrs_bleu_threshold": 0.6,
+        "--ssrs_accept_criteria": "joint_weighted_criteria",
         "--ssrs_sim_metric": "USESimilarityMetric",
-    },
-    "ssrsv2": {
-        "--strategy": "SSRSv2Strategy",
-        "--ssrs2_sim_threshold": 0.8,
-        "--ssrs2_sim_weight": 20,
-        "--ssrs2_ppl_weight": 3,
-        "--ssrs2_sampling_steps": 100,
-        "--ssrs2_clf_weight": 3,
-        "--ssrs2_window_size": 3,
-        "--ssrs2_accept_criteria": "joint_weighted_criteria",
-        "--ssrs2_sim_metric": "USESimilarityMetric",
-        "--ssrs2_early_stop": "none",
+        "--ssrs_early_stop": "none",
         "--ssrs_bleu_weight": 10,
         "--ssrs_bleu_threshold": 0.6,
-    },
-    "ssrsv2B": {
-        "--strategy": "SSRSv2Strategy",
-        "--ssrs2_sim_threshold": 1.0,
-        "--ssrs2_sim_weight": 20,
-        "--ssrs2_ppl_weight": 3,
-        "--ssrs2_sampling_steps": 100,
-        "--ssrs2_clf_weight": 3,
-        "--ssrs2_window_size": 3,
-        "--ssrs2_accept_criteria": "joint_weighted_criteria",
-        "--ssrs2_sim_metric": "USESimilarityMetric",
-        "--ssrs2_early_stop": "none",
-        "--ssrs_bleu_weight": 10,
-        "--ssrs_bleu_threshold": 0.6,
-    },
-    "ssrsv2C": {
-        "--strategy": "SSRSv2Strategy",
-        "--ssrs2_sim_threshold": 1.0,
-        "--ssrs2_sim_weight": 10,
-        "--ssrs2_ppl_weight": 3,
-        "--ssrs2_sampling_steps": 100,
-        "--ssrs2_clf_weight": 3,
-        "--ssrs2_window_size": 3,
-        "--ssrs2_accept_criteria": "joint_weighted_criteria",
-        "--ssrs2_sim_metric": "USESimilarityMetric",
-        "--ssrs2_early_stop": "none",
-        "--ssrs_bleu_weight": 10,
-        "--ssrs_bleu_threshold": 0.6,
-    },
-    "ssrsv2D": {
-        "--strategy": "SSRSv2Strategy",
-        "--ssrs2_sim_threshold": 1.0,
-        "--ssrs2_sim_weight": 10,
-        "--ssrs2_ppl_weight": 3,
-        "--ssrs2_sampling_steps": 100,
-        "--ssrs2_clf_weight": 3,
-        "--ssrs2_window_size": 3,
-        "--ssrs2_accept_criteria": "joint_weighted_criteria",
-        "--ssrs2_sim_metric": "USESimilarityMetric",
-        "--ssrs2_early_stop": "none",
-        "--ssrs_bleu_weight": 10,
-        "--ssrs_bleu_threshold": 1.0,
-    },
-    "ssrsv2E": {
-        "--strategy": "SSRSv2Strategy",
-        "--ssrs2_sim_threshold": 1.0,
-        "--ssrs2_sim_weight": 10,
-        "--ssrs2_ppl_weight": 10,
-        "--ssrs2_sampling_steps": 100,
-        "--ssrs2_clf_weight": 3,
-        "--ssrs2_window_size": 3,
-        "--ssrs2_accept_criteria": "joint_weighted_criteria",
-        "--ssrs2_sim_metric": "USESimilarityMetric",
-        "--ssrs2_early_stop": "none",
-        "--ssrs_bleu_weight": 10,
-        "--ssrs_bleu_threshold": 1.0,
     },
 }
 
@@ -175,14 +106,7 @@ def main():
             command += to_command(COMMON_CONFIG)
             command += to_command(GPU_CONFIG[args.gpu])
             command += to_command(DATASET_CONFIG[dataset])
-            if strategy[:4] == "asrs":
-                strategy_config_tmp = copy.copy(STRATEGY_CONFIG["asrs"])
-                if strategy != "asrs":
-                    for k, v in STRATEGY_CONFIG[strategy].items():
-                        strategy_config_tmp[k] = v
-                command += to_command(strategy_config_tmp)
-            else:
-                command += to_command(STRATEGY_CONFIG[strategy])
+            command += to_command(STRATEGY_CONFIG[strategy])
             command += to_command({"--subsample_offset": args.offset})
             subprocess.call(command)
 

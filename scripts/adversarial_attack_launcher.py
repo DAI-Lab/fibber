@@ -3,7 +3,7 @@ import copy
 import subprocess
 
 COMMON_CONFIG = {
-    "--subsample_testset": 400,
+    "--subsample_testset": 1000,
     "--num_paraphrases_per_text": 50,
     "--robust_tuning": "0",
     # ignored when robut_tuning is 0 and load_robust_tuned_clf is not set
@@ -69,65 +69,20 @@ DATASET_CONFIG = {
         "--output_dir": "exp-mr",
         "--transformer_clf_steps": 5000
     },
-    # "imdb": {
-    #     "--dataset": "imdb",
-    #     "--output_dir": "exp-imdb",
-    #     "--transformer_clf_steps": 5000
-    # },
-    # "yelp": {
-    #     "--dataset": "yelp",l
-    #     "--output_dir": "exp-yelp",
-    #     "--transformer_clf_steps": 20000
-    # },
-    "snli": {
-        "--dataset": "snli",
-        "--output_dir": "exp-snli",
-        "--transformer_clf_steps": 20000
-    },
     "sst2": {
         "--dataset": "sst2",
         "--output_dir": "exp-sst2",
-        "--transformer_clf_steps": 20000
-    },
-    # "mnli": {
-    #     "--dataset": "mnli",
-    #     "--output_dir": "exp-mnli",
-    #     "--transformer_clf_steps": 20000
-    # },
-    # "mnli_mis": {
-    #     "--dataset": "mnli_mis",
-    #     "--output_dir": "exp-mnli_mis",
-    #     "--transformer_clf_steps": 20000
-    # },
-    # "qnli": {
-    #     "--dataset": "qnli",
-    #     "--output_dir": "exp-qnli",
-    #     "--transformer_clf_steps": 20000
-    # },
-    "fr": {
-        "--dataset": "fake_review_cg",
-        "--output_dir": "exp-fr",
-        "--transformer_clf_steps": 20000
-    },
-    "fry": {
-        "--dataset": "fake_review_yelp",
-        "--output_dir": "exp-fry",
-        "--transformer_clf_steps": 20000
-    },
-    "fn": {
-        "--dataset": "fake_news",
-        "--output_dir": "exp-fn",
-        "--transformer_clf_steps": 20000
-    },
-    "hate": {
-        "--dataset": "hate",
-        "--output_dir": "exp-hate",
         "--transformer_clf_steps": 20000
     },
     "trec": {
         "--dataset": "trec",
         "--output_dir": "exp-trec",
         "--transformer_clf_steps": 5000
+    },
+    "hate": {
+        "--dataset": "hate",
+        "--output_dir": "exp-hate",
+        "--transformer_clf_steps": 20000
     },
     "fn_short": {
         "--dataset": "fn_short",
@@ -205,131 +160,24 @@ STRATEGY_CONFIG = {
         "--asrs_sim_metric": "CESimilarityMetric",
         "--robust_tune_num_attack_per_step": 5
     },
-    "asrs-adv-train": {
-        "--asrs_sampling_steps": 50,
-        "--asrs_burnin_steps": 25,
-        "--asrs_sim_metric": "USESimilarityMetric",
-        "--robust_tune_num_attack_per_step": 16
-    },
     "fu": {
         "--strategy": "FudgeStrategy",
     },
-    "asrs-nli": {
-        "--asrs_sim_weight": 100,
-        "--asrs_ppl_weight": 50,
-        "--asrs_clf_weight": 3,
-    },
-    "asrs-u": {
-        "--asrs_sim_metric": "USESimilarityMetric",
-        "--best_adv_metric_name": "USESimilarityMetric"
-    },
-    "asrs-u-nli": {
-        "--asrs_sim_weight": 100,
-        "--asrs_ppl_weight": 50,
-        "--asrs_clf_weight": 3,
-        "--asrs_sim_metric": "USESimilarityMetric",
-        "--best_adv_metric_name": "USESimilarityMetric"
-    },
-    "asrsv2": {
-        "--strategy": "ASRSv2Strategy",
-        "--asrs2_enforcing_dist": "wpe",
-        "--asrs2_wpe_threshold": 1.0,
-        "--asrs2_wpe_weight": 5,
-        "--asrs2_sim_threshold": 0.95,
-        "--asrs2_sim_weight": 20,
-        "--asrs2_ppl_weight": 5,
-        "--asrs2_sampling_steps": 200,
-        "--asrs2_clf_weight": 2,
-        "--asrs2_window_size": 3,
-        "--asrs2_accept_criteria": "joint_weighted_criteria",
-        "--asrs2_lm_option": "finetune",
-        "--asrs2_sim_metric": "USESimilarityMetric",
-        "--asrs2_early_stop": "half",
-        "--robust_tune_num_attack_per_step": 16
-    },
-    "asrsv2-s1": {
-        "--strategy": "ASRSv2Strategy",
-        "--asrs2_enforcing_dist": "wpe",
-        "--asrs2_wpe_threshold": 1.0,
-        "--asrs2_wpe_weight": 5,
-        "--asrs2_sim_threshold": 1.,
-        "--asrs2_sim_weight": 20,
-        "--asrs2_ppl_weight": 5,
-        "--asrs2_sampling_steps": 200,
-        "--asrs2_clf_weight": 2,
-        "--asrs2_window_size": 3,
-        "--asrs2_accept_criteria": "joint_weighted_criteria",
-        "--asrs2_lm_option": "finetune",
-        "--asrs2_sim_metric": "USESimilarityMetric",
-        "--asrs2_early_stop": "half",
-        "--robust_tune_num_attack_per_step": 16
-    },
-    "asrsv2-w1": {
-        "--strategy": "ASRSv2Strategy",
-        "--asrs2_enforcing_dist": "wpe",
-        "--asrs2_wpe_threshold": 1.0,
-        "--asrs2_wpe_weight": 5,
-        "--asrs2_sim_threshold": 0.95,
-        "--asrs2_sim_weight": 20,
-        "--asrs2_ppl_weight": 5,
-        "--asrs2_sampling_steps": 200,
-        "--asrs2_clf_weight": 2,
-        "--asrs2_window_size": 1,
-        "--asrs2_accept_criteria": "joint_weighted_criteria",
-        "--asrs2_lm_option": "finetune",
-        "--asrs2_sim_metric": "USESimilarityMetric",
-        "--asrs2_early_stop": "half",
-        "--robust_tune_num_attack_per_step": 16
-    },
-    "asrsv2-w2": {
-        "--strategy": "ASRSv2Strategy",
-        "--asrs2_enforcing_dist": "wpe",
-        "--asrs2_wpe_threshold": 1.0,
-        "--asrs2_wpe_weight": 5,
-        "--asrs2_sim_threshold": 0.95,
-        "--asrs2_sim_weight": 20,
-        "--asrs2_ppl_weight": 5,
-        "--asrs2_sampling_steps": 200,
-        "--asrs2_clf_weight": 2,
-        "--asrs2_window_size": 2,
-        "--asrs2_accept_criteria": "joint_weighted_criteria",
-        "--asrs2_lm_option": "finetune",
-        "--asrs2_sim_metric": "USESimilarityMetric",
-        "--asrs2_early_stop": "half",
-        "--robust_tune_num_attack_per_step": 16
-    },
-    "asrsv2-w4": {
-        "--strategy": "ASRSv2Strategy",
-        "--asrs2_enforcing_dist": "wpe",
-        "--asrs2_wpe_threshold": 1.0,
-        "--asrs2_wpe_weight": 5,
-        "--asrs2_sim_threshold": 0.95,
-        "--asrs2_sim_weight": 20,
-        "--asrs2_ppl_weight": 5,
-        "--asrs2_sampling_steps": 200,
-        "--asrs2_clf_weight": 2,
-        "--asrs2_window_size": 4,
-        "--asrs2_accept_criteria": "joint_weighted_criteria",
-        "--asrs2_lm_option": "finetune",
-        "--asrs2_sim_metric": "USESimilarityMetric",
-        "--asrs2_early_stop": "half",
-        "--robust_tune_num_attack_per_step": 16
-    },
-    "asrsv2CE": {
-        "--strategy": "ASRSv2Strategy",
-        "--asrs2_enforcing_dist": "wpe",
-        "--asrs2_wpe_threshold": 1.0,
-        "--asrs2_wpe_weight": 5,
-        "--asrs2_sim_threshold": 0.95,
-        "--asrs2_sim_weight": 20,
-        "--asrs2_ppl_weight": 5,
-        "--asrs2_sampling_steps": 200,
-        "--asrs2_clf_weight": 2,
-        "--asrs2_window_size": 3,
-        "--asrs2_accept_criteria": "joint_weighted_criteria",
-        "--asrs2_lm_option": "finetune",
-        "--asrs2_sim_metric": "CESimilarityMetric",
-        "--asrs2_early_stop": "half",
+    "rr": {
+        "--strategy": "RewriteRollbackStrategy",
+        "--rr_enforcing_dist": "wpe",
+        "--rr_wpe_threshold": 1.0,
+        "--rr_wpe_weight": 5,
+        "--rr_sim_threshold": 0.95,
+        "--rr_sim_weight": 20,
+        "--rr_ppl_weight": 5,
+        "--rr_sampling_steps": 200,
+        "--rr_clf_weight": 2,
+        "--rr_window_size": 3,
+        "--rr_accept_criteria": "joint_weighted_criteria",
+        "--rr_lm_option": "finetune",
+        "--rr_sim_metric": "USESimilarityMetric",
+        "--rr_early_stop": "half",
         "--robust_tune_num_attack_per_step": 16
     },
 }
@@ -372,7 +220,7 @@ def main():
 
     for dataset in dataset_list:
         for strategy in strategy_list:
-            command = ["python3", "-m", "fibber.benchmark.benchmark"]
+            command = ["python3", "-m", "fibber.benchmark.benchmark_adversarial_attack"]
             if args.robust_desc is not None:
                 command += to_command({"--load_robust_tuned_clf": args.robust_desc})
             command += to_command(COMMON_CONFIG)
