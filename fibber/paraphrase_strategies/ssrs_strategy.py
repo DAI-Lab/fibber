@@ -54,7 +54,7 @@ def clf_criteria_score(origin, paraphrases, data_record, field_name, clf_metric,
     if clf_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
 
-    dist = clf_metric.predict_dist_batch(origin, paraphrases, data_record, field_name)
+    dist = clf_metric.predict_log_dist_batch(origin, paraphrases, data_record, field_name)
     label = data_record["label"]
     # correct_prob = (dist[:, label]).copy()
     dist[:, label] = -1e8

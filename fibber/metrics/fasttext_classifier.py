@@ -63,7 +63,7 @@ class FasttextClassifier(ClassifierBase):
             self._model.save_model(model_filename)
             self._n_class = len(trainset["label_mapping"])
 
-    def predict_dist_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def predict_log_dist_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Predict the log-probability distribution over classes for one example.
 
         Args:

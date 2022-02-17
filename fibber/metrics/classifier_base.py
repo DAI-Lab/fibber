@@ -8,18 +8,19 @@ class ClassifierBase(MetricBase):
 
     All classifiers must be derived from this class.
 
-    To implement a new classifier, you should at least overwrite the ``predict_dist_example``
+    To implement a new classifier, you should at least overwrite the ``predict_log_dist_example``
     method. This method returns a predicted logits over classes.
 
     Some classifiers output label instead of distribution. In this case, you should return a
     one-hot vector.
 
     Some classifier may run more efficiently on a batch of data. In this case, you should overwrite
-    the ``predict_dist_batch`` function. If you don't overwrite predict_dist_batch, it will compute
-    the metric of paraphrase_list one by one.
+    the ``predict_log_dist_batch`` function. If you don't overwrite predict_log_dist_batch, it will
+    compute the metric of paraphrase_list one by one.
     """
 
-    def predict_dist_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def predict_log_dist_example(self, origin, paraphrase, data_record=None,
+                                 paraphrase_field="text0"):
         """Predict the log-probability distribution over classes for one example.
 
         Args:
@@ -33,8 +34,8 @@ class ClassifierBase(MetricBase):
         """
         raise NotImplementedError
 
-    def predict_dist_batch(self, origin, paraphrase_list, data_record=None,
-                           paraphrase_field="text0"):
+    def predict_log_dist_batch(self, origin, paraphrase_list, data_record=None,
+                               paraphrase_field="text0"):
         """Predict the log-probability distribution over classes for one batch.
 
         Args:
@@ -49,15 +50,15 @@ class ClassifierBase(MetricBase):
         ret = []
         for paraphrase in paraphrase_list:
             ret.append(
-                self.predict_dist_example(origin, paraphrase, data_record, paraphrase_field))
+                self.predict_log_dist_example(origin, paraphrase, data_record, paraphrase_field))
         return np.asarray(ret)
 
-    def predict_dist_multiple_examples(self, origin_list, paraphrase_list,
-                                       data_record_list=None, paraphrase_field="text0"):
+    def predict_log_dist_multiple_examples(self, origin_list, paraphrase_list,
+                                           data_record_list=None, paraphrase_field="text0"):
         ret = []
         for i in range(len(paraphrase_list)):
             ret.append(
-                self.predict_dist_example(
+                self.predict_log_dist_example(
                     None if origin_list is None else origin_list[i], paraphrase_list[i],
                     data_record_list[i] if data_record_list is not None else None,
                     paraphrase_field))
@@ -76,7 +77,7 @@ class ClassifierBase(MetricBase):
             (np.int): predicted label
         """
         return np.argmax(
-            self.predict_dist_example(origin, paraphrase, data_record, paraphrase_field))
+            self.predict_log_dist_example(origin, paraphrase, data_record, paraphrase_field))
 
     def predict_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0"):
         """Predict class label for one example.
@@ -91,14 +92,14 @@ class ClassifierBase(MetricBase):
             (np.array): predicted label as an numpy array of size ``(batch_size)``.
         """
         return np.argmax(
-            self.predict_dist_batch(origin, paraphrase_list, data_record, paraphrase_field),
+            self.predict_log_dist_batch(origin, paraphrase_list, data_record, paraphrase_field),
             axis=1)
 
     def predict_multiple_examples(self, origin_list, paraphrase_list,
                                   data_record_list=None, paraphrase_field="text0"):
         return np.argmax(
-            self.predict_dist_multiple_examples(origin_list, paraphrase_list,
-                                                data_record_list, paraphrase_field), axis=1)
+            self.predict_log_dist_multiple_examples(origin_list, paraphrase_list,
+                                                    data_record_list, paraphrase_field), axis=1)
 
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Predict class label for one example.

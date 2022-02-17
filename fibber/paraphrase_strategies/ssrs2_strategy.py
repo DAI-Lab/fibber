@@ -91,8 +91,8 @@ def clf_criteria_score(origin_list, paraphrases, data_record_list, field_name, c
     if clf_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
 
-    dist_list = clf_metric.predict_dist_multiple_examples(origin_list, paraphrases,
-                                                          data_record_list, field_name)
+    dist_list = clf_metric.predict_log_dist_multiple_examples(origin_list, paraphrases,
+                                                              data_record_list, field_name)
     dist_list = np.exp(dist_list)
 
     scores = []

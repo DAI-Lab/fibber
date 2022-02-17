@@ -96,7 +96,7 @@ class FudgeStrategy(StrategyBase):
         t0_for_use = self._tokenizer.decode(tmp[1:ll + 1])
         sim = self._sim_metric.measure_batch(t0_for_use, text)
 
-        dist = self._clf_metric.predict_dist_batch(t0_for_use, text)
+        dist = self._clf_metric.predict_log_dist_batch(t0_for_use, text)
         label = data_record["label"]
 
         # print(t0_for_use, text)

@@ -44,7 +44,7 @@ def roll_back(record, adv, clf_metric):
         s = " ".join(toks)
         # return clf_metric.predict_example(None, s) != record["label"]
         s_prev = " ".join(toks_prev)
-        log_prob = clf_metric.predict_dist_multiple_examples(None, [s, s_prev])
+        log_prob = clf_metric.predict_log_dist_multiple_examples(None, [s, s_prev])
         label = record["label"]
         return np.argmax(log_prob[0]) != label or log_prob[0, label] < log_prob[1, label]
 
@@ -195,8 +195,8 @@ def clf_criteria_score(origin_list, paraphrases, data_record_list, field_name, c
     if clf_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
 
-    dist_list = clf_metric.predict_dist_multiple_examples(origin_list, paraphrases,
-                                                          data_record_list, field_name)
+    dist_list = clf_metric.predict_log_dist_multiple_examples(origin_list, paraphrases,
+                                                              data_record_list, field_name)
     # dist_list = np.exp(dist_list)
 
     scores = []
@@ -225,9 +225,9 @@ def joint_weighted_criteria(
 
     # masked_part_text = ["It was " + item for item in masked_part_text]
     # filled_in_text = ["It was " + item for item in filled_in_text]
-    # dist1 = clf_metric.predict_dist_multiple_examples(origin_list, masked_part_text,
+    # dist1 = clf_metric.predict_log_dist_multiple_examples(origin_list, masked_part_text,
     #                                                   data_record_list, field_name)
-    # dist2 = clf_metric.predict_dist_multiple_examples(origin_list, filled_in_text,
+    # dist2 = clf_metric.predict_log_dist_multiple_examples(origin_list, filled_in_text,
     #                                                   data_record_list, field_name)
     # dist1 = np.exp(dist1)
     # dist2 = np.exp(dist2)

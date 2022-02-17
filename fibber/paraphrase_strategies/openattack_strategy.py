@@ -31,7 +31,7 @@ class MyClassifier(oa.Classifier):
     # access to the classification probability scores with respect input sentences
     def get_prob(self, input_):
         self._counter += len(input_)
-        ret = self.model.predict_dist_batch(
+        ret = self.model.predict_log_dist_batch(
             self._data_record[self._field_name], input_,
             data_record=self._data_record, paraphrase_field=self._field_name)
         return np.exp(ret)

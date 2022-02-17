@@ -79,7 +79,7 @@ class DefaultTuningStrategy(TuningStrategyBase):
             paraphrase_list = paraphrase_strategy.paraphrase_multiple_examples(
                 data_record_list_tmp, paraphrase_field)
 
-            predict_logp_list = classifier.predict_dist_multiple_examples(
+            predict_logp_list = classifier.predict_log_dist_multiple_examples(
                 None, paraphrase_list, data_record_list_tmp, paraphrase_field)
 
             for (paraphrase, data_record, predict_logp) in zip(

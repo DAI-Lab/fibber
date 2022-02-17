@@ -12,8 +12,8 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from fibber import get_root_dir, log, resources
 from fibber.datasets import DatasetForBert
-from fibber.metrics.bert_classifier_utils_lmag import lmag_fix_sentences
-from fibber.metrics.bert_classifier_utils_sem import (
+from fibber.metrics.transformer_classifier_utils_lmag import lmag_fix_sentences
+from fibber.metrics.transformer_classifier_utils_sem import (
     load_or_build_sem_wordmap, sem_fix_sentences, sem_transform_dataset)
 from fibber.metrics.classifier_base import ClassifierBase
 
@@ -299,8 +299,8 @@ class TransformerClassifier(ClassifierBase):
     def enable_ppl_filter(self, ppl_metric):
         self._ppl_filter_metric = ppl_metric
 
-    def predict_dist_batch(self, origin, paraphrase_list, data_record=None,
-                           paraphrase_field="text0"):
+    def predict_log_dist_batch(self, origin, paraphrase_list, data_record=None,
+                               paraphrase_field="text0"):
         """Predict the log-probability distribution over classes for one batch.
 
         Args:
@@ -356,9 +356,9 @@ class TransformerClassifier(ClassifierBase):
 
         return res_hard
 
-    def predict_dist_multiple_examples(self, origin_list, paraphrase_list,
-                                       data_record_list=None, paraphrase_field="text0",
-                                       return_raw_logits=False):
+    def predict_log_dist_multiple_examples(self, origin_list, paraphrase_list,
+                                           data_record_list=None, paraphrase_field="text0",
+                                           return_raw_logits=False):
         if self._enable_sem or self._enable_lmag:
             raise RuntimeError
 
@@ -381,7 +381,7 @@ class TransformerClassifier(ClassifierBase):
                 res = logits.detach().cpu().numpy()
         return res
 
-    def predict_dist_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def predict_log_dist_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Predict the log-probability distribution over classes for one example.
 
         Args:
@@ -393,7 +393,7 @@ class TransformerClassifier(ClassifierBase):
         Returns:
             (np.array): a numpy array of size ``(num_labels)``.
         """
-        return self.predict_dist_batch(origin, [paraphrase], data_record, paraphrase_field)[0]
+        return self.predict_log_dist_batch(origin, [paraphrase], data_record, paraphrase_field)[0]
 
     def robust_tune_init(self, bert_clf_optimizer, bert_clf_lr, bert_clf_weight_decay,
                          bert_clf_steps, **kwargs):

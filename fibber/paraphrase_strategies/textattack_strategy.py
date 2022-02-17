@@ -55,7 +55,7 @@ class CLFModel(ModelWrapper):
 
     def __call__(self, text_list):
         self._counter += len(text_list)
-        ret = self.model.predict_dist_batch(
+        ret = self.model.predict_log_dist_batch(
             self._data_record[self._field_name], text_list,
             data_record=self._data_record, paraphrase_field=self._field_name)
         ret_hard = np.zeros_like(ret)
