@@ -7,7 +7,7 @@ COMMON_CONFIG = {
     "--num_paraphrases_per_text": 50,
     "--robust_tuning": "0",
     # ignored when robut_tuning is 0 and load_robust_tuned_clf is not set
-    "--robust_tuning_steps": 3000,
+    "--robust_tuning_steps": 5000,
     # "--target_classifier": "fasttext",
     "--target_classifier": "transformer",
     # "--transformer_clf_model_init": "roberta-large"
@@ -59,9 +59,9 @@ GPU_CONFIG = {
 }
 
 DATASET_CONFIG = {
-    "ag": {
+    "ag_no_title": {
         "--dataset": "ag_no_title",
-        "--output_dir": "exp-ag",
+        "--output_dir": "exp-ag_no_title",
         "--transformer_clf_steps": 20000
     },
     "mr": {
@@ -88,7 +88,17 @@ DATASET_CONFIG = {
         "--dataset": "fn_short",
         "--output_dir": "exp-fn_short",
         "--transformer_clf_steps": 20000
-    }
+    },
+    "fake_review_cg": {
+        "--dataset": "fake_review_cg",
+        "--output_dir": "exp-fake_review_cg",
+        "--transformer_clf_steps": 20000
+    },
+    "fake_news": {
+        "--dataset": "fake_news",
+        "--output_dir": "exp-fake_news",
+        "--transformer_clf_steps": 20000
+    },
 }
 
 STRATEGY_CONFIG = {
@@ -124,6 +134,10 @@ STRATEGY_CONFIG = {
         "--strategy": "TextAttackStrategy",
         "--ta_recipe": "CLARE2020",
         "--robust_tune_num_attack_per_step": 16
+    },
+    "a2t": {
+        "--strategy": "TextAttackStrategy",
+        "--ta_recipe": "A2TYoo2021",
     },
     "scpn": {
         "--strategy": "OpenAttackStrategy",
@@ -180,6 +194,12 @@ STRATEGY_CONFIG = {
         "--rr_early_stop": "half",
         "--robust_tune_num_attack_per_step": 16
     },
+    "trivial": {
+        "--strategy": "TrivialStrategy"
+    },
+    "rm": {
+        "--strategy": "RemoveStrategy"
+    }
 }
 
 
@@ -200,8 +220,12 @@ def main():
     parser.add_argument("--strategy", choices=list(STRATEGY_CONFIG.keys()) + ["all"],
                         default="all")
     parser.add_argument("--robust_desc", type=str, default=None)
+    parser.add_argument("--robust_steps", type=int, default=5000)
     parser.add_argument("--robust_tuning", type=str, default="0")
     parser.add_argument("--defense", type=str, default="none")
+    parser.add_argument("--exp_name", type=str, default=None)
+    parser.add_argument("--model_init", type=str, default="bert-base")
+    parser.add_argument("--tr_filename", type=str, default=None)
 
     args = parser.parse_args()
 
@@ -221,12 +245,24 @@ def main():
     for dataset in dataset_list:
         for strategy in strategy_list:
             command = ["python3", "-m", "fibber.benchmark.benchmark_adversarial_attack"]
-            if args.robust_desc is not None:
-                command += to_command({"--load_robust_tuned_clf": args.robust_desc})
+
+            command += ["--transformer_clf_model_init", args.model_init]
+
+            if args.exp_name is not None:
+                command += ["--exp_name", args.exp_name]
+
             command += to_command(COMMON_CONFIG)
             command += to_command(GPU_CONFIG[args.gpu])
             command += to_command(DATASET_CONFIG[dataset])
             command += to_command(DEFENSE_CONFIG[args.defense])
+
+            if args.robust_desc is not None:
+                command += to_command({"--load_robust_tuned_clf_desc": args.robust_desc})
+                idx = command.index("--robust_tuning_steps")
+                command[idx + 1] = str(args.robust_steps)
+
+            if strategy == "trivial":
+                command += to_command({"--tr_filename": args.tr_filename})
             if strategy[:4] == "asrs":
                 strategy_config_tmp = copy.copy(STRATEGY_CONFIG["asrs"])
                 if strategy != "asrs":

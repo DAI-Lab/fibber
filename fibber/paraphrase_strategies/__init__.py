@@ -8,7 +8,10 @@ from fibber.paraphrase_strategies.rewrite_rollback_strategy import RewriteRollba
 from fibber.paraphrase_strategies.ssrs_strategy import SSRSStrategy
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.paraphrase_strategies.textattack_strategy import TextAttackStrategy
+from fibber.paraphrase_strategies.trivial_strategy import TrivialStrategy
+from fibber.paraphrase_strategies.remove_strategy import RemoveStrategy
 
 __all__ = ["IdentityStrategy", "RandomStrategy", "StrategyBase", "ASRSStrategy",
            "TextAttackStrategy", "CheatStrategy", "OpenAttackStrategy",
-           "FudgeStrategy", "SSRSStrategy", "RewriteRollbackStrategy"]
+           "FudgeStrategy", "SSRSStrategy", "RewriteRollbackStrategy",
+           "TrivialStrategy", "RemoveStrategy"]

@@ -219,7 +219,7 @@ def verify_dataset(dataset):
 def clip_sentence(dataset, model_init, max_len):
     """Inplace clipping sentences."""
     tokenizer = AutoTokenizer.from_pretrained(
-        resources.get_transformers(model_init))
+        resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
     logger.info("clipping the dataset to %d tokens.", max_len)
     for data_record in tqdm.tqdm(dataset["data"]):
         s0 = tokenizer.tokenize(data_record["text0"])

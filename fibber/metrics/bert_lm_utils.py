@@ -107,7 +107,6 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
             folder = "autoregressive_lm_filter_%d" % filter
 
     output_dir_t = os.path.join(output_dir, folder)
-    summary = SummaryWriter(output_dir_t + "/summary")
 
     if trainset["cased"]:
         model_init = "bert-base-cased"
@@ -126,6 +125,7 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
             config.is_decoder = True
             return BertLMHeadModel.from_pretrained(ckpt_path, config=config).eval()
 
+    summary = SummaryWriter(output_dir_t + "/summary")
     if as_masked_lm:
         dataset = DatasetForBert(trainset, model_init, lm_bs, exclude=filter, masked_lm=True,
                                  only_one_sentence=only_one_sentence)

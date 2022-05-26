@@ -6,6 +6,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import tqdm
+import json
 import transformers
 from torch.utils.tensorboard import SummaryWriter
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
@@ -49,7 +50,7 @@ def get_optimizer(optimizer_name, lr, decay, train_step, params, warmup=1000):
     return opt, schedule
 
 
-def run_evaluate(model, dataloader_iter, eval_steps, summary, global_step, device):
+def run_evaluate(model, dataloader_iter, eval_steps, summary, global_step, device, model_init):
     """Evaluate a model and add error rate and validation loss to Tensorboard.
 
     Args:
@@ -59,6 +60,7 @@ def run_evaluate(model, dataloader_iter, eval_steps, summary, global_step, devic
         summary (torch.utils.tensorboard.SummaryWriter): a Tensorboard SummaryWriter object.
         global_step (int): current training steps.
         device (torch.Device): the device where the model in running on.
+        model_init (str): a str specifies the pretrained model. used to determine model input.
     """
     model.eval()
 
@@ -73,7 +75,10 @@ def run_evaluate(model, dataloader_iter, eval_steps, summary, global_step, devic
         label = label.to(device)
 
         with torch.no_grad():
-            outputs = model(seq, mask, tok_type, labels=label)
+            if model_init.startswith("bert-"):
+                outputs = model(seq, mask, tok_type, labels=label)
+            else:
+                outputs = model(seq, mask, labels=label)
             loss, logits = outputs[:2]
             loss_list.append(loss.detach().cpu().numpy())
             count += seq.size(0)
@@ -151,10 +156,10 @@ def load_or_train_transformer_clf(
         testset = sem_transform_dataset(testset, transformer_clf_sem_word_map)
 
     dataloader = torch.utils.data.DataLoader(
-        DatasetForBert(trainset, model_init, transformer_clf_bs), batch_size=None, num_workers=2)
+        DatasetForBert(trainset, model_init, transformer_clf_bs), batch_size=None, num_workers=0)
 
     dataloader_val = torch.utils.data.DataLoader(
-        DatasetForBert(testset, model_init, transformer_clf_bs), batch_size=None, num_workers=1)
+        DatasetForBert(testset, model_init, transformer_clf_bs), batch_size=None, num_workers=0)
     dataloader_val_iter = iter(dataloader_val)
 
     params = model.parameters()
@@ -172,7 +177,12 @@ def load_or_train_transformer_clf(
         tok_type = tok_type.to(device)
         label = label.to(device)
 
-        outputs = model(seq, mask, tok_type, labels=label)
+        if model_init.startswith("bert-"):
+            outputs = model(input_ids=seq, attention_mask=mask,
+                            token_type_ids=tok_type, labels=label)
+        else:
+            outputs = model(input_ids=seq, attention_mask=mask, labels=label)
+
         loss, logits = outputs[:2]
 
         count_train += seq.size(0)
@@ -192,7 +202,7 @@ def load_or_train_transformer_clf(
 
         if global_step % transformer_clf_period_val == 0:
             run_evaluate(model, dataloader_val_iter,
-                         transformer_clf_val_steps, summary, global_step, device)
+                         transformer_clf_val_steps, summary, global_step, device, model_init)
 
         if global_step % transformer_clf_period_save == 0 or global_step == transformer_clf_steps:
             ckpt_path = os.path.join(model_dir, model_init + "-%04dk" % (global_step // 1000))
@@ -203,6 +213,15 @@ def load_or_train_transformer_clf(
             break
     model.eval()
     return model
+
+
+def trivial_filtering(sents, tokenizer, vocab):
+    tokens = [tokenizer.tokenize(sent) for sent in sents]
+    for i in range(len(sents)):
+        trivial_wid = [vocab[tok] if tok in vocab else 1e9 for tok in tokens[i]]
+        pos = np.argmin(trivial_wid)
+        tokens[i][pos] = "[MASK]"
+    return [tokenizer.convert_tokens_to_string(row) for row in tokens]
 
 
 class TransformerClassifier(ClassifierBase):
@@ -238,17 +257,18 @@ class TransformerClassifier(ClassifierBase):
                  transformer_clf_model_init="bert-base", **kargs):
         super(TransformerClassifier, self).__init__()
 
-        if transformer_clf_model_init in ["bert-base", "bert-large"]:
+        if transformer_clf_model_init in ["distilbert-base", "bert-base", "bert-large"]:
             if trainset["cased"]:
-                model_init = "bert-base-cased"
+                model_init = transformer_clf_model_init + "-cased"
             else:
-                model_init = "bert-base-uncased"
+                model_init = transformer_clf_model_init + "-uncased"
         else:
             model_init = transformer_clf_model_init
 
         logger.info("Use %s classifier.", model_init)
 
-        self._tokenizer = AutoTokenizer.from_pretrained(resources.get_transformers(model_init))
+        self._tokenizer = AutoTokenizer.from_pretrained(
+            resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
 
         if transformer_clf_gpu_id == -1:
             logger.warning("Transformer clf metric is running on CPU.")
@@ -293,6 +313,12 @@ class TransformerClassifier(ClassifierBase):
         self._fine_tune_opt = None
         self._ppl_filter_metric = None
 
+        # with open("%s-naive.json" % self._dataset_name) as f:
+        #     trivial_words = json.load(f)["trivial"]
+        # self._trivial_words = {}
+        # for wid, (word, _) in enumerate(trivial_words):
+        #     self._trivial_words[word] = wid
+
     def __repr__(self):
         return self._model_init + "-Classifier"
 
@@ -325,6 +351,9 @@ class TransformerClassifier(ClassifierBase):
             paraphrase_list = lmag_fix_sentences(
                 paraphrase_list, context, self._tokenizer, self._lm, self._model, self._device)
 
+        # paraphrase_list = trivial_filtering(paraphrase_list, self._tokenizer, self._trivial_words)
+
+
         if paraphrase_field == "text0":
             batch_input = self._tokenizer(
                 text=paraphrase_list, padding=True, return_tensors="pt").to(self._device)
@@ -347,14 +376,7 @@ class TransformerClassifier(ClassifierBase):
             else:
                 res = F.log_softmax(logits, dim=1).detach().cpu().numpy()
 
-        # return res
-
-        res_hard = np.zeros_like(res)
-
-        for i in range(len(paraphrase_list)):
-            res_hard[i, np.argmax(res[i])] = 1
-
-        return res_hard
+        return res
 
     def predict_log_dist_multiple_examples(self, origin_list, paraphrase_list,
                                            data_record_list=None, paraphrase_field="text0",
@@ -445,8 +467,20 @@ class TransformerClassifier(ClassifierBase):
 
     def load_robust_tuned_model(self, desc, step):
         model_dir = os.path.join(get_root_dir(), "transformer_clf", self._dataset_name, desc)
-        ckpt_path = os.path.join(model_dir, self._model_init + "-%04dk" % (step // 1000))
+        if "/a2t" in model_dir:
+            ckpt_path = os.path.join(model_dir, self._model_init + "-epoch3")
+        else:
+            ckpt_path = os.path.join(model_dir, self._model_init + "-%04dk" % (step // 1000))
         self._model = AutoModelForSequenceClassification.from_pretrained(ckpt_path)
+
+        # logger.warning("SET ALL special character embeddings to 0")
+        # cnt = 0
+        # for word, wid in self._tokenizer.vocab.items():
+        #     if word.startswith("##"):
+        #         self._model.bert.embeddings.word_embeddings.weight[wid] = 0
+        #         cnt += 1
+        # logger.info("clear embeddings for %d words.", cnt)
+
         self._model.eval()
         self._model.to(self._device)
         logger.info("Load transformer-based classifier from %s.", ckpt_path)

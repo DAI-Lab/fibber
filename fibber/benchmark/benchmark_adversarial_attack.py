@@ -10,7 +10,7 @@ from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversari
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
     ASRSStrategy, FudgeStrategy, IdentityStrategy, OpenAttackStrategy, RandomStrategy,
-    RewriteRollbackStrategy, TextAttackStrategy)
+    RewriteRollbackStrategy, TextAttackStrategy, TrivialStrategy, RemoveStrategy)
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.robust_tuning_strategy.default_tuning_strategy import (
     DefaultTuningStrategy, TuningStrategyBase)
@@ -27,6 +27,8 @@ built_in_paraphrase_strategies = {
     "RewriteRollbackStrategy": RewriteRollbackStrategy,
     "OpenAttackStrategy": OpenAttackStrategy,
     "FudgeStrategy": FudgeStrategy,
+    "TrivialStrategy": TrivialStrategy,
+    "RemoveStrategy": RemoveStrategy
 }
 
 built_in_tuning_strategies = {
@@ -300,6 +302,7 @@ def main():
     parser.add_argument("--load_robust_tuned_clf_desc", type=str, default=None)
 
     # add experiment args
+    parser.add_argument("--exp_name", type=str, default=None)
     parser.add_argument("--dataset", type=str, default="ag")
     parser.add_argument("--output_dir", type=str, default=None)
     parser.add_argument("--num_paraphrases_per_text", type=int, default=20)
@@ -362,7 +365,8 @@ def main():
                                         "robust_tune_num_attack_per_step"])
     else:
         benchmark.run_benchmark(paraphrase_strategy=paraphrase_strategy,
-                                num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"])
+                                num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"],
+                                exp_name=arg_dict["exp_name"])
 
 
 if __name__ == "__main__":

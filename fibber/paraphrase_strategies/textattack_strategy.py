@@ -58,12 +58,8 @@ class CLFModel(ModelWrapper):
         ret = self.model.predict_log_dist_batch(
             self._data_record[self._field_name], text_list,
             data_record=self._data_record, paraphrase_field=self._field_name)
-        ret_hard = np.zeros_like(ret)
 
-        for i in range(len(text_list)):
-            ret_hard[i, np.argmax(ret[i])] = 1
-
-        return ret_hard
+        return ret
 
     def reset_counter(self):
         self._counter = 0
