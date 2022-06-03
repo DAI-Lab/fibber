@@ -10,7 +10,7 @@ from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversari
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
     ASRSStrategy, FudgeStrategy, IdentityStrategy, OpenAttackStrategy, RandomStrategy,
-    RewriteRollbackStrategy, TextAttackStrategy, TrivialStrategy, RemoveStrategy)
+    RemoveStrategy, RewriteRollbackStrategy, TextAttackStrategy, TrivialStrategy)
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 from fibber.robust_tuning_strategy.default_tuning_strategy import (
     DefaultTuningStrategy, TuningStrategyBase)

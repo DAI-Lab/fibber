@@ -6,7 +6,6 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import tqdm
-import json
 import transformers
 from torch.utils.tensorboard import SummaryWriter
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
@@ -314,7 +313,6 @@ class TransformerClassifier(ClassifierBase):
         self._fine_tune_opt = None
         self._ppl_filter_metric = None
         self._num_labels = len(trainset["label_mapping"])
-
 
     def __repr__(self):
         return self._model_init + "-Classifier"

@@ -1,11 +1,10 @@
 import math
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-
-from transformers import AutoModel
-from transformers import AutoTokenizer
+from transformers import AutoModel, AutoTokenizer
 
 from fibber import resources
 
@@ -173,4 +172,4 @@ class BertClassifierDARTS(nn.Module):
     def init_linear(self):
         for name, param in self.named_parameters():
             if 'heads.' in name and param.requires_grad and len(param.shape) > 0:
-                stddev = 1 / math.sqrt(param.shape[0])
+                1 / math.sqrt(param.shape[0])

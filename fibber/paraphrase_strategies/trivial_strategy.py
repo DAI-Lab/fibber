@@ -10,7 +10,7 @@ def construct_candidates(sent, target_word):
     ret = [sent]
     toks = sent.split()
     for i in range(len(toks)):
-        ret.append(" ".join(toks[:i] + [target_word] + toks[i+1:]))
+        ret.append(" ".join(toks[:i] + [target_word] + toks[i + 1:]))
     return ret
 
 
@@ -27,7 +27,7 @@ class TrivialStrategy(StrategyBase):
         self._clf_metric = self._metric_bundle.get_target_classifier()
         self._ppl_metric = self._metric_bundle.get_metric("BertPerplexityMetric")
 
-        m = len(trainset["label_mapping"])
+        len(trainset["label_mapping"])
 
         filename = self._strategy_config["filename"]
         if "ag-" in filename:
@@ -61,7 +61,7 @@ class TrivialStrategy(StrategyBase):
         np.random.shuffle(all_sents)
 
         for st in range(0, len(all_sents), 64):
-            sents = all_sents[st:st+64]
+            sents = all_sents[st:st + 64]
             predicts = self._clf_metric.predict_batch(data_record["text0"], sents)
             for pp, ss in zip(predicts, sents):
                 if pp != data_record["label"]:
@@ -79,4 +79,3 @@ class TrivialStrategy(StrategyBase):
             return [mis_clf_sents[idx]], 0
         else:
             return [data_record[field_name]], 0
-

@@ -1,4 +1,3 @@
-import numpy as np
 
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
@@ -15,7 +14,7 @@ class RemoveStrategy(StrategyBase):
         tokens = self._tokenizer.tokenize(text)
 
         for i in range(len(tokens)):
-            current = self._tokenizer.convert_tokens_to_string(tokens[:i] + tokens[i+1:])
+            current = self._tokenizer.convert_tokens_to_string(tokens[:i] + tokens[i + 1:])
             pred = self._clf.predict_example(None, current)
             if pred != data_record["label"]:
                 return [current], i + 1
