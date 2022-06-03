@@ -4,7 +4,6 @@ import signal
 import sys
 import traceback
 
-import numpy as np
 from nltk import word_tokenize
 
 from fibber import log

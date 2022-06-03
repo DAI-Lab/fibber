@@ -1,13 +1,11 @@
 """This module defines customized metric aggregation functions."""
 
-import itertools
 import math
-from multiprocessing import Pool
 
 import numpy as np
 
 from fibber.metrics.edit_distance_metric import EditDistanceMetric
-from fibber.metrics.metric_utils import DIRECTION_HIGHER_BETTER, DIRECTION_LOWER_BETTER
+from fibber.metrics.metric_utils import DIRECTION_LOWER_BETTER
 
 
 def paraphrase_classification_accuracy_agg_fn_constructor(target_clf, type):
@@ -41,26 +39,6 @@ def paraphrase_classification_accuracy_agg_fn_constructor(target_clf, type):
 def editing_distance_element_worker(x):
     editing_distance_metric = EditDistanceMetric()
     return editing_distance_metric.measure_example(x[0], x[1])
-
-
-# pool = Pool(8)
-
-
-# def pairwise_editing_distance_fn(data_record):
-#     """Compute the average pairwise editing distance metric."""
-#     global pool
-#     paraphrases = None
-#     for k, v in data_record.items():
-#         if k in ["text0_paraphrases", "text1_paraphrases"]:
-#             paraphrases = v
-#             break
-#
-#     assert paraphrases is not None
-#
-#     tuples = list(itertools.combinations(paraphrases, 2))
-#
-#     distance = pool.map(editing_distance_element_worker, tuples)
-#     return float(np.mean(distance))
 
 
 def get_best_adv_by_metric(data_record, target_clf, metric_name, lower_better):
@@ -132,11 +110,6 @@ def add_sentence_level_adversarial_attack_metrics(metric_bundle,
         best_adv_metric_name (str):
         best_adv_metric_lower_better (bool):
     """
-    # metric_bundle.add_advanced_aggregation_fn(
-    #     "PairwiseEditDistance",
-    #     pairwise_editing_distance_fn,
-    #     DIRECTION_HIGHER_BETTER
-    # )
 
     target_clf = metric_bundle.get_target_classifier_name()
 

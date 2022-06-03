@@ -14,6 +14,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from fibber import get_root_dir, log, resources
 from fibber.datasets import DatasetForBert
 from fibber.metrics.classifier_base import ClassifierBase
+from fibber.metrics.shield_classifier import BertClassifierDARTS
 from fibber.metrics.transformer_classifier_utils_lmag import lmag_fix_sentences
 from fibber.metrics.transformer_classifier_utils_sem import (
     load_or_build_sem_wordmap, sem_fix_sentences, sem_transform_dataset)
@@ -312,12 +313,8 @@ class TransformerClassifier(ClassifierBase):
         self._fine_tune_schedule = None
         self._fine_tune_opt = None
         self._ppl_filter_metric = None
+        self._num_labels = len(trainset["label_mapping"])
 
-        # with open("%s-naive.json" % self._dataset_name) as f:
-        #     trivial_words = json.load(f)["trivial"]
-        # self._trivial_words = {}
-        # for wid, (word, _) in enumerate(trivial_words):
-        #     self._trivial_words[word] = wid
 
     def __repr__(self):
         return self._model_init + "-Classifier"
@@ -350,9 +347,6 @@ class TransformerClassifier(ClassifierBase):
 
             paraphrase_list = lmag_fix_sentences(
                 paraphrase_list, context, self._tokenizer, self._lm, self._model, self._device)
-
-        # paraphrase_list = trivial_filtering(paraphrase_list, self._tokenizer, self._trivial_words)
-
 
         if paraphrase_field == "text0":
             batch_input = self._tokenizer(
@@ -466,20 +460,32 @@ class TransformerClassifier(ClassifierBase):
         return logits.argmax(axis=1).detach().cpu().numpy(), float(loss.detach().cpu().numpy())
 
     def load_robust_tuned_model(self, desc, step):
+        if "shield" in desc:
+            model_dir = f"saved_models/{self._dataset_name}-shield.pt"
+            self._model = BertClassifierDARTS(model_type=self._model_init,
+                                              freeze_bert=True,
+                                              is_training=False,
+                                              inference=True,
+                                              output_dim=self._num_labels,
+                                              ensemble=1,
+                                              N=5,
+                                              temperature=0.01,
+                                              gumbel=1,
+                                              scaler=1,
+                                              darts=True,
+                                              device=self._device)
+            self._model.load_state_dict(torch.load(model_dir))
+            self._model.eval()
+            self._model.to(self._device)
+            logger.info("Load transformer-based classifier from %s.", model_dir)
+            return
+
         model_dir = os.path.join(get_root_dir(), "transformer_clf", self._dataset_name, desc)
         if "/a2t" in model_dir:
             ckpt_path = os.path.join(model_dir, self._model_init + "-epoch3")
         else:
             ckpt_path = os.path.join(model_dir, self._model_init + "-%04dk" % (step // 1000))
         self._model = AutoModelForSequenceClassification.from_pretrained(ckpt_path)
-
-        # logger.warning("SET ALL special character embeddings to 0")
-        # cnt = 0
-        # for word, wid in self._tokenizer.vocab.items():
-        #     if word.startswith("##"):
-        #         self._model.bert.embeddings.word_embeddings.weight[wid] = 0
-        #         cnt += 1
-        # logger.info("clear embeddings for %d words.", cnt)
 
         self._model.eval()
         self._model.to(self._device)
