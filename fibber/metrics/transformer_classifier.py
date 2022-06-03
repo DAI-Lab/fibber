@@ -317,6 +317,15 @@ class TransformerClassifier(ClassifierBase):
     def __repr__(self):
         return self._model_init + "-Classifier"
 
+    def get_model_and_tokenizer(self):
+        return self._model, self._tokenizer
+
+    def get_model_init(self):
+        return self._model_init
+
+    def get_device(self):
+        return self._device
+
     def enable_ppl_filter(self, ppl_metric):
         self._ppl_filter_metric = ppl_metric
 

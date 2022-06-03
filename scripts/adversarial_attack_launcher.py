@@ -194,8 +194,8 @@ STRATEGY_CONFIG = {
         "--rr_early_stop": "half",
         "--robust_tune_num_attack_per_step": 16
     },
-    "trivial": {
-        "--strategy": "TrivialStrategy"
+    "sap": {
+        "--strategy": "SapStrategy"
     },
     "rm": {
         "--strategy": "RemoveStrategy"
@@ -225,7 +225,6 @@ def main():
     parser.add_argument("--defense", type=str, default="none")
     parser.add_argument("--exp_name", type=str, default=None)
     parser.add_argument("--model_init", type=str, default="bert-base")
-    parser.add_argument("--tr_filename", type=str, default=None)
 
     args = parser.parse_args()
 
@@ -261,8 +260,6 @@ def main():
                 idx = command.index("--robust_tuning_steps")
                 command[idx + 1] = str(args.robust_steps)
 
-            if strategy == "trivial":
-                command += to_command({"--tr_filename": args.tr_filename})
             if strategy[:4] == "asrs":
                 strategy_config_tmp = copy.copy(STRATEGY_CONFIG["asrs"])
                 if strategy != "asrs":
