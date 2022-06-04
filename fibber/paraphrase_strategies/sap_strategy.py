@@ -2,7 +2,7 @@
 import numpy as np
 
 from fibber.datasets import subsample_dataset
-from fibber.metrics.transformer_classifier import TransformerClassifier
+from fibber.metrics.classifier.transformer_classifier import TransformerClassifier
 from fibber.paraphrase_strategies.sap_utils_euba import solve_euba
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 

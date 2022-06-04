@@ -4,7 +4,7 @@ import math
 
 import numpy as np
 
-from fibber.metrics.edit_distance_metric import EditDistanceMetric
+from fibber.metrics.distance.edit_distance_metric import EditDistanceMetric
 from fibber.metrics.metric_utils import DIRECTION_LOWER_BETTER
 
 

@@ -3,7 +3,7 @@ import pytest
 import torch
 
 from fibber.datasets.dataset_utils import get_demo_dataset
-from fibber.metrics.transformer_classifier import TransformerClassifier
+from fibber.metrics.classifier.transformer_classifier import TransformerClassifier
 from fibber.resources.resource_utils import get_bert_clf_demo
 
 

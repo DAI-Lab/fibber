@@ -4,15 +4,15 @@ import numpy as np
 import tqdm
 
 from fibber import log
-from fibber.robust_tuning_strategy.tuning_strategy_base import TuningStrategyBase
+from fibber.defense_strategies.defense_strategy_base import DefenseStrategyBase
 
 logger = log.setup_custom_logger(__name__)
 
 
-class NaiveTuningStrategy(TuningStrategyBase):
+class NaiveDefenseStrategy(DefenseStrategyBase):
     def __init__(self, seed=1234):
         """Initialize the strategy."""
-        super(NaiveTuningStrategy, self).__init__()
+        super(NaiveDefenseStrategy, self).__init__()
         self._rng = np.random.RandomState(seed)
 
     def fine_tune_classifier(self,

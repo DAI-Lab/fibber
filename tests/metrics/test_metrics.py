@@ -1,11 +1,11 @@
 import pytest
 import torch
 
-from fibber.metrics.ce_similarity_metric import CESimilarityMetric
-from fibber.metrics.edit_distance_metric import EditDistanceMetric
-from fibber.metrics.glove_similarity_metric import GloVeSimilarityMetric
-from fibber.metrics.gpt2_perplexity_metric import GPT2PerplexityMetric
-from fibber.metrics.use_similarity_metric import USESimilarityMetric
+from fibber.metrics.similarity.ce_similarity_metric import CESimilarityMetric
+from fibber.metrics.distance.edit_distance_metric import EditDistanceMetric
+from fibber.metrics.similarity.glove_similarity_metric import GloVeSimilarityMetric
+from fibber.metrics.fluency.gpt2_perplexity_metric import GPT2PerplexityMetric
+from fibber.metrics.similarity.use_similarity_metric import USESimilarityMetric
 
 
 @pytest.fixture

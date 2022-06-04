@@ -12,10 +12,9 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from fibber import get_root_dir, log, resources
 from fibber.datasets import DatasetForBert
-from fibber.metrics.classifier_base import ClassifierBase
-from fibber.metrics.shield_classifier import BertClassifierDARTS
-from fibber.metrics.transformer_classifier_utils_lmag import lmag_fix_sentences
-from fibber.metrics.transformer_classifier_utils_sem import (
+from fibber.metrics.classifier.classifier_base import ClassifierBase
+from fibber.metrics.classifier.shield_classifier import BertClassifierDARTS
+from fibber.metrics.classifier.transformer_classifier_utils_sem import (
     load_or_build_sem_wordmap, sem_fix_sentences, sem_transform_dataset)
 
 logger = log.setup_custom_logger(__name__)
@@ -253,8 +252,7 @@ class TransformerClassifier(ClassifierBase):
                  transformer_clf_optimizer="adamw", transformer_clf_weight_decay=0.001,
                  transformer_clf_period_summary=100, transformer_clf_period_val=500,
                  transformer_clf_period_save=20000, transformer_clf_val_steps=10,
-                 transformer_clf_enable_sem=False, transformer_clf_enable_lmag=False,
-                 transformer_clf_model_init="bert-base", **kargs):
+                 transformer_clf_enable_sem=False, transformer_clf_model_init="bert-base", **kargs):
         super(TransformerClassifier, self).__init__()
 
         if transformer_clf_model_init in ["distilbert-base", "bert-base", "bert-large"]:
@@ -282,13 +280,6 @@ class TransformerClassifier(ClassifierBase):
             self._sem_word_map = load_or_build_sem_wordmap(dataset_name, trainset, self._device)
         else:
             self._sem_word_map = None
-
-        self._enable_lmag = transformer_clf_enable_lmag
-        if transformer_clf_enable_lmag:
-            from fibber.metrics.bert_lm_utils import get_lm
-            _, self._lm = get_lm("finetune", dataset_name, trainset, self._device)
-            self._lm = self._lm.eval().to(self._device)
-            self._lmag_repeat = 10
 
         self._model_init = model_init
         self._dataset_name = dataset_name

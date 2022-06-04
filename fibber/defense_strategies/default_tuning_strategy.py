@@ -5,12 +5,12 @@ import numpy as np
 import tqdm
 
 from fibber import log
-from fibber.robust_tuning_strategy.tuning_strategy_base import TuningStrategyBase
+from fibber.defense_strategies.defense_strategy_base import DefenseStrategyBase
 
 logger = log.setup_custom_logger(__name__)
 
 
-class DefaultTuningStrategy(TuningStrategyBase):
+class DefaultDefenseStrategy(DefenseStrategyBase):
     """Default Tuning Strategy tunes the target classifier using adversarial training.
 
     This strategy maintains two lists of data. The ``correct_list`` contains the examples that are
@@ -27,7 +27,7 @@ class DefaultTuningStrategy(TuningStrategyBase):
 
     def __init__(self, seed=1234):
         """Initialize the strategy."""
-        super(DefaultTuningStrategy, self).__init__()
+        super(DefaultDefenseStrategy, self).__init__()
         self._rng = np.random.RandomState(seed)
 
     def fine_tune_classifier(self,

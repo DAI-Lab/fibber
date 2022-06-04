@@ -12,9 +12,8 @@ from fibber.paraphrase_strategies import (
     ASRSStrategy, FudgeStrategy, IdentityStrategy, OpenAttackStrategy, RandomStrategy,
     RemoveStrategy, RewriteRollbackStrategy, SapStrategy, TextAttackStrategy)
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
-from fibber.robust_tuning_strategy.default_tuning_strategy import (
-    DefaultTuningStrategy, TuningStrategyBase)
-from fibber.robust_tuning_strategy.naive_tuning_strategy import NaiveTuningStrategy
+from fibber.defense_strategies import (
+    LMAgStrategy)
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
@@ -32,8 +31,7 @@ built_in_paraphrase_strategies = {
 }
 
 built_in_tuning_strategies = {
-    "DefaultTuningStrategy": DefaultTuningStrategy,
-    "NaiveTuningStrategy": NaiveTuningStrategy
+    "LMAgStrategy": LMAgStrategy,
 }
 
 DATASET_NAME_COL = "0_dataset_name"
@@ -164,7 +162,7 @@ class Benchmark(object):
 
     def run_robust_tuning(self,
                           paraphrase_strategy="IdentityStrategy",
-                          tuning_strategy="DefaultTuningStrategy",
+                          tuning_strategy="DefaultDefenseStrategy",
                           strategy_gpu_id=-1,
                           num_paraphrases_per_text=50,
                           tuning_steps=5000,
@@ -175,7 +173,7 @@ class Benchmark(object):
             paraphrase_strategy (str or StrategyBase): the paraphrase strategy to benchmark.
                 Either the name of a builtin strategy or a customized strategy derived from
                 StrategyBase.
-            tuning_strategy (str or TuningStrategyBase): the adversarial tuning strategy.
+            tuning_strategy (str or DefenseStrategyBase): the adversarial tuning strategy.
                 Either the name of a builtin strategy or a customized strategy derived from
                 TuningStrategyBase
             strategy_gpu_id (int): the GPU id to run the paraphrase strategy.
@@ -191,7 +189,7 @@ class Benchmark(object):
         if isinstance(tuning_strategy, str):
             if tuning_strategy in built_in_tuning_strategies:
                 robust_tuning_strategy = built_in_tuning_strategies[tuning_strategy]()
-        assert isinstance(robust_tuning_strategy, TuningStrategyBase)
+        assert isinstance(robust_tuning_strategy, DefenseStrategyBase)
 
         paraphrase_strategy.fit(self._trainset)
 
@@ -325,6 +323,9 @@ def main():
     for item in built_in_paraphrase_strategies.values():
         item.add_parser_args(parser)
 
+    for item in built_in_tuning_strategies.values():
+        item.add_parser_args(parser)
+
     arg_dict = vars(parser.parse_args())
     assert arg_dict["output_dir"] is not None
 
@@ -345,7 +346,6 @@ def main():
         best_adv_metric_name=arg_dict["best_adv_metric_name"],
         best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"),
         transformer_clf_enable_sem=(arg_dict["transformer_clf_enable_sem"] == "1"),
-        transformer_clf_enable_lmag=(arg_dict["transformer_clf_enable_lmag"] == "1"),
         target_classifier=arg_dict["target_classifier"],
         transformer_clf_model_init=arg_dict["transformer_clf_model_init"])
 
@@ -359,7 +359,7 @@ def main():
     if arg_dict["robust_tuning"] == "1":
         benchmark.run_robust_tuning(paraphrase_strategy=paraphrase_strategy,
                                     num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"],
-                                    tuning_strategy="DefaultTuningStrategy",
+                                    tuning_strategy="DefaultDefenseStrategy",
                                     tuning_steps=arg_dict["robust_tuning_steps"],
                                     num_sentences_to_rewrite_per_step=arg_dict[
                                         "robust_tune_num_attack_per_step"])

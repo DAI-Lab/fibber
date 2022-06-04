@@ -5,7 +5,7 @@ import fasttext
 import numpy as np
 
 from fibber import get_root_dir, log
-from fibber.metrics.classifier_base import ClassifierBase
+from fibber.metrics.classifier.classifier_base import ClassifierBase
 
 logger = log.setup_custom_logger(__name__)
 
