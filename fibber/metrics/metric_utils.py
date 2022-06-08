@@ -194,6 +194,11 @@ class MetricBundle(object):
         """Returns the classifier for attack."""
         return self.get_classifier(self.get_target_classifier_name())
 
+    def replace_target_classifier(self, clf):
+        """Remove the original target classifier and add a new classifier."""
+        del self._classifiers[self.get_target_classifier_name()]
+        self.add_classifier(clf, set_target_clf=True)
+
     def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
         """Compute the results of all metrics in the bundle for one pair of text.
 

@@ -1,3 +1,5 @@
+from functools import partial
+
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -5,6 +7,7 @@ import torch.nn.functional as F
 from fibber.datasets.dataset_utils import text_md5
 from fibber.defense_strategies.defense_strategy_base import DefenseStrategyBase
 from fibber.metrics.bert_lm_utils import get_lm
+from fibber.metrics.classifier.input_manipulation_classifier import InputManipulationClassifier
 
 
 def lmag_fix_sentences(sentences, context, tokenizer, lm, clf, device, bs=50, rep=10):
@@ -18,12 +21,7 @@ def lmag_fix_sentences(sentences, context, tokenizer, lm, clf, device, bs=50, re
     for item in sentences_t:
         sentences += [item] * rep
 
-    if context is not None:
-        context_t = context
-        context = []
-        for item in context_t:
-            context += [item] * rep
-
+    context = None
     while st < len(sentences):
         ed = min(st + bs, len(sentences))
         if context is not None:
@@ -122,7 +120,15 @@ class LMAgStrategy(DefenseStrategyBase):
     def input_manipulation(self):
         pass
 
-    def fit(self, trainset, save_path):
-        _, self._lm = get_lm("finetune", self._dataset_name, trainset, self._device)
+    def fit(self, trainset):
+        self._tokenizer, self._lm = get_lm("finetune", self._dataset_name, trainset, self._device)
         self._lm = self._lm.eval().to(self._device)
         self._lmag_repeat = 10
+
+    def load(self, trainset):
+        self.fit(trainset)
+        return InputManipulationClassifier(
+            self._classifier,
+            partial(lmag_fix_sentences, tokenizer=self._tokenizer, lm=self._lm,
+                    clf=self._classifier._model, device=self._classifier._device, rep=1),
+            str(self._classifier))

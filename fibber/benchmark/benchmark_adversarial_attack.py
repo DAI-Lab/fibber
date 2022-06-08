@@ -94,7 +94,7 @@ class Benchmark(object):
         self._output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
         self._dataset_name = dataset_name
-        self._defense_name = None
+        self._defense_desc = None
 
         # verify correct target classifier
         if target_classifier == "customized":
@@ -217,13 +217,13 @@ class Benchmark(object):
         aggregated_result = self._metric_bundle.aggregate_metrics(
             self._dataset_name, str(paraphrase_strategy), exp_name, results)
 
-        if self._defense_name is None:
+        if self._defense_desc is None:
             update_detailed_result(aggregated_result,
                                    self._output_dir if not update_global_results else None)
         else:
             update_attack_robust_result(aggregated_result,
-                                        self._defense_name,
-                                        self._robust_tuning_steps,
+                                        self._defense_desc,
+                                        0,
                                         self._output_dir if not update_global_results else None)
 
         return aggregated_result
@@ -234,8 +234,9 @@ class Benchmark(object):
     def fit_defense(self, defense_strategy):
         defense_strategy.fit(self._trainset)
 
-    def apply_defense(self, defense_strategy):
-        defense_strategy.load()
+    def load_defense(self, defense_strategy):
+        clf = defense_strategy.load(self._trainset)
+        self._metric_bundle.replace_target_classifier(clf)
 
 
 def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,

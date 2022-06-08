@@ -1,5 +1,4 @@
 import os
-from abc import ABC
 
 import torch
 
@@ -15,11 +14,11 @@ class DefenseStrategyBase(object):
     __abbr__ = "defense_base"
     __hyperparameters__ = []
 
-    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, defense_name, metric_bundle):
+    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, defense_desc, metric_bundle):
         """Initialize the paraphrase_strategies.
 
         This function initialize the ``self._strategy_config``, ``self._metric_bundle``,
-        ``self._device``, ``self._defense_name``, ``self._dataset_name``.
+        ``self._device``, ``self._defense_desc``, ``self._dataset_name``.
 
         **You should not overwrite this function.**
 
@@ -29,7 +28,7 @@ class DefenseStrategyBase(object):
           paraphrases. Strategies can compute metrics during paraphrasing.
         * self._device (torch.Device): any computation that requires a GPU accelerator should
           use this device.
-        * self._defense_name (str): the dir name where the defense will save files.
+        * self._defense_desc (str): the dir name where the defense will save files.
         * self._dataset_name (str): the dataset name.
 
         Args:
@@ -66,8 +65,8 @@ class DefenseStrategyBase(object):
             self._device = torch.device("cuda:%d" % strategy_gpu_id)
 
         self._dataset_name = dataset_name
-        self._defense_name = defense_name
-        self._defense_save_path = os.path.join(get_root_dir(), self._defense_name, dataset_name)
+        self._defense_desc = defense_desc
+        self._defense_save_path = os.path.join(get_root_dir(), self._defense_desc, dataset_name)
         os.makedirs(self._defense_save_path, exist_ok=True)
         self._classifier = self._metric_bundle.get_target_classifier()
 
@@ -88,14 +87,13 @@ class DefenseStrategyBase(object):
     def __repr__(self):
         return self.__class__.__name__
 
-    def fit(self, trainset, save_path):
+    def fit(self, trainset):
         """Fit the paraphrase strategy on a training set.
 
         Args:
             trainset (dict): a fibber dataset.
-            save_path (str): a path to save the model.
         """
         return self._classifier
 
-    def load(self, save_path):
+    def load(self, trainset):
         return self._classifier

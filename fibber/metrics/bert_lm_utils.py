@@ -201,7 +201,7 @@ def get_lm(lm_option, dataset_name, trainset, device, filter=-1, lm_steps=5000, 
             finetune means fine-tuning the BERT model on current dataset.
             adv means adversarial tuning on current dataset.
         dataset_name (str): a directory to store pretrained language model.
-        trainset (DatasetForBert): the training set for finetune the language model.
+        trainset (dict): the training set for finetune the language model.
         device (torch.Device): a device to train the model.
         lm_steps (int): finetuning steps.
         lm_bs (int): finetuning batch size.
