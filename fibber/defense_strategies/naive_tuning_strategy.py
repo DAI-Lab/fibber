@@ -67,7 +67,7 @@ class NaiveDefenseStrategy(DefenseStrategyBase):
             #     paraphrase_list, _ = paraphrase_strategy.paraphrase_example(
             #         data_record_t,
             #         paraphrase_field,
-            #         num_paraphrases_per_text)
+            #         max_paraphrases)
             #
             #     if i == 0:
             #         logger.info(paraphrase_list[0])

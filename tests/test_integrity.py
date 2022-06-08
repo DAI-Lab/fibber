@@ -74,4 +74,4 @@ def test_integrity_bertsampling(gpu_id):
         strategy_gpu_id=gpu_id,
         output_dir="exp-pytest",
         metric_bundle=benchmark.get_metric_bundle())
-    benchmark.run_benchmark(paraphrase_strategy=strategy, num_paraphrases_per_text=10)
+    benchmark.run_benchmark(paraphrase_strategy=strategy, max_paraphrases=10)

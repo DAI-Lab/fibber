@@ -219,7 +219,7 @@ def main():
     # add experiment args
     parser.add_argument("--dataset", type=str, default="ag")
     parser.add_argument("--output_dir", type=str, default=None)
-    parser.add_argument("--num_paraphrases_per_text", type=int, default=20)
+    parser.add_argument("--max_paraphrases", type=int, default=20)
     parser.add_argument("--subsample_testset", type=int, default=1000)
     parser.add_argument("--subsample_offset", type=int, default=0)
     parser.add_argument("--strategy", type=str, default="CheatStrategy")
@@ -258,7 +258,7 @@ def main():
                                        benchmark.get_metric_bundle())
 
     benchmark.run_benchmark(paraphrase_strategy=paraphrase_strategy,
-                            num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"])
+                            num_paraphrases_per_text=arg_dict["max_paraphrases"])
 
 
 if __name__ == "__main__":

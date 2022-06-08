@@ -163,7 +163,7 @@ class Benchmark(object):
     def run_benchmark(self,
                       paraphrase_strategy="IdentityStrategy",
                       strategy_gpu_id=-1,
-                      num_paraphrases_per_text=50,
+                      max_paraphrases=50,
                       exp_name=None,
                       update_global_results=False):
         """Run the benchmark.
@@ -174,7 +174,7 @@ class Benchmark(object):
                 StrategyBase.
             strategy_gpu_id (int): the gpu id to run the strategy. -1 for CPU. Ignored when
                 ``paraphrase_strategy`` is an object.
-            num_paraphrases_per_text (int): number of paraphrases for each sentence.
+            max_paraphrases (int): number of paraphrases for each sentence.
             exp_name (str or None): the name of current experiment. None for default name. the
                 default name is ``<dataset_name>-<strategy_name>-<date>-<time>``.
             update_global_results (bool): whether to write results in <fibber_root_dir> or the
@@ -205,7 +205,7 @@ class Benchmark(object):
             self._output_dir, exp_name + "-tmp.json")
         logger.info("Write paraphrase temporary results in %s.", tmp_output_filename)
         results = paraphrase_strategy.paraphrase_dataset(
-            self._attack_set, num_paraphrases_per_text, tmp_output_filename)
+            self._attack_set, max_paraphrases, tmp_output_filename)
 
         output_filename = os.path.join(
             self._output_dir, exp_name + "-with-metric.json")
@@ -272,8 +272,9 @@ def main():
     # add experiment args
     parser.add_argument("--exp_name", type=str, default=None)
     parser.add_argument("--dataset", type=str, default="ag")
+    parser.add_argument("--field", type=str, default="text0")
     parser.add_argument("--output_dir", type=str, default=None)
-    parser.add_argument("--num_paraphrases_per_text", type=int, default=20)
+    parser.add_argument("--max_paraphrases", type=int, default=20)
     parser.add_argument("--subsample_testset", type=int, default=1000)
     parser.add_argument("--strategy", choices=list(built_in_paraphrase_strategies.keys()),
                         default="RandomStrategy")
@@ -333,7 +334,7 @@ def main():
             benchmark.load_defense(defense_strategy=defense_strategy)
 
         benchmark.run_benchmark(paraphrase_strategy=paraphrase_strategy,
-                                num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"],
+                                max_paraphrases=arg_dict["max_paraphrases"],
                                 exp_name=arg_dict["exp_name"])
     else:
         raise RuntimeError("Unknown task.")

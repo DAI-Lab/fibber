@@ -4,7 +4,7 @@ import subprocess
 
 COMMON_CONFIG = {
     "--subsample_testset": 1000,
-    "--num_paraphrases_per_text": 50,
+    "--max_paraphrases": 50,
     "--task": "attack",
     "--target_classifier": "transformer",
     "--transformer_clf_model_init": "bert-base"

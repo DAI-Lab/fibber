@@ -73,19 +73,8 @@ def get_dataset(dataset_name):
     data_dir = get_root_dir()
     data_dir = os.path.join(data_dir, "datasets")
 
-    if dataset_name == "mnli" or dataset_name == "mnli_mis":
-        train_filename = os.path.join(data_dir, "mnli/train.json")
-        if dataset_name == "mnli":
-            test_filename = os.path.join(data_dir, "mnli/dev_matched.json")
-        else:
-            test_filename = os.path.join(data_dir, "mnli/dev_mismatched.json")
-
-    elif dataset_name in ["qnli", "sst2"]:
-        train_filename = os.path.join(data_dir, dataset_name, "train.json")
-        test_filename = os.path.join(data_dir, dataset_name, "dev.json")
-    else:
-        train_filename = os.path.join(data_dir, dataset_name, "train.json")
-        test_filename = os.path.join(data_dir, dataset_name, "test.json")
+    train_filename = os.path.join(data_dir, dataset_name, "train.json")
+    test_filename = os.path.join(data_dir, dataset_name, "test.json")
 
     if not os.path.exists(train_filename) or not os.path.exists(test_filename):
         logger.error("%s dataset not found.", dataset_name)
@@ -97,14 +86,6 @@ def get_dataset(dataset_name):
 
     with open(test_filename) as f:
         testset = json.load(f)
-
-    if "paraphrase_field" not in trainset:
-        trainset["paraphrase_field"] = "text0"
-        logger.warning("paraphrase_field not in trainset, use text0.")
-
-    if "paraphrase_field" not in testset:
-        testset["paraphrase_field"] = "text0"
-        logger.warning("paraphrase_field not in testset, use text0.")
 
     logger.info("%s training set has %d records.", dataset_name, len(trainset["data"]))
     logger.info("%s test set has %d records.", dataset_name, len(testset["data"]))
@@ -197,9 +178,6 @@ def verify_dataset(dataset):
         dataset (dict): a dataset dict.
     """
     assert "label_mapping" in dataset
-    assert "cased" in dataset
-    assert "paraphrase_field" in dataset
-    assert dataset["paraphrase_field"] in ["text0", "text1"]
 
     num_labels = len(dataset["label_mapping"])
     counter = [0] * num_labels
@@ -210,7 +188,6 @@ def verify_dataset(dataset):
         assert 0 <= label < num_labels
         counter[label] += 1
         assert "text0" in data_record
-        assert dataset["paraphrase_field"] in data_record
 
     for item in counter:
         assert item > 0, "empty class"

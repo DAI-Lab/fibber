@@ -71,7 +71,7 @@ python -m fibber.benchmark.benchmark \
 	--dataset mr \
 	--strategy ASRSStrategy \
 	--output_dir exp-mr \
-	--num_paraphrases_per_text 20 \
+	--max_paraphrases 20 \
 	--subsample_testset 100 \
 	--gpt2_gpu 0 \
 	--bert_gpu 0 \
