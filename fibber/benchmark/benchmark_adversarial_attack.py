@@ -6,14 +6,14 @@ from fibber import log
 from fibber.benchmark.benchmark_utils import update_attack_robust_result, update_detailed_result
 from fibber.datasets import (
     builtin_datasets, clip_sentence, get_dataset, subsample_dataset, verify_dataset)
+from fibber.defense_strategies import LMAgStrategy
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
+from fibber.metrics.classifier.classifier_base import ClassifierBase
 from fibber.metrics.metric_utils import MetricBundle
 from fibber.paraphrase_strategies import (
     ASRSStrategy, FudgeStrategy, IdentityStrategy, OpenAttackStrategy, RandomStrategy,
     RemoveStrategy, RewriteRollbackStrategy, SapStrategy, TextAttackStrategy)
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
-from fibber.defense_strategies import (
-    LMAgStrategy)
 
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
@@ -30,7 +30,7 @@ built_in_paraphrase_strategies = {
     "RemoveStrategy": RemoveStrategy
 }
 
-built_in_tuning_strategies = {
+built_in_defense_strategies = {
     "LMAgStrategy": LMAgStrategy,
 }
 
@@ -47,19 +47,14 @@ class Benchmark(object):
                  subsample_attack_set=0,
                  customized_clf=None,
                  enable_transformer_clf=True,
+                 enable_fasttext_classifier=False,
                  use_gpu_id=-1,
-                 gpt2_gpu_id=-1,
                  bert_ppl_gpu_id=-1,
                  transformer_clf_gpu_id=-1,
-                 ce_gpu_id=-1,
                  transformer_clf_steps=20000,
                  transformer_clf_bs=32,
-                 load_robust_tuned_clf_desc=None,
-                 robust_tuning_steps=0,
                  best_adv_metric_name="USESimilarityMetric",
                  best_adv_metric_lower_better=False,
-                 transformer_clf_enable_sem=False,
-                 transformer_clf_enable_lmag=False,
                  target_classifier="transformer",
                  transformer_clf_model_init="bert-base"):
         """Initialize Benchmark framework.
@@ -75,23 +70,44 @@ class Benchmark(object):
             attack_set (dict or None): the set to run adversarial attack. Use None to attack the
                 ``testset``.
             subsample_attack_set (int): subsample the attack set. 0 to use the whole attack set.
-            customized_clf (MetricBase): an classifier object.
-            enable_transformer_clf (bool): whether to enable bert classifier in metrics. You can disable
-                it when you are attacking your own classifier.
+            customized_clf (ClassifierBase): an classifier object.
+            enable_transformer_clf (bool): whether to enable transformer classifier in metrics.
+            enable_fasttext_classifier (bool): whether to enable fasttext classifier in metrics.
             use_gpu_id (int): the gpu to run universal sentence encoder to compute metrics.
                 -1 for CPU.
-            gpt2_gpu_id (int): the gpu to run the GPT2-medium language model to compute metrics.
+            bert_ppl_gpu_id (int): the gpu to run the BERT language model for perplexity.
                 -1 for CPU.
-            transformer_clf_gpu_id (int): the gpu to run the BERT text classifier, which is the model being
-                attacked. -1 for CPU.
+            transformer_clf_gpu_id (int): the gpu to run the BERT text classifier, which is the
+                model being attacked. -1 for CPU.
             transformer_clf_steps (int): number of steps to train the BERT text classifier.
             transformer_clf_bs (int): the batch size to train the BERT classifier.
-            transformer_clf_enable_sem (bool): use SEM on BERT classifier.
+            best_adv_metric_name (str): the metric name to identify the best adversarial example
+                if the paraphrase strategy outputs multiple options.
+            best_adv_metric_lower_better (bool): whether the metric is lower better.
+            target_classifier (str): the victim classifier. Choose from ["transformer",
+                "fasttext", "customized"].
+            transformer_clf_model_init (str): the backbone pretrained language model. Choose from
+                [bert-base, bert-large, distilbert-base, distilbert-large, roberta-base,
+                roberta-large]. Do not specify "cased" or "uncased".
         """
         # make output dir
         self._output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
         self._dataset_name = dataset_name
+        self._defense_name = None
+
+        # verify correct target classifier
+        if target_classifier == "customized":
+            if not isinstance(customized_clf, ClassifierBase):
+                raise RuntimeError("customized_clf is not an instance of ClassifierBase")
+        elif target_classifier == "transformer":
+            if not enable_transformer_clf:
+                raise RuntimeError("target classifier is not enabled.")
+        elif target_classifier == "fasttext":
+            if not enable_fasttext_classifier:
+                raise RuntimeError("target classifier is not enabled.")
+        else:
+            raise RuntimeError("Unknown target classifier.")
 
         # setup dataset
         if dataset_name in builtin_datasets:
@@ -120,87 +136,29 @@ class Benchmark(object):
 
         # setup metric bundle
         self._metric_bundle = MetricBundle(
+            dataset_name=dataset_name,
+            trainset=trainset, testset=testset,
             enable_transformer_classifier=enable_transformer_clf,
-            enable_fasttext_classifier=(target_classifier == "fasttext"),
-            enable_glove_similarity=False,
-            target_clf=target_classifier,
-            use_gpu_id=use_gpu_id, gpt2_gpu_id=gpt2_gpu_id,
-            transformer_clf_gpu_id=transformer_clf_gpu_id, dataset_name=dataset_name,
-            bert_ppl_gpu_id=bert_ppl_gpu_id, enable_bert_perplexity=True,
-            trainset=self._trainset, testset=testset,
+            transformer_clf_gpu_id=transformer_clf_gpu_id,
+            transformer_clf_model_init=transformer_clf_model_init,
             transformer_clf_steps=transformer_clf_steps,
             transformer_clf_bs=transformer_clf_bs,
-            ce_gpu_id=ce_gpu_id,
-            transformer_clf_enable_sem=transformer_clf_enable_sem,
-            transformer_clf_enable_lmag=transformer_clf_enable_lmag,
+            enable_fasttext_classifier=enable_fasttext_classifier,
+            target_clf=target_classifier,
+            enable_use_similarity=True, use_gpu_id=use_gpu_id,
+            enable_bert_perplexity=True, bert_ppl_gpu_id=bert_ppl_gpu_id,
             enable_ce_similarity=False,
             enable_gpt2_perplexity=False,
-            transformer_clf_model_init=transformer_clf_model_init
+            enable_glove_similarity=False,
         )
 
-        # self._metric_bundle.get_target_classifier().enable_ppl_filter(
-        #     self._metric_bundle.get_metric("BertPerplexityMetric"))
-
         if customized_clf:
-            self._metric_bundle.add_classifier(str(customized_clf), customized_clf)
-            self._metric_bundle.set_target_classifier_by_name(str(customized_clf))
-
-        if (load_robust_tuned_clf_desc is not None
-                and load_robust_tuned_clf_desc not in ["null", "None", "none", ""]):
-            self._metric_bundle.get_target_classifier().load_robust_tuned_model(
-                load_robust_tuned_clf_desc, robust_tuning_steps)
-            self._robust_tuned_clf_desc = load_robust_tuned_clf_desc
-            self._robust_tuning_steps = robust_tuning_steps
-        else:
-            self._robust_tuned_clf_desc = None
-            self._robust_tuning_steps = 0
+            self._metric_bundle.add_classifier(customized_clf, True)
 
         add_sentence_level_adversarial_attack_metrics(
             self._metric_bundle,
             best_adv_metric_name=best_adv_metric_name,
             best_adv_metric_lower_better=best_adv_metric_lower_better)
-
-    def run_robust_tuning(self,
-                          paraphrase_strategy="IdentityStrategy",
-                          tuning_strategy="DefaultDefenseStrategy",
-                          strategy_gpu_id=-1,
-                          num_paraphrases_per_text=50,
-                          tuning_steps=5000,
-                          num_sentences_to_rewrite_per_step=20):
-        """Using a paraphrase strategy to do adversarial fine tuning for the target classifier.
-
-        Args:
-            paraphrase_strategy (str or StrategyBase): the paraphrase strategy to benchmark.
-                Either the name of a builtin strategy or a customized strategy derived from
-                StrategyBase.
-            tuning_strategy (str or DefenseStrategyBase): the adversarial tuning strategy.
-                Either the name of a builtin strategy or a customized strategy derived from
-                TuningStrategyBase
-            strategy_gpu_id (int): the GPU id to run the paraphrase strategy.
-            num_paraphrases_per_text (int): number of paraphrases for each sentence.
-            tuning_steps (int): number of steps to tune the classifier.
-        """
-        if isinstance(paraphrase_strategy, str):
-            if paraphrase_strategy in built_in_paraphrase_strategies:
-                paraphrase_strategy = built_in_paraphrase_strategies[paraphrase_strategy](
-                    {}, self._dataset_name, strategy_gpu_id, self._output_dir, self._metric_bundle)
-        assert isinstance(paraphrase_strategy, StrategyBase)
-
-        if isinstance(tuning_strategy, str):
-            if tuning_strategy in built_in_tuning_strategies:
-                robust_tuning_strategy = built_in_tuning_strategies[tuning_strategy]()
-        assert isinstance(robust_tuning_strategy, DefenseStrategyBase)
-
-        paraphrase_strategy.fit(self._trainset)
-
-        robust_tuning_strategy.fine_tune_classifier(
-            metric_bundle=self._metric_bundle,
-            paraphrase_strategy=paraphrase_strategy,
-            train_set=self._trainset,
-            num_paraphrases_per_text=num_paraphrases_per_text,
-            tuning_steps=tuning_steps,
-            num_sentences_to_rewrite_per_step=num_sentences_to_rewrite_per_step
-        )
 
     def run_benchmark(self,
                       paraphrase_strategy="IdentityStrategy",
@@ -259,12 +217,12 @@ class Benchmark(object):
         aggregated_result = self._metric_bundle.aggregate_metrics(
             self._dataset_name, str(paraphrase_strategy), exp_name, results)
 
-        if self._robust_tuned_clf_desc is None:
+        if self._defense_name is None:
             update_detailed_result(aggregated_result,
                                    self._output_dir if not update_global_results else None)
         else:
             update_attack_robust_result(aggregated_result,
-                                        self._robust_tuned_clf_desc,
+                                        self._defense_name,
                                         self._robust_tuning_steps,
                                         self._output_dir if not update_global_results else None)
 
@@ -272,6 +230,12 @@ class Benchmark(object):
 
     def get_metric_bundle(self):
         return self._metric_bundle
+
+    def fit_defense(self, defense_strategy):
+        defense_strategy.fit(self._trainset)
+
+    def apply_defense(self, defense_strategy):
+        defense_strategy.load()
 
 
 def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
@@ -281,6 +245,13 @@ def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
         arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
 
 
+def get_defense_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
+                         defense_desc, metric_bundle):
+    """Take the strategy name and construct a strategy object."""
+    return built_in_defense_strategies[strategy_name](
+        arg_dict, dataset_name, strategy_gpu_id, defense_desc, metric_bundle)
+
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -288,16 +259,14 @@ def main():
     parser.add_argument("--target_classifier", type=str, default="bert")
     parser.add_argument("--transformer_clf_model_init", type=str, default="bert-base")
 
-    # BERT classifier related args
-    parser.add_argument("--transformer_clf_enable_sem", type=str, default="0")
-    parser.add_argument("--transformer_clf_enable_lmag", type=str, default="0")
-
-    # option on robust training vs attack
-    parser.add_argument("--robust_tuning", type=str, default="0",
-                        help="use 1 for robust training. (make a separate run to attack).\\"
-                             "use 0 for attack.")
-    parser.add_argument("--robust_tuning_steps", type=int, default=5000)
-    parser.add_argument("--load_robust_tuned_clf_desc", type=str, default=None)
+    # option on robust defense vs attack
+    parser.add_argument("--task", choices=["defense", "attack"], default="attack",
+                        help="Choose from defending the classifier vs. attack the classifier.")
+    parser.add_argument("--defense_strategy",
+                        choices=["none"] + list(built_in_defense_strategies.keys()),
+                        default="none", help="use `none` to disable defense. ")
+    parser.add_argument("--defense_desc", type=str, default=None,
+                        help="A name to recognize this defense setup. ")
 
     # add experiment args
     parser.add_argument("--exp_name", type=str, default=None)
@@ -305,17 +274,15 @@ def main():
     parser.add_argument("--output_dir", type=str, default=None)
     parser.add_argument("--num_paraphrases_per_text", type=int, default=20)
     parser.add_argument("--subsample_testset", type=int, default=1000)
-    parser.add_argument("--strategy", type=str, default="RandomStrategy")
+    parser.add_argument("--strategy", choices=list(built_in_paraphrase_strategies.keys()),
+                        default="RandomStrategy")
     parser.add_argument("--strategy_gpu_id", type=int, default=-1)
-    parser.add_argument("--robust_tune_num_attack_per_step", type=int, default=20)
 
     # metric args
-    parser.add_argument("--gpt2_gpu_id", type=int, default=-1)
     parser.add_argument("--bert_ppl_gpu_id", type=int, default=-1)
     parser.add_argument("--transformer_clf_gpu_id", type=int, default=-1)
     parser.add_argument("--use_gpu_id", type=int, default=-1)
     parser.add_argument("--transformer_clf_steps", type=int, default=20000)
-    parser.add_argument("--ce_gpu_id", type=int, default=-1)
     parser.add_argument("--best_adv_metric_name", type=str, default="USESimilarityMetric")
     parser.add_argument("--best_adv_lower_better", type=str, default="0")
 
@@ -323,29 +290,21 @@ def main():
     for item in built_in_paraphrase_strategies.values():
         item.add_parser_args(parser)
 
-    for item in built_in_tuning_strategies.values():
+    for item in built_in_defense_strategies.values():
         item.add_parser_args(parser)
 
     arg_dict = vars(parser.parse_args())
     assert arg_dict["output_dir"] is not None
-
-    if arg_dict["robust_tuning"] == "1":
-        assert arg_dict["load_robust_tuned_clf_desc"] is None
 
     benchmark = Benchmark(
         arg_dict["output_dir"], arg_dict["dataset"],
         subsample_attack_set=arg_dict["subsample_testset"],
         use_gpu_id=arg_dict["use_gpu_id"],
         transformer_clf_gpu_id=arg_dict["transformer_clf_gpu_id"],
-        gpt2_gpu_id=arg_dict["gpt2_gpu_id"],
         bert_ppl_gpu_id=arg_dict["bert_ppl_gpu_id"],
         transformer_clf_steps=arg_dict["transformer_clf_steps"],
-        load_robust_tuned_clf_desc=arg_dict["load_robust_tuned_clf_desc"],
-        robust_tuning_steps=arg_dict["robust_tuning_steps"],
-        ce_gpu_id=arg_dict["ce_gpu_id"],
         best_adv_metric_name=arg_dict["best_adv_metric_name"],
         best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"),
-        transformer_clf_enable_sem=(arg_dict["transformer_clf_enable_sem"] == "1"),
         target_classifier=arg_dict["target_classifier"],
         transformer_clf_model_init=arg_dict["transformer_clf_model_init"])
 
@@ -356,17 +315,27 @@ def main():
                                        arg_dict["strategy_gpu_id"], arg_dict["output_dir"],
                                        benchmark.get_metric_bundle())
 
-    if arg_dict["robust_tuning"] == "1":
-        benchmark.run_robust_tuning(paraphrase_strategy=paraphrase_strategy,
-                                    num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"],
-                                    tuning_strategy="DefaultDefenseStrategy",
-                                    tuning_steps=arg_dict["robust_tuning_steps"],
-                                    num_sentences_to_rewrite_per_step=arg_dict[
-                                        "robust_tune_num_attack_per_step"])
+    if arg_dict["defense_strategy"] != "none":
+        defense_strategy = get_defense_strategy(
+            arg_dict, arg_dict["dataset"], arg_dict["defense_strategy"],
+            arg_dict["strategy_gpu_id"], arg_dict["defense_desc"], benchmark.get_metric_bundle())
     else:
+        defense_strategy = None
+
+    if arg_dict["task"] == "defense":
+        if defense_strategy is None:
+            raise RuntimeError("Defense strategy is None.")
+        benchmark.fit_defense(defense_strategy=defense_strategy)
+
+    elif arg_dict["task"] == "attack":
+        if defense_strategy is not None:
+            benchmark.load_defense(defense_strategy=defense_strategy)
+
         benchmark.run_benchmark(paraphrase_strategy=paraphrase_strategy,
                                 num_paraphrases_per_text=arg_dict["num_paraphrases_per_text"],
                                 exp_name=arg_dict["exp_name"])
+    else:
+        raise RuntimeError("Unknown task.")
 
 
 if __name__ == "__main__":

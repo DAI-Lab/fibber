@@ -1,5 +1,10 @@
-from fibber import log
+import os
+from abc import ABC
+
 import torch
+
+from fibber import get_root_dir, log
+
 logger = log.setup_custom_logger(__name__)
 log.remove_logger_tf_handler(logger)
 
@@ -10,11 +15,11 @@ class DefenseStrategyBase(object):
     __abbr__ = "defense_base"
     __hyperparameters__ = []
 
-    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, metric_bundle):
+    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, defense_name, metric_bundle):
         """Initialize the paraphrase_strategies.
 
         This function initialize the ``self._strategy_config``, ``self._metric_bundle``,
-        ``self._device``, ``self._output_dir``, ``self._dataset_name``.
+        ``self._device``, ``self._defense_name``, ``self._dataset_name``.
 
         **You should not overwrite this function.**
 
@@ -24,7 +29,7 @@ class DefenseStrategyBase(object):
           paraphrases. Strategies can compute metrics during paraphrasing.
         * self._device (torch.Device): any computation that requires a GPU accelerator should
           use this device.
-        * self._output_dir (str): the dir name where the strategy can save files.
+        * self._defense_name (str): the dir name where the defense will save files.
         * self._dataset_name (str): the dataset name.
 
         Args:
@@ -61,6 +66,10 @@ class DefenseStrategyBase(object):
             self._device = torch.device("cuda:%d" % strategy_gpu_id)
 
         self._dataset_name = dataset_name
+        self._defense_name = defense_name
+        self._defense_save_path = os.path.join(get_root_dir(), self._defense_name, dataset_name)
+        os.makedirs(self._defense_save_path, exist_ok=True)
+        self._classifier = self._metric_bundle.get_target_classifier()
 
     @classmethod
     def add_parser_args(cls, parser):
@@ -79,47 +88,14 @@ class DefenseStrategyBase(object):
     def __repr__(self):
         return self.__class__.__name__
 
-    def input_manipulation(self):
-        pass
-
-    def fine_tune_classifier(self,
-                             metric_bundle,
-                             paraphrase_strategy,
-                             train_set,
-                             num_paraphrases_per_text,
-                             tuning_steps,
-                             tuning_batch_size=32,
-                             num_sentences_to_rewrite_per_step=20,
-                             num_updates_per_step=5,
-                             period_save=1000):
-        """Fine tune the classifier using given data.
-
-        Args:
-            metric_bundle (MetricBundle): a metric bundle including the target classifier.
-            paraphrase_strategy (StrategyBase): a paraphrase strategy to fine tune the classifier.
-            train_set (dict): the training set of the classifier.
-            num_paraphrases_per_text (int): the number of paraphrases to generate for each data.
-                This parameter is for paraphrase strategy.
-            tuning_steps (int): the number of steps to fine tune the classifier.
-            tuning_batch_size (int): the batch size for fine tuning.
-            num_sentences_to_rewrite_per_step (int): the number of data to rewrite using the
-                paraphrase strategy in each tuning step. You can set is as large as the tuning
-                batch size. You can also use a smaller value to speed up the tuning.
-            num_updates_per_step (int): the number of classifier updates per iteration.
-            period_save (int): the period in steps to save the fine tuned classifier.
-        """
-        raise NotImplementedError
-
-    def model_architecture_change(self):
-        pass
-
-    def fit(self, trainset):
+    def fit(self, trainset, save_path):
         """Fit the paraphrase strategy on a training set.
 
         Args:
             trainset (dict): a fibber dataset.
+            save_path (str): a path to save the model.
         """
-        logger.info("Training is needed for this strategy. Did nothing.")
+        return self._classifier
 
-    def apply(self):
-        pass
+    def load(self, save_path):
+        return self._classifier

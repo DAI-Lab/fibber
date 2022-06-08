@@ -1,9 +1,10 @@
-from fibber.defense_strategies.defense_strategy_base import DefenseStrategyBase
+import numpy as np
 import torch
 import torch.nn.functional as F
-import numpy as np
-from fibber.metrics.bert_lm_utils import get_lm
 
+from fibber.datasets.dataset_utils import text_md5
+from fibber.defense_strategies.defense_strategy_base import DefenseStrategyBase
+from fibber.metrics.bert_lm_utils import get_lm
 
 
 def lmag_fix_sentences(sentences, context, tokenizer, lm, clf, device, bs=50, rep=10):
@@ -115,14 +116,13 @@ def lmag_fix_sentences(sentences, context, tokenizer, lm, clf, device, bs=50, re
     return ret
 
 
-
 class LMAgStrategy(DefenseStrategyBase):
     """Base class for Tuning strategy"""
 
     def input_manipulation(self):
         pass
 
-    def fit(self, dataset_name, trainset, device):
-        _, self._lm = get_lm("finetune", dataset_name, trainset, self._device)
+    def fit(self, trainset, save_path):
+        _, self._lm = get_lm("finetune", self._dataset_name, trainset, self._device)
         self._lm = self._lm.eval().to(self._device)
         self._lmag_repeat = 10

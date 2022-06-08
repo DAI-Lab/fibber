@@ -14,8 +14,6 @@ from fibber import get_root_dir, log, resources
 from fibber.datasets import DatasetForBert
 from fibber.metrics.classifier.classifier_base import ClassifierBase
 from fibber.metrics.classifier.shield_classifier import BertClassifierDARTS
-from fibber.metrics.classifier.transformer_classifier_utils_sem import (
-    load_or_build_sem_wordmap, sem_fix_sentences, sem_transform_dataset)
 
 logger = log.setup_custom_logger(__name__)
 
@@ -94,8 +92,7 @@ def load_or_train_transformer_clf(
         model_init, dataset_name, trainset, testset,
         transformer_clf_steps, transformer_clf_bs, transformer_clf_lr, transformer_clf_optimizer,
         transformer_clf_weight_decay, transformer_clf_period_summary, transformer_clf_period_val,
-        transformer_clf_period_save, transformer_clf_val_steps,
-        transformer_clf_enable_sem, transformer_clf_sem_word_map, device):
+        transformer_clf_period_save, transformer_clf_val_steps, device):
     """Train transformer-based classification model on a dataset.
 
     The trained model will be stored at ``<fibber_root_dir>/transformer_clf/<dataset_name>/``.
@@ -118,17 +115,12 @@ def load_or_train_transformer_clf(
             validation summary.
         transformer_clf_period_save (int): the period in steps to save current model.
         transformer_clf_val_steps (int): number of batched in each validation.
-        transformer_clf_enable_sem (bool): whether to use sem to preprocess input.
-        transformer_clf_sem_word_map (dict): sem word map.
         device (torch.Device): the device to run the model.
 
     Returns:
         a torch transformer model.
     """
-    if transformer_clf_enable_sem:
-        model_dir = os.path.join(get_root_dir(), "transformer_clf_sem", dataset_name)
-    else:
-        model_dir = os.path.join(get_root_dir(), "transformer_clf", dataset_name)
+    model_dir = os.path.join(get_root_dir(), "transformer_clf", dataset_name)
     ckpt_path = os.path.join(model_dir, model_init + "-%04dk" %
                              (transformer_clf_steps // 1000))
 
@@ -149,10 +141,6 @@ def load_or_train_transformer_clf(
     logger.info("Num labels: %s", num_labels)
 
     summary = SummaryWriter(os.path.join(model_dir, "summary"))
-
-    if transformer_clf_enable_sem:
-        trainset = sem_transform_dataset(trainset, transformer_clf_sem_word_map)
-        testset = sem_transform_dataset(testset, transformer_clf_sem_word_map)
 
     dataloader = torch.utils.data.DataLoader(
         DatasetForBert(trainset, model_init, transformer_clf_bs), batch_size=None, num_workers=0)
@@ -252,7 +240,7 @@ class TransformerClassifier(ClassifierBase):
                  transformer_clf_optimizer="adamw", transformer_clf_weight_decay=0.001,
                  transformer_clf_period_summary=100, transformer_clf_period_val=500,
                  transformer_clf_period_save=20000, transformer_clf_val_steps=10,
-                 transformer_clf_enable_sem=False, transformer_clf_model_init="bert-base", **kargs):
+                 transformer_clf_model_init="bert-base", **kargs):
         super(TransformerClassifier, self).__init__()
 
         if transformer_clf_model_init in ["distilbert-base", "bert-base", "bert-large"]:
@@ -275,12 +263,6 @@ class TransformerClassifier(ClassifierBase):
             logger.info("Transformer clf metric is running on GPU %d.", transformer_clf_gpu_id)
             self._device = torch.device("cuda:%d" % transformer_clf_gpu_id)
 
-        self._enable_sem = transformer_clf_enable_sem
-        if transformer_clf_enable_sem:
-            self._sem_word_map = load_or_build_sem_wordmap(dataset_name, trainset, self._device)
-        else:
-            self._sem_word_map = None
-
         self._model_init = model_init
         self._dataset_name = dataset_name
         self._model = load_or_train_transformer_clf(
@@ -297,8 +279,6 @@ class TransformerClassifier(ClassifierBase):
             transformer_clf_period_val=transformer_clf_period_val,
             transformer_clf_period_save=transformer_clf_period_save,
             transformer_clf_val_steps=transformer_clf_val_steps,
-            transformer_clf_enable_sem=transformer_clf_enable_sem,
-            transformer_clf_sem_word_map=self._sem_word_map,
             device=self._device)
         self._fine_tune_schedule = None
         self._fine_tune_opt = None
@@ -335,16 +315,6 @@ class TransformerClassifier(ClassifierBase):
         """
         if self._ppl_filter_metric is not None:
             paraphrase_list = self._ppl_filter_metric.perplexity_filter(paraphrase_list)
-        if self._enable_sem:
-            paraphrase_list = sem_fix_sentences(paraphrase_list, self._sem_word_map)
-        if self._enable_lmag:
-            context = None
-            if "text1" in data_record:
-                assert paraphrase_field == "text1"
-                context = [data_record["text0"]] * len(paraphrase_list)
-
-            paraphrase_list = lmag_fix_sentences(
-                paraphrase_list, context, self._tokenizer, self._lm, self._model, self._device)
 
         if paraphrase_field == "text0":
             batch_input = self._tokenizer(
@@ -356,26 +326,13 @@ class TransformerClassifier(ClassifierBase):
                                           padding=True, return_tensors="pt").to(self._device)
         with torch.no_grad():
             logits = self._model(**batch_input)[0]
-            if self._enable_lmag:
-                res = F.log_softmax(
-                    torch.sum(
-                        F.one_hot(
-                            logits.view(len(paraphrase_list) // self._lmag_repeat,
-                                        self._lmag_repeat, -1).argmax(dim=-1),
-                            logits.size(-1)),
-                        dim=1).float(),
-                    dim=1).detach().cpu().numpy()
-            else:
-                res = F.log_softmax(logits, dim=1).detach().cpu().numpy()
+            res = F.log_softmax(logits, dim=1).detach().cpu().numpy()
 
         return res
 
     def predict_log_dist_multiple_examples(self, origin_list, paraphrase_list,
                                            data_record_list=None, paraphrase_field="text0",
                                            return_raw_logits=False):
-        if self._enable_sem or self._enable_lmag:
-            raise RuntimeError
-
         if self._ppl_filter_metric is not None:
             paraphrase_list = self._ppl_filter_metric.perplexity_filter(paraphrase_list)
 
