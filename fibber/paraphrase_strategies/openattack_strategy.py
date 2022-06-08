@@ -1,12 +1,20 @@
 """This module implements the paraphrase strategy using TextFooler."""
 
+import sys
+
 import numpy as np
-import OpenAttack as oa
 
 from fibber import log
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
 logger = log.setup_custom_logger(__name__)
+
+try:
+    sys.path.append("./OpenAttack")
+    import OpenAttack as oa
+except ImportError:
+    logger.warning("OpenAttack is not installed. Install it by `pip install OpenAttack`.")
+    ModelWrapper = object
 
 
 class MyClassifier(oa.Classifier):
