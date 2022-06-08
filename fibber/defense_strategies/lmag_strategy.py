@@ -21,17 +21,10 @@ def lmag_fix_sentences(sentences, context, tokenizer, lm, clf, device, bs=50, re
     for item in sentences_t:
         sentences += [item] * rep
 
-    context = None
     while st < len(sentences):
         ed = min(st + bs, len(sentences))
-        if context is not None:
-            batch_input_small = tokenizer(context_t[st // rep:ed // rep],
-                                          sentences_t[st // rep:ed // rep],
-                                          padding=True)
-            batch_input = tokenizer(context[st:ed], sentences[st:ed], padding=True)
-        else:
-            batch_input_small = tokenizer(sentences_t[st // rep:ed // rep], padding=True)
-            batch_input = tokenizer(sentences[st:ed], padding=True)
+        batch_input_small = tokenizer(sentences_t[st // rep:ed // rep], padding=True)
+        batch_input = tokenizer(sentences[st:ed], padding=True)
 
         input_ids = torch.tensor(batch_input_small["input_ids"])
         token_type_ids = torch.tensor(batch_input_small["token_type_ids"])
@@ -68,17 +61,8 @@ def lmag_fix_sentences(sentences, context, tokenizer, lm, clf, device, bs=50, re
             if i % rep == 0:
                 rng = np.random.RandomState(
                     hash(int(text_md5(sentences_t[i // rep]), 16) % 1000000007))
-                if context is not None:
-                    change = -1
-                    for j in range(1, token_type_ids.size(1)):
-                        if token_type_ids[i - st, j - 1] == 0 and token_type_ids[i - st, j] == 1:
-                            change = j
-                            break
-                    u = change
-                    v = attention_mask[i - st].sum() - 1
-                else:
-                    u = 1
-                    v = attention_mask[i - st].sum() - 1
+                u = 1
+                v = attention_mask[i - st].sum() - 1
 
                 n_mask = max(1, int((v - u) * 0.2))
                 prob = attention_grad[(i - st) // rep, u:v]
@@ -96,17 +80,8 @@ def lmag_fix_sentences(sentences, context, tokenizer, lm, clf, device, bs=50, re
         )[0].argmax(dim=-1).detach().cpu().numpy()
 
         for i in range(st, ed):
-            if context is not None:
-                change = -1
-                for j in range(1, token_type_ids.size(1)):
-                    if token_type_ids[i - st, j - 1] == 0 and token_type_ids[i - st, j] == 1:
-                        change = j
-                        break
-                u = change
-                v = attention_mask[i - st].sum() - 1
-            else:
-                u = 1
-                v = attention_mask[i - st].sum() - 1
+            u = 1
+            v = attention_mask[i - st].sum() - 1
 
             ret.append(tokenizer.decode(pred[i - st, u:v], skip_special_tokens=True))
 

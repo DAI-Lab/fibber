@@ -1,6 +1,5 @@
 from fibber.metrics.attack_aggregation_utils import (
-    get_best_adv_by_metric,
-    paraphrase_classification_accuracy_agg_fn_constructor)
+    get_best_adv_by_metric, paraphrase_classification_accuracy_agg_fn_constructor)
 
 
 def make_data_record(label, origin_predict, paraphrase_ppl_list,
