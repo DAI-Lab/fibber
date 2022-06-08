@@ -11,13 +11,14 @@ logger = log.setup_custom_logger(__name__)
 
 try:
     sys.path.append("./OpenAttack")
+    import oa.Classifier as OAClassifier
     import OpenAttack as oa
 except ImportError:
     logger.warning("OpenAttack is not installed. Install it by `pip install OpenAttack`.")
-    ModelWrapper = object
+    OAClassifier = object
 
 
-class MyClassifier(oa.Classifier):
+class MyClassifier(OAClassifier):
     def __init__(self, clf_metric, field_name):
         self.model = clf_metric
         self._field_name = field_name
