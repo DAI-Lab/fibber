@@ -540,8 +540,6 @@ class RewriteRollbackStrategy(StrategyBase):
                     if decision_fn_state[1][kk]:
                         paraphrases[kk] = roll_back(
                             data_record_list[kk], paraphrases[kk], self._clf_metric)
-                # for kk in range(len(paraphrases)):
-                #     paraphrases[kk] = roll_back(data_record_list[kk], paraphrases[kk], self._clf_metric)
                 if (self._strategy_config["early_stop"] == "half"
                         and np.sum(decision_fn_state[1]) >= len(data_record_list) * 0.5):
                     break

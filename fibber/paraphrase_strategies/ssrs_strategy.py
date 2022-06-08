@@ -135,7 +135,6 @@ def joint_weighted_criteria(
                                                      bleu_metric=bleu_metric,
                                                      bleu_weight=bleu_weight,
                                                      bleu_threshold=bleu_threshold)
-        # print("ppl score", ppl_score[0], "sim score", sim_score[0], "clf score", clf_score[0], "bleu", bleu_score[0])
         return ppl_score + sim_score + clf_score + bleu_score, is_incorrect
 
     if state is not None:

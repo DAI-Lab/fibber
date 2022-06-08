@@ -194,12 +194,12 @@ def joint_weighted_criteria(
                        for x, ll in zip(batch_tensor.detach().cpu().numpy(), seq_len)]
         ppl_score, ppl_ratio = ppl_criteria_score(origin=origin, paraphrases=paraphrases,
                                                   ppl_metric=ppl_metric, ppl_weight=ppl_weight)
-        sim_score, sim_value = sim_criteria_score(origin=origin, paraphrases=paraphrases, sim_metric=sim_metric,
-                                                  sim_weight=sim_weight, sim_threshold=sim_threshold)
-        clf_score, is_incorrect = clf_criteria_score(origin=origin, paraphrases=paraphrases,
-                                                     data_record=data_record, field_name=field_name,
-                                                     clf_metric=clf_metric,
-                                                     clf_weight=clf_weight)
+        sim_score, sim_value = sim_criteria_score(
+            origin=origin, paraphrases=paraphrases, sim_metric=sim_metric,
+            sim_weight=sim_weight, sim_threshold=sim_threshold)
+        clf_score, is_incorrect = clf_criteria_score(
+            origin=origin, paraphrases=paraphrases, data_record=data_record,
+            field_name=field_name, clf_metric=clf_metric, clf_weight=clf_weight)
         return ppl_score + sim_score + clf_score, is_incorrect
 
     if state is not None:
@@ -331,8 +331,9 @@ class ASRSStrategy(StrategyBase):
             "accept": 0
         }
 
-    def _parallel_sequential_generation(self, original_text, seed, batch_size, burnin_steps,
-                                        sampling_steps, field_name, data_record, early_stop=False):
+    def _parallel_sequential_generation(
+            self, original_text, seed, batch_size, burnin_steps, sampling_steps, field_name,
+            data_record, early_stop=False):
         if self._strategy_config["seed_option"] == "origin":
             seq = ["[CLS]"] + self._tokenizer.tokenize(seed) + ["[SEP]"]
             batch_tensor = torch.tensor(
@@ -417,7 +418,8 @@ class ASRSStrategy(StrategyBase):
                 logits_lm = self._bert_lm(
                     batch_tensor_tmp,
                     token_type_ids=tok_type_tensor_tmp,
-                    attention_mask=attention_mask)[0][:, context_len + pos_st:context_len + pos_ed]
+                    attention_mask=attention_mask)[0][
+                    :, context_len + pos_st:context_len + pos_ed]
             else:
                 logits_lm = self._bert_lm(
                     batch_tensor, attention_mask=attention_mask)[0][:, pos_st:pos_ed]
@@ -472,9 +474,10 @@ class ASRSStrategy(StrategyBase):
                         logits_joint, dim=1, index=candidate_ids.unsqueeze(1)).squeeze(1)
                     * attention_mask_paraphrase_text_only[:, pos])
 
-                batch_tensor[:, pos] = (candidate_ids * attention_mask_paraphrase_text_only[:, pos]
-                                        + batch_tensor[:, pos]
-                                        * (1 - attention_mask_paraphrase_text_only[:, pos]))
+                batch_tensor[:, pos] = (
+                    candidate_ids * attention_mask_paraphrase_text_only[:, pos]
+                    + batch_tensor[:, pos]
+                    * (1 - attention_mask_paraphrase_text_only[:, pos]))
 
             candidate_ids = batch_tensor[:, pos_st:pos_ed].clone()
 

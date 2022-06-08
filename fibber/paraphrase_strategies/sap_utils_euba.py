@@ -80,8 +80,8 @@ def estimate_weight(clf_model, embedding_layer, vocabulary, hook, example, token
             tmp = np.tile(tmp.reshape(-1, 1), (1, grad.size(0)))  # batch * L
 
             weight.append(
-                (torch.einsum("bld,ld->bl", embedding_layer(torch.tensor(tmp).to(device)), grad) -
-                 torch.einsum("ld,ld->l", emb_output, grad)) + log_prob)
+                (torch.einsum("bld,ld->bl", embedding_layer(torch.tensor(tmp).to(device)), grad)
+                 - torch.einsum("ld,ld->l", emb_output, grad)) + log_prob)
 
         weight = torch.cat(weight, dim=0)  # V * l
         weight[:, 0] = 1e8   # change clf tok weight to inf

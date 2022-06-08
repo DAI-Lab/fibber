@@ -229,8 +229,8 @@ class TransformerClassifier(ClassifierBase):
         transformer_clf_optimizer (str): the optimizer name.
         transformer_clf_weight_decay (float): the weight decay in the optimizer.
         transformer_clf_period_summary (int): the period in steps to write training summary.
-        transformer_clf_period_val (int): the period in steps to run validation and write validation
-            summary.
+        transformer_clf_period_val (int): the period in steps to run validation and write
+            validation summary.
         transformer_clf_period_save (int): the period in steps to save current model.
         transformer_clf_val_steps (int): number of batched in each validation.
     """

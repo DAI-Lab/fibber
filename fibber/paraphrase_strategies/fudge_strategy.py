@@ -67,11 +67,7 @@ class FudgeStrategy(StrategyBase):
             text = [item["text0"] for item in batch]
             input_output = [
                 make_input_output_pair(
-                    self._tokenizer,
-                    "<|endoftext|> " +
-                    x +
-                    " <|endoftext|> " +
-                    x) for x in text]
+                    self._tokenizer, "<|endoftext|> " + x + " <|endoftext|> " + x) for x in text]
             input, output = zip(*input_output)
 
             toks_input, mask = make_batch(input)
@@ -109,7 +105,8 @@ class FudgeStrategy(StrategyBase):
 
     def paraphrase_example(self, data_record, field_name, n):
         tmp, _ = make_input_output_pair(
-            self._tokenizer, "<|endoftext|> " + data_record["text0"] + " <|endoftext|> " + data_record["text0"])
+            self._tokenizer,
+            "<|endoftext|> " + data_record["text0"] + " <|endoftext|> " + data_record["text0"])
         batch = torch.tensor([tmp]).to(self._device)
 
         topk = 20
@@ -136,9 +133,5 @@ class FudgeStrategy(StrategyBase):
 
             ret.append(
                 self._tokenizer.decode(
-                    batch[0].detach().cpu().numpy()[
-                        len(tmp) //
-                        2 +
-                        2:len(tmp) -
-                        1]))
+                    batch[0].detach().cpu().numpy()[len(tmp) // 2 + 2:len(tmp) - 1]))
         return ret
