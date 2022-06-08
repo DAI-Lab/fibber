@@ -1,5 +1,5 @@
 from fibber.metrics.attack_aggregation_utils import (
-    get_best_adv_by_metric, pairwise_editing_distance_fn,
+    get_best_adv_by_metric,
     paraphrase_classification_accuracy_agg_fn_constructor)
 
 
@@ -56,17 +56,6 @@ def test_paraphrase_classification_accuracy_agg_fn_constructor():
                                    paraphrase_pred_list=[1, 1, 1],
                                    classifier=classifier)
     assert agg_fn(data_record) == 1
-
-
-def test_pairwise_editing_distance_fn():
-    data_record = {
-        "text0_paraphrases": [
-            "aa bb cc",
-            "aa cc ee",
-            "aa bb"
-        ]
-    }
-    assert abs(pairwise_editing_distance_fn(data_record) - 5 / 3) < 1e-6
 
 
 def test_get_best_adv_by_metric():
