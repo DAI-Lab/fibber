@@ -19,7 +19,8 @@ def bert_classifier_on_demo(gpu_id):
     get_bert_clf_demo()
     trainset, testset = get_demo_dataset()
     bert_classifier = TransformerClassifier(
-        "demo", trainset, testset, transformer_clf_gpu_id=gpu_id, transformer_clf_steps=5000)
+        "demo", trainset, testset, transformer_clf_gpu_id=gpu_id, transformer_clf_steps=5000,
+        field="text0")
     return bert_classifier
 
 

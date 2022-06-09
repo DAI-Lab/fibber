@@ -15,7 +15,8 @@ def gpu_id():
 def test_metric_bundle(gpu_id):
     metric_bundle = MetricBundle(
         use_gpu_id=gpu_id,
-        gpt2_gpu_id=gpu_id)
+        gpt2_gpu_id=gpu_id,
+        field="text0")
     s1 = "Saturday is the last day in a week"
     s2 = "Sunday is the last day in a week"
     results = metric_bundle.measure_example(s1, s2)

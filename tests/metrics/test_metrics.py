@@ -40,7 +40,7 @@ def test_edit_distance_metric():
     batched_io_pairs = [
         (("aa bb cc", ["aa bb cc dd", "aa bb cc", "aa ee"]), [1, 0, 2])
     ]
-    editing_distance_metric = EditDistanceMetric()
+    editing_distance_metric = EditDistanceMetric(field="text0")
 
     metric_test_helper(editing_distance_metric, io_pairs, batched_io_pairs)
 
@@ -59,7 +59,7 @@ def test_use_semantic_similarity(gpu_id):
            "Saturday is the last day in a week"]),
          [0.171, 0.759]),
     ]
-    use_semantic_similarity_metric = USESimilarityMetric(use_gpu_id=gpu_id)
+    use_semantic_similarity_metric = USESimilarityMetric(use_gpu_id=gpu_id, field="text0")
     metric_test_helper(use_semantic_similarity_metric, io_pairs, batched_io_pairs, eps=0.01)
 
 
@@ -77,7 +77,7 @@ def test_ce_semantic_similarity(gpu_id):
            "Saturday is the last day in a week"]),
          [0.009, 0.291]),
     ]
-    ce_semantic_similarity_metric = CESimilarityMetric(ce_gpu_id=gpu_id)
+    ce_semantic_similarity_metric = CESimilarityMetric(ce_gpu_id=gpu_id, field="text0")
     metric_test_helper(ce_semantic_similarity_metric, io_pairs, batched_io_pairs, eps=0.01)
 
 
@@ -95,7 +95,7 @@ def test_gpt2_grammar_quality(gpu_id):
            "Saturday is the last day in a week."]),
          [14.64, 1.10]),
     ]
-    gpt2_grammar_quality_metric = GPT2PerplexityMetric(gpt2_gpu_id=gpu_id)
+    gpt2_grammar_quality_metric = GPT2PerplexityMetric(gpt2_gpu_id=gpu_id, field="text0")
     metric_test_helper(gpt2_grammar_quality_metric, io_pairs, batched_io_pairs, eps=0.1)
 
 
@@ -114,5 +114,5 @@ def test_glove_semantic_similarity():
            "Obama was the president of the United State."]),
          [0.997, 0.678])
     ]
-    glove_semantic_similarity_metric = GloVeSimilarityMetric()
+    glove_semantic_similarity_metric = GloVeSimilarityMetric(field="text0")
     metric_test_helper(glove_semantic_similarity_metric, io_pairs, batched_io_pairs, eps=0.01)
