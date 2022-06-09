@@ -145,16 +145,6 @@ def get_universal_sentence_encoder():
     return data_dir
 
 
-def get_corenlp():
-    """Download stanford corenlp package.
-    """
-    data_dir = get_root_dir()
-    data_dir = os.path.join(data_dir, "common")
-    if not os.path.exists(os.path.join(data_dir, "stanford-corenlp-4.1.0")):
-        download_file(subdir=os.path.join(data_dir),
-                      **downloadable_resource_urls["stanford-corenlp"])
-
-
 def get_transformers(name):
     """Download pretrained transformer models.
 

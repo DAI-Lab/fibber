@@ -2,8 +2,8 @@ from fibber.metrics.classifier.classifier_base import ClassifierBase
 
 
 class InputManipulationClassifier(ClassifierBase):
-    def __init__(self, original_classifier, input_manipulation, name):
-        super(InputManipulationClassifier, self).__init__()
+    def __init__(self, original_classifier, input_manipulation, name, **kwargs):
+        super(InputManipulationClassifier, self).__init__(**kwargs)
         self._classifier = original_classifier
         self._input_manipulation = input_manipulation
         self._name = name

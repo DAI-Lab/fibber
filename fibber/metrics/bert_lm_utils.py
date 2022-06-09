@@ -5,10 +5,10 @@ import torch
 import torch.nn.functional as F
 import tqdm
 from torch.utils.tensorboard import SummaryWriter
-from transformers import BertConfig, BertForMaskedLM, BertLMHeadModel, BertTokenizerFast
+from transformers import AutoTokenizer, BertConfig, BertForMaskedLM, BertLMHeadModel
 
 from fibber import get_root_dir, log, resources
-from fibber.datasets import DatasetForBert
+from fibber.datasets import DatasetForTransformers
 from fibber.metrics.classifier.transformer_classifier import get_optimizer
 
 logger = log.setup_custom_logger(__name__)
@@ -66,10 +66,10 @@ def compute_lm_loss(lm_model, seq, mask, tok_type, lm_label, stats):
     return lm_loss
 
 
-def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
-                 lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
+def fine_tune_lm(output_dir, trainset, filter, device, model_init="bert-base-cased",
+                 lm_steps=5000, lm_bs=32, lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
                  lm_period_summary=100, lm_period_save=5000, as_masked_lm=True,
-                 only_one_sentence=False):
+                 select_field=None):
     """Returns a finetuned BERT language model on a given dataset.
 
     The language model will be stored at ``<output_dir>/lm_all`` if filter is -1, or
@@ -80,9 +80,10 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
 
     Args:
         output_dir (str): a directory to store pretrained language model.
-        trainset (DatasetForBert): the training set for finetune the language model.
+        trainset (DatasetForTransformers): the training set for finetune the language model.
         filter (int): a category to exclude from finetuning.
         device (torch.Device): a device to train the model.
+        model_init (str): the backbone bert model.
         lm_steps (int): finetuning steps.
         lm_bs (int): finetuning batch size.
         lm_opt (str): optimzer name. choose from ["sgd", "adam", "adamW"].
@@ -91,6 +92,7 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
         lm_period_summary (int): number of steps to write training summary.
         lm_period_save (int): number of steps to save the finetuned model.
         as_masked_lm (bool): use BERT as a masked language model. If False, use as auto-regressive.
+        select_field (None or str): select one field for language model.
     Returns:
         (BertForMaskedLM): a finetuned language model.
     """
@@ -108,11 +110,6 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
 
     output_dir_t = os.path.join(output_dir, folder)
 
-    if trainset["cased"]:
-        model_init = "bert-base-cased"
-    else:
-        model_init = "bert-base-uncased"
-
     ckpt_path_pattern = output_dir_t + "/checkpoint-%04dk"
     ckpt_path = ckpt_path_pattern % (lm_steps // 1000)
 
@@ -127,26 +124,26 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
 
     summary = SummaryWriter(output_dir_t + "/summary")
     if as_masked_lm:
-        dataset = DatasetForBert(trainset, model_init, lm_bs, exclude=filter, masked_lm=True,
-                                 only_one_sentence=only_one_sentence)
+        dataset = DatasetForTransformers(trainset, model_init, lm_bs, exclude=filter,
+                                         masked_lm=True, select_field=select_field)
         lm_model = BertForMaskedLM.from_pretrained(resources.get_transformers(model_init))
     else:
-        dataset = DatasetForBert(trainset, model_init, lm_bs, exclude=filter,
-                                 autoregressive_lm=True, only_one_sentence=only_one_sentence)
+        dataset = DatasetForTransformers(trainset, model_init, lm_bs, exclude=filter,
+                                         autoregressive_lm=True, select_field=select_field)
         config = BertConfig.from_pretrained(resources.get_transformers(model_init))
         config.is_decoder = True
         lm_model = BertLMHeadModel.from_pretrained(resources.get_transformers(model_init),
                                                    config=config)
     lm_model.train()
     lm_model.to(device)
-    dataloader = torch.utils.data.DataLoader(
-        dataset, batch_size=None, num_workers=2)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=None, num_workers=0)
 
     params = list(lm_model.parameters())
     opt, sche = get_optimizer(lm_opt, lm_lr, lm_decay, lm_steps, params)
 
     global_step = 0
     stats = new_stats()
+
     for seq, mask, tok_type, label, lm_label in tqdm.tqdm(
             dataloader, total=lm_steps):
         opt.zero_grad()
@@ -181,9 +178,9 @@ def fine_tune_lm(output_dir, trainset, filter, device, lm_steps=5000, lm_bs=32,
     return lm_model
 
 
-def get_lm(lm_option, dataset_name, trainset, device, filter=-1, lm_steps=5000, lm_bs=32,
-           lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
-           lm_period_summary=100, lm_period_save=5000):
+def get_lm(lm_option, dataset_name, trainset, device, model_init="bert-base-cased",
+           filter=-1, lm_steps=5000, lm_bs=32, lm_opt="adamw", lm_lr=0.0001, lm_decay=0.01,
+           lm_period_summary=100, lm_period_save=5000, select_field=None):
     """Returns a BERT language model or a list of language models on a given dataset.
 
     The language model will be stored at ``<output_dir>/lm_all`` if lm_option is finetune.
@@ -203,6 +200,7 @@ def get_lm(lm_option, dataset_name, trainset, device, filter=-1, lm_steps=5000, 
         dataset_name (str): a directory to store pretrained language model.
         trainset (dict): the training set for finetune the language model.
         device (torch.Device): a device to train the model.
+        model_init (str): the backbone bert model.
         lm_steps (int): finetuning steps.
         lm_bs (int): finetuning batch size.
         lm_opt (str): optimzer name. choose from ["sgd", "adam", "adamW"].
@@ -210,21 +208,14 @@ def get_lm(lm_option, dataset_name, trainset, device, filter=-1, lm_steps=5000, 
         lm_decay (float): weight decay for the optimizer.
         lm_period_summary (int): number of steps to write training summary.
         lm_period_save (int): number of steps to save the finetuned model.
+        select_field (str or None): train language model on one specific field.
     Returns:
         (BertTokenizerFast): the tokenizer for the language model.
         (BertForMaskedLM): a finetuned language model if lm_option is pretrain or finetune.
         ([BertForMaskedLM]): a list of finetuned language model if lm_option is adv. The i-th
             language model in the list is fine-tuned on data not having label i.
     """
-
-    if trainset["cased"]:
-        model_init = "bert-base-cased"
-    else:
-        model_init = "bert-base-uncased"
-
-    tokenizer = BertTokenizerFast.from_pretrained(
-        resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
-    tokenizer.do_lower_case = True if "uncased" in model_init else False
+    tokenizer = AutoTokenizer.from_pretrained(resources.get_transformers(model_init))
 
     output_dir = os.path.join(get_root_dir(), "bert_lm", dataset_name)
 
@@ -234,24 +225,26 @@ def get_lm(lm_option, dataset_name, trainset, device, filter=-1, lm_steps=5000, 
             resources.get_transformers(model_init))
     elif lm_option == "finetune":
         bert_lm = fine_tune_lm(
-            output_dir, trainset, filter, device,
+            output_dir, trainset, filter, device, model_init=model_init,
             lm_steps=lm_steps, lm_bs=lm_bs, lm_opt=lm_opt, lm_lr=lm_lr, lm_decay=lm_decay,
-            lm_period_summary=lm_period_summary, lm_period_save=lm_period_save)
+            lm_period_summary=lm_period_summary, lm_period_save=lm_period_save,
+            select_field=select_field)
     elif lm_option == "adv":
         bert_lm = []
         assert filter == -1
         for i in range(len(trainset["label_mapping"])):
             lm = fine_tune_lm(
-                output_dir, trainset, i, device,
+                output_dir, trainset, i, device, model_init=model_init,
                 lm_steps=lm_steps, lm_bs=lm_bs, lm_opt=lm_opt, lm_lr=lm_lr, lm_decay=lm_decay,
-                lm_period_summary=lm_period_summary, lm_period_save=lm_period_save)
+                lm_period_summary=lm_period_summary, lm_period_save=lm_period_save,
+                select_field=select_field)
             bert_lm.append(lm)
     elif lm_option == "ppl":
         bert_lm = fine_tune_lm(
-            output_dir, trainset, filter, device,
+            output_dir, trainset, filter, device, model_init=model_init,
             lm_steps=lm_steps, lm_bs=lm_bs, lm_opt=lm_opt, lm_lr=lm_lr, lm_decay=lm_decay,
             lm_period_summary=lm_period_summary, lm_period_save=lm_period_save, as_masked_lm=False,
-            only_one_sentence=True)
+            select_field=select_field)
     else:
         raise RuntimeError("unsupported lm_option")
 

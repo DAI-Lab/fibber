@@ -264,15 +264,15 @@ class SSRSStrategy(StrategyBase):
             "accept": 0
         }
 
-    def paraphrase_example(self, data_record, field, n):
-        return self.paraphrase_multiple_examples([data_record] * n, field), 0
+    def paraphrase_example(self, data_record, n):
+        return self.paraphrase_multiple_examples([data_record] * n), 0
 
-    def paraphrase_multiple_examples(self, data_record_list, field):
+    def paraphrase_multiple_examples(self, data_record_list):
         bert_lm = self._bert_lms[data_record_list[0]["label"]].to(self._device)
 
-        origin = [item[field] for item in data_record_list]
+        origin = [item[self._field] for item in data_record_list]
         paraphrases = origin[:]
-        context = None if field == "text0" else [item["text0"] for item in data_record_list]
+        context = None if self._field == "text0" else [item["text0"] for item in data_record_list]
 
         sampling_steps = self._strategy_config["sampling_steps"]
         window_size = self._strategy_config["window_size"]
@@ -298,7 +298,7 @@ class SSRSStrategy(StrategyBase):
                     self._tokenizer.convert_tokens_to_string(
                         toks[:st] + masked_part + toks[ed:]))
 
-            if field == "text1":
+            if self._field == "text1":
                 batch_input = self._tokenizer(
                     context, paraphrases_with_mask, padding=True,
                     return_tensors="pt").to(self._device)

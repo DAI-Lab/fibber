@@ -13,8 +13,6 @@
         "Business",
         "Sci/Tech"
       ],
-      "cased": true,
-      "field": "text0",
       "data": [
         {
           "label": 1,
@@ -34,7 +32,7 @@
 
 * To convert a dataset dict to a ``torch.IterableDataset`` for BERT model, run::
 
-    iterable_dataset = DatasetForBert(trainset, "bert-base-cased", batch_size=32);
+    iterable_dataset = DatasetForTransformers(trainset, "bert-base-cased", batch_size=32);
 
 For more details, see ``https://dai-lab.github.io/fibber/``
 """
@@ -195,8 +193,7 @@ def verify_dataset(dataset):
 
 def clip_sentence(dataset, model_init, max_len):
     """Inplace clipping sentences."""
-    tokenizer = AutoTokenizer.from_pretrained(
-        resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
+    tokenizer = AutoTokenizer.from_pretrained(resources.get_transformers(model_init))
     logger.info("clipping the dataset to %d tokens.", max_len)
     for data_record in tqdm.tqdm(dataset["data"]):
         s0 = tokenizer.tokenize(data_record["text0"])
@@ -209,7 +206,7 @@ def clip_sentence(dataset, model_init, max_len):
             data_record["text1"] = tokenizer.convert_tokens_to_string(s1)
 
 
-class DatasetForBert(torch.utils.data.IterableDataset):
+class DatasetForTransformers(torch.utils.data.IterableDataset):
     """Create a ``torch.IterableDataset`` for a BERT model.
 
     The module is an iterator that yields infinite batches from the dataset. To construct a
@@ -250,7 +247,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
 
     def __init__(self, dataset, model_init, batch_size, exclude=-1,
                  masked_lm=False, masked_lm_ratio=0.2, autoregressive_lm=False,
-                 only_one_sentence=False, seed=0):
+                 select_field=None, seed=0):
         """Initialize.
 
         Args:
@@ -262,11 +259,11 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                 Use -1 (default) to include all categories.
             masked_lm (bool): whether to randomly replace words with mask tokens.
             masked_lm_ratio (float): the ratio of random masks. Ignored when masked_lm is False.
+            select_field (None or str): select one field. None to use all available fields.
             seed: random seed.
         """
         self._batch_size = batch_size
-        self._tokenizer = AutoTokenizer.from_pretrained(
-            resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
+        self._tokenizer = AutoTokenizer.from_pretrained(resources.get_transformers(model_init))
 
         self._seed = seed
         self._pad_tok_id = self._tokenizer.pad_token_id
@@ -274,14 +271,20 @@ class DatasetForBert(torch.utils.data.IterableDataset):
         self._masked_lm = masked_lm
         self._masked_lm_ratio = masked_lm_ratio
         self._mask_tok_id = self._tokenizer.mask_token_id
-        self._only_one_sentence = only_one_sentence
+
+        if select_field is None:
+            if "text1" not in dataset["data"]:
+                self._field = "text0"
+            else:
+                self._field = "both"
+        else:
+            self._field = select_field
 
         self._autoregressive_lm = autoregressive_lm
         if self._autoregressive_lm and self._masked_lm:
             raise RuntimeError("masked_lm and autoregressive_lm are used at the same time.")
 
         self._data = dataset["data"]
-        self._field = dataset["field"]
         if exclude != -1:
             self._data = [item for item in self._data if item["label"] != exclude]
 
@@ -295,7 +298,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
         while True:
             data_records = self._rng.choice(self._data, self._batch_size)
 
-            if "text1" in data_records[0] and not self._only_one_sentence:
+            if self._field == "both":
                 batch_input = self._tokenizer(
                     [item["text0"] for item in data_records],
                     [item["text1"] for item in data_records],

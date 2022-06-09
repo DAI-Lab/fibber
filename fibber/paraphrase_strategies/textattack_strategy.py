@@ -108,18 +108,17 @@ class TextAttackStrategy(StrategyBase):
         if ModelWrapper is None:
             raise RuntimeError("no internet connection.")
 
-        self._model = CLFModel(self._metric_bundle.get_target_classifier(),
-                               trainset["field"])
+        self._model = CLFModel(self._metric_bundle.get_target_classifier(), self._field)
         self._recipe = getattr(attack_recipes, self._strategy_config["recipe"]
                                ).build(self._model)
 
-    def paraphrase_example(self, data_record, field, n):
+    def paraphrase_example(self, data_record, n):
         """Generate paraphrased sentences."""
         self._model.set_data_record(data_record)
 
         self._model.reset_counter()
 
-        attack_text = data_record[field]
+        attack_text = data_record[self._field]
 
         signal.signal(signal.SIGALRM, alarm_handler)
         signal.alarm(self._strategy_config["time_limit"])
@@ -128,7 +127,7 @@ class TextAttackStrategy(StrategyBase):
         except TimeOutException:
             logger.warn("Timeout.")
             att = None
-        except BaseException:
+        except RuntimeError:
             logger.warn("TextAttack package failure.")
             traceback.print_exc()
             att = None
@@ -138,4 +137,4 @@ class TextAttackStrategy(StrategyBase):
         if isinstance(att, textattack.attack_results.SuccessfulAttackResult):
             return [att.perturbed_result.attacked_text.text], clf_count
         else:
-            return [data_record[field]], clf_count
+            return [data_record[self._field]], clf_count

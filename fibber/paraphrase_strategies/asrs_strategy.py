@@ -301,7 +301,7 @@ class ASRSStrategy(StrategyBase):
         self._ppl_metric = self._metric_bundle.get_metric("BertPerplexityMetric")
 
         # load word piece embeddings.
-        wpe = get_wordpiece_emb(self._output_dir, self._dataset_name, trainset, self._device)
+        wpe = get_wordpiece_emb(self._dataset_name, trainset, self._tokenizer, self._device)
         self._word_embs = nn.Embedding(self._tokenizer.vocab_size, 300)
         self._word_embs.weight.data = torch.tensor(wpe.T).float()
         self._word_embs = self._word_embs.to(self._device)
@@ -515,7 +515,7 @@ class ASRSStrategy(StrategyBase):
         return [tostring(self._tokenizer, x[1:ll - 1])
                 for x, ll in zip(batch_tensor.detach().cpu().numpy(), seq_len)]
 
-    def paraphrase_example(self, data_record, field, n, early_stop=False):
+    def paraphrase_example(self, data_record, n, early_stop=False):
         global asrs_clf_counter
         asrs_clf_counter = 0
 
@@ -523,7 +523,7 @@ class ASRSStrategy(StrategyBase):
             self._bert_lm = self._bert_lms[data_record["label"]]
             self._bert_lm.to(self._device)
 
-        clipped_text = data_record[field]
+        clipped_text = data_record[self._field]
         clipped_text = process_text(clipped_text, PRE_PROCESSING_PATTERN)
         batch_size = self._strategy_config["batch_size"]
 
@@ -543,7 +543,7 @@ class ASRSStrategy(StrategyBase):
                 batch_size if id != n_batches - 1 else last_batch_size,
                 burnin_steps,
                 sampling_steps,
-                field, data_record,
+                self._field, data_record,
                 early_stop=early_stop)
             sentences += batch
 

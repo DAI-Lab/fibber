@@ -31,8 +31,7 @@ class BertClassifierDARTS(nn.Module):
         self.embedding_matrix = []
         self.device = device
 
-        self.tokenizer = AutoTokenizer.from_pretrained(resources.get_transformers(model_type),
-                                                       do_lower_case="uncased" in model_type)
+        self.tokenizer = AutoTokenizer.from_pretrained(resources.get_transformers(model_type))
         self.bert_layer = AutoModel.from_pretrained(resources.get_transformers(model_type))
 
         if freeze_bert:

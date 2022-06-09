@@ -5,26 +5,18 @@ import torch
 import tqdm
 from nltk import word_tokenize
 from torch import nn
-from transformers import BertTokenizer
 
-from fibber import get_root_dir, log, resources
+from fibber import get_root_dir, log
 from fibber.resources import get_counter_fitted_vector
 
 logger = log.setup_custom_logger(__name__)
 
 
 class WordPieceDataset(torch.utils.data.Dataset):
-    def __init__(self, dataset, model_init):
-        self._tokenizer = BertTokenizer.from_pretrained(
-            resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
+    def __init__(self, dataset, tokenizer):
+        self._tokenizer = tokenizer
 
         self._glove = get_counter_fitted_vector()
-        # stopwords = get_stopwords()
-        #
-        # for word in stopwords:
-        #     word = word.lower().strip()
-        #     if word in self._glove["tok2id"]:
-        #         self._glove["emb_table"][self._glove["tok2id"][word], :] = 0
 
         data = []
         logger.info("processing data for wordpiece embedding training")
@@ -53,16 +45,17 @@ class WordPieceDataset(torch.utils.data.Dataset):
         return torch.tensor(comp).float(), torch.tensor(g_emb).float()
 
 
-def get_wordpiece_emb(output_dir, dataset_name, trainset, device,
+def get_wordpiece_emb(dataset_name, trainset, tokenizer, device,
                       steps=5000, bs=1000, lr=1, lr_halve_steps=1000):
     """Transfer GloVe embeddings to BERT vocabulary.
 
-    The transfered embeddings will be stored at ``<output_dir>/wordpiece_emb*``.
+    The transfered embeddings will be stored at ``~.fibber/wordpiece_emb_conterfited/
+    wordpiece_emb_<dataset>_<steps>.pt``.
 
     Args:
-        output_dir (str): a directory to store pretrained language model.
         dataset_name (str): dataset name.
         trainset (dict): the dataset dist.
+        tokenizer (transformers.PreTrainedTokenizer): the tokenizer that specifies wordpieces.
         device (torch.Device): a device to train the model.
         steps (int): transfering steps.
         bs (int): transfering batch size.
@@ -79,17 +72,12 @@ def get_wordpiece_emb(output_dir, dataset_name, trainset, device,
         logger.info("load wordpiece embeddings from %s", filename)
         return state_dict["embs"]
 
-    if trainset["cased"]:
-        model_init = "bert-base-cased"
-    else:
-        model_init = "bert-base-uncased"
-
-    dataset = WordPieceDataset(trainset, model_init)
+    dataset = WordPieceDataset(trainset, tokenizer=tokenizer)
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=bs, shuffle=True,
         num_workers=0, drop_last=True)
 
-    linear = nn.Linear(dataset._tokenizer.vocab_size, 300, bias=False).to(device)
+    linear = nn.Linear(tokenizer.vocab_size, 300, bias=False).to(device)
     opt = torch.optim.SGD(lr=lr, momentum=0.5,
                           params=linear.parameters())
     scheduler = torch.optim.lr_scheduler.StepLR(
@@ -97,7 +85,7 @@ def get_wordpiece_emb(output_dir, dataset_name, trainset, device,
 
     linear.weight.data.zero_()
     cc = 0
-    for w, wid in dataset._tokenizer.vocab.items():
+    for w, wid in tokenizer.vocab.items():
         if w.lower() in dataset._glove["tok2id"]:
             cc += 1
             linear.weight.data[:, wid] = torch.tensor(

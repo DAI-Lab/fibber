@@ -13,20 +13,21 @@ logger = log.setup_custom_logger(__name__)
 class Fibber(object):
     """Fibber is a unified interface for paraphrase strategies."""
 
-    def __init__(self, arg_dict, dataset_name, strategy_name, trainset=None, testset=None,
-                 output_dir=".", bert_clf_steps=5000):
+    def __init__(self, arg_dict, dataset_name, strategy_name, field="text0",
+                 trainset=None, testset=None, output_dir=".", bert_clf_steps=5000):
         """Initialize
 
         Args:
             arg_dict (dict): a dict of hyper parameters for the MetricBundle and strategy.
             dataset_name (str): the name of the dataset.
             strategy_name (str): the strategy name.
+            field (str):
             trainset (dict): fibber dataset.
             testset (dict): fibber testset.
             output_dir (str): directory to cache the strategy.
         """
         super(Fibber, self).__init__()
-
+        self._field = field
         # setup dataset
         if dataset_name in builtin_datasets:
             if trainset is not None or testset is not None:
@@ -39,6 +40,7 @@ class Fibber(object):
             verify_dataset(testset)
 
         self._metric_bundle = MetricBundle(
+            field=field,
             enable_transformer_classifier=True,
             enable_bert_perplexity=True,
             enable_glove_similarity=False,
@@ -72,12 +74,11 @@ class Fibber(object):
         self._trainset = trainset
         self._testset = testset
 
-    def paraphrase(self, data_record, field="text0", n=20):
+    def paraphrase(self, data_record, n=20):
         """Paraphrase a given data record.
 
         Args:
             data_record (dict): data record to be paraphrased.
-            field (str): select from ``["text0", "text1"]``
             n (int): number of paraphrases.
 
         Returns:
@@ -88,8 +89,8 @@ class Fibber(object):
         metrics = []
         for item in paraphrases:
             metrics.append(self._metric_bundle.measure_example(
-                data_record[field], item, data_record, field))
-        return data_record[field], paraphrases, metrics
+                data_record[self._field], item, data_record))
+        return data_record[self._field], paraphrases, metrics
 
     def paraphrase_a_random_sentence(self, n=20, from_testset=True):
         """Randomly pick one data, then paraphrase it.
@@ -104,13 +105,12 @@ class Fibber(object):
             * a list of dict as corresponding metrics.
         """
         dataset = self._testset if from_testset else self._trainset
-        field = dataset["field"]
 
         data_record = np.random.choice(dataset["data"])
 
-        _, paraphrases, metrics = self.paraphrase(data_record, field=field, n=n)
+        _, paraphrases, metrics = self.paraphrase(data_record, n=n)
 
-        return data_record[field], paraphrases, metrics
+        return data_record[self._field], paraphrases, metrics
 
     def get_metric_bundle(self):
         """"Get the metric bundle."""

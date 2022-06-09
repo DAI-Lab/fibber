@@ -15,16 +15,15 @@ class SelfBleuMetric(MetricBase):
 
     def __init__(self, **kargs):
         """Initialize ce model."""
-        super(SelfBleuMetric, self).__init__()
+        super(SelfBleuMetric, self).__init__(**kargs)
 
-    def measure_example(self, origin, paraphrase, data_record=None, field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None):
         """Compute the 4 gram self bleu
 
         Args:
             origin (str): original text.
             paraphrase (str): paraphrased text.
             data_record: ignored.
-            field: ignored.
         """
         ref = word_tokenize(origin)
         hypo = word_tokenize(paraphrase)

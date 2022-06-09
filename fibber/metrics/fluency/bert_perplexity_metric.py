@@ -4,7 +4,6 @@ The perplexity is estimated using GPT2 model. This metric can reveal the meaning
 sentence.
 """
 import torch
-from expiringdict import ExpiringDict
 
 from fibber import log
 from fibber.metrics.bert_lm_utils import get_lm
@@ -20,7 +19,7 @@ class BertPerplexityMetric(MetricBase):
 
     def __init__(self, dataset_name, trainset, bert_ppl_gpu_id=-1, bert_ppl_filter=-1, **kargs):
         """Initialize Bert perplexity model."""
-        super(BertPerplexityMetric, self).__init__()
+        super(BertPerplexityMetric, self).__init__(**kargs)
 
         if bert_ppl_gpu_id == -1:
             logger.warning("BertPerplexityMetric is running on CPU.")
@@ -31,13 +30,12 @@ class BertPerplexityMetric(MetricBase):
 
         logger.info("load bert perplexity model.")
         self._tokenizer, self._model = get_lm("ppl", dataset_name, trainset, self._device,
-                                              filter=bert_ppl_filter)
+                                              filter=bert_ppl_filter, select_field=self._field)
         self._model.to(self._device)
         self._data_filter = bert_ppl_filter
         self._name_suffix = ""
         if self._data_filter != -1:
             self._name_suffix = "-exclude-" + trainset["label_mapping"][self._data_filter]
-        self.cache = ExpiringDict(max_len=100000, max_age_seconds=1800)
 
     @property
     def lm_model(self):
@@ -103,56 +101,13 @@ class BertPerplexityMetric(MetricBase):
             res = self._get_ppl(paraphrase_list)
         return [float(x) for x in res]
 
-    def measure_example(self, origin, paraphrase, data_record=None, field="text0",
-                        use_ratio=False):
+    def measure_example(self, origin, paraphrase, data_record=None, use_ratio=False):
         """Compute the perplexity ratio.
 
         Args:
             origin (str): original text.
             paraphrase (str): paraphrased text.
             data_record: ignored.
-            field: ignored.
             use_ratio (bool): whether to return ppl ratio.
         """
-        return self.measure_batch(origin, [paraphrase], data_record, field,
-                                  use_ratio=use_ratio)[0]
-
-    def _filter(self, sentence, bar):
-        tokens = sentence.split()
-        sentence_set = []
-        for idx in range(len(tokens)):
-            st = max(0, idx - 5)
-            ed = min(idx + 6, len(tokens))
-            s1 = " ".join(tokens[st:ed])
-            s2 = " ".join(tokens[st:idx] + tokens[idx + 1:ed])
-            if s1 not in self.cache:
-                sentence_set.append(s1)
-            if s2 not in self.cache:
-                sentence_set.append(s2)
-        ppls = []
-        st = 0
-        while st < len(sentence_set):
-            ed = st + 64
-            ppls += list(self._get_ppl(sentence_set[st:ed]))
-            st = ed
-
-        for s, ppl in zip(sentence_set, ppls):
-            self.cache[s] = ppl
-
-        ret = []
-        for i in range(len(tokens)):
-            st = max(0, idx - 5)
-            ed = min(idx + 6, len(tokens))
-            ppl = self.cache[" ".join(tokens[st:ed])]
-            ppl_rm = self.cache[" ".join(tokens[st:idx] + tokens[idx + 1:ed])]
-
-            if ppl_rm - ppl > bar:
-                ret.append(tokens[i])
-        return " ".join(ret)
-
-    def perplexity_filter(self, sentences, bar=0):
-        result = []
-        for sentence in sentences:
-            result.append(self._filter(sentence, bar))
-
-        return result
+        return self.measure_batch(origin, [paraphrase], data_record, use_ratio=use_ratio)[0]

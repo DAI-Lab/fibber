@@ -14,7 +14,8 @@ class DefenseStrategyBase(object):
     __abbr__ = "defense_base"
     __hyperparameters__ = []
 
-    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, defense_desc, metric_bundle):
+    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, defense_desc,
+                 metric_bundle, field):
         """Initialize the paraphrase_strategies.
 
         This function initialize the ``self._strategy_config``, ``self._metric_bundle``,
@@ -36,6 +37,7 @@ class DefenseStrategyBase(object):
             dataset_name (str): the name of the dataset.
             strategy_gpu_id (int): the gpu id to run the strategy.
             metric_bundle (MetricBundle): a MetricBundle object.
+            field (str): the field that perturbation can happen.
         """
         super(DefenseStrategyBase, self).__init__()
 
@@ -69,6 +71,7 @@ class DefenseStrategyBase(object):
         self._defense_save_path = os.path.join(get_root_dir(), self._defense_desc, dataset_name)
         os.makedirs(self._defense_save_path, exist_ok=True)
         self._classifier = self._metric_bundle.get_target_classifier()
+        self._field = field
 
     @classmethod
     def add_parser_args(cls, parser):

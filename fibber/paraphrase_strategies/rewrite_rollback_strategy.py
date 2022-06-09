@@ -12,11 +12,7 @@ from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
 logger = log.setup_custom_logger(__name__)
 
-REDFLAG_WORDS = ["not", "no", "'t", "t", "nobody", "nothing",
-                 "never", "few", "little", "hardly", "seldom",
-                 "but", "however", "nevertheless", "too", "only",
-                 "fuck", "fucking", "fucked", "idiot", "ass", "bitch",
-                 "nigga", "niggas", "nigger"]
+REDFLAG_WORDS = []
 
 
 def roll_back(record, adv, clf_metric):
@@ -47,13 +43,6 @@ def roll_back(record, adv, clf_metric):
         log_prob = clf_metric.predict_log_dist_multiple_examples(None, [s, s_prev])
         label = record["label"]
         return np.argmax(log_prob[0]) != label or log_prob[0, label] < log_prob[1, label]
-
-    #         if clf.predict_example(None, s) == record["label"]:
-    #             return False
-
-    #         ss = " ".join(toks_prev)
-    #         ppls = ppl.measure_batch(None, [ss, s])
-    #         return ppls[1] < ppls[0] * 2
 
     cc = 0
 
@@ -223,17 +212,6 @@ def joint_weighted_criteria(
         log_prob_trans_forward, log_prob_trans_backward, edit_metric,
         masked_part_text, filled_in_text, **kargs):
 
-    # masked_part_text = ["It was " + item for item in masked_part_text]
-    # filled_in_text = ["It was " + item for item in filled_in_text]
-    # dist1 = clf_metric.predict_log_dist_multiple_examples(origin_list, masked_part_text,
-    #                                                   data_record_list, field)
-    # dist2 = clf_metric.predict_log_dist_multiple_examples(origin_list, filled_in_text,
-    #                                                   data_record_list, field)
-    # dist1 = np.exp(dist1)
-    # dist2 = np.exp(dist2)
-    # check_ok = (np.max(np.abs(dist1 - dist2), axis=1) < 0.1)
-    check_ok = 1
-
     def compute_criteria_score(paraphrases):
         ppl_score, ppl_ratio = ppl_criteria_score(origin_list=origin_list, paraphrases=paraphrases,
                                                   ppl_metric=ppl_metric, ppl_weight=ppl_weight)
@@ -262,14 +240,7 @@ def joint_weighted_criteria(
     alpha = np.exp((candidate_criteria_score - previous_criteria_score
                     + log_prob_trans_backward - log_prob_trans_forward))
 
-    accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32") * check_ok
-    # accept = np.asarray(candidate_criteria_score > previous_criteria_score)
-
-    # for i in range(len(alpha)):
-    #     if previous_is_incorrect[i] and candidate_is_incorrect[i]:
-    #         e1 = edit_metric.measure_example(origin_list[i], prev_paraphrases[i])
-    #         e2 = edit_metric.measure_example(origin_list[i], candidate_paraphrases[i])
-    #         accept[i] = (e2 < e1)
+    accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
 
     stats["accept"] += np.sum(accept)
     stats["all"] += len(accept)
@@ -400,7 +371,7 @@ class RewriteRollbackStrategy(StrategyBase):
         self._edit_metric = self._metric_bundle.get_metric("EditDistanceMetric")
 
         # load word piece embeddings.
-        wpe = get_wordpiece_emb(self._output_dir, self._dataset_name, trainset, self._device)
+        wpe = get_wordpiece_emb(self._dataset_name, trainset, self._tokenizer, self._device)
         assert wpe.shape[0] == 300
         wpe[:, self._tokenizer.mask_token_id] = 0
         wpe[:, self._tokenizer.sep_token_id] = 0
@@ -441,13 +412,13 @@ class RewriteRollbackStrategy(StrategyBase):
             "accept": 0
         }
 
-    def paraphrase_example(self, data_record, field, n):
-        return self.paraphrase_multiple_examples([data_record] * n, field), 0
+    def paraphrase_example(self, data_record, n):
+        return self.paraphrase_multiple_examples([data_record] * n, self._field), 0
 
-    def paraphrase_multiple_examples(self, data_record_list, field):
-        origin = [item[field] for item in data_record_list]
+    def paraphrase_multiple_examples(self, data_record_list):
+        origin = [item[self._field] for item in data_record_list]
         paraphrases = origin[:]
-        context = None if field == "text0" else [item["text0"] for item in data_record_list]
+        context = None if self._field == "text0" else [item["text0"] for item in data_record_list]
 
         sampling_steps = self._strategy_config["sampling_steps"]
         window_size = self._strategy_config["window_size"]
@@ -481,7 +452,7 @@ class RewriteRollbackStrategy(StrategyBase):
                 masked_part_text.append(self._tokenizer.convert_tokens_to_string(toks[st:ed]))
                 masked_index.append((st, st + len(masked_part)))
 
-            if field == "text1":
+            if self._field == "text1":
                 batch_input = self._tokenizer(
                     context, paraphrases_with_mask, padding=True,
                     return_tensors="pt").to(self._device)
@@ -522,7 +493,7 @@ class RewriteRollbackStrategy(StrategyBase):
                 origin_list=origin, prev_paraphrases=paraphrases,
                 candidate_paraphrases=candidate_paraphrases,
                 data_record_list=data_record_list,
-                field=field,
+                field=self._field,
                 sim_metric=self._sim_metric,
                 sim_threshold=self._strategy_config["sim_threshold"],
                 sim_weight=self._strategy_config["sim_weight"],

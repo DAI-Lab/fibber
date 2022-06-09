@@ -43,7 +43,7 @@ class GPT2PerplexityMetric(MetricBase):
 
     def __init__(self, gpt2_pretrained_model="gpt2-medium", gpt2_gpu_id=-1, **kargs):
         """Initialize GPT2 model."""
-        super(GPT2PerplexityMetric, self).__init__()
+        super(GPT2PerplexityMetric, self).__init__(**kargs)
 
         logger.info("load gpt2 model.")
         self._tokenizer = GPT2TokenizerFast.from_pretrained(
@@ -81,15 +81,13 @@ class GPT2PerplexityMetric(MetricBase):
         ppl = ppl.detach().cpu().numpy()
         return ppl
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None, field="text0",
-                      use_ratio=False):
+    def measure_batch(self, origin, paraphrase_list, data_record=None, use_ratio=False):
         """Measure the metric on a batch of paraphrase_list.
 
         Args:
             origin (str): the original text.
             paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            field (str): the field name to paraphrase.
             use_ratio (bool): returns the perplexity ratio.
 
         Returns:
@@ -103,8 +101,7 @@ class GPT2PerplexityMetric(MetricBase):
         return [float(x) for x in res]
 
     def measure_multiple_examples(self, origin_list, paraphrase_list,
-                                  data_record_list=None, field="text0",
-                                  use_ratio=False):
+                                  data_record_list=None, use_ratio=False):
         assert len(origin_list) == len(paraphrase_list)
         if use_ratio:
             ppls = self._get_ppl(origin_list + paraphrase_list)
@@ -114,15 +111,13 @@ class GPT2PerplexityMetric(MetricBase):
         print(res)
         return [float(x) for x in res]
 
-    def measure_example(self, origin, paraphrase, data_record=None, field="text0",
-                        use_ratio=False):
+    def measure_example(self, origin, paraphrase, data_record=None, use_ratio=False):
         """Compute the perplexity ratio.
 
         Args:
             origin (str): original text.
             paraphrase (str): paraphrased text.
             data_record: ignored.
-            field: ignored.
             use_ratio (bool): returns the perplexity ratio.
 
         """

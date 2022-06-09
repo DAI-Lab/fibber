@@ -16,39 +16,37 @@ class MetricBase(object):
     of paraphrase_list one by one.
     """
 
-    def __init__(self, **kargs):
+    def __init__(self, field, **kargs):
         super(MetricBase, self).__init__()
+        self._field = field
 
     def __repr__(self):
         return self.__class__.__name__
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None, field="text0"):
+    def measure_batch(self, origin, paraphrase_list, data_record=None):
         """Measure the metric on a batch of paraphrase_list.
 
         Args:
             origin (str): the original text.
             paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            field (str): the field name to paraphrase.
 
         Returns:
             (list): a list containing the metric for each paraphrase.
         """
         ret = []
         for paraphrase in paraphrase_list:
-            ret.append(self.measure_example(origin, paraphrase, data_record, field))
+            ret.append(self.measure_example(origin, paraphrase, data_record))
         return ret
 
-    def measure_multiple_examples(self, origin_list, paraphrase_list,
-                                  data_record_list=None, field="text0"):
+    def measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None):
         assert len(origin_list) == len(paraphrase_list)
         ret = []
         for i in range(len(origin_list)):
             ret.append(self.measure_example(
                 origin_list[i], paraphrase_list[i],
-                data_record_list[i] if data_record_list is not None else None,
-                field))
+                data_record_list[i] if data_record_list is not None else None))
         return ret
 
-    def measure_example(self, origin, paraphrase, data_record=None, field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None):
         raise NotImplementedError()

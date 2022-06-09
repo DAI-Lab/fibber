@@ -56,7 +56,7 @@ class Benchmark(object):
                  best_adv_metric_name="USESimilarityMetric",
                  best_adv_metric_lower_better=False,
                  target_classifier="transformer",
-                 transformer_clf_model_init="bert-base"):
+                 transformer_clf_model_init="bert-base-cased"):
         """Initialize Benchmark framework.
 
         Args:
@@ -86,9 +86,8 @@ class Benchmark(object):
             best_adv_metric_lower_better (bool): whether the metric is lower better.
             target_classifier (str): the victim classifier. Choose from ["transformer",
                 "fasttext", "customized"].
-            transformer_clf_model_init (str): the backbone pretrained language model. Choose from
-                [bert-base, bert-large, distilbert-base, distilbert-large, roberta-base,
-                roberta-large]. Do not specify "cased" or "uncased".
+            transformer_clf_model_init (str): the backbone pretrained language model, e.g.,
+                `bert-base-cased`.
         """
         # make output dir
         self._output_dir = output_dir
@@ -120,9 +119,8 @@ class Benchmark(object):
             verify_dataset(trainset)
             verify_dataset(testset)
 
-        model_init = "bert-base-%s" % ("cased" if trainset["cased"] else "uncased")
-        clip_sentence(trainset, model_init, max_len=128)
-        clip_sentence(testset, model_init, max_len=128)
+        clip_sentence(trainset, transformer_clf_model_init, max_len=128)
+        clip_sentence(testset, transformer_clf_model_init, max_len=128)
 
         if attack_set is None:
             attack_set = testset
@@ -240,17 +238,17 @@ class Benchmark(object):
 
 
 def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
-                 output_dir, metric_bundle):
+                 output_dir, metric_bundle, field):
     """Take the strategy name and construct a strategy object."""
     return built_in_paraphrase_strategies[strategy_name](
-        arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle)
+        arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle, field)
 
 
 def get_defense_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
-                         defense_desc, metric_bundle):
+                         defense_desc, metric_bundle, field):
     """Take the strategy name and construct a strategy object."""
     return built_in_defense_strategies[strategy_name](
-        arg_dict, dataset_name, strategy_gpu_id, defense_desc, metric_bundle)
+        arg_dict, dataset_name, strategy_gpu_id, defense_desc, metric_bundle, field)
 
 
 def main():
@@ -258,7 +256,7 @@ def main():
 
     # target clf
     parser.add_argument("--target_classifier", type=str, default="bert")
-    parser.add_argument("--transformer_clf_model_init", type=str, default="bert-base")
+    parser.add_argument("--transformer_clf_model_init", type=str, default="bert-base-cased")
 
     # option on robust defense vs attack
     parser.add_argument("--task", choices=["defense", "attack"], default="attack",

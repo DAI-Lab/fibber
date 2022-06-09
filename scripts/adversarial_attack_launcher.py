@@ -33,14 +33,14 @@ GPU_CONFIG = {
 }
 
 DATASET_CONFIG = {
-    "ag_no_title": {
-        "--dataset": "ag_no_title",
-        "--output_dir": "exp-ag_no_title",
+    "ag_news": {
+        "--dataset": "ag_news",
+        "--output_dir": "exp-ag_news",
         "--transformer_clf_steps": 20000
     },
-    "mr": {
-        "--dataset": "mr",
-        "--output_dir": "exp-mr",
+    "movie_review": {
+        "--dataset": "movie_review",
+        "--output_dir": "exp-movie_review",
         "--transformer_clf_steps": 5000
     },
     "sst2": {
@@ -53,24 +53,24 @@ DATASET_CONFIG = {
         "--output_dir": "exp-trec",
         "--transformer_clf_steps": 5000
     },
-    "hate": {
-        "--dataset": "hate",
-        "--output_dir": "exp-hate",
-        "--transformer_clf_steps": 20000
-    },
-    "fn_short": {
-        "--dataset": "fn_short",
-        "--output_dir": "exp-fn_short",
-        "--transformer_clf_steps": 20000
-    },
-    "fake_review_cg": {
-        "--dataset": "fake_review_cg",
-        "--output_dir": "exp-fake_review_cg",
+    "twitter_toxicity": {
+        "--dataset": "twitter_toxicity",
+        "--output_dir": "exp-twitter_toxicity",
         "--transformer_clf_steps": 20000
     },
     "fake_news": {
         "--dataset": "fake_news",
         "--output_dir": "exp-fake_news",
+        "--transformer_clf_steps": 20000
+    },
+    "fake_news_title": {
+        "--dataset": "fake_news_title",
+        "--output_dir": "exp-fake_news_title",
+        "--transformer_clf_steps": 20000
+    },
+    "fake_review_generated": {
+        "--dataset": "fake_review_generated",
+        "--output_dir": "exp-fake_review_generated",
         "--transformer_clf_steps": 20000
     },
 }
@@ -175,7 +175,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--gpu", choices=list(GPU_CONFIG.keys()), default="gpu")
-    parser.add_argument("--dataset", choices=list(DATASET_CONFIG.keys()), default="mr")
+    parser.add_argument("--dataset", choices=list(DATASET_CONFIG.keys()), default="movie_review")
     parser.add_argument("--strategy", choices=list(STRATEGY_CONFIG.keys()), default="textfooler")
     parser.add_argument("--task", choices=["attack", "defense"], default="attack")
     parser.add_argument("--defense_strategy", choices=list(DEFENSE_CONFIG.keys()), default="none")
@@ -183,10 +183,7 @@ def main():
     parser.add_argument("--subsample_testset", type=int, default=1000)
 
     parser.add_argument("--exp_name", type=str, default=None)
-    parser.add_argument(
-        "--classifier", choices=["fasttext", "bert-base", "roberta-base", "bert-large",
-                                 "roberta-large", "distilbert-base", "distilbert-large"],
-        default="bert-base")
+    parser.add_argument("--classifier", type=str, default="bert-base-cased")
 
     args = parser.parse_args()
 

@@ -69,16 +69,15 @@ class OpenAttackStrategy(StrategyBase):
         return self._strategy_config["recipe"]
 
     def fit(self, trainset):
-        self._victim = MyClassifier(self._metric_bundle.get_target_classifier(),
-                                    trainset["field"])
+        self._victim = MyClassifier(self._metric_bundle.get_target_classifier(), self._field)
         self._attacker = getattr(oa.attackers, self._strategy_config["recipe"])()
 
-    def paraphrase_example(self, data_record, field, n):
+    def paraphrase_example(self, data_record, n):
         """Generate paraphrased sentences."""
         self._victim.set_data_record(data_record)
         self._victim.reset_counter()
 
-        attack_text = data_record[field]
+        attack_text = data_record[self._field]
         attack_eval = oa.AttackEval(self._attacker, self._victim)
         res = next(attack_eval.ieval([{"x": attack_text, "y": data_record["label"]}]))
         return [res["result"]] if res["success"] else [attack_text], self._victim.get_counter()

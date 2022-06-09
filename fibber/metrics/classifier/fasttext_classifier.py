@@ -38,7 +38,7 @@ class FasttextClassifier(ClassifierBase):
 
     def __init__(self, dataset_name, trainset, testset,
                  fasttext_lr=1., fasttext_epoch=25, fasttext_ngram=5, **kargs):
-        super(FasttextClassifier, self).__init__()
+        super(FasttextClassifier, self).__init__(**kargs)
         model_dir = os.path.join(get_root_dir(), "fasttext_clf", dataset_name)
         os.makedirs(model_dir, exist_ok=True)
         model_filename = os.path.join(

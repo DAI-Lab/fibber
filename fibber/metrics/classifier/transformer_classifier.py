@@ -11,7 +11,7 @@ from torch.utils.tensorboard import SummaryWriter
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from fibber import get_root_dir, log, resources
-from fibber.datasets import DatasetForBert
+from fibber.datasets import DatasetForTransformers
 from fibber.metrics.classifier.classifier_base import ClassifierBase
 from fibber.metrics.classifier.shield_classifier import BertClassifierDARTS
 
@@ -143,10 +143,10 @@ def load_or_train_transformer_clf(
     summary = SummaryWriter(os.path.join(model_dir, "summary"))
 
     dataloader = torch.utils.data.DataLoader(
-        DatasetForBert(trainset, model_init, transformer_clf_bs), batch_size=None, num_workers=0)
+        DatasetForTransformers(trainset, model_init, transformer_clf_bs), batch_size=None, num_workers=0)
 
     dataloader_val = torch.utils.data.DataLoader(
-        DatasetForBert(testset, model_init, transformer_clf_bs), batch_size=None, num_workers=0)
+        DatasetForTransformers(testset, model_init, transformer_clf_bs), batch_size=None, num_workers=0)
     dataloader_val_iter = iter(dataloader_val)
 
     params = model.parameters()
@@ -240,21 +240,12 @@ class TransformerClassifier(ClassifierBase):
                  transformer_clf_optimizer="adamw", transformer_clf_weight_decay=0.001,
                  transformer_clf_period_summary=100, transformer_clf_period_val=500,
                  transformer_clf_period_save=20000, transformer_clf_val_steps=10,
-                 transformer_clf_model_init="bert-base", **kargs):
-        super(TransformerClassifier, self).__init__()
-
-        if transformer_clf_model_init in ["distilbert-base", "bert-base", "bert-large"]:
-            if trainset["cased"]:
-                model_init = transformer_clf_model_init + "-cased"
-            else:
-                model_init = transformer_clf_model_init + "-uncased"
-        else:
-            model_init = transformer_clf_model_init
-
-        logger.info("Use %s classifier.", model_init)
+                 transformer_clf_model_init="bert-base-cased", **kargs):
+        super(TransformerClassifier, self).__init__(**kargs)
+        logger.info("Use %s classifier.", transformer_clf_model_init)
 
         self._tokenizer = AutoTokenizer.from_pretrained(
-            resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
+            resources.get_transformers(transformer_clf_model_init))
 
         if transformer_clf_gpu_id == -1:
             logger.warning("Transformer clf metric is running on CPU.")
@@ -263,10 +254,10 @@ class TransformerClassifier(ClassifierBase):
             logger.info("Transformer clf metric is running on GPU %d.", transformer_clf_gpu_id)
             self._device = torch.device("cuda:%d" % transformer_clf_gpu_id)
 
-        self._model_init = model_init
+        self._model_init = transformer_clf_model_init
         self._dataset_name = dataset_name
         self._model = load_or_train_transformer_clf(
-            model_init=model_init,
+            model_init=transformer_clf_model_init,
             dataset_name=dataset_name,
             trainset=trainset,
             testset=testset,

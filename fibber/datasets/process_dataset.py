@@ -36,8 +36,8 @@ dataset_configs = {
     "mnli_matched": DatasetConfig(dataset="glue", subset="mnli",
                                   splits={"train": "train", "test": "validation_matched"},
                                   text0="premise", text1="hypothesis", label="label"),
-    "mnli_mismatched": DatasetConfig(dataset="glue", subset="mnli_mismatched",
-                                     splits={"train": "train", "test": "validation_matched"},
+    "mnli_mismatched": DatasetConfig(dataset="glue", subset="mnli",
+                                     splits={"train": "train", "test": "validation_mismatched"},
                                      text0="premise", text1="hypothesis", label="label"),
 }
 

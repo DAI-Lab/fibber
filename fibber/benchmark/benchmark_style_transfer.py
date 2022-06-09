@@ -83,7 +83,7 @@ class Benchmark(object):
             verify_dataset(trainset)
             verify_dataset(testset)
 
-        model_init = "bert-base-%s" % ("cased" if trainset["cased"] else "uncased")
+        model_init = "bert-base-cased"
         clip_sentence(trainset, model_init, max_len=128)
         clip_sentence(testset, model_init, max_len=128)
 
