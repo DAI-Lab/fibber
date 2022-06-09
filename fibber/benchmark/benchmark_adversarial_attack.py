@@ -313,12 +313,13 @@ def main():
     # Get paraphrase strategy
     paraphrase_strategy = get_strategy(arg_dict, arg_dict["dataset"], arg_dict["strategy"],
                                        arg_dict["strategy_gpu_id"], arg_dict["output_dir"],
-                                       benchmark.get_metric_bundle())
+                                       benchmark.get_metric_bundle(), field=arg_dict["field"])
 
     if arg_dict["defense_strategy"] != "none":
         defense_strategy = get_defense_strategy(
             arg_dict, arg_dict["dataset"], arg_dict["defense_strategy"],
-            arg_dict["strategy_gpu_id"], arg_dict["defense_desc"], benchmark.get_metric_bundle())
+            arg_dict["strategy_gpu_id"], arg_dict["defense_desc"], benchmark.get_metric_bundle(),
+            field=arg_dict["field"])
     else:
         defense_strategy = None
 

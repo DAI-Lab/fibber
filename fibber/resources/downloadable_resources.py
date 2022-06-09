@@ -76,6 +76,20 @@ downloadable_resource_urls = {
         "untar": True,
         "unzip": False,
     },
+    "roberta-base": {
+        "filename": "roberta-base.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/roberta-base.tgz",
+        "md5": "40eb7497c8c4f56c1eee82d5b5cdaf21",
+        "untar": True,
+        "unzip": False,
+    },
+    "roberta-large": {
+        "filename": "roberta-large.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/roberta-large.tgz",
+        "md5": "11667313ecde0f00d86d40912a29edc2",
+        "untar": True,
+        "unzip": False,
+    },
     "gpt2-medium": {
         "filename": "gpt2-medium.tgz",
         "url": "https://fibber-data.s3.amazonaws.com/gpt2-medium.tgz",

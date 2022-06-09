@@ -330,7 +330,7 @@ class SSRSStrategy(StrategyBase):
                 origin_list=origin, prev_paraphrases=paraphrases,
                 candidate_paraphrases=candidate_paraphrases,
                 data_record_list=data_record_list,
-                field=field,
+                field=self._field,
                 sim_metric=self._sim_metric,
                 sim_threshold=self._strategy_config["sim_threshold"],
                 sim_weight=self._strategy_config["sim_weight"],

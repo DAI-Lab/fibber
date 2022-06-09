@@ -61,9 +61,12 @@ class OpenAttackStrategy(StrategyBase):
         ("recipe", str, "PSOAttacker", "an attacking recipe implemented in OpenAttack."),
     ]
 
-    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle):
-        super(OpenAttackStrategy, self).__init__(arg_dict, dataset_name, strategy_gpu_id,
-                                                 output_dir, metric_bundle)
+    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle, field):
+        if "oa" not in sys.modules:
+            logger.error("OpenAttack not installed. Please install OpenAttack manually.")
+            raise RuntimeError
+        super(OpenAttackStrategy, self).__init__(
+            arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle, field)
 
     def __repr__(self):
         return self._strategy_config["recipe"]

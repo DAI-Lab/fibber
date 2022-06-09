@@ -85,7 +85,7 @@ class Fibber(object):
             * a list of str as paraphrased sentences.
             * a list of dict as corresponding metrics.
         """
-        paraphrases, _ = self._strategy.paraphrase_example(data_record, field, n)
+        paraphrases, _ = self._strategy.paraphrase_example(data_record, n)
         metrics = []
         for item in paraphrases:
             metrics.append(self._metric_bundle.measure_example(

@@ -94,12 +94,12 @@ class TextAttackStrategy(StrategyBase):
         ("time_limit", float, 60, "time limit for each attack.")
     ]
 
-    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle):
+    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle, field):
         if "textattack" not in sys.modules:
             logger.error("TextAttack not installed. Please install textattack manually.")
             raise RuntimeError
-        super(TextAttackStrategy, self).__init__(arg_dict, dataset_name, strategy_gpu_id,
-                                                 output_dir, metric_bundle)
+        super(TextAttackStrategy, self).__init__(
+            arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle, field)
 
     def __repr__(self):
         return self._strategy_config["recipe"]

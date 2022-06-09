@@ -143,10 +143,12 @@ def load_or_train_transformer_clf(
     summary = SummaryWriter(os.path.join(model_dir, "summary"))
 
     dataloader = torch.utils.data.DataLoader(
-        DatasetForTransformers(trainset, model_init, transformer_clf_bs), batch_size=None, num_workers=0)
+        DatasetForTransformers(trainset, model_init, transformer_clf_bs), batch_size=None,
+        num_workers=0)
 
     dataloader_val = torch.utils.data.DataLoader(
-        DatasetForTransformers(testset, model_init, transformer_clf_bs), batch_size=None, num_workers=0)
+        DatasetForTransformers(testset, model_init, transformer_clf_bs), batch_size=None,
+        num_workers=0)
     dataloader_val_iter = iter(dataloader_val)
 
     params = model.parameters()

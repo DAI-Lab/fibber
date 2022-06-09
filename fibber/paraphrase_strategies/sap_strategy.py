@@ -69,7 +69,7 @@ class SapStrategy(StrategyBase):
     def paraphrase_example(self, data_record, n):
         if self._clf_metric.predict_example(
                 data_record["text0"], data_record["text0"]) != data_record["label"]:
-            return [data_record[field]], 0
+            return [data_record[self._field]], 0
 
         mis_clf_sents = []
         all_sents = []
@@ -99,4 +99,4 @@ class SapStrategy(StrategyBase):
             idx = np.argmin(score)
             return [mis_clf_sents[idx]], counter
         else:
-            return [data_record[field]], counter
+            return [data_record[self._field]], counter
