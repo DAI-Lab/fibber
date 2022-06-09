@@ -50,7 +50,7 @@ class NaiveDefenseStrategy(DefenseStrategyBase):
         classifier = metric_bundle.get_target_classifier()
         classifier.robust_tune_init("adamw", 0.00002, 0.001, tuning_steps * num_updates_per_step)
 
-        paraphrase_field = train_set["paraphrase_field"]
+        field = train_set["field"]
 
         pbar = tqdm.tqdm(total=tuning_steps)
 
@@ -66,29 +66,29 @@ class NaiveDefenseStrategy(DefenseStrategyBase):
             #     data_record_t = self._rng.choice(train_set["data"])
             #     paraphrase_list, _ = paraphrase_strategy.paraphrase_example(
             #         data_record_t,
-            #         paraphrase_field,
+            #         field,
             #         max_paraphrases)
             #
             #     if i == 0:
             #         logger.info(paraphrase_list[0])
             #
             #     predict_label_list = classifier.measure_batch(
-            #         data_record_t[paraphrase_field], paraphrase_list, data_record_t,
-            #         paraphrase_field)
+            #         data_record_t[field], paraphrase_list, data_record_t,
+            #         field)
             #
             #     for (paraphrase, predict_label) in zip(paraphrase_list, predict_label_list):
             #         if predict_label != data_record_t["label"]:
             #             data_record_new = copy.deepcopy(data_record_t)
-            #             data_record_new[paraphrase_field] = paraphrase
+            #             data_record_new[field] = paraphrase
             #             data_pool_2.append(data_record_new)
             #     data_pool_1.append(data_record_t)
             data_pool_1 = list(
                 self._rng.choice(train_set["data"], num_sentences_to_rewrite_per_step))
             paraphrases = paraphrase_strategy.paraphrase_multiple_examples(
-                data_pool_1, paraphrase_field)
+                data_pool_1, field)
             data_pool_2 = [item.copy() for item in data_pool_1]
             for idx in range(num_sentences_to_rewrite_per_step):
-                data_pool_2[idx][paraphrase_field] = paraphrases[idx]
+                data_pool_2[idx][field] = paraphrases[idx]
 
             correct_cnt = 0
             tot_cnt = 0

@@ -72,7 +72,7 @@ class BertPerplexityMetric(MetricBase):
 
         return ppl
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0",
+    def measure_batch(self, origin, paraphrase_list, data_record=None, field="text0",
                       use_ratio=False):
         """Measure the metric on a batch of paraphrase_list.
 
@@ -80,7 +80,7 @@ class BertPerplexityMetric(MetricBase):
             origin (str): the original text.
             paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            paraphrase_field (str): the field name to paraphrase.
+            field (str): the field name to paraphrase.
             use_ratio (bool): whether to return ppl ratio.
         Returns:
             (list): a list containing the USE similarity metric for each paraphrase.
@@ -93,7 +93,7 @@ class BertPerplexityMetric(MetricBase):
         return [float(x) for x in res]
 
     def measure_multiple_examples(self, origin_list, paraphrase_list,
-                                  data_record_list=None, paraphrase_field="text0",
+                                  data_record_list=None, field="text0",
                                   use_ratio=False):
         assert len(origin_list) == len(paraphrase_list)
         if use_ratio:
@@ -103,7 +103,7 @@ class BertPerplexityMetric(MetricBase):
             res = self._get_ppl(paraphrase_list)
         return [float(x) for x in res]
 
-    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0",
+    def measure_example(self, origin, paraphrase, data_record=None, field="text0",
                         use_ratio=False):
         """Compute the perplexity ratio.
 
@@ -111,10 +111,10 @@ class BertPerplexityMetric(MetricBase):
             origin (str): original text.
             paraphrase (str): paraphrased text.
             data_record: ignored.
-            paraphrase_field: ignored.
+            field: ignored.
             use_ratio (bool): whether to return ppl ratio.
         """
-        return self.measure_batch(origin, [paraphrase], data_record, paraphrase_field,
+        return self.measure_batch(origin, [paraphrase], data_record, field,
                                   use_ratio=use_ratio)[0]
 
     def _filter(self, sentence, bar):

@@ -9,8 +9,8 @@ class RemoveStrategy(StrategyBase):
         self._clf = self._metric_bundle.get_target_classifier()
         self._tokenizer = self._metric_bundle.get_target_classifier()._tokenizer
 
-    def paraphrase_example(self, data_record, field_name, n):
-        text = data_record[field_name]
+    def paraphrase_example(self, data_record, field, n):
+        text = data_record[field]
         tokens = self._tokenizer.tokenize(text)
 
         for i in range(len(tokens)):

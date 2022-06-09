@@ -103,7 +103,7 @@ class FudgeStrategy(StrategyBase):
         return -np.maximum(correct_prob - incorrect_prob, 0) - 10 * \
             np.maximum(0.95 - np.asarray(sim), 0) ** 2
 
-    def paraphrase_example(self, data_record, field_name, n):
+    def paraphrase_example(self, data_record, field, n):
         tmp, _ = make_input_output_pair(
             self._tokenizer,
             "<|endoftext|> " + data_record["text0"] + " <|endoftext|> " + data_record["text0"])

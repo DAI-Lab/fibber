@@ -17,14 +17,14 @@ class RefBleuMetric(MetricBase):
         """Initialize ce model."""
         super(RefBleuMetric, self).__init__()
 
-    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, field="text0"):
         """Compute the 4 gram self bleu
 
         Args:
             origin (str): original text.
             paraphrase (str): paraphrased text.
             data_record: ignored.
-            paraphrase_field: ignored.
+            field: ignored.
         """
         try:
             ref = data_record["ref"]

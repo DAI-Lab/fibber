@@ -66,10 +66,10 @@ class SapStrategy(StrategyBase):
 
         self._adversarial_word_candidates = sac_result[:50]
 
-    def paraphrase_example(self, data_record, field_name, n):
+    def paraphrase_example(self, data_record, field, n):
         if self._clf_metric.predict_example(
                 data_record["text0"], data_record["text0"]) != data_record["label"]:
-            return [data_record[field_name]], 0
+            return [data_record[field]], 0
 
         mis_clf_sents = []
         all_sents = []
@@ -99,4 +99,4 @@ class SapStrategy(StrategyBase):
             idx = np.argmin(score)
             return [mis_clf_sents[idx]], counter
         else:
-            return [data_record[field_name]], counter
+            return [data_record[field]], counter

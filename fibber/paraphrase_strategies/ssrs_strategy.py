@@ -86,13 +86,13 @@ def bleu_criteria_score(origin_list, paraphrases, bleu_metric, bleu_weight, bleu
     return -bleu_weight * np.maximum(bleu_threshold - np.asarray(bleu_score), 0), bleu_score
 
 
-def clf_criteria_score(origin_list, paraphrases, data_record_list, field_name, clf_metric,
+def clf_criteria_score(origin_list, paraphrases, data_record_list, field, clf_metric,
                        clf_weight):
     if clf_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
 
     dist_list = clf_metric.predict_log_dist_multiple_examples(origin_list, paraphrases,
-                                                              data_record_list, field_name)
+                                                              data_record_list, field)
     dist_list = np.exp(dist_list)
 
     scores = []
@@ -114,7 +114,7 @@ def clf_criteria_score(origin_list, paraphrases, data_record_list, field_name, c
 
 def joint_weighted_criteria(
         origin_list, prev_paraphrases, candidate_paraphrases,
-        data_record_list, field_name, sim_metric, sim_threshold, sim_weight,
+        data_record_list, field, sim_metric, sim_threshold, sim_weight,
         clf_metric, clf_weight, ppl_metric, ppl_weight, stats, state,
         log_prob_trans_forward, log_prob_trans_backward,
         bleu_metric, bleu_weight, bleu_threshold, **kargs):
@@ -128,7 +128,7 @@ def joint_weighted_criteria(
         clf_score, is_incorrect = clf_criteria_score(origin_list=origin_list,
                                                      paraphrases=paraphrases,
                                                      data_record_list=data_record_list,
-                                                     field_name=field_name, clf_metric=clf_metric,
+                                                     field=field, clf_metric=clf_metric,
                                                      clf_weight=clf_weight)
         bleu_score, bleu_value = bleu_criteria_score(origin_list=origin_list,
                                                      paraphrases=paraphrases,
@@ -264,15 +264,15 @@ class SSRSStrategy(StrategyBase):
             "accept": 0
         }
 
-    def paraphrase_example(self, data_record, field_name, n):
-        return self.paraphrase_multiple_examples([data_record] * n, field_name), 0
+    def paraphrase_example(self, data_record, field, n):
+        return self.paraphrase_multiple_examples([data_record] * n, field), 0
 
-    def paraphrase_multiple_examples(self, data_record_list, field_name):
+    def paraphrase_multiple_examples(self, data_record_list, field):
         bert_lm = self._bert_lms[data_record_list[0]["label"]].to(self._device)
 
-        origin = [item[field_name] for item in data_record_list]
+        origin = [item[field] for item in data_record_list]
         paraphrases = origin[:]
-        context = None if field_name == "text0" else [item["text0"] for item in data_record_list]
+        context = None if field == "text0" else [item["text0"] for item in data_record_list]
 
         sampling_steps = self._strategy_config["sampling_steps"]
         window_size = self._strategy_config["window_size"]
@@ -298,7 +298,7 @@ class SSRSStrategy(StrategyBase):
                     self._tokenizer.convert_tokens_to_string(
                         toks[:st] + masked_part + toks[ed:]))
 
-            if field_name == "text1":
+            if field == "text1":
                 batch_input = self._tokenizer(
                     context, paraphrases_with_mask, padding=True,
                     return_tensors="pt").to(self._device)
@@ -330,7 +330,7 @@ class SSRSStrategy(StrategyBase):
                 origin_list=origin, prev_paraphrases=paraphrases,
                 candidate_paraphrases=candidate_paraphrases,
                 data_record_list=data_record_list,
-                field_name=field_name,
+                field=field,
                 sim_metric=self._sim_metric,
                 sim_threshold=self._strategy_config["sim_threshold"],
                 sim_weight=self._strategy_config["sim_weight"],

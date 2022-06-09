@@ -64,14 +64,14 @@ class FasttextClassifier(ClassifierBase):
             self._n_class = len(trainset["label_mapping"])
 
     def predict_log_dist_example(self, origin, paraphrase,
-                                 data_record=None, paraphrase_field="text0"):
+                                 data_record=None, field="text0"):
         """Predict the log-probability distribution over classes for one example.
 
         Args:
             origin (str): the original text.
             paraphrase (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            paraphrase_field (str): the field name to paraphrase.
+            field (str): the field name to paraphrase.
 
         Returns:
             (np.array): a numpy array of size ``(num_labels)``.

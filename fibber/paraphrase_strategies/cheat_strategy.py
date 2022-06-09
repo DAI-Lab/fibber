@@ -6,5 +6,5 @@ class CheatStrategy(StrategyBase):
 
     __abbr__ = "cheat"
 
-    def paraphrase_example(self, data_record, field_name, n):
+    def paraphrase_example(self, data_record, field, n):
         return [data_record["ref"]]

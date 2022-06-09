@@ -133,12 +133,12 @@ def ppl_criteria_score(origin, paraphrases, ppl_metric, ppl_weight):
             ppl_ratio)
 
 
-def clf_criteria_score(origin, paraphrases, data_record, field_name, clf_metric, clf_weight):
+def clf_criteria_score(origin, paraphrases, data_record, field, clf_metric, clf_weight):
     global asrs_clf_counter
     if clf_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
 
-    dist = clf_metric.predict_log_dist_batch(origin, paraphrases, data_record, field_name)
+    dist = clf_metric.predict_log_dist_batch(origin, paraphrases, data_record, field)
     label = data_record["label"]
     correct_prob = (dist[:, label]).copy()
     dist[:, label] = -1e8
@@ -149,7 +149,7 @@ def clf_criteria_score(origin, paraphrases, data_record, field_name, clf_metric,
 
 
 def joint_weighted_criteria(
-        tokenizer, data_record, field_name, origin, batch_tensor,
+        tokenizer, data_record, field, origin, batch_tensor,
         pos_st, pos_ed, previous_ids, candidate_ids, sim_metric, sim_threshold, sim_weight,
         clf_metric, clf_weight, ppl_metric, ppl_weight, burnin_weight, stats, state,
         device, seq_len, log_prob_previous_ids, log_prob_candidate_ids, **kargs):
@@ -158,8 +158,8 @@ def joint_weighted_criteria(
     Args:
         tokenizer (transformers.BertTokenizer): a bert tokenizer.
         data_record (dict): the data record dict.
-        field_name (str): the field to rewritten.
-        origin (str): original text. Same as ``data_record[field_name]``.
+        field (str): the field to rewritten.
+        origin (str): original text. Same as ``data_record[field]``.
         batch_tensor (torch.Tensor): tensor of a batch of text with size ``(batch_size, L)``.
         pos_st (int): the start position of sampling (include).
         pos_ed (int): the end position of sampling (exclude).
@@ -199,7 +199,7 @@ def joint_weighted_criteria(
             sim_weight=sim_weight, sim_threshold=sim_threshold)
         clf_score, is_incorrect = clf_criteria_score(
             origin=origin, paraphrases=paraphrases, data_record=data_record,
-            field_name=field_name, clf_metric=clf_metric, clf_weight=clf_weight)
+            field=field, clf_metric=clf_metric, clf_weight=clf_weight)
         return ppl_score + sim_score + clf_score, is_incorrect
 
     if state is not None:
@@ -332,7 +332,7 @@ class ASRSStrategy(StrategyBase):
         }
 
     def _parallel_sequential_generation(
-            self, original_text, seed, batch_size, burnin_steps, sampling_steps, field_name,
+            self, original_text, seed, batch_size, burnin_steps, sampling_steps, field,
             data_record, early_stop=False):
         if self._strategy_config["seed_option"] == "origin":
             seq = ["[CLS]"] + self._tokenizer.tokenize(seed) + ["[SEP]"]
@@ -377,7 +377,7 @@ class ASRSStrategy(StrategyBase):
             attention_mask[rid, :ll] = 1
             attention_mask_paraphrase_text_only[rid, 1:ll - 1] = 1
 
-        if field_name == "text1":
+        if field == "text1":
             context_seq = ["[CLS]"] + self._tokenizer.tokenize(data_record["text0"])
             context_tensor = torch.tensor(
                 [self._tokenizer.convert_tokens_to_ids(context_seq)] * batch_size
@@ -410,7 +410,7 @@ class ASRSStrategy(StrategyBase):
                 * attention_mask_paraphrase_text_only[:, pos_st:pos_ed]
                 + previous_ids * (1 - attention_mask_paraphrase_text_only[:, pos_st:pos_ed]))
 
-            if field_name == "text1":
+            if field == "text1":
                 batch_tensor_tmp = torch.cat([context_tensor, batch_tensor], dim=1)
                 tok_type_tensor_tmp = torch.cat([
                     torch.zeros_like(context_tensor),
@@ -494,8 +494,8 @@ class ASRSStrategy(StrategyBase):
                 decision_fn_burnin_weight = 1
 
             final_ids, decision_fn_state = self._decision_fn(
-                tokenizer=self._tokenizer, data_record=data_record, field_name=field_name,
-                origin=data_record[field_name], batch_tensor=batch_tensor,
+                tokenizer=self._tokenizer, data_record=data_record, field=field,
+                origin=data_record[field], batch_tensor=batch_tensor,
                 pos_st=pos_st, pos_ed=pos_ed, previous_ids=previous_ids,
                 candidate_ids=candidate_ids, sim_metric=self._sim_metric,
                 sim_threshold=self._strategy_config["sim_threshold"],
@@ -515,7 +515,7 @@ class ASRSStrategy(StrategyBase):
         return [tostring(self._tokenizer, x[1:ll - 1])
                 for x, ll in zip(batch_tensor.detach().cpu().numpy(), seq_len)]
 
-    def paraphrase_example(self, data_record, field_name, n, early_stop=False):
+    def paraphrase_example(self, data_record, field, n, early_stop=False):
         global asrs_clf_counter
         asrs_clf_counter = 0
 
@@ -523,7 +523,7 @@ class ASRSStrategy(StrategyBase):
             self._bert_lm = self._bert_lms[data_record["label"]]
             self._bert_lm.to(self._device)
 
-        clipped_text = data_record[field_name]
+        clipped_text = data_record[field]
         clipped_text = process_text(clipped_text, PRE_PROCESSING_PATTERN)
         batch_size = self._strategy_config["batch_size"]
 
@@ -543,7 +543,7 @@ class ASRSStrategy(StrategyBase):
                 batch_size if id != n_batches - 1 else last_batch_size,
                 burnin_steps,
                 sampling_steps,
-                field_name, data_record,
+                field, data_record,
                 early_stop=early_stop)
             sentences += batch
 

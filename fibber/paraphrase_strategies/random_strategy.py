@@ -8,8 +8,8 @@ class RandomStrategy(StrategyBase):
 
     __abbr__ = "rand"
 
-    def paraphrase_example(self, data_record, field_name, n):
-        text = data_record[field_name]
+    def paraphrase_example(self, data_record, field, n):
+        text = data_record[field]
         tokens = text.split()
         ret = []
         for i in range(n):

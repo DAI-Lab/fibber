@@ -68,14 +68,14 @@ class GloVeSimilarityMetric(MetricBase):
             if word in self._glove["tok2id"]:
                 self._glove["emb_table"][self._glove["tok2id"][word], :] = 0
 
-    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, field="text0"):
         """Compute the Glove cosine similarity between two sentences.
 
         Args:
             origin (str): original text.
             paraphrase (str): paraphrased text.
             data_record: ignored.
-            paraphrase_field: ignored.
+            field: ignored.
         """
         return float(compute_emb_sim(self._glove["emb_table"], self._glove["tok2id"],
                                      origin, paraphrase))

@@ -12,23 +12,23 @@ class InputManipulationClassifier(ClassifierBase):
         return self._name
 
     def predict_log_dist_example(self, origin, paraphrase, data_record=None,
-                                 paraphrase_field="text0"):
+                                 field="text0"):
         paraphrase = self._input_manipulation(
             [paraphrase], [data_record] if data_record is not None else None)[0]
         return self._classifier.predict_log_dist_example(
-            origin, paraphrase, data_record, paraphrase_field)
+            origin, paraphrase, data_record, field)
 
     def predict_log_dist_batch(self, origin, paraphrase_list, data_record=None,
-                               paraphrase_field="text0"):
+                               field="text0"):
         paraphrase_list = self._input_manipulation(
             paraphrase_list,
             [data_record] * len(paraphrase_list) if data_record is not None else None)
         return self._classifier.predict_log_dist_batch(
-            origin, paraphrase_list, data_record, paraphrase_field)
+            origin, paraphrase_list, data_record, field)
 
     def predict_log_dist_multiple_examples(self, origin_list, paraphrase_list,
-                                           data_record_list=None, paraphrase_field="text0"):
+                                           data_record_list=None, field="text0"):
         paraphrase_list = self._input_manipulation(
             paraphrase_list, data_record_list if data_record_list is not None else None)
         return self._classifier.predict_log_dist_multiple_examples(
-            origin_list, paraphrase_list, data_record_list, paraphrase_field)
+            origin_list, paraphrase_list, data_record_list, field)

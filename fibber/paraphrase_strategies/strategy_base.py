@@ -114,7 +114,7 @@ class StrategyBase(object):
         """
         logger.info("Training is needed for this strategy. Did nothing.")
 
-    def paraphrase_example(self, data_record, field_name, n):
+    def paraphrase_example(self, data_record, field, n):
         """Paraphrase one data record.
 
         This function should be overwritten by subclasses. When overwriting this class, you can
@@ -123,7 +123,7 @@ class StrategyBase(object):
 
         Args:
             data_record (dict): a dict storing one data of a dataset.
-            field_name (str): the field needed to be paraphrased.
+            field (str): the field needed to be paraphrased.
             n (int): number of paraphrases.
 
         Returns:
@@ -152,9 +152,9 @@ class StrategyBase(object):
             data_record = copy.deepcopy(data_record)
             paraphrases, clf_count = (
                 self.paraphrase_example(
-                    data_record, paraphrase_set["paraphrase_field"], n)[:n])
+                    data_record, paraphrase_set["field"], n)[:n])
 
-            data_record[paraphrase_set["paraphrase_field"] + "_paraphrases"] = paraphrases
+            data_record[paraphrase_set["field"] + "_paraphrases"] = paraphrases
             data_record["clf_count"] = clf_count
 
             results["data"].append(data_record)

@@ -81,7 +81,7 @@ class GPT2PerplexityMetric(MetricBase):
         ppl = ppl.detach().cpu().numpy()
         return ppl
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0",
+    def measure_batch(self, origin, paraphrase_list, data_record=None, field="text0",
                       use_ratio=False):
         """Measure the metric on a batch of paraphrase_list.
 
@@ -89,7 +89,7 @@ class GPT2PerplexityMetric(MetricBase):
             origin (str): the original text.
             paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            paraphrase_field (str): the field name to paraphrase.
+            field (str): the field name to paraphrase.
             use_ratio (bool): returns the perplexity ratio.
 
         Returns:
@@ -103,7 +103,7 @@ class GPT2PerplexityMetric(MetricBase):
         return [float(x) for x in res]
 
     def measure_multiple_examples(self, origin_list, paraphrase_list,
-                                  data_record_list=None, paraphrase_field="text0",
+                                  data_record_list=None, field="text0",
                                   use_ratio=False):
         assert len(origin_list) == len(paraphrase_list)
         if use_ratio:
@@ -114,7 +114,7 @@ class GPT2PerplexityMetric(MetricBase):
         print(res)
         return [float(x) for x in res]
 
-    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0",
+    def measure_example(self, origin, paraphrase, data_record=None, field="text0",
                         use_ratio=False):
         """Compute the perplexity ratio.
 
@@ -122,7 +122,7 @@ class GPT2PerplexityMetric(MetricBase):
             origin (str): original text.
             paraphrase (str): paraphrased text.
             data_record: ignored.
-            paraphrase_field: ignored.
+            field: ignored.
             use_ratio (bool): returns the perplexity ratio.
 
         """

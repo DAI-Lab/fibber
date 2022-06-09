@@ -72,24 +72,24 @@ class Fibber(object):
         self._trainset = trainset
         self._testset = testset
 
-    def paraphrase(self, data_record, field_name="text0", n=20):
+    def paraphrase(self, data_record, field="text0", n=20):
         """Paraphrase a given data record.
 
         Args:
             data_record (dict): data record to be paraphrased.
-            field_name (str): select from ``["text0", "text1"]``
+            field (str): select from ``["text0", "text1"]``
             n (int): number of paraphrases.
 
         Returns:
             * a list of str as paraphrased sentences.
             * a list of dict as corresponding metrics.
         """
-        paraphrases, _ = self._strategy.paraphrase_example(data_record, field_name, n)
+        paraphrases, _ = self._strategy.paraphrase_example(data_record, field, n)
         metrics = []
         for item in paraphrases:
             metrics.append(self._metric_bundle.measure_example(
-                data_record[field_name], item, data_record, field_name))
-        return data_record[field_name], paraphrases, metrics
+                data_record[field], item, data_record, field))
+        return data_record[field], paraphrases, metrics
 
     def paraphrase_a_random_sentence(self, n=20, from_testset=True):
         """Randomly pick one data, then paraphrase it.
@@ -104,11 +104,11 @@ class Fibber(object):
             * a list of dict as corresponding metrics.
         """
         dataset = self._testset if from_testset else self._trainset
-        field = dataset["paraphrase_field"]
+        field = dataset["field"]
 
         data_record = np.random.choice(dataset["data"])
 
-        _, paraphrases, metrics = self.paraphrase(data_record, field_name=field, n=n)
+        _, paraphrases, metrics = self.paraphrase(data_record, field=field, n=n)
 
         return data_record[field], paraphrases, metrics
 

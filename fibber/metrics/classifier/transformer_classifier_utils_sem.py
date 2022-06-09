@@ -39,7 +39,7 @@ def load_or_build_sem_wordmap(dataset_name, trainset, device, kk=10, delta=0.5):
     freq = Counter(emb["id2tok"])
 
     for item in trainset["data"]:
-        freq.update(word_tokenize(item[trainset["paraphrase_field"]].lower()))
+        freq.update(word_tokenize(item[trainset["field"]].lower()))
     word_by_freq = sorted(list(freq.items()), key=lambda x: -x[1])
     word_by_freq = [item for item in word_by_freq if item[0] in emb["tok2id"]]
     word_map = dict([(item[0], None) for item in word_by_freq])
@@ -105,7 +105,7 @@ def sem_fix_sentences(sentences, word_map):
 def sem_transform_dataset(dataset, word_map, deepcopy=True):
     if deepcopy:
         dataset = copy.deepcopy(dataset)
-    field_name = dataset["paraphrase_field"]
+    field = dataset["field"]
     for item in dataset["data"]:
-        item[field_name] = sem_fix_sentences([item[field_name]], word_map)[0]
+        item[field] = sem_fix_sentences([item[field]], word_map)[0]
     return dataset

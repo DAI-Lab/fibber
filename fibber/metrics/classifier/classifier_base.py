@@ -20,14 +20,14 @@ class ClassifierBase(MetricBase):
     """
 
     def predict_log_dist_example(self, origin, paraphrase, data_record=None,
-                                 paraphrase_field="text0"):
+                                 field="text0"):
         """Predict the log-probability distribution over classes for one example.
 
         Args:
             origin (str): the original text.
             paraphrase (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            paraphrase_field (str): the field name to paraphrase.
+            field (str): the field name to paraphrase.
 
         Returns:
             (np.array): a numpy array of size ``(num_labels)``.
@@ -35,14 +35,14 @@ class ClassifierBase(MetricBase):
         raise NotImplementedError
 
     def predict_log_dist_batch(self, origin, paraphrase_list, data_record=None,
-                               paraphrase_field="text0"):
+                               field="text0"):
         """Predict the log-probability distribution over classes for one batch.
 
         Args:
             origin (str): the original text.
             paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            paraphrase_field (str): the field name to paraphrase.
+            field (str): the field name to paraphrase.
 
         Returns:
             (np.array): a numpy array of size ``(batch_size * num_labels)``.
@@ -50,58 +50,58 @@ class ClassifierBase(MetricBase):
         ret = []
         for paraphrase in paraphrase_list:
             ret.append(
-                self.predict_log_dist_example(origin, paraphrase, data_record, paraphrase_field))
+                self.predict_log_dist_example(origin, paraphrase, data_record, field))
         return np.asarray(ret)
 
     def predict_log_dist_multiple_examples(self, origin_list, paraphrase_list,
-                                           data_record_list=None, paraphrase_field="text0"):
+                                           data_record_list=None, field="text0"):
         ret = []
         for i in range(len(paraphrase_list)):
             ret.append(
                 self.predict_log_dist_example(
                     None if origin_list is None else origin_list[i], paraphrase_list[i],
                     data_record_list[i] if data_record_list is not None else None,
-                    paraphrase_field))
+                    field))
         return np.asarray(ret)
 
-    def predict_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def predict_example(self, origin, paraphrase, data_record=None, field="text0"):
         """Predict class label for one example.
 
         Args:
             origin (str): the original text.
             paraphrase (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            paraphrase_field (str): the field name to paraphrase.
+            field (str): the field name to paraphrase.
 
         Returns:
             (np.int): predicted label
         """
         return np.argmax(
-            self.predict_log_dist_example(origin, paraphrase, data_record, paraphrase_field))
+            self.predict_log_dist_example(origin, paraphrase, data_record, field))
 
-    def predict_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0"):
+    def predict_batch(self, origin, paraphrase_list, data_record=None, field="text0"):
         """Predict class label for one example.
 
         Args:
             origin (str): the original text.
             paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            paraphrase_field (str): the field name to paraphrase.
+            field (str): the field name to paraphrase.
 
         Returns:
             (np.array): predicted label as an numpy array of size ``(batch_size)``.
         """
         return np.argmax(
-            self.predict_log_dist_batch(origin, paraphrase_list, data_record, paraphrase_field),
+            self.predict_log_dist_batch(origin, paraphrase_list, data_record, field),
             axis=1)
 
     def predict_multiple_examples(self, origin_list, paraphrase_list,
-                                  data_record_list=None, paraphrase_field="text0"):
+                                  data_record_list=None, field="text0"):
         return np.argmax(
             self.predict_log_dist_multiple_examples(origin_list, paraphrase_list,
-                                                    data_record_list, paraphrase_field), axis=1)
+                                                    data_record_list, field), axis=1)
 
-    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, field="text0"):
         """Predict class label for one example.
 
         Wrapper for ``predict_example``. Return type is changed from numpy.int to int.
@@ -110,14 +110,14 @@ class ClassifierBase(MetricBase):
             origin (str): the original text.
             paraphrase (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            paraphrase_field (str): the field name to paraphrase.
+            field (str): the field name to paraphrase.
 
         Returns:
             (int): predicted label
         """
-        return int(self.predict_example(origin, paraphrase, data_record, paraphrase_field))
+        return int(self.predict_example(origin, paraphrase, data_record, field))
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0"):
+    def measure_batch(self, origin, paraphrase_list, data_record=None, field="text0"):
         """Predict class label for one batch.
 
          Wrapper for ``predict_batch``. Return type is changed from numpy.array to list of int.
@@ -126,18 +126,18 @@ class ClassifierBase(MetricBase):
              origin (str): the original text.
              paraphrase_list (list): a set of paraphrase_list.
              data_record (dict): the corresponding data record of original text.
-             paraphrase_field (str): the field name to paraphrase.
+             field (str): the field name to paraphrase.
 
          Returns:
              ([int]): predicted label
          """
         return [int(x) for x in
-                self.predict_batch(origin, paraphrase_list, data_record, paraphrase_field)]
+                self.predict_batch(origin, paraphrase_list, data_record, field)]
 
     def measure_multiple_examples(self, origin_list, paraphrase_list,
-                                  data_record_list=None, paraphrase_field="text0"):
+                                  data_record_list=None, field="text0"):
         return [int(x) for x in self.predict_multiple_examples(
-            origin_list, paraphrase_list, data_record_list, paraphrase_field)]
+            origin_list, paraphrase_list, data_record_list, field)]
 
     def robust_tune_step(self, data_record_list):
         raise NotImplementedError

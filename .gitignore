@@ -3,6 +3,7 @@ exp-*/
 .remote-sync.json
 .idea/
 scripts/
+*.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

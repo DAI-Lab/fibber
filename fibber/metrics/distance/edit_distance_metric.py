@@ -22,14 +22,14 @@ class EditDistanceMetric(MetricBase):
         super(EditDistanceMetric, self).__init__()
         self._no_puctuation = editing_distance_ignore_punctuation
 
-    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, field="text0"):
         """compute editing distance between original and parapharse.
 
         Args:
             origin (str): original text.
             paraphrase (str): paraphrased text.
             data_record: ignored.
-            paraphrase_field: ignored.
+            field: ignored.
 
         Returns:
             (int): the editing distance.

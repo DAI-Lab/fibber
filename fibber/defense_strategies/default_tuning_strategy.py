@@ -62,7 +62,7 @@ class DefaultDefenseStrategy(DefenseStrategyBase):
         classifier = metric_bundle.get_target_classifier()
         classifier.robust_tune_init("adamw", 0.00002, 0.001, tuning_steps * num_updates_per_step)
 
-        paraphrase_field = train_set["paraphrase_field"]
+        field = train_set["field"]
 
         pbar = tqdm.tqdm(total=tuning_steps)
 
@@ -77,15 +77,15 @@ class DefaultDefenseStrategy(DefenseStrategyBase):
             data_record_list_tmp = list(self._rng.choice(train_set["data"],
                                                          num_sentences_to_rewrite_per_step))
             paraphrase_list = paraphrase_strategy.paraphrase_multiple_examples(
-                data_record_list_tmp, paraphrase_field)
+                data_record_list_tmp, field)
 
             predict_logp_list = classifier.predict_log_dist_multiple_examples(
-                None, paraphrase_list, data_record_list_tmp, paraphrase_field)
+                None, paraphrase_list, data_record_list_tmp, field)
 
             for (paraphrase, data_record, predict_logp) in zip(
                     paraphrase_list, data_record_list_tmp, predict_logp_list):
                 data_record_new = copy.deepcopy(data_record)
-                data_record_new[paraphrase_field] = paraphrase
+                data_record_new[field] = paraphrase
                 predict_label = np.argmax(predict_logp)
 
                 if predict_label != data_record["label"]:

@@ -36,14 +36,14 @@ class CESimilarityMetric(MetricBase):
         """Compute the embedding of sentences."""
         return self._model.encode(sentences)
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0"):
+    def measure_batch(self, origin, paraphrase_list, data_record=None, field="text0"):
         """Measure the metric on a batch of paraphrase_list.
 
         Args:
             origin (str): the original text.
             paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            paraphrase_field (str): the field name to paraphrase.
+            field (str): the field name to paraphrase.
 
         Returns:
             (list): a list containing the USE similarity metric for each paraphrase.
@@ -52,18 +52,18 @@ class CESimilarityMetric(MetricBase):
             [[origin, paraphrase] for paraphrase in paraphrase_list])]
 
     def measure_multiple_examples(self, origin_list, paraphrase_list,
-                                  data_record_list=None, paraphrase_field="text0"):
+                                  data_record_list=None, field="text0"):
         assert len(origin_list) == len(paraphrase_list)
         return [float(x) for x in self._model.predict(
             [[origin, paraphrase] for origin, paraphrase in zip(origin_list, paraphrase_list)])]
 
-    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, field="text0"):
         """Compute the perplexity ratio.
 
         Args:
             origin (str): original text.
             paraphrase (str): paraphrased text.
             data_record: ignored.
-            paraphrase_field: ignored.
+            field: ignored.
         """
         return float(self._model.predict([[origin, paraphrase]])[0])

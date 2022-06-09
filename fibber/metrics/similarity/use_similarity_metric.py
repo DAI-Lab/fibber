@@ -51,14 +51,14 @@ class USESimilarityMetric(MetricBase):
         self.model = hub.load(resources.get_universal_sentence_encoder())
         log.remove_logger_tf_handler(logger)   # tensorflow_hub mess up the python logging
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0"):
+    def measure_batch(self, origin, paraphrase_list, data_record=None, field="text0"):
         """Measure the metric on a batch of paraphrase_list.
 
         Args:
             origin (str): the original text.
             paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            paraphrase_field (str): the field name to paraphrase.
+            field (str): the field name to paraphrase.
 
         Returns:
             (list): a list containing the USE similarity metric for each paraphrase.
@@ -71,7 +71,7 @@ class USESimilarityMetric(MetricBase):
         return [float(x) for x in sim[1:]]
 
     def measure_multiple_examples(self, origin_list, paraphrase_list,
-                                  data_record_list=None, paraphrase_field="text0"):
+                                  data_record_list=None, field="text0"):
         assert len(origin_list) == len(paraphrase_list)
         embs = self.model(origin_list + paraphrase_list).numpy()
         norm = np.linalg.norm(embs, axis=1)
@@ -79,7 +79,7 @@ class USESimilarityMetric(MetricBase):
         sim = (embs[:len(origin_list)] * embs[len(origin_list):]).sum(axis=1)
         return [float(x) for x in sim]
 
-    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def measure_example(self, origin, paraphrase, data_record=None, field="text0"):
         """Compute the cosine similarity between the embedding of original text and paraphrased
         text.
 
@@ -87,7 +87,7 @@ class USESimilarityMetric(MetricBase):
             origin (str): original text.
             paraphrase (str): paraphrased text.
             data_record: ignored.
-            paraphrase_field: ignored.
+            field: ignored.
         """
         embs = self.model([origin, paraphrase]).numpy()
         return float(np.sum(embs[0] * embs[1]) / np.linalg.norm(embs[0]) / np.linalg.norm(embs[1]))

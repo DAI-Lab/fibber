@@ -14,7 +14,7 @@
         "Sci/Tech"
       ],
       "cased": true,
-      "paraphrase_field": "text0",
+      "field": "text0",
       "data": [
         {
           "label": 1,
@@ -281,7 +281,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
             raise RuntimeError("masked_lm and autoregressive_lm are used at the same time.")
 
         self._data = dataset["data"]
-        self._field_name = dataset["paraphrase_field"]
+        self._field = dataset["field"]
         if exclude != -1:
             self._data = [item for item in self._data if item["label"] != exclude]
 
@@ -303,7 +303,7 @@ class DatasetForBert(torch.utils.data.IterableDataset):
                     padding=True)
             else:
                 batch_input = self._tokenizer(
-                    [item[self._field_name] for item in data_records],
+                    [item[self._field] for item in data_records],
                     return_tensors="np",
                     padding=True)
 

@@ -42,9 +42,9 @@ class DefaultTokenizer(object):
 class CLFModel(ModelWrapper):
     """A classifier wrapper for textattack package."""
 
-    def __init__(self, clf_metric, field_name):
+    def __init__(self, clf_metric, field):
         self.model = clf_metric
-        self._field_name = field_name
+        self._field = field
         if hasattr(clf_metric, "_tokenizer"):
             self._tokenizer = clf_metric._tokenizer
         else:
@@ -55,8 +55,8 @@ class CLFModel(ModelWrapper):
     def __call__(self, text_list):
         self._counter += len(text_list)
         ret = self.model.predict_log_dist_batch(
-            self._data_record[self._field_name], text_list,
-            data_record=self._data_record, paraphrase_field=self._field_name)
+            self._data_record[self._field], text_list,
+            data_record=self._data_record, field=self._field)
 
         return ret
 
@@ -109,17 +109,17 @@ class TextAttackStrategy(StrategyBase):
             raise RuntimeError("no internet connection.")
 
         self._model = CLFModel(self._metric_bundle.get_target_classifier(),
-                               trainset["paraphrase_field"])
+                               trainset["field"])
         self._recipe = getattr(attack_recipes, self._strategy_config["recipe"]
                                ).build(self._model)
 
-    def paraphrase_example(self, data_record, field_name, n):
+    def paraphrase_example(self, data_record, field, n):
         """Generate paraphrased sentences."""
         self._model.set_data_record(data_record)
 
         self._model.reset_counter()
 
-        attack_text = data_record[field_name]
+        attack_text = data_record[field]
 
         signal.signal(signal.SIGALRM, alarm_handler)
         signal.alarm(self._strategy_config["time_limit"])
@@ -138,4 +138,4 @@ class TextAttackStrategy(StrategyBase):
         if isinstance(att, textattack.attack_results.SuccessfulAttackResult):
             return [att.perturbed_result.attacked_text.text], clf_count
         else:
-            return [data_record[field_name]], clf_count
+            return [data_record[field]], clf_count
