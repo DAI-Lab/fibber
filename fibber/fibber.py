@@ -21,8 +21,8 @@ class Fibber(object):
             arg_dict (dict): a dict of hyper parameters for the MetricBundle and strategy.
             dataset_name (str): the name of the dataset.
             strategy_name (str): the strategy name.
-            trainset (str): fibber dataset.
-            testset (str): fibber testset.
+            trainset (dict): fibber dataset.
+            testset (dict): fibber testset.
             output_dir (str): directory to cache the strategy.
         """
         super(Fibber, self).__init__()

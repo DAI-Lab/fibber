@@ -124,7 +124,7 @@ class MetricBundle(object):
         Args:
             metric_name: the name of the matric.
         Returns:
-            (object): a metric object.
+            (MetricBase): a metric object.
         """
         assert metric_name in self._metrics
         return self._metrics[metric_name][0]
@@ -139,7 +139,7 @@ class MetricBundle(object):
         Args:
             metric_name: the name of the matric.
         Returns:
-            (object): a metric object.
+            (MetricBase): a metric object.
         """
         assert metric_name in self._metrics
         return self._metrics[metric_name][1]
@@ -205,7 +205,7 @@ class MetricBundle(object):
         Args:
             origin (str): original text.
             paraphrase (str): paraphrased text.
-            data_record (str): the data record.
+            data_record (dict): the data record.
             field (str): choose from "text0", "text1".
 
         Returns:
