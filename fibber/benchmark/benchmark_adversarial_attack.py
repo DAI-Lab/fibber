@@ -2,6 +2,9 @@ import argparse
 import datetime
 import os
 
+import torch
+import numpy as np
+
 from fibber import log
 from fibber.benchmark.benchmark_utils import update_attack_robust_result, update_detailed_result
 from fibber.datasets import (
@@ -277,6 +280,7 @@ def main():
     parser.add_argument("--strategy", choices=list(built_in_paraphrase_strategies.keys()),
                         default="RandomStrategy")
     parser.add_argument("--strategy_gpu_id", type=int, default=-1)
+    parser.add_argument("--seed", type=int, default=42)
 
     # metric args
     parser.add_argument("--bert_ppl_gpu_id", type=int, default=-1)
@@ -295,6 +299,9 @@ def main():
 
     arg_dict = vars(parser.parse_args())
     assert arg_dict["output_dir"] is not None
+
+    torch.manual_seed(arg_dict["seed"])
+    np.random.seed(arg_dict["seed"])
 
     benchmark = Benchmark(
         arg_dict["output_dir"], arg_dict["dataset"],

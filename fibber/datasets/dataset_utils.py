@@ -153,14 +153,14 @@ def subsample_dataset(dataset, n, offset=0):
         if "text1" in data:
             text += data["text1"]
 
-        bins[label].append((idx, text_md5(text)))
+        bins[label].append(idx)
 
     data_list = []
     for i in range(len(bins)):
-        bins[i] = sorted(bins[i], key=lambda x: x[1])
+        np.random.shuffle(bins[i])
         m = n // len(bins) + (1 if i < n % len(bins) else 0)
         for j in range(offset, min(offset + m, len(bins[i]))):
-            data_list.append(copy.deepcopy(dataset["data"][bins[i][j][0]]))
+            data_list.append(copy.deepcopy(dataset["data"][bins[i][j]]))
 
     subset["data"] = data_list
 
@@ -247,7 +247,7 @@ class DatasetForTransformers(torch.utils.data.IterableDataset):
 
     def __init__(self, dataset, model_init, batch_size, exclude=-1,
                  masked_lm=False, masked_lm_ratio=0.2, autoregressive_lm=False,
-                 select_field=None, seed=0):
+                 select_field=None):
         """Initialize.
 
         Args:
@@ -260,12 +260,10 @@ class DatasetForTransformers(torch.utils.data.IterableDataset):
             masked_lm (bool): whether to randomly replace words with mask tokens.
             masked_lm_ratio (float): the ratio of random masks. Ignored when masked_lm is False.
             select_field (None or str): select one field. None to use all available fields.
-            seed: random seed.
         """
         self._batch_size = batch_size
         self._tokenizer = AutoTokenizer.from_pretrained(resources.get_transformers(model_init))
 
-        self._seed = seed
         self._pad_tok_id = self._tokenizer.pad_token_id
 
         self._masked_lm = masked_lm
@@ -290,13 +288,11 @@ class DatasetForTransformers(torch.utils.data.IterableDataset):
 
     def __iter__(self):
         worker_info = torch.utils.data.get_worker_info()
-        if worker_info is None:
-            self._rng = np.random.RandomState(self._seed)
-        else:
-            self._rng = np.random.RandomState(worker_info.id + self._seed)
+        if worker_info is not None:
+            raise RuntimeError("worker is not allowed.")
 
         while True:
-            data_records = self._rng.choice(self._data, self._batch_size)
+            data_records = np.random.choice(self._data, self._batch_size)
 
             if self._field == "both":
                 batch_input = self._tokenizer(
@@ -323,7 +319,7 @@ class DatasetForTransformers(torch.utils.data.IterableDataset):
                 ret = [torch.tensor(x) for x in [texts, masks, tok_types, labels]]
                 yield tuple(ret)
             elif self._masked_lm:
-                rand_t = self._rng.rand(self._batch_size, max_text_len)
+                rand_t = np.random.rand(self._batch_size, max_text_len)
                 masked_pos = (rand_t < self._masked_lm_ratio) * masks
 
                 # No mask on cls and sep.
@@ -333,8 +329,8 @@ class DatasetForTransformers(torch.utils.data.IterableDataset):
                 if np.sum(masked_pos) == 0:
                     continue
                 lm_labels = (masked_pos * texts - 100 * (1 - masked_pos))
-                rand_t = self._rng.rand(self._batch_size, max_text_len)
-                filling = self._rng.randint(0, self._tokenizer.vocab_size,
+                rand_t = np.random.rand(self._batch_size, max_text_len)
+                filling = np.random.randint(0, self._tokenizer.vocab_size,
                                             (self._batch_size, max_text_len))
                 filling = ((rand_t < 0.8) * self._mask_tok_id
                            + (rand_t >= 0.8) * (rand_t < 0.9) * filling
