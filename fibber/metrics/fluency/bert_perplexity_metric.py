@@ -17,9 +17,9 @@ class BertPerplexityMetric(MetricBase):
     original text. The perplexity is measured using BERT model.
     """
 
-    def __init__(self, dataset_name, trainset, bert_ppl_gpu_id=-1, bert_ppl_filter=-1, **kargs):
+    def __init__(self, dataset_name, trainset, bert_ppl_gpu_id=-1, bert_ppl_filter=-1, **kwargs):
         """Initialize Bert perplexity model."""
-        super(BertPerplexityMetric, self).__init__(**kargs)
+        super(BertPerplexityMetric, self).__init__(**kwargs)
 
         if bert_ppl_gpu_id == -1:
             logger.warning("BertPerplexityMetric is running on CPU.")
@@ -70,8 +70,8 @@ class BertPerplexityMetric(MetricBase):
 
         return ppl
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None, field="text0",
-                      use_ratio=False):
+    def _measure_batch(self, origin, paraphrase_list, data_record=None, field="text0",
+                       use_ratio=False, **kwargs):
         """Measure the metric on a batch of paraphrase_list.
 
         Args:
@@ -90,9 +90,9 @@ class BertPerplexityMetric(MetricBase):
             res = self._get_ppl(paraphrase_list)
         return [float(x) for x in res]
 
-    def measure_multiple_examples(self, origin_list, paraphrase_list,
-                                  data_record_list=None, field="text0",
-                                  use_ratio=False):
+    def _measure_multiple_examples(self, origin_list, paraphrase_list,
+                                   data_record_list=None, field="text0",
+                                   use_ratio=False, **kwargs):
         assert len(origin_list) == len(paraphrase_list)
         if use_ratio:
             ppls = self._get_ppl(origin_list + paraphrase_list)
@@ -101,7 +101,7 @@ class BertPerplexityMetric(MetricBase):
             res = self._get_ppl(paraphrase_list)
         return [float(x) for x in res]
 
-    def measure_example(self, origin, paraphrase, data_record=None, use_ratio=False):
+    def _measure_example(self, origin, paraphrase, data_record=None, use_ratio=False, **kwargs):
         """Compute the perplexity ratio.
 
         Args:

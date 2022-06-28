@@ -1,4 +1,7 @@
-class MetricBase(object):
+from abc import ABC, abstractmethod
+
+
+class MetricBase(ABC):
     """Base class for Metrics.
 
     All metrics should be derived from this class.
@@ -16,15 +19,24 @@ class MetricBase(object):
     of paraphrase_list one by one.
     """
 
-    def __init__(self, field, **kargs):
+    def __init__(self, field, bs, **kwargs):
         super(MetricBase, self).__init__()
         self._field = field
+        self._bs = bs
 
     def __repr__(self):
         return self.__class__.__name__
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None):
+    def _measure_batch(self, origin, paraphrase_list, data_record=None, **kwargs):
+        ret = []
+        for paraphrase in paraphrase_list:
+            ret.append(self.measure_example(origin, paraphrase, data_record))
+        return ret
+
+    def measure_batch(self, origin, paraphrase_list, data_record=None, **kwargs):
         """Measure the metric on a batch of paraphrase_list.
+
+        If batch is larger than self._bs, the data will be split into smaller batches.
 
         Args:
             origin (str): the original text.
@@ -35,18 +47,32 @@ class MetricBase(object):
             (list): a list containing the metric for each paraphrase.
         """
         ret = []
-        for paraphrase in paraphrase_list:
-            ret.append(self.measure_example(origin, paraphrase, data_record))
+        for i in range(0, len(paraphrase_list), self._bs):
+            ret += self._measure_batch(origin, paraphrase_list[i:i + self._bs], data_record, **kwargs)
         return ret
 
-    def measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None):
+    def _measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None, **kwargs):
         assert len(origin_list) == len(paraphrase_list)
         ret = []
         for i in range(len(origin_list)):
             ret.append(self.measure_example(
                 origin_list[i], paraphrase_list[i],
-                data_record_list[i] if data_record_list is not None else None))
+                data_record_list[i] if data_record_list is not None else None, **kwargs))
         return ret
 
-    def measure_example(self, origin, paraphrase, data_record=None):
+    def measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None, **kwargs):
+        assert len(origin_list) == len(paraphrase_list)
+        ret = []
+        for i in range(0, len(origin_list), self._bs):
+            ret += self._measure_batch(
+                None if origin_list is None else origin_list[i:i + self._bs],
+                paraphrase_list[i:i + self._bs],
+                None if data_record_list is None else data_record_list[i:i + self._bs], **kwargs)
+        return ret
+
+    @abstractmethod
+    def _measure_example(self, origin, paraphrase, data_record=None, **kwargs):
         raise NotImplementedError()
+
+    def measure_example(self, origin, paraphrase, data_record=None, **kwargs):
+        return self._measure_example(origin, paraphrase, data_record=None, **kwargs)

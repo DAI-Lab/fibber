@@ -16,9 +16,9 @@ class CESimilarityMetric(MetricBase):
     see `https://github.com/UKPLab/sentence-transformers` for more information.
     """
 
-    def __init__(self, ce_pretrained_model="stsb-roberta-large", ce_gpu_id=-1, **kargs):
+    def __init__(self, ce_pretrained_model="stsb-roberta-large", ce_gpu_id=-1, **kwargs):
         """Initialize ce model."""
-        super(CESimilarityMetric, self).__init__(**kargs)
+        super(CESimilarityMetric, self).__init__(**kwargs)
 
         if ce_gpu_id == -1:
             logger.warning("CE metric is running on CPU.")
@@ -36,7 +36,7 @@ class CESimilarityMetric(MetricBase):
         """Compute the embedding of sentences."""
         return self._model.encode(sentences)
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None):
+    def _measure_batch(self, origin, paraphrase_list, data_record=None, **kwargs):
         """Measure the metric on a batch of paraphrase_list.
 
         Args:
@@ -50,12 +50,12 @@ class CESimilarityMetric(MetricBase):
         return [float(x) for x in self._model.predict(
             [[origin, paraphrase] for paraphrase in paraphrase_list])]
 
-    def measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None):
+    def _measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None, **kwargs):
         assert len(origin_list) == len(paraphrase_list)
         return [float(x) for x in self._model.predict(
             [[origin, paraphrase] for origin, paraphrase in zip(origin_list, paraphrase_list)])]
 
-    def measure_example(self, origin, paraphrase, data_record=None):
+    def _measure_example(self, origin, paraphrase, data_record=None, **kwargs):
         """Compute the perplexity ratio.
 
         Args:

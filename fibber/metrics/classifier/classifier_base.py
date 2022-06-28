@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 import numpy as np
 
 from fibber.metrics.metric_base import MetricBase
@@ -19,6 +21,10 @@ class ClassifierBase(MetricBase):
     compute the metric of paraphrase_list one by one.
     """
 
+    @abstractmethod
+    def _predict_log_dist_example(self, origin, paraphrase, data_record=None):
+        raise NotImplementedError
+
     def predict_log_dist_example(self, origin, paraphrase, data_record=None):
         """Predict the log-probability distribution over classes for one example.
 
@@ -30,7 +36,14 @@ class ClassifierBase(MetricBase):
         Returns:
             (np.array): a numpy array of size ``(num_labels)``.
         """
-        raise NotImplementedError
+        return self._predict_log_dist_example(origin, paraphrase, data_record)
+
+    def _predict_log_dist_batch(self, origin, paraphrase_list, data_record=None):
+        ret = []
+        for paraphrase in paraphrase_list:
+            ret.append(
+                self.predict_log_dist_example(origin, paraphrase, data_record))
+        return np.asarray(ret)
 
     def predict_log_dist_batch(self, origin, paraphrase_list, data_record=None):
         """Predict the log-probability distribution over classes for one batch.
@@ -44,19 +57,30 @@ class ClassifierBase(MetricBase):
             (np.array): a numpy array of size ``(batch_size * num_labels)``.
         """
         ret = []
-        for paraphrase in paraphrase_list:
-            ret.append(
-                self.predict_log_dist_example(origin, paraphrase, data_record))
-        return np.asarray(ret)
+        for i in range(0, len(paraphrase_list), self._bs):
+            ret.append(self._predict_log_dist_batch(
+                origin, paraphrase_list[i:i + self._bs], data_record))
+        return np.concatenate(ret, axis=0)
 
-    def predict_log_dist_multiple_examples(self, origin_list, paraphrase_list,
-                                           data_record_list=None):
+    def _predict_log_dist_multiple_examples(self, origin_list, paraphrase_list,
+                                            data_record_list=None):
         ret = []
         for i in range(len(paraphrase_list)):
             ret.append(
                 self.predict_log_dist_example(
                     None if origin_list is None else origin_list[i], paraphrase_list[i],
                     data_record_list[i] if data_record_list is not None else None))
+        return np.asarray(ret)
+
+    def predict_log_dist_multiple_examples(self, origin_list, paraphrase_list,
+                                           data_record_list=None):
+        ret = []
+        for i in range(0, len(paraphrase_list), self._bs):
+            ret.append(
+                self._predict_log_dist_multiple_examples(
+                    None if origin_list is None else origin_list[i:i + self._bs],
+                    paraphrase_list[i:i + self._bs],
+                    None if data_record_list is None else data_record_list[i:i + self._bs]))
         return np.asarray(ret)
 
     def predict_example(self, origin, paraphrase, data_record=None):
@@ -92,7 +116,7 @@ class ClassifierBase(MetricBase):
             self.predict_log_dist_multiple_examples(origin_list, paraphrase_list,
                                                     data_record_list), axis=1)
 
-    def measure_example(self, origin, paraphrase, data_record=None):
+    def _measure_example(self, origin, paraphrase, data_record=None, **kwargs):
         """Predict class label for one example.
 
         Wrapper for ``predict_example``. Return type is changed from numpy.int to int.
@@ -101,14 +125,13 @@ class ClassifierBase(MetricBase):
             origin (str): the original text.
             paraphrase (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            field (str): the field name to paraphrase.
 
         Returns:
             (int): predicted label
         """
         return int(self.predict_example(origin, paraphrase, data_record))
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None):
+    def _measure_batch(self, origin, paraphrase_list, data_record=None, **kwargs):
         """Predict class label for one batch.
 
          Wrapper for ``predict_batch``. Return type is changed from numpy.array to list of int.
@@ -124,7 +147,7 @@ class ClassifierBase(MetricBase):
         return [int(x) for x in
                 self.predict_batch(origin, paraphrase_list, data_record)]
 
-    def measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None):
+    def _measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None, **kwargs):
         return [int(x) for x in self.predict_multiple_examples(
             origin_list, paraphrase_list, data_record_list)]
 

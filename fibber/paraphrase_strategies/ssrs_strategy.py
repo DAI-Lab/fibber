@@ -39,7 +39,7 @@ def sample_word_from_logits(logits, temperature=1., top_k=0):
     return idx
 
 
-def all_accept_criteria(candidate_paraphrases, **kargs):
+def all_accept_criteria(candidate_paraphrases, **kwargs):
     """Always accept proposed words.
     """
     return candidate_paraphrases, None
@@ -117,7 +117,7 @@ def joint_weighted_criteria(
         data_record_list, field, sim_metric, sim_threshold, sim_weight,
         clf_metric, clf_weight, ppl_metric, ppl_weight, stats, state,
         log_prob_trans_forward, log_prob_trans_backward,
-        bleu_metric, bleu_weight, bleu_threshold, **kargs):
+        bleu_metric, bleu_weight, bleu_threshold, **kwargs):
 
     def compute_criteria_score(paraphrases):
         ppl_score, ppl_ratio = ppl_criteria_score(origin_list=origin_list, paraphrases=paraphrases,
@@ -163,7 +163,7 @@ def joint_weighted_criteria(
     return ret, state
 
 
-def none_constraint(**kargs):
+def none_constraint(**kwargs):
     return 0.
 
 

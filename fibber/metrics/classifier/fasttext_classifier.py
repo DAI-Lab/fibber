@@ -37,8 +37,8 @@ class FasttextClassifier(ClassifierBase):
     """
 
     def __init__(self, dataset_name, trainset, testset,
-                 fasttext_lr=1., fasttext_epoch=25, fasttext_ngram=5, **kargs):
-        super(FasttextClassifier, self).__init__(**kargs)
+                 fasttext_lr=1., fasttext_epoch=25, fasttext_ngram=5, **kwargs):
+        super(FasttextClassifier, self).__init__(**kwargs)
         model_dir = os.path.join(get_root_dir(), "fasttext_clf", dataset_name)
         os.makedirs(model_dir, exist_ok=True)
         model_filename = os.path.join(
@@ -63,15 +63,13 @@ class FasttextClassifier(ClassifierBase):
             self._model.save_model(model_filename)
             self._n_class = len(trainset["label_mapping"])
 
-    def predict_log_dist_example(self, origin, paraphrase,
-                                 data_record=None, field="text0"):
+    def _predict_log_dist_example(self, origin, paraphrase, data_record=None):
         """Predict the log-probability distribution over classes for one example.
 
         Args:
             origin (str): the original text.
             paraphrase (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            field (str): the field name to paraphrase.
 
         Returns:
             (np.array): a numpy array of size ``(num_labels)``.
@@ -82,3 +80,12 @@ class FasttextClassifier(ClassifierBase):
             idx = int(label[len("__label__"):])
             ret[idx] = prob
         return np.log(ret + 1e-12)
+
+    def robust_tune_step(self, data_record_list):
+        raise NotImplementedError
+
+    def load_robust_tuned_model(self, desc, step):
+        raise NotImplementedError
+
+    def save_robust_tuned_model(self, desc, step):
+        raise NotImplementedError

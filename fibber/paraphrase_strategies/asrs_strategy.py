@@ -79,7 +79,7 @@ def sample_word_from_logits(logits, temperature=1., top_k=0):
     return idx
 
 
-def all_accept_criteria(candidate_ids, stats, **kargs):
+def all_accept_criteria(candidate_ids, stats, **kwargs):
     """Always accept proposed words.
 
     Args:
@@ -152,7 +152,7 @@ def joint_weighted_criteria(
         tokenizer, data_record, field, origin, batch_tensor,
         pos_st, pos_ed, previous_ids, candidate_ids, sim_metric, sim_threshold, sim_weight,
         clf_metric, clf_weight, ppl_metric, ppl_weight, burnin_weight, stats, state,
-        device, seq_len, log_prob_previous_ids, log_prob_candidate_ids, **kargs):
+        device, seq_len, log_prob_previous_ids, log_prob_candidate_ids, **kwargs):
     """Accept or reject candidate word using the joint weighted criteria.
 
     Args:
@@ -225,16 +225,16 @@ def joint_weighted_criteria(
     return ids, state
 
 
-def none_constraint(**kargs):
+def none_constraint(**kwargs):
     return 0.
 
 
-def allow_list_constraint(allow_list, **kargs):
+def allow_list_constraint(allow_list, **kwargs):
     return -1e6 * (1 - allow_list)
 
 
 def wpe_constraint(target_emb, word_embs, batch_tensor, pos_st, pos_ed,
-                   wpe_threshold, wpe_weight, attention_mask_paraphrase_text_only, **kargs):
+                   wpe_threshold, wpe_weight, attention_mask_paraphrase_text_only, **kwargs):
     current_emb = word_embs(batch_tensor) * attention_mask_paraphrase_text_only[:, :, None]
     current_emb[:, pos_st, pos_ed] = 0
     current_emb = current_emb.sum(dim=1)

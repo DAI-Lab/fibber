@@ -54,9 +54,9 @@ def compute_emb_sim(emb_table, tok_to_id, x, y):
 class GloVeSimilarityMetric(MetricBase):
     """This metric computes the cosine similarity between two sentences."""
 
-    def __init__(self, **kargs):
+    def __init__(self, **kwargs):
         """Initialize, load Glove embeddings."""
-        super(GloVeSimilarityMetric, self).__init__(**kargs)
+        super(GloVeSimilarityMetric, self).__init__(**kwargs)
 
         get_nltk_data()
         self._glove = get_glove_emb()
@@ -68,7 +68,7 @@ class GloVeSimilarityMetric(MetricBase):
             if word in self._glove["tok2id"]:
                 self._glove["emb_table"][self._glove["tok2id"][word], :] = 0
 
-    def measure_example(self, origin, paraphrase, data_record=None):
+    def _measure_example(self, origin, paraphrase, data_record=None, **kwargs):
         """Compute the Glove cosine similarity between two sentences.
 
         Args:

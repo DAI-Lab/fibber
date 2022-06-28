@@ -59,8 +59,6 @@ def lmag_fix_sentences(sentences, context, tokenizer, lm, clf, device, bs=50, re
 
         for i in range(st, ed):
             if i % rep == 0:
-                rng = np.random.RandomState(
-                    hash(int(text_md5(sentences_t[i // rep]), 16) % 1000000007))
                 u = 1
                 v = attention_mask[i - st].sum() - 1
 
@@ -70,7 +68,7 @@ def lmag_fix_sentences(sentences, context, tokenizer, lm, clf, device, bs=50, re
                 prob = prob ** float(alpha)
                 prob /= np.sum(prob)
 
-            samples = u + rng.choice(v - u, p=prob, replace=False, size=n_mask)
+            samples = u + np.random.choice(v - u, p=prob, replace=False, size=n_mask)
             for p in samples:
                 input_ids[i - st, p] = tokenizer.mask_token_id
         pred = lm(
@@ -86,24 +84,32 @@ def lmag_fix_sentences(sentences, context, tokenizer, lm, clf, device, bs=50, re
             ret.append(tokenizer.decode(pred[i - st, u:v], skip_special_tokens=True))
 
         st = ed
-    return ret
+
+    ret_reformat = []
+    for i in range(0, len(sentences), rep):
+        ret_reformat.append(ret[i:i + rep])
+    return ret_reformat
 
 
 class LMAgStrategy(DefenseStrategyBase):
     """Base class for Tuning strategy"""
 
-    def input_manipulation(self):
-        pass
+    __abbr__ = "lmag"
+    __hyperparameters__ = [
+        ("reps", int, 10, "number of rewrites.")]
 
     def fit(self, trainset):
         self._tokenizer, self._lm = get_lm("finetune", self._dataset_name, trainset, self._device)
         self._lm = self._lm.eval().to(self._device)
-        self._lmag_repeat = 10
+        self._lmag_repeat = self._strategy_config["reps"]
 
     def load(self, trainset):
         self.fit(trainset)
         return InputManipulationClassifier(
             self._classifier,
             partial(lmag_fix_sentences, tokenizer=self._tokenizer, lm=self._lm,
-                    clf=self._classifier._model, device=self._classifier._device, rep=1),
-            str(self._classifier))
+                    clf=self._classifier._model, device=self._classifier._device,
+                    rep=self._lmag_repeat),
+            str(self._classifier),
+            field=self._classifier._field,
+            bs=self._classifier._bs)

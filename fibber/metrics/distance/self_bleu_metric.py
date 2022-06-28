@@ -13,11 +13,11 @@ logger = log.setup_custom_logger(__name__)
 class SelfBleuMetric(MetricBase):
     """This metric computes the bleu score between input and output"""
 
-    def __init__(self, **kargs):
+    def __init__(self, **kwargs):
         """Initialize ce model."""
-        super(SelfBleuMetric, self).__init__(**kargs)
+        super(SelfBleuMetric, self).__init__(**kwargs)
 
-    def measure_example(self, origin, paraphrase, data_record=None):
+    def _measure_example(self, origin, paraphrase, data_record=None, **kwargs):
         """Compute the 4 gram self bleu
 
         Args:

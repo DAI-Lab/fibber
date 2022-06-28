@@ -2,8 +2,8 @@ import argparse
 import datetime
 import os
 
-import torch
 import numpy as np
+import torch
 
 from fibber import log
 from fibber.benchmark.benchmark_utils import update_attack_robust_result, update_detailed_result

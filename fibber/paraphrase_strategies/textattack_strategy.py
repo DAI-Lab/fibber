@@ -55,8 +55,7 @@ class CLFModel(ModelWrapper):
     def __call__(self, text_list):
         self._counter += len(text_list)
         ret = self.model.predict_log_dist_batch(
-            self._data_record[self._field], text_list,
-            data_record=self._data_record, field=self._field)
+            self._data_record[self._field], text_list, data_record=self._data_record)
 
         return ret
 

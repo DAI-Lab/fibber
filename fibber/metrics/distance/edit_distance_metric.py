@@ -12,17 +12,17 @@ from fibber.metrics.metric_base import MetricBase
 class EditDistanceMetric(MetricBase):
     """This class measures the editing distance between two sentences."""
 
-    def __init__(self, editing_distance_ignore_punctuation=True, **kargs):
+    def __init__(self, editing_distance_ignore_punctuation=True, **kwargs):
         """Initialize.
 
         Args:
             editing_distance_ignore_punctuation (bool): whether to ignore punctuation when
                 computing editing distance.
         """
-        super(EditDistanceMetric, self).__init__(**kargs)
+        super(EditDistanceMetric, self).__init__(**kwargs)
         self._no_puctuation = editing_distance_ignore_punctuation
 
-    def measure_example(self, origin, paraphrase, data_record=None):
+    def _measure_example(self, origin, paraphrase, data_record=None, **kwargs):
         """compute editing distance between original and parapharse.
 
         Args:

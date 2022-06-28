@@ -242,8 +242,8 @@ class TransformerClassifier(ClassifierBase):
                  transformer_clf_optimizer="adamw", transformer_clf_weight_decay=0.001,
                  transformer_clf_period_summary=100, transformer_clf_period_val=500,
                  transformer_clf_period_save=20000, transformer_clf_val_steps=10,
-                 transformer_clf_model_init="bert-base-cased", **kargs):
-        super(TransformerClassifier, self).__init__(**kargs)
+                 transformer_clf_model_init="bert-base-cased", **kwargs):
+        super(TransformerClassifier, self).__init__(**kwargs)
         logger.info("Use %s classifier.", transformer_clf_model_init)
 
         self._tokenizer = AutoTokenizer.from_pretrained(
@@ -293,15 +293,13 @@ class TransformerClassifier(ClassifierBase):
     def enable_ppl_filter(self, ppl_metric):
         self._ppl_filter_metric = ppl_metric
 
-    def predict_log_dist_batch(self, origin, paraphrase_list, data_record=None,
-                               field="text0"):
+    def _predict_log_dist_batch(self, origin, paraphrase_list, data_record=None):
         """Predict the log-probability distribution over classes for one batch.
 
         Args:
             origin (str): the original text.
             paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            field (str): the field name to paraphrase.
 
         Returns:
             (np.array): a numpy array of size ``(batch_size * num_labels)``.
@@ -309,11 +307,11 @@ class TransformerClassifier(ClassifierBase):
         if self._ppl_filter_metric is not None:
             paraphrase_list = self._ppl_filter_metric.perplexity_filter(paraphrase_list)
 
-        if field == "text0":
+        if self._field == "text0":
             batch_input = self._tokenizer(
                 text=paraphrase_list, padding=True, return_tensors="pt").to(self._device)
         else:
-            assert field == "text1"
+            assert self._field == "text1"
             batch_input = self._tokenizer(text=[data_record["text0"]] * len(paraphrase_list),
                                           text_pair=paraphrase_list,
                                           padding=True, return_tensors="pt").to(self._device)
@@ -323,17 +321,16 @@ class TransformerClassifier(ClassifierBase):
 
         return res
 
-    def predict_log_dist_multiple_examples(self, origin_list, paraphrase_list,
-                                           data_record_list=None, field="text0",
-                                           return_raw_logits=False):
+    def _predict_log_dist_multiple_examples(self, origin_list, paraphrase_list,
+                                            data_record_list=None, return_raw_logits=False):
         if self._ppl_filter_metric is not None:
             paraphrase_list = self._ppl_filter_metric.perplexity_filter(paraphrase_list)
 
-        if field == "text0":
+        if self._field == "text0":
             batch_input = self._tokenizer(
                 text=paraphrase_list, padding=True, return_tensors="pt").to(self._device)
         else:
-            assert field == "text1"
+            assert self._field == "text1"
             batch_input = self._tokenizer(text=[item["text0"] for item in data_record_list],
                                           text_pair=paraphrase_list,
                                           padding=True, return_tensors="pt").to(self._device)
@@ -345,20 +342,18 @@ class TransformerClassifier(ClassifierBase):
                 res = logits.detach().cpu().numpy()
         return res
 
-    def predict_log_dist_example(self, origin, paraphrase,
-                                 data_record=None, field="text0"):
+    def _predict_log_dist_example(self, origin, paraphrase, data_record=None):
         """Predict the log-probability distribution over classes for one example.
 
         Args:
             origin (str): the original text.
             paraphrase (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            field (str): the field name to paraphrase.
 
         Returns:
             (np.array): a numpy array of size ``(num_labels)``.
         """
-        return self.predict_log_dist_batch(origin, [paraphrase], data_record, field)[0]
+        return self.predict_log_dist_batch(origin, [paraphrase], data_record)[0]
 
     def robust_tune_init(self, bert_clf_optimizer, bert_clf_lr, bert_clf_weight_decay,
                          bert_clf_steps, **kwargs):

@@ -43,8 +43,7 @@ class MetricBundle(object):
                  enable_self_bleu=False,
                  enable_ref_bleu=False,
                  target_clf="transformer",
-                 field="text0",
-                 **kargs):
+                 field="text0", bs=32, **kwargs):
         """Initialize various metrics.
 
         Args:
@@ -62,7 +61,8 @@ class MetricBundle(object):
                 in metrics.
             target_clf (str): choose from "trasformer", "fasttext".
             field (str): the field where perturbation can happen.
-            kargs: arguments for metrics. kargs will be passed to all metrics.
+            bs (int): batch size.
+            kwargs: arguments for metrics. kwargs will be passed to all metrics.
         """
         super(MetricBundle, self).__init__()
 
@@ -74,32 +74,39 @@ class MetricBundle(object):
         self._advanced_aggregation_fn = {}
 
         if enable_edit_distance:
-            self.add_metric(EditDistanceMetric(field=field, **kargs), DIRECTION_UNKNOWN)
+            self.add_metric(EditDistanceMetric(field=field, bs=bs, **kwargs),
+                            DIRECTION_UNKNOWN)
         if enable_use_similarity:
-            self.add_metric(USESimilarityMetric(field=field, **kargs), DIRECTION_HIGHER_BETTER)
+            self.add_metric(USESimilarityMetric(field=field, bs=bs, **kwargs),
+                            DIRECTION_HIGHER_BETTER)
         if enable_glove_similarity:
-            self.add_metric(GloVeSimilarityMetric(field=field, **kargs), DIRECTION_HIGHER_BETTER)
+            self.add_metric(GloVeSimilarityMetric(field=field, bs=bs, **kwargs),
+                            DIRECTION_HIGHER_BETTER)
         if enable_gpt2_perplexity:
-            self.add_metric(GPT2PerplexityMetric(field=field, **kargs), DIRECTION_LOWER_BETTER)
+            self.add_metric(GPT2PerplexityMetric(field=field, bs=bs, **kwargs),
+                            DIRECTION_LOWER_BETTER)
         if enable_ce_similarity:
-            self.add_metric(CESimilarityMetric(field=field, **kargs), DIRECTION_HIGHER_BETTER)
+            self.add_metric(CESimilarityMetric(field=field, bs=bs, **kwargs),
+                            DIRECTION_HIGHER_BETTER)
         if enable_transformer_classifier:
-            self.add_classifier(TransformerClassifier(field=field, **kargs),
+            self.add_classifier(TransformerClassifier(field=field, bs=bs, **kwargs),
                                 set_target_clf=(target_clf == "transformer"))
         if enable_fasttext_classifier:
-            self.add_classifier(FasttextClassifier(field=field, **kargs),
+            self.add_classifier(FasttextClassifier(field=field, bs=bs, **kwargs),
                                 set_target_clf=(target_clf == "fasttext"))
         if enable_bert_perplexity:
-            self.add_metric(BertPerplexityMetric(field=field, **kargs), DIRECTION_LOWER_BETTER)
+            self.add_metric(BertPerplexityMetric(field=field, bs=bs, **kwargs),
+                            DIRECTION_LOWER_BETTER)
         if enable_bert_perplexity_per_class:
-            n_labels = len(kargs["trainset"]["label_mapping"])
+            n_labels = len(kwargs["trainset"]["label_mapping"])
             for i in range(n_labels):
-                self.add_metric(BertPerplexityMetric(bert_ppl_filter=i, field=field, **kargs),
-                                DIRECTION_LOWER_BETTER)
+                self.add_metric(
+                    BertPerplexityMetric(bert_ppl_filter=i, field=field, bs=bs, **kwargs),
+                    DIRECTION_LOWER_BETTER)
         if enable_self_bleu:
-            self.add_metric(SelfBleuMetric(field=field, **kargs), DIRECTION_UNKNOWN)
+            self.add_metric(SelfBleuMetric(field=field, bs=bs, **kwargs), DIRECTION_UNKNOWN)
         if enable_ref_bleu:
-            self.add_metric(RefBleuMetric(field=field, **kargs), DIRECTION_HIGHER_BETTER)
+            self.add_metric(RefBleuMetric(field=field, bs=bs, **kwargs), DIRECTION_HIGHER_BETTER)
 
     def add_metric(self, metric, direction):
         """Add a customized metric to metric bundle.

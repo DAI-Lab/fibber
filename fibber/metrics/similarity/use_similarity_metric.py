@@ -39,9 +39,9 @@ class USESimilarityMetric(MetricBase):
     """This metric uses universal sentence encoder to measure the semantic similarity of
     two sentences."""
 
-    def __init__(self, use_gpu_id=-1, **kargs):
+    def __init__(self, use_gpu_id=-1, **kwargs):
         """Initialize universal sentence encoder."""
-        super(USESimilarityMetric, self).__init__(**kargs)
+        super(USESimilarityMetric, self).__init__(**kwargs)
         logger.info("load universal sentence encoder")
         config_tf_gpu(use_gpu_id)
         if use_gpu_id == -1:
@@ -51,7 +51,7 @@ class USESimilarityMetric(MetricBase):
         self.model = hub.load(resources.get_universal_sentence_encoder())
         log.remove_logger_tf_handler(logger)   # tensorflow_hub mess up the python logging
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None):
+    def _measure_batch(self, origin, paraphrase_list, data_record=None, **kwargs):
         """Measure the metric on a batch of paraphrase_list.
 
         Args:
@@ -69,7 +69,7 @@ class USESimilarityMetric(MetricBase):
         assert abs(sim[0] - 1) < 1e-4
         return [float(x) for x in sim[1:]]
 
-    def measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None):
+    def _measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None, **kwargs):
         assert len(origin_list) == len(paraphrase_list)
         embs = self.model(origin_list + paraphrase_list).numpy()
         norm = np.linalg.norm(embs, axis=1)
@@ -77,7 +77,7 @@ class USESimilarityMetric(MetricBase):
         sim = (embs[:len(origin_list)] * embs[len(origin_list):]).sum(axis=1)
         return [float(x) for x in sim]
 
-    def measure_example(self, origin, paraphrase, data_record=None):
+    def _measure_example(self, origin, paraphrase, data_record=None, **kwargs):
         """Compute the cosine similarity between the embedding of original text and paraphrased
         text.
 
