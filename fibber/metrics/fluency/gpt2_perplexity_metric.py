@@ -101,7 +101,7 @@ class GPT2PerplexityMetric(MetricBase):
         return [float(x) for x in res]
 
     def _measure_multiple_examples(self, origin_list, paraphrase_list,
-                                  data_record_list=None, use_ratio=False, **kwargs):
+                                   data_record_list=None, use_ratio=False, **kwargs):
         assert len(origin_list) == len(paraphrase_list)
         if use_ratio:
             ppls = self._get_ppl(origin_list + paraphrase_list)

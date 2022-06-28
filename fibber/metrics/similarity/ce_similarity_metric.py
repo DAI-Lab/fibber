@@ -50,7 +50,8 @@ class CESimilarityMetric(MetricBase):
         return [float(x) for x in self._model.predict(
             [[origin, paraphrase] for paraphrase in paraphrase_list])]
 
-    def _measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None, **kwargs):
+    def _measure_multiple_examples(self, origin_list, paraphrase_list,
+                                   data_record_list=None, **kwargs):
         assert len(origin_list) == len(paraphrase_list)
         return [float(x) for x in self._model.predict(
             [[origin, paraphrase] for origin, paraphrase in zip(origin_list, paraphrase_list)])]

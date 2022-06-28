@@ -147,7 +147,8 @@ class ClassifierBase(MetricBase):
         return [int(x) for x in
                 self.predict_batch(origin, paraphrase_list, data_record)]
 
-    def _measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None, **kwargs):
+    def _measure_multiple_examples(self, origin_list, paraphrase_list,
+                                   data_record_list=None, **kwargs):
         return [int(x) for x in self.predict_multiple_examples(
             origin_list, paraphrase_list, data_record_list)]
 

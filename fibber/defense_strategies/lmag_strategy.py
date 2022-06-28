@@ -4,7 +4,6 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from fibber.datasets.dataset_utils import text_md5
 from fibber.defense_strategies.defense_strategy_base import DefenseStrategyBase
 from fibber.metrics.bert_lm_utils import get_lm
 from fibber.metrics.classifier.input_manipulation_classifier import InputManipulationClassifier

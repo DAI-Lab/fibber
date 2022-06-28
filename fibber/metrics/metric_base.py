@@ -48,10 +48,14 @@ class MetricBase(ABC):
         """
         ret = []
         for i in range(0, len(paraphrase_list), self._bs):
-            ret += self._measure_batch(origin, paraphrase_list[i:i + self._bs], data_record, **kwargs)
+            ret += self._measure_batch(origin,
+                                       paraphrase_list[i:i + self._bs],
+                                       data_record,
+                                       **kwargs)
         return ret
 
-    def _measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None, **kwargs):
+    def _measure_multiple_examples(self, origin_list, paraphrase_list,
+                                   data_record_list=None, **kwargs):
         assert len(origin_list) == len(paraphrase_list)
         ret = []
         for i in range(len(origin_list)):
@@ -60,7 +64,8 @@ class MetricBase(ABC):
                 data_record_list[i] if data_record_list is not None else None, **kwargs))
         return ret
 
-    def measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None, **kwargs):
+    def measure_multiple_examples(self, origin_list, paraphrase_list,
+                                  data_record_list=None, **kwargs):
         assert len(origin_list) == len(paraphrase_list)
         ret = []
         for i in range(0, len(origin_list), self._bs):

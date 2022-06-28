@@ -1,6 +1,7 @@
-from fibber.metrics.classifier.classifier_base import ClassifierBase
 import numpy as np
 from scipy.special import log_softmax as scipy_log_softmax
+
+from fibber.metrics.classifier.classifier_base import ClassifierBase
 
 
 def hard_agg(x):
@@ -49,7 +50,7 @@ class InputManipulationClassifier(ClassifierBase):
         p = 0
         logits_reformat = []
         for item in paraphrase_list:
-            logits_reformat.append(logits[p:p+len(item)])
+            logits_reformat.append(logits[p:p + len(item)])
             p += len(item)
         assert p == len(logits)
 
@@ -80,7 +81,7 @@ class InputManipulationClassifier(ClassifierBase):
         p = 0
         logits_reformat = []
         for item in paraphrase_list:
-            logits_reformat.append(logits[p:p+len(item)])
+            logits_reformat.append(logits[p:p + len(item)])
             p += len(item)
         assert p == len(logits)
 

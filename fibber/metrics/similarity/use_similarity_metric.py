@@ -69,7 +69,8 @@ class USESimilarityMetric(MetricBase):
         assert abs(sim[0] - 1) < 1e-4
         return [float(x) for x in sim[1:]]
 
-    def _measure_multiple_examples(self, origin_list, paraphrase_list, data_record_list=None, **kwargs):
+    def _measure_multiple_examples(self, origin_list, paraphrase_list,
+                                   data_record_list=None, **kwargs):
         assert len(origin_list) == len(paraphrase_list)
         embs = self.model(origin_list + paraphrase_list).numpy()
         norm = np.linalg.norm(embs, axis=1)
