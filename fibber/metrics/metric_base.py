@@ -19,7 +19,7 @@ class MetricBase(ABC):
     of paraphrase_list one by one.
     """
 
-    def __init__(self, field, bs, **kwargs):
+    def __init__(self, field, bs=32, **kwargs):
         super(MetricBase, self).__init__()
         self._field = field
         self._bs = bs
