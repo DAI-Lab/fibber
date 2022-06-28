@@ -90,11 +90,14 @@ class InputManipulationClassifier(ClassifierBase):
             ret.append(self._agg_fn(item))
         return np.asarray(ret)
 
+    def robust_tune_init(self, optimizer, lr, weight_decay, steps):
+        raise NotImplementedError
+
     def robust_tune_step(self, data_record_list):
         raise NotImplementedError
 
-    def load_robust_tuned_model(self, desc, step):
+    def load_robust_tuned_model(self, save_path):
         raise NotImplementedError
 
-    def save_robust_tuned_model(self, desc, step):
+    def save_robust_tuned_model(self, load_path):
         raise NotImplementedError

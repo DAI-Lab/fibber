@@ -1,3 +1,4 @@
 from fibber.defense_strategies.lmag_strategy import LMAgStrategy
+from fibber.defense_strategies.sem_strategy import SEMStrategy
 
-__all__ = ["LMAgStrategy"]
+__all__ = ["LMAgStrategy", "SEMStrategy"]

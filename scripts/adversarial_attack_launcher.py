@@ -14,6 +14,9 @@ DEFENSE_CONFIG = {
     "none": {},
     "lmag": {
         "--defense_strategy": "LMAgStrategy"
+    },
+    "sem": {
+        "--defense_strategy": "SEMStrategy",
     }
 }
 

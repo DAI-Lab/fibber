@@ -13,7 +13,6 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from fibber import get_root_dir, log, resources
 from fibber.datasets import DatasetForTransformers
 from fibber.metrics.classifier.classifier_base import ClassifierBase
-from fibber.metrics.classifier.shield_classifier import BertClassifierDARTS
 
 logger = log.setup_custom_logger(__name__)
 
@@ -355,15 +354,14 @@ class TransformerClassifier(ClassifierBase):
         """
         return self.predict_log_dist_batch(origin, [paraphrase], data_record)[0]
 
-    def robust_tune_init(self, bert_clf_optimizer, bert_clf_lr, bert_clf_weight_decay,
-                         bert_clf_steps, **kwargs):
+    def robust_tune_init(self, optimizer, lr, weight_decay, steps):
         if self._fine_tune_schedule is not None or self._fine_tune_opt is not None:
             logger.error("fine tuning has been initialized.")
             raise RuntimeError("fine tuning has been initialized.")
 
         params = self._model.parameters()
         self._fine_tune_opt, self._fine_tune_schedule = get_optimizer(
-            bert_clf_optimizer, bert_clf_lr, bert_clf_weight_decay, bert_clf_steps, params)
+            optimizer, lr, weight_decay, steps, params)
 
     def robust_tune_step(self, data_record_list):
         if self._fine_tune_schedule is None or self._fine_tune_opt is None:
@@ -402,40 +400,15 @@ class TransformerClassifier(ClassifierBase):
         self._model.eval()
         return logits.argmax(axis=1).detach().cpu().numpy(), float(loss.detach().cpu().numpy())
 
-    def load_robust_tuned_model(self, desc, step):
-        if "shield" in desc:
-            model_dir = f"saved_models/{self._dataset_name}-shield.pt"
-            self._model = BertClassifierDARTS(model_type=self._model_init,
-                                              freeze_bert=True,
-                                              is_training=False,
-                                              inference=True,
-                                              output_dim=self._num_labels,
-                                              ensemble=1,
-                                              N=5,
-                                              temperature=0.01,
-                                              gumbel=1,
-                                              scaler=1,
-                                              darts=True,
-                                              device=self._device)
-            self._model.load_state_dict(torch.load(model_dir))
-            self._model.eval()
-            self._model.to(self._device)
-            logger.info("Load transformer-based classifier from %s.", model_dir)
-            return
-
-        model_dir = os.path.join(get_root_dir(), "transformer_clf", self._dataset_name, desc)
-        if "/a2t" in model_dir:
-            ckpt_path = os.path.join(model_dir, self._model_init + "-epoch3")
-        else:
-            ckpt_path = os.path.join(model_dir, self._model_init + "-%04dk" % (step // 1000))
-        self._model = AutoModelForSequenceClassification.from_pretrained(ckpt_path)
+    def load_robust_tuned_model(self, load_path):
+        model_dir = os.path.join(load_path, "model_ckpt")
+        self._model = AutoModelForSequenceClassification.from_pretrained(model_dir)
 
         self._model.eval()
         self._model.to(self._device)
-        logger.info("Load transformer-based classifier from %s.", ckpt_path)
+        logger.info("Load transformer-based classifier from %s.", model_dir)
 
-    def save_robust_tuned_model(self, desc, step):
-        model_dir = os.path.join(get_root_dir(), "transformer_clf", self._dataset_name, desc)
-        ckpt_path = os.path.join(model_dir, self._model_init + "-%04dk" % (step // 1000))
-        self._model.save_pretrained(ckpt_path)
-        logger.info("Transformer-based classifier saved at %s.", ckpt_path)
+    def save_robust_tuned_model(self, save_path):
+        model_dir = os.path.join(save_path, "model_ckpt")
+        self._model.save_pretrained(model_dir)
+        logger.info("Transformer-based classifier saved at %s.", model_dir)

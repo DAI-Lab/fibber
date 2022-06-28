@@ -9,7 +9,7 @@ from fibber.metrics.bert_lm_utils import get_lm
 from fibber.metrics.classifier.input_manipulation_classifier import InputManipulationClassifier
 
 
-def lmag_fix_sentences(sentences, context, tokenizer, lm, clf, device, bs=50, rep=10):
+def lmag_fix_sentences(sentences, data_record_list, tokenizer, lm, clf, device, bs=50, rep=10):
     assert bs % rep == 0
 
     st = 0
