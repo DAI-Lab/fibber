@@ -9,7 +9,7 @@ from fibber import log
 from fibber.benchmark.benchmark_utils import update_attack_robust_result, update_detailed_result
 from fibber.datasets import (
     builtin_datasets, clip_sentence, get_dataset, subsample_dataset, verify_dataset)
-from fibber.defense_strategies import LMAgStrategy, SEMStrategy
+from fibber.defense_strategies import AdvTrainStrategy, LMAgStrategy, SEMStrategy
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
 from fibber.metrics.classifier.classifier_base import ClassifierBase
 from fibber.metrics.metric_utils import MetricBundle
@@ -36,6 +36,7 @@ built_in_paraphrase_strategies = {
 built_in_defense_strategies = {
     "LMAgStrategy": LMAgStrategy,
     "SEMStrategy": SEMStrategy,
+    "AdvTrainStrategy": AdvTrainStrategy
 }
 
 DATASET_NAME_COL = "0_dataset_name"
@@ -233,7 +234,8 @@ class Benchmark(object):
     def get_metric_bundle(self):
         return self._metric_bundle
 
-    def fit_defense(self, defense_strategy):
+    def fit_defense(self, paraphrase_strategy, defense_strategy):
+        paraphrase_strategy.fit(self._trainset)
         defense_strategy.fit(self._trainset)
 
     def load_defense(self, defense_strategy):
@@ -249,10 +251,11 @@ def get_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
 
 
 def get_defense_strategy(arg_dict, dataset_name, strategy_name, strategy_gpu_id,
-                         defense_desc, metric_bundle, field):
+                         defense_desc, metric_bundle, attack_strategy, field):
     """Take the strategy name and construct a strategy object."""
     return built_in_defense_strategies[strategy_name](
-        arg_dict, dataset_name, strategy_gpu_id, defense_desc, metric_bundle, field)
+        arg_dict, dataset_name, strategy_gpu_id, defense_desc, metric_bundle,
+        attack_strategy, field)
 
 
 def main():
@@ -327,14 +330,15 @@ def main():
         defense_strategy = get_defense_strategy(
             arg_dict, arg_dict["dataset"], arg_dict["defense_strategy"],
             arg_dict["strategy_gpu_id"], arg_dict["defense_desc"], benchmark.get_metric_bundle(),
-            field=arg_dict["field"])
+            attack_strategy=paraphrase_strategy, field=arg_dict["field"])
     else:
         defense_strategy = None
 
     if arg_dict["task"] == "defense":
         if defense_strategy is None:
             raise RuntimeError("Defense strategy is None.")
-        benchmark.fit_defense(defense_strategy=defense_strategy)
+        benchmark.fit_defense(paraphrase_strategy=paraphrase_strategy,
+                              defense_strategy=defense_strategy)
 
     elif arg_dict["task"] == "attack":
         if defense_strategy is not None:

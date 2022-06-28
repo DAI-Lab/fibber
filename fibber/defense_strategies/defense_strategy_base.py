@@ -15,7 +15,7 @@ class DefenseStrategyBase(object):
     __hyperparameters__ = []
 
     def __init__(self, arg_dict, dataset_name, strategy_gpu_id, defense_desc,
-                 metric_bundle, field):
+                 metric_bundle, attack_strategy, field):
         """Initialize the paraphrase_strategies.
 
         This function initialize the ``self._strategy_config``, ``self._metric_bundle``,
@@ -37,6 +37,8 @@ class DefenseStrategyBase(object):
             dataset_name (str): the name of the dataset.
             strategy_gpu_id (int): the gpu id to run the strategy.
             metric_bundle (MetricBundle): a MetricBundle object.
+            attack_strategy (ParaphraseStrategyBase or None): the attack strategy. Used in some
+                defense methods.
             field (str): the field that perturbation can happen.
         """
         super(DefenseStrategyBase, self).__init__()
@@ -58,6 +60,7 @@ class DefenseStrategyBase(object):
         self._strategy_config["strategy_name"] = str(self)
 
         self._metric_bundle = metric_bundle
+        self._attack_strategy = attack_strategy
 
         if strategy_gpu_id == -1:
             logger.warning("%s is running on CPU." % str(self))

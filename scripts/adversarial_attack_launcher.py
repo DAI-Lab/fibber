@@ -17,6 +17,9 @@ DEFENSE_CONFIG = {
     },
     "sem": {
         "--defense_strategy": "SEMStrategy",
+    },
+    "adv": {
+        "--defense_strategy": "AdvTrainStrategy",
     }
 }
 
