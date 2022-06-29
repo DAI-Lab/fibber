@@ -55,16 +55,20 @@ class Fibber(object):
         strategy_gpu_id = arg_dict["strategy_gpu_id"]
         if strategy_name == "RandomStrategy":
             self._strategy = RandomStrategy(
-                arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
+                arg_dict, dataset_name, strategy_gpu_id, output_dir,
+                self._metric_bundle, field=field)
         if strategy_name == "IdentityStrategy":
             self._strategy = IdentityStrategy(
-                arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
+                arg_dict, dataset_name, strategy_gpu_id, output_dir,
+                self._metric_bundle, field=field)
         if strategy_name == "TextAttackStrategy":
             self._strategy = TextAttackStrategy(
-                arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
+                arg_dict, dataset_name, strategy_gpu_id, output_dir,
+                self._metric_bundle, field=field)
         if strategy_name == "ASRSStrategy":
             self._strategy = ASRSStrategy(
-                arg_dict, dataset_name, strategy_gpu_id, output_dir, self._metric_bundle)
+                arg_dict, dataset_name, strategy_gpu_id, output_dir,
+                self._metric_bundle, field=field)
         if self._strategy is None:
             logger.error("unknown strategy name %s." % strategy_name)
             raise RuntimeError
