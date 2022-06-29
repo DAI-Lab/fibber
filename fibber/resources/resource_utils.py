@@ -177,7 +177,7 @@ def get_bert_lm_demo():
     """Download the pretrained language model for demo dataset."""
     data_dir = get_root_dir()
     data_dir = os.path.join(data_dir, "bert_lm")
-    if not os.path.exists(os.path.join(path, "demo")):
+    if not os.path.exists(os.path.join(data_dir, "demo")):
         download_file(subdir=data_dir,
                       **downloadable_resource_urls["bert-base-cased-lm-demo"])
 
@@ -186,5 +186,5 @@ def get_wordpiece_emb_demo():
     """Download wordpiece embeddings for demo dataset."""
     data_dir = get_root_dir()
     data_dir = os.path.join(data_dir, "wordpiece_emb_conterfited")
-    if not os.path.exists(os.path.join(path, "wordpiece_emb-demo-0500.pt")):
+    if not os.path.exists(os.path.join(data_dir, "wordpiece_emb-demo-0500.pt")):
         download_file(subdir=data_dir, **downloadable_resource_urls["wpe-demo"])
