@@ -37,14 +37,56 @@ downloadable_resource_urls = {
     "bert-base-cased": {
         "filename": "bert-base-cased.tgz",
         "url": "https://fibber-data.s3.amazonaws.com/bert-base-cased.tgz",
-        "md5": "24e9ed53ff28518793de40c344ba0b6a",
+        "md5": "a81caaa4f3b98f6b0fb047290df9d355",
         "untar": True,
         "unzip": False,
     },
     "bert-base-uncased": {
         "filename": "bert-base-uncased.tgz",
         "url": "https://fibber-data.s3.amazonaws.com/bert-base-uncased.tgz",
-        "md5": "0c41b10e7dd3a42cfd314e2bab315b25",
+        "md5": "e9345a81e506c40a7727f75768e73366",
+        "untar": True,
+        "unzip": False,
+    },
+    "bert-large-cased": {
+        "filename": "bert-large-cased.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/bert-large-cased.tgz",
+        "md5": "669cb3a04055dffad348520cb57408a5",
+        "untar": True,
+        "unzip": False,
+    },
+    "bert-large-uncased": {
+        "filename": "bert-large-uncased.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/bert-large-uncased.tgz",
+        "md5": "40c48c7c1daeaf867c525eb925ad2dc7",
+        "untar": True,
+        "unzip": False,
+    },
+    "distilbert-base-cased": {
+        "filename": "distilbert-base-cased.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/distilbert-base-cased.tgz",
+        "md5": "bc27409472a5d741804034e33ab91a36",
+        "untar": True,
+        "unzip": False,
+    },
+    "distilbert-base-uncased": {
+        "filename": "distilbert-base-uncased.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/distilbert-base-uncased.tgz",
+        "md5": "7f59535e2b19e4f8fece5d7d8523c22b",
+        "untar": True,
+        "unzip": False,
+    },
+    "roberta-base": {
+        "filename": "roberta-base.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/roberta-base.tgz",
+        "md5": "40eb7497c8c4f56c1eee82d5b5cdaf21",
+        "untar": True,
+        "unzip": False,
+    },
+    "roberta-large": {
+        "filename": "roberta-large.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/roberta-large.tgz",
+        "md5": "11667313ecde0f00d86d40912a29edc2",
         "untar": True,
         "unzip": False,
     },
@@ -55,31 +97,31 @@ downloadable_resource_urls = {
         "untar": True,
         "unzip": False,
     },
-    "stanford-corenlp": {
-        "filename": "stanford-corenlp-4.1.0.zip",
-        "url": "https://fibber-data.s3.amazonaws.com/stanford-corenlp-4.1.0.zip",
-        "md5": "2ee2e614eec7f913800957297139f63d",
-        "untar": False,
-        "unzip": True,
-    },
-    "bert-base-uncased-clf-demo": {
-        "filename": "bert-base-uncased-clf-demo.tgz",
-        "url": "https://fibber-data.s3.amazonaws.com/bert-base-uncased-clf-demo.tgz",
-        "md5": "4af6ca998625bbd64d9a6d59a3af035f",
+    "gpt2-large": {
+        "filename": "gpt2-large.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/gpt2-large.tgz",
+        "md5": "98bd08097c4188e19826d92561caad2b",
         "untar": True,
         "unzip": False,
     },
-    "bert-base-uncased-lm-demo": {
-        "filename": "bert-base-uncased-lm-demo.tgz",
-        "url": "https://fibber-data.s3.amazonaws.com/bert-base-uncased-lm-demo.tgz",
-        "md5": "ff8f302c81b0aace15890842b7bb0e17",
+    "bert-base-cased-clf-demo": {
+        "filename": "bert-base-cased-clf-demo.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/bert-base-cased-clf-demo.tgz",
+        "md5": "4a1a09af58c38ffe2f9ac2670228df0e",
+        "untar": True,
+        "unzip": False,
+    },
+    "bert-base-cased-lm-demo": {
+        "filename": "bert-base-cased-lm-demo.tgz",
+        "url": "https://fibber-data.s3.amazonaws.com/bert-base-cased-lm-demo.tgz",
+        "md5": "0a79895bb04cc29a9d4944b9dd102cae",
         "untar": True,
         "unzip": False
     },
     "wpe-demo": {
         "filename": "wpe-demo.tgz",
         "url": "https://fibber-data.s3.amazonaws.com/wpe-demo.tgz",
-        "md5": "673fb249c2d63e334bc224c4a7f9bc89",
+        "md5": "b1ff08e8735db7ec5adb3b1a94cc5145",
         "untar": True,
         "unzip": False
     },
@@ -89,5 +131,12 @@ downloadable_resource_urls = {
         "md5": "e606aedf35a953b739c0537a11eebeb5",
         "untar": True,
         "unzip": False
+    },
+    "counter-fitted-vectors": {
+        "filename": "counter-fitted-vectors.zip",
+        "url": "https://fibber-data.s3.amazonaws.com/counter-fitted-vectors.zip",
+        "md5": "2515d2a6502d3e7c9b12cfd0e2318bd1",
+        "untar": False,
+        "unzip": True
     }
 }

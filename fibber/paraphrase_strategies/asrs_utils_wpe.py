@@ -5,26 +5,18 @@ import torch
 import tqdm
 from nltk import word_tokenize
 from torch import nn
-from transformers import BertTokenizer
 
-from fibber import log, resources
-from fibber.resources import get_glove_emb, get_stopwords
+from fibber import get_root_dir, log
+from fibber.resources import get_counter_fitted_vector
 
 logger = log.setup_custom_logger(__name__)
 
 
 class WordPieceDataset(torch.utils.data.Dataset):
-    def __init__(self, dataset, model_init):
-        self._tokenizer = BertTokenizer.from_pretrained(
-            resources.get_transformers(model_init), do_lower_case="uncased" in model_init)
+    def __init__(self, dataset, tokenizer):
+        self._tokenizer = tokenizer
 
-        self._glove = get_glove_emb()
-        stopwords = get_stopwords()
-
-        for word in stopwords:
-            word = word.lower().strip()
-            if word in self._glove["tok2id"]:
-                self._glove["emb_table"][self._glove["tok2id"][word], :] = 0
+        self._glove = get_counter_fitted_vector()
 
         data = []
         logger.info("processing data for wordpiece embedding training")
@@ -53,16 +45,17 @@ class WordPieceDataset(torch.utils.data.Dataset):
         return torch.tensor(comp).float(), torch.tensor(g_emb).float()
 
 
-def get_wordpiece_emb(output_dir, dataset_name, trainset, device,
-                      steps=500, bs=1000, lr=1, lr_halve_steps=100):
+def get_wordpiece_emb(dataset_name, trainset, tokenizer, device,
+                      steps=5000, bs=1000, lr=1, lr_halve_steps=1000):
     """Transfer GloVe embeddings to BERT vocabulary.
 
-    The transfered embeddings will be stored at ``<output_dir>/wordpiece_emb*``.
+    The transfered embeddings will be stored at ``~.fibber/wordpiece_emb_conterfited/
+    wordpiece_emb_<dataset>_<steps>.pt``.
 
     Args:
-        output_dir (str): a directory to store pretrained language model.
         dataset_name (str): dataset name.
         trainset (dict): the dataset dist.
+        tokenizer (transformers.PreTrainedTokenizer): the tokenizer that specifies wordpieces.
         device (torch.Device): a device to train the model.
         steps (int): transfering steps.
         bs (int): transfering batch size.
@@ -71,33 +64,33 @@ def get_wordpiece_emb(output_dir, dataset_name, trainset, device,
     Returns:
         (np.array): a array of size (300, N) where N is the vocabulary size for a bert-base model.
     """
-    filename = output_dir + "/wordpiece_emb-%s-%04d.pt" % (
-        dataset_name, steps)
+    filename = os.path.join(get_root_dir(), "wordpiece_emb_conterfited")
+    os.makedirs(filename, exist_ok=True)
+    filename = os.path.join(filename, "wordpiece_emb-%s-%04d.pt" % (dataset_name, steps))
     if os.path.exists(filename):
         state_dict = torch.load(filename)
         logger.info("load wordpiece embeddings from %s", filename)
         return state_dict["embs"]
 
-    if trainset["cased"]:
-        model_init = "bert-base-cased"
-    else:
-        model_init = "bert-base-uncased"
-
-    dataset = WordPieceDataset(trainset, model_init)
+    dataset = WordPieceDataset(trainset, tokenizer=tokenizer)
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=bs, shuffle=True,
         num_workers=0, drop_last=True)
 
-    linear = nn.Linear(dataset._tokenizer.vocab_size, 300, bias=False).to(device)
+    linear = nn.Linear(tokenizer.vocab_size, 300, bias=False).to(device)
     opt = torch.optim.SGD(lr=lr, momentum=0.5,
                           params=linear.parameters())
     scheduler = torch.optim.lr_scheduler.StepLR(
         opt, step_size=lr_halve_steps, gamma=0.5)
 
-    for w, wid in dataset._tokenizer.vocab.items():
+    linear.weight.data.zero_()
+    cc = 0
+    for w, wid in tokenizer.vocab.items():
         if w.lower() in dataset._glove["tok2id"]:
+            cc += 1
             linear.weight.data[:, wid] = torch.tensor(
                 dataset._glove["emb_table"][dataset._glove["tok2id"][w.lower()]]).to(device)
+    logger.info("Overlap bert and counter fitted vectors: %d", cc)
 
     logger.info("train word piece embeddings")
     pbar = tqdm.tqdm(total=steps)

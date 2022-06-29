@@ -2,7 +2,7 @@
 
 __author__ = 'MIT Data To AI Lab'
 __email__ = 'dailabmit@gmail.com'
-__version__ = '0.3.1'
+__version__ = '0.4.0.dev0'
 
 import os
 
@@ -18,7 +18,3 @@ def get_root_dir():
 
 # change cache directory
 nltk.data.path += [os.path.join(get_root_dir(), "common", "nltk_data")]
-os.environ['TRANSFORMERS_CACHE'] = os.path.join(
-    get_root_dir(), "common", "transformers_pretrained")
-os.environ['TFHUB_CACHE_DIR'] = os.path.join(get_root_dir(), "common", "tfhub_pretrained")
-os.environ['CORENLP_HOME'] = os.path.join(get_root_dir(), "common", "stanford-corenlp-4.1.0")

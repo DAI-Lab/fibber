@@ -6,14 +6,18 @@ import pandas as pd
 import tqdm
 
 from fibber import log
-from fibber.metrics.bert_classifier import BertClassifier
-from fibber.metrics.ce_semantic_similarity_metric import CESemanticSimilarityMetric
-from fibber.metrics.classifier_base import ClassifierBase
-from fibber.metrics.edit_distance_metric import EditDistanceMetric
-from fibber.metrics.glove_semantic_similarity_metric import GloVeSemanticSimilarityMetric
-from fibber.metrics.gpt2_grammar_quality_metric import GPT2GrammarQualityMetric
+from fibber.metrics.classifier.classifier_base import ClassifierBase
+from fibber.metrics.classifier.fasttext_classifier import FasttextClassifier
+from fibber.metrics.classifier.transformer_classifier import TransformerClassifier
+from fibber.metrics.distance.edit_distance_metric import EditDistanceMetric
+from fibber.metrics.distance.ref_bleu_metric import RefBleuMetric
+from fibber.metrics.distance.self_bleu_metric import SelfBleuMetric
+from fibber.metrics.fluency.bert_perplexity_metric import BertPerplexityMetric
+from fibber.metrics.fluency.gpt2_perplexity_metric import GPT2PerplexityMetric
 from fibber.metrics.metric_base import MetricBase
-from fibber.metrics.use_semantic_similarity_metric import USESemanticSimilarityMetric
+from fibber.metrics.similarity.ce_similarity_metric import CESimilarityMetric
+from fibber.metrics.similarity.glove_similarity_metric import GloVeSimilarityMetric
+from fibber.metrics.similarity.use_similarity_metric import USESimilarityMetric
 
 logger = log.setup_custom_logger(__name__)
 
@@ -28,45 +32,81 @@ class MetricBundle(object):
 
     def __init__(self,
                  enable_edit_distance=True,
-                 enable_use_semantic_similarity=True,
-                 enable_glove_semantic_similarity=True,
-                 enable_gpt2_grammar_quality=True,
-                 enable_bert_clf_prediction=False,
-                 enable_ce_semantic_similarity=True,
-                 **kargs):
+                 enable_use_similarity=True,
+                 enable_glove_similarity=True,
+                 enable_gpt2_perplexity=False,
+                 enable_transformer_classifier=True,
+                 enable_ce_similarity=False,
+                 enable_fasttext_classifier=False,
+                 enable_bert_perplexity=True,
+                 enable_bert_perplexity_per_class=False,
+                 enable_self_bleu=False,
+                 enable_ref_bleu=False,
+                 target_clf="transformer",
+                 field="text0", bs=32, **kwargs):
         """Initialize various metrics.
 
         Args:
             enable_edit_distance (bool): whether to use editing distance in the bundle.
-            enable_use_semantic_similarity (bool): whether to use Universal sentence encoder to
+            enable_use_similarity (bool): whether to use Universal sentence encoder to
                 compute sentence similarity
-            enable_glove_semantic_similarity (bool): whether to use Glove embeddings to compute
+            enable_glove_similarity (bool): whether to use Glove embeddings to compute
                 sentence similarity.
-            enable_gpt2_grammar_quality (bool): whether to use GPT2 to compute sentence quality.
-            enable_bert_clf_prediction (bool): whether to include BERT classifier prediction in
+            enable_gpt2_perplexity (bool): whether to use GPT2 to compute sentence quality.
+            enable_transformer_classifier (bool): whether to include BERT classifier prediction in
                 metrics.
-            kargs: arguments for metrics. kargs will be passed to all metrics.
+            enable_ce_similarity (bool): whether to use Cross Encoder to measure sentence
+                similarity.
+            enable_fasttext_classifier (bool): whether to include Fasttext classifier prediction
+                in metrics.
+            target_clf (str): choose from "trasformer", "fasttext".
+            field (str): the field where perturbation can happen.
+            bs (int): batch size.
+            kwargs: arguments for metrics. kwargs will be passed to all metrics.
         """
         super(MetricBundle, self).__init__()
 
         self._metrics = {}
         self._classifiers = {}
         self._target_clf = None
+        self._field = field
 
         self._advanced_aggregation_fn = {}
 
         if enable_edit_distance:
-            self.add_metric(EditDistanceMetric(**kargs), DIRECTION_HIGHER_BETTER)
-        if enable_use_semantic_similarity:
-            self.add_metric(USESemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
-        if enable_glove_semantic_similarity:
-            self.add_metric(GloVeSemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
-        if enable_gpt2_grammar_quality:
-            self.add_metric(GPT2GrammarQualityMetric(**kargs), DIRECTION_LOWER_BETTER)
-        if enable_ce_semantic_similarity:
-            self.add_metric(CESemanticSimilarityMetric(**kargs), DIRECTION_HIGHER_BETTER)
-        if enable_bert_clf_prediction:
-            self.add_classifier(BertClassifier(**kargs), set_target_clf=True)
+            self.add_metric(EditDistanceMetric(field=field, bs=bs, **kwargs),
+                            DIRECTION_UNKNOWN)
+        if enable_use_similarity:
+            self.add_metric(USESimilarityMetric(field=field, bs=bs, **kwargs),
+                            DIRECTION_HIGHER_BETTER)
+        if enable_glove_similarity:
+            self.add_metric(GloVeSimilarityMetric(field=field, bs=bs, **kwargs),
+                            DIRECTION_HIGHER_BETTER)
+        if enable_gpt2_perplexity:
+            self.add_metric(GPT2PerplexityMetric(field=field, bs=bs, **kwargs),
+                            DIRECTION_LOWER_BETTER)
+        if enable_ce_similarity:
+            self.add_metric(CESimilarityMetric(field=field, bs=bs, **kwargs),
+                            DIRECTION_HIGHER_BETTER)
+        if enable_transformer_classifier:
+            self.add_classifier(TransformerClassifier(field=field, bs=bs, **kwargs),
+                                set_target_clf=(target_clf == "transformer"))
+        if enable_fasttext_classifier:
+            self.add_classifier(FasttextClassifier(field=field, bs=bs, **kwargs),
+                                set_target_clf=(target_clf == "fasttext"))
+        if enable_bert_perplexity:
+            self.add_metric(BertPerplexityMetric(field=field, bs=bs, **kwargs),
+                            DIRECTION_LOWER_BETTER)
+        if enable_bert_perplexity_per_class:
+            n_labels = len(kwargs["trainset"]["label_mapping"])
+            for i in range(n_labels):
+                self.add_metric(
+                    BertPerplexityMetric(bert_ppl_filter=i, field=field, bs=bs, **kwargs),
+                    DIRECTION_LOWER_BETTER)
+        if enable_self_bleu:
+            self.add_metric(SelfBleuMetric(field=field, bs=bs, **kwargs), DIRECTION_UNKNOWN)
+        if enable_ref_bleu:
+            self.add_metric(RefBleuMetric(field=field, bs=bs, **kwargs), DIRECTION_HIGHER_BETTER)
 
     def add_metric(self, metric, direction):
         """Add a customized metric to metric bundle.
@@ -94,7 +134,7 @@ class MetricBundle(object):
         Args:
             metric_name: the name of the matric.
         Returns:
-            (object): a metric object.
+            (MetricBase): a metric object.
         """
         assert metric_name in self._metrics
         return self._metrics[metric_name][0]
@@ -109,7 +149,7 @@ class MetricBundle(object):
         Args:
             metric_name: the name of the matric.
         Returns:
-            (object): a metric object.
+            (MetricBase): a metric object.
         """
         assert metric_name in self._metrics
         return self._metrics[metric_name][1]
@@ -164,14 +204,18 @@ class MetricBundle(object):
         """Returns the classifier for attack."""
         return self.get_classifier(self.get_target_classifier_name())
 
-    def measure_example(self, origin, paraphrase, data_record=None, paraphrase_field="text0"):
+    def replace_target_classifier(self, clf):
+        """Remove the original target classifier and add a new classifier."""
+        del self._classifiers[self.get_target_classifier_name()]
+        self.add_classifier(clf, set_target_clf=True)
+
+    def measure_example(self, origin, paraphrase, data_record=None):
         """Compute the results of all metrics in the bundle for one pair of text.
 
         Args:
             origin (str): original text.
             paraphrase (str): paraphrased text.
-            data_record (str): the data record.
-            paraphrase_field (str): choose from "text0", "text1".
+            data_record (dict): the data record.
 
         Returns:
             (dict): a dict with metric name as key.
@@ -179,21 +223,20 @@ class MetricBundle(object):
         ret = {}
         for name in self.get_metric_names():
             metric = self.get_metric(name)
-            ret[name] = metric.measure_example(origin, paraphrase, data_record, paraphrase_field)
+            ret[name] = metric.measure_example(origin, paraphrase, data_record)
         for name in self.get_classifier_names():
             classifier = self.get_classifier(name)
             ret[name] = classifier.measure_example(
-                origin, paraphrase, data_record, paraphrase_field)
+                origin, paraphrase, data_record)
         return ret
 
-    def measure_batch(self, origin, paraphrase_list, data_record=None, paraphrase_field="text0"):
+    def measure_batch(self, origin, paraphrase_list, data_record=None,):
         """Measure the metric on a batch of paraphrase_list.
 
         Args:
             origin (str): the original text.
             paraphrase_list (list): a set of paraphrase_list.
             data_record (dict): the corresponding data record of original text.
-            paraphrase_field (str): the field name to paraphrase.
 
         Returns:
             (list): a list containing dict of metrics for each paraphrase.
@@ -201,13 +244,12 @@ class MetricBundle(object):
         ret = [{} for i in range(len(paraphrase_list))]
         for name in self.get_metric_names():
             metric = self.get_metric(name)
-            result = metric.measure_batch(origin, paraphrase_list, data_record, paraphrase_field)
+            result = metric.measure_batch(origin, paraphrase_list, data_record)
             for i in range(len(paraphrase_list)):
                 ret[i][name] = result[i]
         for name in self.get_classifier_names():
             classifier = self.get_classifier(name)
-            result = classifier.measure_batch(origin, paraphrase_list,
-                                              data_record, paraphrase_field)
+            result = classifier.measure_batch(origin, paraphrase_list, data_record)
             for i in range(len(paraphrase_list)):
                 ret[i][name] = result[i]
         return ret
@@ -225,7 +267,6 @@ class MetricBundle(object):
         """
         last_output_save_time = -1
         logger.info("Start measuring.")
-        paraphrase_field = results["paraphrase_field"]
 
         for data_record in tqdm.tqdm(results["data"]):
             data_record_tmp = dict([(k, v) for k, v in data_record.items()
@@ -233,13 +274,13 @@ class MetricBundle(object):
 
             # Run metrics on original text
             data_record["original_text_metrics"] = self.measure_example(
-                data_record[paraphrase_field], data_record[paraphrase_field],
-                data_record_tmp, paraphrase_field)
+                data_record[self._field], data_record[self._field],
+                data_record_tmp)
 
             # Run metrics on paraphrased text
             data_record["paraphrase_metrics"] = self.measure_batch(
-                data_record[paraphrase_field], data_record[paraphrase_field + "_paraphrases"],
-                data_record_tmp, paraphrase_field)
+                data_record[self._field], data_record[self._field + "_paraphrases"],
+                data_record_tmp)
 
             # save tmp output every 30 seconds
             if datetime.datetime.now().timestamp() - last_output_save_time > 30:

@@ -7,8 +7,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from fibber import log
-from fibber.paraphrase_strategies.asrs_utils_lm import get_lm
-from fibber.paraphrase_strategies.asrs_utils_text_parser import TextParser
+from fibber.metrics.bert_lm_utils import get_lm
 from fibber.paraphrase_strategies.asrs_utils_wpe import get_wordpiece_emb
 from fibber.paraphrase_strategies.strategy_base import StrategyBase
 
@@ -34,7 +33,7 @@ PRE_PROCESSING_PATTERN = [
     (r"'ve\s", r" have "),
 ]
 
-AUTO_SENTENCE_LEN_THRESHOLD = 50  # 50 words
+asrs_clf_counter = 0
 
 
 def process_text(text, patterns):
@@ -80,7 +79,7 @@ def sample_word_from_logits(logits, temperature=1., top_k=0):
     return idx
 
 
-def all_accept_criteria(candidate_ids, stats, **kargs):
+def all_accept_criteria(candidate_ids, stats, **kwargs):
     """Always accept proposed words.
 
     Args:
@@ -111,11 +110,10 @@ def sim_criteria_score(origin, paraphrases, sim_metric, sim_threshold, sim_weigh
     Returns:
         (np.array): a numpy array of size ``(batch_size,)``. All entries ``<=0``.
     """
-    if sim_weight == 0:
-        return np.zeros(len(paraphrases), dtype="float32")
     use_semantic_similarity = sim_metric.measure_batch(origin, paraphrases)
-    return -sim_weight * (
-        np.maximum(sim_threshold - np.asarray(use_semantic_similarity), 0) ** 2)
+    return (-sim_weight * (
+        np.maximum(sim_threshold - np.asarray(use_semantic_similarity), 0) ** 2),
+        use_semantic_similarity)
 
 
 def ppl_criteria_score(origin, paraphrases, ppl_metric, ppl_weight):
@@ -124,42 +122,44 @@ def ppl_criteria_score(origin, paraphrases, ppl_metric, ppl_weight):
     Args:
         origin (str): original sentence.
         paraphrases ([str]): a list of paraphrase_list.
-        ppl_metric (GPT2GrammarQualityMetric): a GPT2GrammarQualityMetric metric object.
+        ppl_metric (GPT2PerplexityMetric): a GPT2PerplexityMetric metric object.
         ppl_weight (float): the weight parameter for the criteria.
 
     Returns:
         (np.array): a numpy array of size ``(batch_size,)``. All entries ``<=0``.
     """
-    if ppl_weight == 0:
-        return np.zeros(len(paraphrases), dtype="float32")
-    ppl_ratio = ppl_metric.measure_batch(origin, paraphrases)
-    return -ppl_weight * (np.maximum(ppl_ratio, 0) ** 2)
+    ppl_ratio = ppl_metric.measure_batch(origin, paraphrases, use_ratio=True)
+    return (-ppl_weight * (np.maximum(np.asarray(ppl_ratio) - 1, 0) ** 2),
+            ppl_ratio)
 
 
-def clf_criteria_score(origin, paraphrases, data_record, field_name, clf_metric, clf_weight):
+def clf_criteria_score(origin, paraphrases, data_record, field, clf_metric, clf_weight):
+    global asrs_clf_counter
     if clf_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
 
-    dist = clf_metric.predict_dist_batch(origin, paraphrases, data_record, field_name)
+    dist = clf_metric.predict_log_dist_batch(origin, paraphrases, data_record)
     label = data_record["label"]
     correct_prob = (dist[:, label]).copy()
     dist[:, label] = -1e8
     incorrect_prob = np.max(dist, axis=1)
-    return -clf_weight * np.maximum(correct_prob - incorrect_prob, 0)
+    asrs_clf_counter += len(paraphrases)
+    return (-clf_weight * np.maximum(correct_prob - incorrect_prob, 0),
+            incorrect_prob > correct_prob)
 
 
 def joint_weighted_criteria(
-        tokenizer, data_record, field_name, origin, batch_tensor,
+        tokenizer, data_record, field, origin, batch_tensor,
         pos_st, pos_ed, previous_ids, candidate_ids, sim_metric, sim_threshold, sim_weight,
         clf_metric, clf_weight, ppl_metric, ppl_weight, burnin_weight, stats, state,
-        device, seq_len, **kargs):
+        device, seq_len, log_prob_previous_ids, log_prob_candidate_ids, **kwargs):
     """Accept or reject candidate word using the joint weighted criteria.
 
     Args:
         tokenizer (transformers.BertTokenizer): a bert tokenizer.
         data_record (dict): the data record dict.
-        field_name (str): the field to rewritten.
-        origin (str): original text. Same as ``data_record[field_name]``.
+        field (str): the field to rewritten.
+        origin (str): original text. Same as ``data_record[field]``.
         batch_tensor (torch.Tensor): tensor of a batch of text with size ``(batch_size, L)``.
         pos_st (int): the start position of sampling (include).
         pos_ed (int): the end position of sampling (exclude).
@@ -167,12 +167,12 @@ def joint_weighted_criteria(
             size ``(batch_size, pos_ed-pos_st)``.
         candidate_ids (torch.Tensor): proposed word ids in this sampling step with
             size ``(batch_size, pos_ed-pos_st)``.
-        sim_metric (USESemanticSimilarityMetric): a universal sentence encoder metric object.
+        sim_metric (USESimilarityMetric): a universal sentence encoder metric object.
         sim_threshold (float): the universal sentence encoder similarity threshold.
         sim_weight (float): the weight for USE criteria score.
         clf_metric (BertClassifier): a BertClassifier metric.
         clf_weight (float): the weight for BERT criteria score.
-        ppl_metric (GPT2GrammarQualityMetric): a GPT2GrammarQualityMetric metric.
+        ppl_metric (GPT2PerplexityMetric): a GPT2PerplexityMetric metric.
         ppl_weight (float): the weight for GPT2 criteria score.
         burnin_weight (float): the discount factor.
         stats (dict): a dict to keep track the accept rate.
@@ -186,53 +186,58 @@ def joint_weighted_criteria(
             a 1-D float array of criteria score.
     """
     if burnin_weight == 0:
-        return candidate_ids
+        return all_accept_criteria(candidate_ids, stats)
 
     def compute_criteria_score(fill_ids):
         batch_tensor[:, pos_st:pos_ed] = fill_ids
         paraphrases = [tostring(tokenizer, x[1:ll - 1])
                        for x, ll in zip(batch_tensor.detach().cpu().numpy(), seq_len)]
-        return (ppl_criteria_score(origin=origin, paraphrases=paraphrases,
-                                   ppl_metric=ppl_metric, ppl_weight=ppl_weight)
-                + sim_criteria_score(origin=origin, paraphrases=paraphrases, sim_metric=sim_metric,
-                                     sim_weight=sim_weight, sim_threshold=sim_threshold)
-                + clf_criteria_score(origin=origin, paraphrases=paraphrases,
-                                     data_record=data_record, field_name=field_name,
-                                     clf_metric=clf_metric,
-                                     clf_weight=clf_weight)) * burnin_weight
+        ppl_score, ppl_ratio = ppl_criteria_score(origin=origin, paraphrases=paraphrases,
+                                                  ppl_metric=ppl_metric, ppl_weight=ppl_weight)
+        sim_score, sim_value = sim_criteria_score(
+            origin=origin, paraphrases=paraphrases, sim_metric=sim_metric,
+            sim_weight=sim_weight, sim_threshold=sim_threshold)
+        clf_score, is_incorrect = clf_criteria_score(
+            origin=origin, paraphrases=paraphrases, data_record=data_record,
+            field=field, clf_metric=clf_metric, clf_weight=clf_weight)
+        return ppl_score + sim_score + clf_score, is_incorrect
 
     if state is not None:
-        previous_criteria_score = state
+        previous_criteria_score = state[0]
+        previous_is_incorrect = state[1]
     else:
-        previous_criteria_score = compute_criteria_score(previous_ids)
+        previous_criteria_score, previous_is_incorrect = compute_criteria_score(previous_ids)
 
-    candidate_criteria_score = compute_criteria_score(candidate_ids)
+    candidate_criteria_score, candidate_is_incorrect = compute_criteria_score(candidate_ids)
 
-    alpha = np.exp(candidate_criteria_score - previous_criteria_score)
+    alpha = np.exp((candidate_criteria_score - previous_criteria_score
+                    + log_prob_previous_ids - log_prob_candidate_ids) * burnin_weight)
 
     accept = np.asarray(np.random.rand(len(alpha)) < alpha, dtype="int32")
 
     stats["accept"] += np.sum(accept)
     stats["all"] += len(accept)
-    state = candidate_criteria_score * accept + previous_criteria_score * (1 - accept)
+    state = (candidate_criteria_score * accept + previous_criteria_score * (1 - accept),
+             candidate_is_incorrect * accept + previous_is_incorrect * (1 - accept))
+
     accept = torch.tensor(accept).to(device)
     ids = candidate_ids * accept.reshape(-1, 1) + previous_ids * (1 - accept.reshape(-1, 1))
     return ids, state
 
 
-def none_constraint(**kargs):
-    return 0
+def none_constraint(**kwargs):
+    return 0.
 
 
-def allow_list_constraint(allow_list, **kargs):
+def allow_list_constraint(allow_list, **kwargs):
     return -1e6 * (1 - allow_list)
 
 
-def wpe_constraint(target_emb, word_embs, batch_tensor, pos,
-                   wpe_threshold, wpe_weight, attention_mask_paraphrase_text_only, **kargs):
-    current_emb = ((word_embs(batch_tensor)
-                    * attention_mask_paraphrase_text_only[:, :, None]).sum(dim=1)
-                   - word_embs(batch_tensor[:, pos]))
+def wpe_constraint(target_emb, word_embs, batch_tensor, pos_st, pos_ed,
+                   wpe_threshold, wpe_weight, attention_mask_paraphrase_text_only, **kwargs):
+    current_emb = word_embs(batch_tensor) * attention_mask_paraphrase_text_only[:, :, None]
+    current_emb[:, pos_st, pos_ed] = 0
+    current_emb = current_emb.sum(dim=1)
     candidate_emb = current_emb[:, None, :] + word_embs.weight.data[None, :, :]
     dis = F.cosine_similarity(candidate_emb, target_emb[:, None, :], dim=2)
     dis = (wpe_threshold - dis).clamp_(min=0)
@@ -256,23 +261,21 @@ class ASRSStrategy(StrategyBase):
             ("the schedule decides how much additional "
              "constraint is added. options are [linear, 0, 1].")),
         ("accept_criteria", str, "joint_weighted_criteria", (
-            "select an accept criteria for candidate words from "
+            "choose an accept criteria for candidate words from "
             "[all, joint_weighted_criteria].")),
-        ("enforcing_dist", str, "wpe", ("select an additional constraint for candidate "
+        ("enforcing_dist", str, "wpe", ("choose an additional constraint for candidate "
                                         "words from [none, allow_list, wpe].")),
         ("burnin_criteria_schedule", str, "1", ("the schedule decides how strict the criteria is "
                                                 "used. options are [linear, 0, 1].")),
         ("seed_option", str, "origin", ("the option for seed sentences in generation. "
-                                        "choose from [origin, auto, dynamic_len].")),
+                                        "choose from [origin, dynamic_len].")),
         ("dynamic_len_min", int, -3, "change length min."),
         ("dynamic_len_max", int, 3, "change length max."),
-        ("split_sentence", str, "auto", "split paragraph to sentence. options are [0, 1, auto]."),
-        ("stanza_port", int, 9000, "stanza port"),
         ("lm_option", str, "finetune", "choose from [pretrain, finetune, adv]."),
         ("lm_steps", int, 5000, "lm training steps."),
         ("clf_weight", float, 3, "weight for the clf score in the criteria."),
         ("ppl_weight", float, 5, "the smoothing parameter for gpt2."),
-        ("sim_metric", str, "CESemanticSimilarityMetric", "similarity metric")
+        ("sim_metric", str, "USESimilarityMetric", "similarity metric")
     ]
 
     def __repr__(self):
@@ -283,8 +286,9 @@ class ASRSStrategy(StrategyBase):
         logger.info("Load bert language model for ASRSStrategy.")
 
         self._tokenizer, lm = get_lm(
-            self._strategy_config["lm_option"], self._output_dir, trainset, self._device,
-            self._strategy_config["lm_steps"])
+            self._strategy_config["lm_option"], self._dataset_name, trainset, self._device,
+            lm_steps=self._strategy_config["lm_steps"])
+
         if isinstance(lm, list):
             self._bert_lms = lm
         else:
@@ -295,10 +299,10 @@ class ASRSStrategy(StrategyBase):
         self._sim_metric = self._metric_bundle.get_metric(
             self._strategy_config["sim_metric"])
         self._clf_metric = self._metric_bundle.get_target_classifier()
-        self._ppl_metric = self._metric_bundle.get_metric("GPT2GrammarQualityMetric")
+        self._ppl_metric = self._metric_bundle.get_metric("BertPerplexityMetric")
 
         # load word piece embeddings.
-        wpe = get_wordpiece_emb(self._output_dir, self._dataset_name, trainset, self._device)
+        wpe = get_wordpiece_emb(self._dataset_name, trainset, self._tokenizer, self._device)
         self._word_embs = nn.Embedding(self._tokenizer.vocab_size, 300)
         self._word_embs.weight.data = torch.tensor(wpe.T).float()
         self._word_embs = self._word_embs.to(self._device)
@@ -323,33 +327,19 @@ class ASRSStrategy(StrategyBase):
         else:
             assert 0
 
-        # load text parser
-        if (self._strategy_config["seed_option"] != "origin"
-                or self._strategy_config["split_sentence"] != "0"):
-            self._text_parser = TextParser(self._strategy_config["stanza_port"])
-        else:
-            self._text_parser = None
-
         self._stats = {
             "all": 0,
             "accept": 0
         }
 
-    def _parallel_sequential_generation(self, seed, batch_size, burnin_steps, sampling_steps,
-                                        field_name, data_record):
+    def _parallel_sequential_generation(
+            self, original_text, seed, batch_size, burnin_steps, sampling_steps, field,
+            data_record, early_stop=False):
         if self._strategy_config["seed_option"] == "origin":
             seq = ["[CLS]"] + self._tokenizer.tokenize(seed) + ["[SEP]"]
             batch_tensor = torch.tensor(
                 [self._tokenizer.convert_tokens_to_ids(seq)] * batch_size).to(self._device)
             seq_len = [len(seq)] * batch_size
-        elif self._strategy_config["seed_option"] == "auto":
-            seeds = self._text_parser.phrase_level_shuffle(seed, batch_size)
-            seq = [self._tokenizer.tokenize(x) for x in seeds]
-            seq_len = ([len(x) + 2 for x in seq])
-            max_len = max(seq_len)
-            seq = [["[CLS]"] + x + ["[SEP]"] + ["[PAD]"] * (max_len - len(x) - 2) for x in seq]
-            batch_tensor = torch.tensor(
-                [self._tokenizer.convert_tokens_to_ids(x) for x in seq]).to(self._device)
         elif self._strategy_config["seed_option"] == "dynamic_len":
             seq_raw = self._tokenizer.tokenize(seed)
             seq = []
@@ -388,7 +378,7 @@ class ASRSStrategy(StrategyBase):
             attention_mask[rid, :ll] = 1
             attention_mask_paraphrase_text_only[rid, 1:ll - 1] = 1
 
-        if field_name == "text1":
+        if field == "text1":
             context_seq = ["[CLS]"] + self._tokenizer.tokenize(data_record["text0"])
             context_tensor = torch.tensor(
                 [self._tokenizer.convert_tokens_to_ids(context_seq)] * batch_size
@@ -402,7 +392,7 @@ class ASRSStrategy(StrategyBase):
             context_tensor = None
 
         target_emb = (self._word_embs(torch.tensor([
-            self._tokenizer.convert_tokens_to_ids(self._tokenizer.tokenize(seed))
+            self._tokenizer.convert_tokens_to_ids(self._tokenizer.tokenize(original_text))
             for _ in range(batch_size)]).to(self._device))).sum(dim=1)
 
         allow_list = F.one_hot(batch_tensor[0] * attention_mask_paraphrase_text_only[0],
@@ -421,57 +411,74 @@ class ASRSStrategy(StrategyBase):
                 * attention_mask_paraphrase_text_only[:, pos_st:pos_ed]
                 + previous_ids * (1 - attention_mask_paraphrase_text_only[:, pos_st:pos_ed]))
 
+            if field == "text1":
+                batch_tensor_tmp = torch.cat([context_tensor, batch_tensor], dim=1)
+                tok_type_tensor_tmp = torch.cat([
+                    torch.zeros_like(context_tensor),
+                    torch.ones_like(batch_tensor)], dim=1)
+                logits_lm = self._bert_lm(
+                    batch_tensor_tmp,
+                    token_type_ids=tok_type_tensor_tmp,
+                    attention_mask=attention_mask)[0][
+                    :, context_len + pos_st:context_len + pos_ed]
+            else:
+                logits_lm = self._bert_lm(
+                    batch_tensor, attention_mask=attention_mask)[0][:, pos_st:pos_ed]
+            logits_lm[:, :, self._tokenizer.sep_token_id] = -1e8
+
+            logits_enforcing = self._enforcing_dist_fn(
+                # for wpe constraint
+                target_emb=target_emb,
+                word_embs=self._word_embs,
+                batch_tensor=batch_tensor,
+                pos_st=pos_st,
+                pos_ed=pos_ed,
+                wpe_threshold=self._strategy_config["wpe_threshold"],
+                wpe_weight=self._strategy_config["wpe_weight"],
+                # for naive constraint
+                allow_list=allow_list,
+                attention_mask_paraphrase_text_only=attention_mask_paraphrase_text_only
+            )
+
+            log_prob_previous_ids = 0
+            log_prob_candidate_ids = 0
+
             sample_order = np.arange(pos_st, pos_ed)
             np.random.shuffle(sample_order)
             for pos in sample_order:
-                if field_name == "text1":
-                    batch_tensor_tmp = torch.cat([context_tensor, batch_tensor], dim=1)
-                    tok_type_tensor_tmp = torch.cat([
-                        torch.zeros_like(context_tensor),
-                        torch.ones_like(batch_tensor)], dim=1)
-                    logits_lm = self._bert_lm(
-                        batch_tensor_tmp,
-                        token_type_ids=tok_type_tensor_tmp,
-                        attention_mask=attention_mask)[0][:, context_len + pos]
-                    logits_lm[:, self._tokenizer.sep_token_id] = -1e8
-                else:
-                    logits_lm = self._bert_lm(batch_tensor,
-                                              attention_mask=attention_mask)[0][:, pos]
-
-                logits_enforcing = self._enforcing_dist_fn(
-                    # for wpe constraint
-                    target_emb=target_emb,
-                    word_embs=self._word_embs,
-                    batch_tensor=batch_tensor,
-                    pos=pos,
-                    wpe_threshold=self._strategy_config["wpe_threshold"],
-                    wpe_weight=self._strategy_config["wpe_weight"],
-                    # for naive constraint
-                    allow_list=allow_list,
-                    attention_mask_paraphrase_text_only=attention_mask_paraphrase_text_only
-                )
-
                 if ii < burnin_steps:
                     if self._strategy_config["burnin_enforcing_schedule"] == "0":
-                        logits_joint = logits_lm
+                        logits_joint = logits_lm[:, pos - pos_st]
                     elif self._strategy_config["burnin_enforcing_schedule"] == "1":
-                        logits_joint = logits_lm + logits_enforcing
+                        logits_joint = logits_lm[:, pos - pos_st] + logits_enforcing
                     elif self._strategy_config["burnin_enforcing_schedule"] == "linear":
-                        logits_joint = logits_lm + (
-                            ii / burnin_steps) * logits_enforcing
+                        logits_joint = logits_lm[:, pos - pos_st] + (
+                            (ii + 1) / burnin_steps) * logits_enforcing
                     else:
                         assert 0
                 else:
-                    logits_joint = logits_lm + logits_enforcing
+                    logits_joint = logits_lm[:, pos - pos_st] + logits_enforcing
 
-                top_k = self._strategy_config["top_k"] if (
-                    ii >= burnin_steps) else 0
+                logits_joint = F.log_softmax(logits_joint, dim=1)
+
+                top_k = self._strategy_config["top_k"] if (ii >= burnin_steps) else 0
 
                 candidate_ids = sample_word_from_logits(
                     logits_joint, top_k=top_k, temperature=self._strategy_config["temperature"])
-                batch_tensor[:, pos] = (candidate_ids * attention_mask_paraphrase_text_only[:, pos]
-                                        + batch_tensor[:, pos]
-                                        * (1 - attention_mask_paraphrase_text_only[:, pos]))
+
+                log_prob_previous_ids = log_prob_previous_ids + (
+                    torch.gather(
+                        logits_joint, dim=1, index=previous_ids[:, pos - pos_st].unsqueeze(1)
+                    ).squeeze(1) * attention_mask_paraphrase_text_only[:, pos])
+                log_prob_candidate_ids = log_prob_candidate_ids + (
+                    torch.gather(
+                        logits_joint, dim=1, index=candidate_ids.unsqueeze(1)).squeeze(1)
+                    * attention_mask_paraphrase_text_only[:, pos])
+
+                batch_tensor[:, pos] = (
+                    candidate_ids * attention_mask_paraphrase_text_only[:, pos]
+                    + batch_tensor[:, pos]
+                    * (1 - attention_mask_paraphrase_text_only[:, pos]))
 
             candidate_ids = batch_tensor[:, pos_st:pos_ed].clone()
 
@@ -481,15 +488,15 @@ class ASRSStrategy(StrategyBase):
                 elif self._strategy_config["burnin_criteria_schedule"] == "1":
                     decision_fn_burnin_weight = 1
                 elif self._strategy_config["burnin_criteria_schedule"] == "linear":
-                    decision_fn_burnin_weight = ii / burnin_steps
+                    decision_fn_burnin_weight = (ii + 1) / burnin_steps
                 else:
                     assert 0
             else:
-                pass
+                decision_fn_burnin_weight = 1
 
             final_ids, decision_fn_state = self._decision_fn(
-                tokenizer=self._tokenizer, data_record=data_record, field_name=field_name,
-                origin=data_record[field_name], batch_tensor=batch_tensor,
+                tokenizer=self._tokenizer, data_record=data_record, field=field,
+                origin=data_record[field], batch_tensor=batch_tensor,
                 pos_st=pos_st, pos_ed=pos_ed, previous_ids=previous_ids,
                 candidate_ids=candidate_ids, sim_metric=self._sim_metric,
                 sim_threshold=self._strategy_config["sim_threshold"],
@@ -498,19 +505,26 @@ class ASRSStrategy(StrategyBase):
                 ppl_metric=self._ppl_metric, ppl_weight=self._strategy_config["ppl_weight"],
                 burnin_weight=decision_fn_burnin_weight, stats=self._stats,
                 state=decision_fn_state, device=self._device,
-                seq_len=seq_len)
+                seq_len=seq_len,
+                log_prob_candidate_ids=log_prob_candidate_ids.detach().cpu().numpy(),
+                log_prob_previous_ids=log_prob_previous_ids.detach().cpu().numpy())
 
             batch_tensor[:, pos_st:pos_ed] = final_ids
+            if early_stop and np.sum(decision_fn_state[1]) >= 3:
+                break
 
         return [tostring(self._tokenizer, x[1:ll - 1])
                 for x, ll in zip(batch_tensor.detach().cpu().numpy(), seq_len)]
 
-    def paraphrase_example(self, data_record, field_name, n):
+    def paraphrase_example(self, data_record, n, early_stop=False):
+        global asrs_clf_counter
+        asrs_clf_counter = 0
+
         if self._strategy_config["lm_option"] == "adv":
             self._bert_lm = self._bert_lms[data_record["label"]]
             self._bert_lm.to(self._device)
 
-        clipped_text = " ".join(data_record[field_name].split()[:200])
+        clipped_text = data_record[self._field]
         clipped_text = process_text(clipped_text, PRE_PROCESSING_PATTERN)
         batch_size = self._strategy_config["batch_size"]
 
@@ -524,50 +538,15 @@ class ASRSStrategy(StrategyBase):
             burnin_steps = self._strategy_config["burnin_steps"]
             sampling_steps = self._strategy_config["sampling_steps"]
 
-            if self._strategy_config["split_sentence"] == "0":
-                batch = self._parallel_sequential_generation(
-                    clipped_text,
-                    batch_size if id != n_batches - 1 else last_batch_size,
-                    burnin_steps,
-                    sampling_steps,
-                    field_name, data_record)
-                sentences += batch
-            elif self._strategy_config["split_sentence"] in ["1", "auto"]:
-                splitted_text_ori = self._text_parser.split_paragraph_to_sentences(
-                    clipped_text)
-
-                if self._strategy_config["split_sentence"] == "auto":
-                    splitted_text = []
-                    current_text = ""
-                    for s in splitted_text_ori:
-                        current_text += " " + s
-                        if len(current_text.split()) > AUTO_SENTENCE_LEN_THRESHOLD:
-                            splitted_text.append(current_text)
-                            current_text = ""
-                    if len(current_text.split()) > 0:
-                        splitted_text.append(current_text)
-
-                    burnin_steps = self._strategy_config["burnin_steps"] // len(splitted_text)
-                    sampling_steps = self._strategy_config["sampling_steps"] // len(splitted_text)
-                elif self._strategy_config["split_sentence"] == "1":
-                    splitted_text = splitted_text_ori
-                    burnin_steps = self._strategy_config["burnin_steps"] // len(splitted_text)
-                    sampling_steps = self._strategy_config["sampling_steps"] // len(splitted_text)
-                else:
-                    assert 0
-
-                batch_res = [""] * (batch_size if id != n_batches - 1 else last_batch_size)
-                for text in splitted_text:
-                    batch = self._parallel_sequential_generation(
-                        text, batch_size if id != n_batches - 1 else last_batch_size,
-                        burnin_steps,
-                        sampling_steps,
-                        field_name, data_record)
-
-                    batch_res = [(x + " " + y).strip() for (x, y) in zip(batch_res, batch)]
-                sentences += batch_res
-            else:
-                assert 0
+            batch = self._parallel_sequential_generation(
+                clipped_text,
+                clipped_text if "seed" not in data_record else data_record["seed"],
+                batch_size if id != n_batches - 1 else last_batch_size,
+                burnin_steps,
+                sampling_steps,
+                self._field, data_record,
+                early_stop=early_stop)
+            sentences += batch
 
         assert len(sentences) == n
 
@@ -576,4 +555,4 @@ class ASRSStrategy(StrategyBase):
 
         logger.info("Aggregated accept rate: %.2lf%%.",
                     self._stats["accept"] / self._stats["all"] * 100)
-        return sentences[:n]
+        return sentences[:n], asrs_clf_counter

@@ -1,11 +1,11 @@
 import pytest
 import torch
 
-from fibber.metrics.ce_semantic_similarity_metric import CESemanticSimilarityMetric
-from fibber.metrics.edit_distance_metric import EditDistanceMetric
-from fibber.metrics.glove_semantic_similarity_metric import GloVeSemanticSimilarityMetric
-from fibber.metrics.gpt2_grammar_quality_metric import GPT2GrammarQualityMetric
-from fibber.metrics.use_semantic_similarity_metric import USESemanticSimilarityMetric
+from fibber.metrics.distance.edit_distance_metric import EditDistanceMetric
+from fibber.metrics.fluency.gpt2_perplexity_metric import GPT2PerplexityMetric
+from fibber.metrics.similarity.ce_similarity_metric import CESimilarityMetric
+from fibber.metrics.similarity.glove_similarity_metric import GloVeSimilarityMetric
+from fibber.metrics.similarity.use_similarity_metric import USESimilarityMetric
 
 
 @pytest.fixture
@@ -15,14 +15,14 @@ def gpu_id():
     return -1
 
 
-def metric_test_helper(metric, io_pairs, batched_io_pairs, eps=0):
+def metric_test_helper(metric, io_pairs, batched_io_pairs, eps=0, **kwargs):
     for (origin, paraphrase), true_output in io_pairs:
-        value = metric.measure_example(origin, paraphrase)
+        value = metric.measure_example(origin, paraphrase, **kwargs)
         assert isinstance(value, int) or isinstance(value, float)
         assert abs(value - true_output) <= eps
 
     for (origin, paraphrase_list), true_output_list in batched_io_pairs:
-        values = metric.measure_batch(origin, paraphrase_list)
+        values = metric.measure_batch(origin, paraphrase_list, **kwargs)
         assert isinstance(values, list)
         assert all([isinstance(x, int) or isinstance(x, float) for x in values])
         assert all([abs(output - true_output) <= eps
@@ -40,7 +40,7 @@ def test_edit_distance_metric():
     batched_io_pairs = [
         (("aa bb cc", ["aa bb cc dd", "aa bb cc", "aa ee"]), [1, 0, 2])
     ]
-    editing_distance_metric = EditDistanceMetric()
+    editing_distance_metric = EditDistanceMetric(field="text0")
 
     metric_test_helper(editing_distance_metric, io_pairs, batched_io_pairs)
 
@@ -59,7 +59,7 @@ def test_use_semantic_similarity(gpu_id):
            "Saturday is the last day in a week"]),
          [0.171, 0.759]),
     ]
-    use_semantic_similarity_metric = USESemanticSimilarityMetric(use_gpu_id=gpu_id)
+    use_semantic_similarity_metric = USESimilarityMetric(use_gpu_id=gpu_id, field="text0")
     metric_test_helper(use_semantic_similarity_metric, io_pairs, batched_io_pairs, eps=0.01)
 
 
@@ -77,7 +77,7 @@ def test_ce_semantic_similarity(gpu_id):
            "Saturday is the last day in a week"]),
          [0.009, 0.291]),
     ]
-    ce_semantic_similarity_metric = CESemanticSimilarityMetric(ce_gpu_id=gpu_id)
+    ce_semantic_similarity_metric = CESimilarityMetric(ce_gpu_id=gpu_id, field="text0")
     metric_test_helper(ce_semantic_similarity_metric, io_pairs, batched_io_pairs, eps=0.01)
 
 
@@ -95,8 +95,9 @@ def test_gpt2_grammar_quality(gpu_id):
            "Saturday is the last day in a week."]),
          [14.64, 1.10]),
     ]
-    gpt2_grammar_quality_metric = GPT2GrammarQualityMetric(gpt2_gpu_id=gpu_id)
-    metric_test_helper(gpt2_grammar_quality_metric, io_pairs, batched_io_pairs, eps=0.1)
+    gpt2_grammar_quality_metric = GPT2PerplexityMetric(gpt2_gpu_id=gpu_id, field="text0")
+    metric_test_helper(gpt2_grammar_quality_metric, io_pairs, batched_io_pairs, eps=0.1,
+                       use_ratio=True)
 
 
 @pytest.mark.slow
@@ -114,5 +115,5 @@ def test_glove_semantic_similarity():
            "Obama was the president of the United State."]),
          [0.997, 0.678])
     ]
-    glove_semantic_similarity_metric = GloVeSemanticSimilarityMetric()
+    glove_semantic_similarity_metric = GloVeSimilarityMetric(field="text0")
     metric_test_helper(glove_semantic_similarity_metric, io_pairs, batched_io_pairs, eps=0.01)

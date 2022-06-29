@@ -35,7 +35,7 @@ class StrategyBase(object):
     __abbr__ = "base"
     __hyperparameters__ = []
 
-    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle):
+    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle, field):
         """Initialize the paraphrase_strategies.
 
         This function initialize the ``self._strategy_config``, ``self._metric_bundle``,
@@ -88,6 +88,7 @@ class StrategyBase(object):
 
         self._output_dir = output_dir
         self._dataset_name = dataset_name
+        self._field = field
 
     def __repr__(self):
         return self.__class__.__name__
@@ -114,7 +115,7 @@ class StrategyBase(object):
         """
         logger.info("Training is needed for this strategy. Did nothing.")
 
-    def paraphrase_example(self, data_record, field_name, n):
+    def paraphrase_example(self, data_record, n):
         """Paraphrase one data record.
 
         This function should be overwritten by subclasses. When overwriting this class, you can
@@ -123,7 +124,6 @@ class StrategyBase(object):
 
         Args:
             data_record (dict): a dict storing one data of a dataset.
-            field_name (str): the field needed to be paraphrased.
             n (int): number of paraphrases.
 
         Returns:
@@ -150,13 +150,15 @@ class StrategyBase(object):
 
         for data_record in tqdm.tqdm(paraphrase_set["data"]):
             data_record = copy.deepcopy(data_record)
-            data_record[paraphrase_set["paraphrase_field"] + "_paraphrases"] = (
-                self.paraphrase_example(
-                    data_record, paraphrase_set["paraphrase_field"], n)[:n])
+            paraphrases, clf_count = (self.paraphrase_example(data_record, n)[:n])
+
+            data_record[self._field + "_paraphrases"] = paraphrases
+            data_record["clf_count"] = clf_count
+
             results["data"].append(data_record)
 
-            # save tmp output every 30 seconds
-            if datetime.datetime.now().timestamp() - last_tmp_output_save_time > 30:
+            # save tmp output every 600 seconds
+            if datetime.datetime.now().timestamp() - last_tmp_output_save_time > 600:
                 with open(tmp_output_filename, "w") as f:
                     json.dump(results, f, indent=2)
                 last_tmp_output_save_time = datetime.datetime.now().timestamp()

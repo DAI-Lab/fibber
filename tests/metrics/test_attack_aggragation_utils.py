@@ -1,6 +1,5 @@
 from fibber.metrics.attack_aggregation_utils import (
-    get_best_adv_by_metric, pairwise_editing_distance_fn,
-    paraphrase_classification_accuracy_agg_fn_constructor)
+    get_best_adv_by_metric, paraphrase_classification_accuracy_agg_fn_constructor)
 
 
 def make_data_record(label, origin_predict, paraphrase_ppl_list,
@@ -15,8 +14,8 @@ def make_data_record(label, origin_predict, paraphrase_ppl_list,
         },
         "paraphrase_metrics": [
             {
-                "GPT2GrammarQualityMetric": ppl,
-                "USESemanticSimilarityMetric": sim,
+                "GPT2PerplexityMetric": ppl,
+                "USESimilarityMetric": sim,
                 classifier: pred
             } for ppl, sim, pred in zip(paraphrase_ppl_list,
                                         paraphrase_sim_list,
@@ -27,7 +26,7 @@ def make_data_record(label, origin_predict, paraphrase_ppl_list,
 
 def test_paraphrase_classification_accuracy_agg_fn_constructor():
     classifier = "FooClassifier"
-    agg_fn = paraphrase_classification_accuracy_agg_fn_constructor(classifier)
+    agg_fn = paraphrase_classification_accuracy_agg_fn_constructor(classifier, "worst")
 
     data_record = make_data_record(label=1, origin_predict=0,
                                    paraphrase_ppl_list=[],
@@ -58,17 +57,6 @@ def test_paraphrase_classification_accuracy_agg_fn_constructor():
     assert agg_fn(data_record) == 1
 
 
-def test_pairwise_editing_distance_fn():
-    data_record = {
-        "text0_paraphrases": [
-            "aa bb cc",
-            "aa cc ee",
-            "aa bb"
-        ]
-    }
-    assert abs(pairwise_editing_distance_fn(data_record) - 5 / 3) < 1e-6
-
-
 def test_get_best_adv_by_metric():
     classifier = "FooClassifier"
     data_record = make_data_record(label=1, origin_predict=1,
@@ -77,13 +65,13 @@ def test_get_best_adv_by_metric():
                                    paraphrase_pred_list=[2, 3, 1, 4, 5, 6],
                                    classifier=classifier)
     best_metric = get_best_adv_by_metric(
-        data_record, classifier, "GPT2GrammarQualityMetric", lower_better=True)
-    assert best_metric["GPT2GrammarQualityMetric"] == 1.2
-    assert best_metric["USESemanticSimilarityMetric"] == 0.7
+        data_record, classifier, "GPT2PerplexityMetric", lower_better=True)
+    assert best_metric["GPT2PerplexityMetric"] == 1.2
+    assert best_metric["USESimilarityMetric"] == 0.7
     assert best_metric[classifier] == 3
 
     best_metric = get_best_adv_by_metric(
-        data_record, classifier, "USESemanticSimilarityMetric", lower_better=False)
-    assert best_metric["GPT2GrammarQualityMetric"] == 5.1
-    assert best_metric["USESemanticSimilarityMetric"] == 0.98
+        data_record, classifier, "USESimilarityMetric", lower_better=False)
+    assert best_metric["GPT2PerplexityMetric"] == 5.1
+    assert best_metric["USESimilarityMetric"] == 0.98
     assert best_metric[classifier] == 2

@@ -1,5 +1,14 @@
 # History
 
+## Version 0.4.0 - 2022-06-29
+This release includes the following updates
+
+## New Features
+- Add RewriteRollbackStrategy, SAPStrategy. 
+- Redesign defense strategy API. 
+- Add AdvTrainStrategy, SEMStrategy, SAPDStrategy
+
+
 ## Version 0.3.1 - 2021-07-20
 This release includes the following updates
 

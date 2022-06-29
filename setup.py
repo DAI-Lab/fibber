@@ -24,7 +24,10 @@ install_requires = [
     'nltk>=3.0',
     'rake_nltk>=1.0.4',
     'stanza>=1.1.0',
-    'sentence-transformers>=0.3.0'
+    'sentence-transformers>=0.3.0',
+    'rake_nltk>=1.0.4',
+    'fasttext>=0.9.0',
+    'expiringdict>=1.2.0'
 ]
 
 setup_requires = [
@@ -102,6 +105,6 @@ setup(
     test_suite='tests',
     tests_require=tests_require,
     url='https://github.com/DAI-Lab/fibber',
-    version='0.3.1',
+    version='0.4.0.dev0',
     zip_safe=False,
 )

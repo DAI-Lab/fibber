@@ -3,7 +3,7 @@ import pytest
 import torch
 
 from fibber.datasets.dataset_utils import get_demo_dataset
-from fibber.metrics.bert_classifier import BertClassifier
+from fibber.metrics.classifier.transformer_classifier import TransformerClassifier
 from fibber.resources.resource_utils import get_bert_clf_demo
 
 
@@ -18,14 +18,15 @@ def gpu_id():
 def bert_classifier_on_demo(gpu_id):
     get_bert_clf_demo()
     trainset, testset = get_demo_dataset()
-    bert_classifier = BertClassifier(
-        "demo", trainset, testset, bert_gpu_id=gpu_id, bert_clf_steps=5000)
+    bert_classifier = TransformerClassifier(
+        "demo", trainset, testset, transformer_clf_gpu_id=gpu_id, transformer_clf_steps=5000,
+        field="text0")
     return bert_classifier
 
 
 @pytest.mark.slow
 def test_bert_classifier(bert_classifier_on_demo):
-    assert isinstance(bert_classifier_on_demo, BertClassifier)
+    assert isinstance(bert_classifier_on_demo, TransformerClassifier)
 
     io_pairs = [
         ("This is a bad movie", 0),
@@ -33,7 +34,7 @@ def test_bert_classifier(bert_classifier_on_demo):
     ]
 
     for x, y in io_pairs:
-        dist = bert_classifier_on_demo.predict_dist_example(None, x)
+        dist = bert_classifier_on_demo.predict_log_dist_example(None, x)
         assert len(dist) == 2
         assert np.argmax(dist) == y
 
@@ -45,12 +46,12 @@ def test_bert_classifier(bert_classifier_on_demo):
 
     batched_io_pairs = [
         (["This is a bad movie.",
-          "This is a good movie. I want to buy a ticket."],
+          "This is a good movie and I want to buy a ticket."],
          [0, 1])
     ]
 
     for x, y in batched_io_pairs:
-        dist = bert_classifier_on_demo.predict_dist_batch(None, x)
+        dist = bert_classifier_on_demo.predict_log_dist_batch(None, x)
         assert dist.shape[0] == 2 and dist.shape[1] == 2
         assert np.all(np.argmax(dist, axis=1) == y)
 

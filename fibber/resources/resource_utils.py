@@ -72,6 +72,31 @@ def get_glove_emb(download_only=False):
     return load_glove_model(os.path.join(data_dir, "glove.6B.300d.txt"), 300)
 
 
+def get_counter_fitted_vector(download_only=False):
+    """Download default pretrained counter fitted embeddings and return a dict.
+
+    See https://github.com/nmrksic/counter-fitting
+
+    Args:
+        download_only (bool): set True to only download. (Returns None)
+
+    Returns:
+        (dict): a dict of GloVe word embedding model.
+            "emb_table": a numpy array of size(N, 300)
+            "id2tok": a list of strings.
+            "tok2id": a dict that maps word (string) to its id.
+    """
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "common")
+    if not os.path.exists(os.path.join(data_dir, "counter-fitted-vectors.txt")):
+        download_file(subdir=os.path.join(data_dir),
+                      **downloadable_resource_urls["counter-fitted-vectors"])
+
+    if download_only:
+        return None
+    return load_glove_model(os.path.join(data_dir, "counter-fitted-vectors.txt"), 300)
+
+
 def get_stopwords():
     """Download default stopword words.
 
@@ -120,16 +145,6 @@ def get_universal_sentence_encoder():
     return data_dir
 
 
-def get_corenlp():
-    """Download stanford corenlp package.
-    """
-    data_dir = get_root_dir()
-    data_dir = os.path.join(data_dir, "common")
-    if not os.path.exists(os.path.join(data_dir, "stanford-corenlp-4.1.0")):
-        download_file(subdir=os.path.join(data_dir),
-                      **downloadable_resource_urls["stanford-corenlp"])
-
-
 def get_transformers(name):
     """Download pretrained transformer models.
 
@@ -152,22 +167,24 @@ def get_transformers(name):
 def get_bert_clf_demo():
     """Download the pretrained classifier for demo dataset."""
     data_dir = get_root_dir()
-    data_dir = os.path.join(data_dir, "bert_clf")
+    data_dir = os.path.join(data_dir, "transformer_clf")
     if not os.path.exists(os.path.join(data_dir, "demo")):
         download_file(subdir=data_dir,
-                      **downloadable_resource_urls["bert-base-uncased-clf-demo"])
+                      **downloadable_resource_urls["bert-base-cased-clf-demo"])
 
 
-def get_bert_lm_demo(path="."):
-    """Download the pretrained language model for demo dataset.
+def get_bert_lm_demo():
+    """Download the pretrained language model for demo dataset."""
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "bert_lm")
+    if not os.path.exists(os.path.join(data_dir, "demo")):
+        download_file(subdir=data_dir,
+                      **downloadable_resource_urls["bert-base-cased-lm-demo"])
 
-    Since this data is algorithm-specific, it is downloaded to ``path`` instead of
-    ``<fibber_root_dir>``.
-    """
-    if not os.path.exists(os.path.join(path, "lm_all")):
-        download_file(abs_path=path,
-                      **downloadable_resource_urls["bert-base-uncased-lm-demo"])
 
-    if not os.path.exists(os.path.join(path, "wordpiece_emb-demo-0500.pt")):
-        download_file(abs_path=path,
-                      **downloadable_resource_urls["wpe-demo"])
+def get_wordpiece_emb_demo():
+    """Download wordpiece embeddings for demo dataset."""
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "wordpiece_emb_conterfited")
+    if not os.path.exists(os.path.join(data_dir, "wordpiece_emb-demo-0500.pt")):
+        download_file(subdir=data_dir, **downloadable_resource_urls["wpe-demo"])
