@@ -46,7 +46,7 @@ def test_bert_classifier(bert_classifier_on_demo):
 
     batched_io_pairs = [
         (["This is a bad movie.",
-          "This is a good movie. I want to buy a ticket."],
+          "This is a good movie and I want to buy a ticket."],
          [0, 1])
     ]
 

@@ -62,7 +62,8 @@ class Benchmark(object):
                  best_adv_metric_name="USESimilarityMetric",
                  best_adv_metric_lower_better=False,
                  target_classifier="transformer",
-                 transformer_clf_model_init="bert-base-cased"):
+                 transformer_clf_model_init="bert-base-cased",
+                 field="text0"):
         """Initialize Benchmark framework.
 
         Args:
@@ -94,12 +95,14 @@ class Benchmark(object):
                 "fasttext", "customized"].
             transformer_clf_model_init (str): the backbone pretrained language model, e.g.,
                 `bert-base-cased`.
+            field (str): attack text field.
         """
         # make output dir
         self._output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
         self._dataset_name = dataset_name
         self._defense_desc = None
+        self._field = field
 
         # verify correct target classifier
         if target_classifier == "customized":
@@ -154,6 +157,7 @@ class Benchmark(object):
             enable_ce_similarity=False,
             enable_gpt2_perplexity=False,
             enable_glove_similarity=False,
+            field=field
         )
 
         if customized_clf:
@@ -191,7 +195,8 @@ class Benchmark(object):
         if isinstance(paraphrase_strategy, str):
             if paraphrase_strategy in built_in_paraphrase_strategies:
                 paraphrase_strategy = built_in_paraphrase_strategies[paraphrase_strategy](
-                    {}, self._dataset_name, strategy_gpu_id, self._output_dir, self._metric_bundle)
+                    {}, self._dataset_name, strategy_gpu_id, self._output_dir, self._metric_bundle,
+                    field=self._field)
         else:
             assert isinstance(paraphrase_strategy, StrategyBase)
 
@@ -318,7 +323,8 @@ def main():
         best_adv_metric_name=arg_dict["best_adv_metric_name"],
         best_adv_metric_lower_better=(arg_dict["best_adv_lower_better"] == "1"),
         target_classifier=arg_dict["target_classifier"],
-        transformer_clf_model_init=arg_dict["transformer_clf_model_init"])
+        transformer_clf_model_init=arg_dict["transformer_clf_model_init"],
+        field=arg_dict["field"])
 
     log.remove_logger_tf_handler(logger)
 
