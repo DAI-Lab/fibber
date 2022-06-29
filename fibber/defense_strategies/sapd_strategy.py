@@ -1,17 +1,20 @@
 import copy
 
 import numpy as np
-import tqdm
-
 import torch
-from fibber import log
+import tqdm
 from nltk.tokenize import word_tokenize
+from transformers import (
+    BertForSequenceClassification, DistilBertForSequenceClassification,
+    RobertaForSequenceClassification)
+
+from fibber import log
 from fibber.defense_strategies.defense_strategy_base import DefenseStrategyBase
-from transformers import DistilBertForSequenceClassification, BertForSequenceClassification, RobertaForSequenceClassification
 
 logger = log.setup_custom_logger(__name__)
 
 INFTY = 1e8
+
 
 class EmbeddingGradHook:
     def __init__(self):
@@ -53,7 +56,7 @@ def random_long_word_perturb(data_record_list, tokenizer, adv_long_word, field):
         wid = np.random.choice(len(adv_long_word[label]))
         long_word_toks = adv_long_word[label][wid]
         pos = np.random.randint(len(sent_toks))
-        sent_toks = sent_toks[:pos] + long_word_toks + sent_toks[pos+1:]
+        sent_toks = sent_toks[:pos] + long_word_toks + sent_toks[pos + 1:]
         data_record_list[i][field] = tokenizer.convert_tokens_to_string(sent_toks)
 
     return data_record_list
