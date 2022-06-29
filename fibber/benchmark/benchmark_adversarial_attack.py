@@ -9,7 +9,7 @@ from fibber import log
 from fibber.benchmark.benchmark_utils import update_attack_robust_result, update_detailed_result
 from fibber.datasets import (
     builtin_datasets, clip_sentence, get_dataset, subsample_dataset, verify_dataset)
-from fibber.defense_strategies import AdvTrainStrategy, LMAgStrategy, SEMStrategy
+from fibber.defense_strategies import AdvTrainStrategy, LMAgStrategy, SEMStrategy, SAPDStrategy
 from fibber.metrics.attack_aggregation_utils import add_sentence_level_adversarial_attack_metrics
 from fibber.metrics.classifier.classifier_base import ClassifierBase
 from fibber.metrics.metric_utils import MetricBundle
@@ -36,7 +36,8 @@ built_in_paraphrase_strategies = {
 built_in_defense_strategies = {
     "LMAgStrategy": LMAgStrategy,
     "SEMStrategy": SEMStrategy,
-    "AdvTrainStrategy": AdvTrainStrategy
+    "AdvTrainStrategy": AdvTrainStrategy,
+    "SAPDStrategy": SAPDStrategy
 }
 
 DATASET_NAME_COL = "0_dataset_name"

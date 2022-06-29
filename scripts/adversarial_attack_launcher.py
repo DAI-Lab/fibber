@@ -20,6 +20,9 @@ DEFENSE_CONFIG = {
     },
     "adv": {
         "--defense_strategy": "AdvTrainStrategy",
+    },
+    "sapd": {
+        "--defense_strategy": "SAPDStrategy",
     }
 }
 
