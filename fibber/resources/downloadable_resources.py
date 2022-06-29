@@ -111,7 +111,7 @@ downloadable_resource_urls = {
         "untar": True,
         "unzip": False,
     },
-    "bert-base-uncased-lm-demo": {
+    "bert-base-cased-lm-demo": {
         "filename": "bert-base-cased-lm-demo.tgz",
         "url": "https://fibber-data.s3.amazonaws.com/bert-base-cased-lm-demo.tgz",
         "md5": "0a79895bb04cc29a9d4944b9dd102cae",
