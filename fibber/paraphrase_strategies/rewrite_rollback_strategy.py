@@ -184,8 +184,8 @@ def clf_criteria_score(origin_list, paraphrases, data_record_list, field, clf_me
     if clf_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
 
-    dist_list = clf_metric.predict_log_dist_multiple_examples(origin_list, paraphrases,
-                                                              data_record_list, field)
+    dist_list = clf_metric.predict_log_dist_multiple_examples(
+        origin_list, paraphrases, data_record_list)
     # dist_list = np.exp(dist_list)
 
     scores = []
@@ -223,7 +223,6 @@ def joint_weighted_criteria(
                                                      data_record_list=data_record_list,
                                                      field=field, clf_metric=clf_metric,
                                                      clf_weight=clf_weight)
-        # print("ppl score", ppl_score[0], "sim score", sim_score[0], "clf score", clf_score[0])
         return ppl_score + sim_score + clf_score, is_incorrect
 
     if state is not None:
@@ -413,7 +412,7 @@ class RewriteRollbackStrategy(StrategyBase):
         }
 
     def paraphrase_example(self, data_record, n):
-        return self.paraphrase_multiple_examples([data_record] * n, self._field), 0
+        return self.paraphrase_multiple_examples([data_record] * n), 0
 
     def paraphrase_multiple_examples(self, data_record_list):
         origin = [item[self._field] for item in data_record_list]

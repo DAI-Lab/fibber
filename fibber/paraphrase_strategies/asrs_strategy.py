@@ -138,7 +138,7 @@ def clf_criteria_score(origin, paraphrases, data_record, field, clf_metric, clf_
     if clf_weight == 0:
         return np.zeros(len(paraphrases), dtype="float32")
 
-    dist = clf_metric.predict_log_dist_batch(origin, paraphrases, data_record, field)
+    dist = clf_metric.predict_log_dist_batch(origin, paraphrases, data_record)
     label = data_record["label"]
     correct_prob = (dist[:, label]).copy()
     dist[:, label] = -1e8
@@ -261,9 +261,9 @@ class ASRSStrategy(StrategyBase):
             ("the schedule decides how much additional "
              "constraint is added. options are [linear, 0, 1].")),
         ("accept_criteria", str, "joint_weighted_criteria", (
-            "select an accept criteria for candidate words from "
+            "choose an accept criteria for candidate words from "
             "[all, joint_weighted_criteria].")),
-        ("enforcing_dist", str, "wpe", ("select an additional constraint for candidate "
+        ("enforcing_dist", str, "wpe", ("choose an additional constraint for candidate "
                                         "words from [none, allow_list, wpe].")),
         ("burnin_criteria_schedule", str, "1", ("the schedule decides how strict the criteria is "
                                                 "used. options are [linear, 0, 1].")),
@@ -275,7 +275,7 @@ class ASRSStrategy(StrategyBase):
         ("lm_steps", int, 5000, "lm training steps."),
         ("clf_weight", float, 3, "weight for the clf score in the criteria."),
         ("ppl_weight", float, 5, "the smoothing parameter for gpt2."),
-        ("sim_metric", str, "CESimilarityMetric", "similarity metric")
+        ("sim_metric", str, "USESimilarityMetric", "similarity metric")
     ]
 
     def __repr__(self):
@@ -287,7 +287,8 @@ class ASRSStrategy(StrategyBase):
 
         self._tokenizer, lm = get_lm(
             self._strategy_config["lm_option"], self._dataset_name, trainset, self._device,
-            self._strategy_config["lm_steps"])
+            lm_steps=self._strategy_config["lm_steps"])
+
         if isinstance(lm, list):
             self._bert_lms = lm
         else:

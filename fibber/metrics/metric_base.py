@@ -69,7 +69,7 @@ class MetricBase(ABC):
         assert len(origin_list) == len(paraphrase_list)
         ret = []
         for i in range(0, len(origin_list), self._bs):
-            ret += self._measure_batch(
+            ret += self._measure_multiple_examples(
                 None if origin_list is None else origin_list[i:i + self._bs],
                 paraphrase_list[i:i + self._bs],
                 None if data_record_list is None else data_record_list[i:i + self._bs], **kwargs)

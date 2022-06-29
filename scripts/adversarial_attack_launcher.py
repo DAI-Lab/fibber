@@ -141,7 +141,7 @@ STRATEGY_CONFIG = {
         "--asrs_burnin_criteria_schedule": "1",
         "--asrs_seed_option": "dynamic_len",
         "--asrs_lm_option": "finetune",
-        "--asrs_sim_metric": "CESimilarityMetric",
+        "--asrs_sim_metric": "USESimilarityMetric",
     },
     "fu": {
         "--strategy": "FudgeStrategy",

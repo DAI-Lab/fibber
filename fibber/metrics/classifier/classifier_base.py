@@ -81,7 +81,7 @@ class ClassifierBase(MetricBase):
                     None if origin_list is None else origin_list[i:i + self._bs],
                     paraphrase_list[i:i + self._bs],
                     None if data_record_list is None else data_record_list[i:i + self._bs]))
-        return np.asarray(ret)
+        return np.concatenate(ret, axis=0)
 
     def predict_example(self, origin, paraphrase, data_record=None):
         """Predict class label for one example.

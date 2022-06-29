@@ -170,19 +170,21 @@ def get_bert_clf_demo():
     data_dir = os.path.join(data_dir, "transformer_clf")
     if not os.path.exists(os.path.join(data_dir, "demo")):
         download_file(subdir=data_dir,
-                      **downloadable_resource_urls["bert-base-uncased-clf-demo"])
+                      **downloadable_resource_urls["bert-base-cased-clf-demo"])
 
 
-def get_bert_lm_demo(path="."):
-    """Download the pretrained language model for demo dataset.
+def get_bert_lm_demo():
+    """Download the pretrained language model for demo dataset."""
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "bert_lm")
+    if not os.path.exists(os.path.join(path, "demo")):
+        download_file(subdir=data_dir,
+                      **downloadable_resource_urls["bert-base-cased-lm-demo"])
 
-    Since this data is algorithm-specific, it is downloaded to ``path`` instead of
-    ``<fibber_root_dir>``.
-    """
-    if not os.path.exists(os.path.join(path, "lm_all")):
-        download_file(abs_path=path,
-                      **downloadable_resource_urls["bert-base-uncased-lm-demo"])
 
+def get_wordpiece_emb_demo():
+    """Download wordpiece embeddings for demo dataset."""
+    data_dir = get_root_dir()
+    data_dir = os.path.join(data_dir, "wordpiece_emb_conterfited")
     if not os.path.exists(os.path.join(path, "wordpiece_emb-demo-0500.pt")):
-        download_file(abs_path=path,
-                      **downloadable_resource_urls["wpe-demo"])
+        download_file(subdir=data_dir, **downloadable_resource_urls["wpe-demo"])
