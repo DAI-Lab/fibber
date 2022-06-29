@@ -30,7 +30,7 @@ class MetricBase(ABC):
     def _measure_batch(self, origin, paraphrase_list, data_record=None, **kwargs):
         ret = []
         for paraphrase in paraphrase_list:
-            ret.append(self.measure_example(origin, paraphrase, data_record))
+            ret.append(self.measure_example(origin, paraphrase, data_record, **kwargs))
         return ret
 
     def measure_batch(self, origin, paraphrase_list, data_record=None, **kwargs):

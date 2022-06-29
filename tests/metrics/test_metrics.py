@@ -15,14 +15,14 @@ def gpu_id():
     return -1
 
 
-def metric_test_helper(metric, io_pairs, batched_io_pairs, eps=0):
+def metric_test_helper(metric, io_pairs, batched_io_pairs, eps=0, **kwargs):
     for (origin, paraphrase), true_output in io_pairs:
-        value = metric.measure_example(origin, paraphrase)
+        value = metric.measure_example(origin, paraphrase, **kwargs)
         assert isinstance(value, int) or isinstance(value, float)
         assert abs(value - true_output) <= eps
 
     for (origin, paraphrase_list), true_output_list in batched_io_pairs:
-        values = metric.measure_batch(origin, paraphrase_list)
+        values = metric.measure_batch(origin, paraphrase_list, **kwargs)
         assert isinstance(values, list)
         assert all([isinstance(x, int) or isinstance(x, float) for x in values])
         assert all([abs(output - true_output) <= eps
@@ -96,7 +96,8 @@ def test_gpt2_grammar_quality(gpu_id):
          [14.64, 1.10]),
     ]
     gpt2_grammar_quality_metric = GPT2PerplexityMetric(gpt2_gpu_id=gpu_id, field="text0")
-    metric_test_helper(gpt2_grammar_quality_metric, io_pairs, batched_io_pairs, eps=0.1)
+    metric_test_helper(gpt2_grammar_quality_metric, io_pairs, batched_io_pairs, eps=0.1,
+                       use_ratio=True)
 
 
 @pytest.mark.slow
