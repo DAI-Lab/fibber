@@ -1,0 +1,7 @@
+fibber.paraphrase\_strategies.rewrite\_rollback\_strategy module
+================================================================
+
+.. automodule:: fibber.paraphrase_strategies.rewrite_rollback_strategy
+   :members:
+   :undoc-members:
+   :show-inheritance:

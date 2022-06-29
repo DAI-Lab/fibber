@@ -1,0 +1,7 @@
+fibber.benchmark.benchmark\_style\_transfer module
+==================================================
+
+.. automodule:: fibber.benchmark.benchmark_style_transfer
+   :members:
+   :undoc-members:
+   :show-inheritance:

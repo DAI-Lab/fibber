@@ -1,0 +1,7 @@
+fibber.paraphrase\_strategies.remove\_strategy module
+=====================================================
+
+.. automodule:: fibber.paraphrase_strategies.remove_strategy
+   :members:
+   :undoc-members:
+   :show-inheritance:

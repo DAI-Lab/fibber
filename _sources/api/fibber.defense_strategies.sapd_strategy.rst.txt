@@ -1,0 +1,7 @@
+fibber.defense\_strategies.sapd\_strategy module
+================================================
+
+.. automodule:: fibber.defense_strategies.sapd_strategy
+   :members:
+   :undoc-members:
+   :show-inheritance:

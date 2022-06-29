@@ -1,7 +1,0 @@
-fibber.paraphrase\_strategies.narrl\_strategy module
-====================================================
-
-.. automodule:: fibber.paraphrase_strategies.narrl_strategy
-   :members:
-   :undoc-members:
-   :show-inheritance:

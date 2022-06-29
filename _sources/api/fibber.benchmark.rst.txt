@@ -7,7 +7,8 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   fibber.benchmark.benchmark
+   fibber.benchmark.benchmark_adversarial_attack
+   fibber.benchmark.benchmark_style_transfer
    fibber.benchmark.benchmark_utils
    fibber.benchmark.make_overview
 

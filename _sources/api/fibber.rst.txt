@@ -9,10 +9,10 @@ Subpackages
 
    fibber.benchmark
    fibber.datasets
+   fibber.defense_strategies
    fibber.metrics
    fibber.paraphrase_strategies
    fibber.resources
-   fibber.robust_tuning_strategy
 
 Submodules
 ----------

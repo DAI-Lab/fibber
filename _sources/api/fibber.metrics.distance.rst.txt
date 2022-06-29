@@ -1,0 +1,20 @@
+fibber.metrics.distance package
+===============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   fibber.metrics.distance.edit_distance_metric
+   fibber.metrics.distance.ref_bleu_metric
+   fibber.metrics.distance.self_bleu_metric
+
+Module contents
+---------------
+
+.. automodule:: fibber.metrics.distance
+   :members:
+   :undoc-members:
+   :show-inheritance:

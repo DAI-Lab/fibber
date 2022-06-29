@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.metrics.attack_aggregation_utils &#8212; fibber 0.3.1 documentation</title>
+    <title>fibber.metrics.attack_aggregation_utils &#8212; fibber 0.4.0 documentation</title>
     
-  <link href="../../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -22,10 +22,10 @@
       
 
     
-    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/css/blank.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
-  <link rel="preload" as="script" href="../../../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
@@ -37,7 +37,10 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -170,17 +173,15 @@
   <h1>Source code for fibber.metrics.attack_aggregation_utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;This module defines customized metric aggregation functions.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">fibber.metrics.edit_distance_metric</span> <span class="kn">import</span> <span class="n">EditDistanceMetric</span>
-<span class="kn">from</span> <span class="nn">fibber.metrics.metric_utils</span> <span class="kn">import</span> <span class="n">DIRECTION_HIGHER_BETTER</span><span class="p">,</span> <span class="n">DIRECTION_LOWER_BETTER</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.distance.edit_distance_metric</span> <span class="kn">import</span> <span class="n">EditDistanceMetric</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.metric_utils</span> <span class="kn">import</span> <span class="n">DIRECTION_LOWER_BETTER</span>
 
 
-<div class="viewcode-block" id="paraphrase_classification_accuracy_agg_fn_constructor"><a class="viewcode-back" href="../../../api/fibber.metrics.attack_aggregation_utils.html#fibber.metrics.attack_aggregation_utils.paraphrase_classification_accuracy_agg_fn_constructor">[docs]</a><span class="k">def</span> <span class="nf">paraphrase_classification_accuracy_agg_fn_constructor</span><span class="p">(</span><span class="n">target_clf</span><span class="p">):</span>
+<div class="viewcode-block" id="paraphrase_classification_accuracy_agg_fn_constructor"><a class="viewcode-back" href="../../../api/fibber.metrics.attack_aggregation_utils.html#fibber.metrics.attack_aggregation_utils.paraphrase_classification_accuracy_agg_fn_constructor">[docs]</a><span class="k">def</span> <span class="nf">paraphrase_classification_accuracy_agg_fn_constructor</span><span class="p">(</span><span class="n">target_clf</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This function makes a aggregation function for the target classification metric.</span>
 
 <span class="sd">    The aggregation function outputs the after attack accuracy of the BERT classifier.</span>
@@ -189,39 +190,28 @@
 <span class="sd">        target_clf (str): the metric name of the target classifier.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">agg_fn</span><span class="p">(</span><span class="n">data_record</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;original_text_metrics&quot;</span><span class="p">][</span><span class="n">target_clf</span><span class="p">]</span> <span class="o">!=</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]:</span>
-            <span class="k">return</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;paraphrase_metrics&quot;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="n">target_clf</span><span class="p">]</span> <span class="o">!=</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;worst&quot;</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">agg_fn</span><span class="p">(</span><span class="n">data_record</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;original_text_metrics&quot;</span><span class="p">][</span><span class="n">target_clf</span><span class="p">]</span> <span class="o">!=</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]:</span>
                 <span class="k">return</span> <span class="mi">0</span>
-        <span class="k">return</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;paraphrase_metrics&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="n">target_clf</span><span class="p">]</span> <span class="o">!=</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;avg&quot;</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">agg_fn</span><span class="p">(</span><span class="n">data_record</span><span class="p">):</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;paraphrase_metrics&quot;</span><span class="p">]:</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="n">target_clf</span><span class="p">]</span> <span class="o">!=</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="n">agg_fn</span></div>
 
 
 <div class="viewcode-block" id="editing_distance_element_worker"><a class="viewcode-back" href="../../../api/fibber.metrics.attack_aggregation_utils.html#fibber.metrics.attack_aggregation_utils.editing_distance_element_worker">[docs]</a><span class="k">def</span> <span class="nf">editing_distance_element_worker</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">editing_distance_metric</span> <span class="o">=</span> <span class="n">EditDistanceMetric</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">editing_distance_metric</span><span class="o">.</span><span class="n">measure_example</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
-
-
-<span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="pairwise_editing_distance_fn"><a class="viewcode-back" href="../../../api/fibber.metrics.attack_aggregation_utils.html#fibber.metrics.attack_aggregation_utils.pairwise_editing_distance_fn">[docs]</a><span class="k">def</span> <span class="nf">pairwise_editing_distance_fn</span><span class="p">(</span><span class="n">data_record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute the average pairwise editing distance metric.&quot;&quot;&quot;</span>
-    <span class="k">global</span> <span class="n">pool</span>
-    <span class="n">paraphrases</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data_record</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;text0_paraphrases&quot;</span><span class="p">,</span> <span class="s2">&quot;text1_paraphrases&quot;</span><span class="p">]:</span>
-            <span class="n">paraphrases</span> <span class="o">=</span> <span class="n">v</span>
-            <span class="k">break</span>
-
-    <span class="k">assert</span> <span class="n">paraphrases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-
-    <span class="n">tuples</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">paraphrases</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-
-    <span class="n">distance</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">editing_distance_element_worker</span><span class="p">,</span> <span class="n">tuples</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">distance</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="get_best_adv_by_metric"><a class="viewcode-back" href="../../../api/fibber.metrics.attack_aggregation_utils.html#fibber.metrics.attack_aggregation_utils.get_best_adv_by_metric">[docs]</a><span class="k">def</span> <span class="nf">get_best_adv_by_metric</span><span class="p">(</span><span class="n">data_record</span><span class="p">,</span> <span class="n">target_clf</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">lower_better</span><span class="p">):</span>
@@ -272,9 +262,19 @@
     <span class="k">return</span> <span class="n">agg_fn</span></div>
 
 
+<div class="viewcode-block" id="query_count_fn_constructor"><a class="viewcode-back" href="../../../api/fibber.metrics.attack_aggregation_utils.html#fibber.metrics.attack_aggregation_utils.query_count_fn_constructor">[docs]</a><span class="k">def</span> <span class="nf">query_count_fn_constructor</span><span class="p">(</span><span class="n">target_clf</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">agg_fn</span><span class="p">(</span><span class="n">data_record</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;original_text_metrics&quot;</span><span class="p">][</span><span class="n">target_clf</span><span class="p">]</span> <span class="o">==</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;clf_count&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">return</span> <span class="n">agg_fn</span></div>
+
+
 <div class="viewcode-block" id="add_sentence_level_adversarial_attack_metrics"><a class="viewcode-back" href="../../../api/fibber.metrics.attack_aggregation_utils.html#fibber.metrics.attack_aggregation_utils.add_sentence_level_adversarial_attack_metrics">[docs]</a><span class="k">def</span> <span class="nf">add_sentence_level_adversarial_attack_metrics</span><span class="p">(</span><span class="n">metric_bundle</span><span class="p">,</span>
-                                                  <span class="n">best_adv_metric_name</span><span class="p">,</span>
-                                                  <span class="n">best_adv_metric_lower_better</span><span class="p">):</span>
+                                                  <span class="n">best_adv_metric_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                                  <span class="n">best_adv_metric_lower_better</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                                  <span class="n">clf_agg_type</span><span class="o">=</span><span class="s2">&quot;worst&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Add advanced aggregation functions related to adversarial attack to a specific metric</span>
 <span class="sd">    bundle.</span>
 
@@ -283,38 +283,43 @@
 <span class="sd">        best_adv_metric_name (str):</span>
 <span class="sd">        best_adv_metric_lower_better (bool):</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">metric_bundle</span><span class="o">.</span><span class="n">add_advanced_aggregation_fn</span><span class="p">(</span>
-        <span class="s2">&quot;PairwiseEditDistance&quot;</span><span class="p">,</span>
-        <span class="n">pairwise_editing_distance_fn</span><span class="p">,</span>
-        <span class="n">DIRECTION_HIGHER_BETTER</span>
-    <span class="p">)</span>
 
     <span class="n">target_clf</span> <span class="o">=</span> <span class="n">metric_bundle</span><span class="o">.</span><span class="n">get_target_classifier_name</span><span class="p">()</span>
 
     <span class="n">metric_bundle</span><span class="o">.</span><span class="n">add_advanced_aggregation_fn</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_AfterAttackAccuracy&quot;</span> <span class="o">%</span> <span class="n">target_clf</span><span class="p">,</span>
-        <span class="n">paraphrase_classification_accuracy_agg_fn_constructor</span><span class="p">(</span><span class="n">target_clf</span><span class="p">),</span>
+        <span class="s2">&quot;AverageQuery&quot;</span><span class="p">,</span>
+        <span class="n">query_count_fn_constructor</span><span class="p">(</span><span class="n">target_clf</span><span class="p">),</span>
         <span class="n">DIRECTION_LOWER_BETTER</span>
     <span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">metric_name</span> <span class="ow">in</span> <span class="n">metric_bundle</span><span class="o">.</span><span class="n">get_metric_names</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">clf_name</span> <span class="ow">in</span> <span class="n">metric_bundle</span><span class="o">.</span><span class="n">get_classifier_names</span><span class="p">():</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_Accuracy&quot;</span> <span class="o">%</span> <span class="n">clf_name</span>
+        <span class="k">if</span> <span class="n">clf_name</span> <span class="o">==</span> <span class="n">target_clf</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">+=</span> <span class="s2">&quot;_targeted&quot;</span>
         <span class="n">metric_bundle</span><span class="o">.</span><span class="n">add_advanced_aggregation_fn</span><span class="p">(</span>
-            <span class="s2">&quot;best_adv_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">metric_name</span><span class="p">,</span>
-            <span class="n">get_best_adv_metric_fn_constructor</span><span class="p">(</span>
-                <span class="k">lambda</span> <span class="n">_data_record</span><span class="p">,</span> <span class="n">_target_clf</span><span class="p">:</span> <span class="n">get_best_adv_by_metric</span><span class="p">(</span>
-                    <span class="n">_data_record</span><span class="p">,</span> <span class="n">_target_clf</span><span class="p">,</span> <span class="n">best_adv_metric_name</span><span class="p">,</span> <span class="n">best_adv_metric_lower_better</span><span class="p">),</span>
-                <span class="n">metric_name</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="o">.</span><span class="n">get_target_classifier_name</span><span class="p">()),</span>
-            <span class="n">metric_bundle</span><span class="o">.</span><span class="n">get_metric_direction</span><span class="p">(</span><span class="n">metric_name</span><span class="p">)</span>
-        <span class="p">)</span></div>
+            <span class="n">name</span><span class="p">,</span> <span class="n">paraphrase_classification_accuracy_agg_fn_constructor</span><span class="p">(</span><span class="n">clf_name</span><span class="p">,</span> <span class="n">clf_agg_type</span><span class="p">),</span>
+            <span class="n">DIRECTION_LOWER_BETTER</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">best_adv_metric_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">metric_name</span> <span class="ow">in</span> <span class="n">metric_bundle</span><span class="o">.</span><span class="n">get_metric_names</span><span class="p">():</span>
+            <span class="n">metric_bundle</span><span class="o">.</span><span class="n">add_advanced_aggregation_fn</span><span class="p">(</span>
+                <span class="s2">&quot;best_adv_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">metric_name</span><span class="p">,</span>
+                <span class="n">get_best_adv_metric_fn_constructor</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">_data_record</span><span class="p">,</span> <span class="n">_target_clf</span><span class="p">:</span> <span class="n">get_best_adv_by_metric</span><span class="p">(</span>
+                        <span class="n">_data_record</span><span class="p">,</span> <span class="n">_target_clf</span><span class="p">,</span>
+                        <span class="n">best_adv_metric_name</span><span class="p">,</span> <span class="n">best_adv_metric_lower_better</span><span class="p">),</span>
+                    <span class="n">metric_name</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="o">.</span><span class="n">get_target_classifier_name</span><span class="p">()),</span>
+                <span class="n">metric_bundle</span><span class="o">.</span><span class="n">get_metric_direction</span><span class="p">(</span><span class="n">metric_name</span><span class="p">)</span>
+            <span class="p">)</span></div>
 </pre></div>
 
               </div>
               
               
-              <div class='prev-next-bottom'>
-                
-
-              </div>
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
               
           </main>
           
@@ -322,20 +327,19 @@
       </div>
     </div>
   
-  <script src="../../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
-
-  <footer class="footer mt-5 mt-md-0">
+  <script src="../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
       <p class="copyright">
-    &copy; Copyright 2020, MIT Data To AI Lab.<br/>
+    &copy; Copyright 2020, MIT Data To AI Lab.<br>
 </p>
     </div>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br>
 </p>
     </div>
     

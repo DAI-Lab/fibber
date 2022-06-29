@@ -1,0 +1,570 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>fibber.benchmark.benchmark_adversarial_attack &#8212; fibber 0.4.0 documentation</title>
+    
+  <link href="../../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../../../_static/css/blank.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="shortcut icon" href="../../../_static/dai-logo-white.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+
+<a class="navbar-brand" href="../../../index.html">
+  <img src="../../../_static/dai-logo-white-200.png" class="logo" alt="logo">
+</a>
+
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../readme.html">
+  Fibber
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../dataformat.html">
+  Data Format
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../benchmark.html">
+  Benchmark
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../api/fibber.html">
+  API Reference
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../contributing.html">
+  Contributing
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../authors.html">
+  Credits
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../history.html">
+  History
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/dai-lab/fibber" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <h1>Source code for fibber.benchmark.benchmark_adversarial_attack</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">fibber.benchmark.benchmark_utils</span> <span class="kn">import</span> <span class="n">update_attack_robust_result</span><span class="p">,</span> <span class="n">update_detailed_result</span>
+<span class="kn">from</span> <span class="nn">fibber.datasets</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">builtin_datasets</span><span class="p">,</span> <span class="n">clip_sentence</span><span class="p">,</span> <span class="n">get_dataset</span><span class="p">,</span> <span class="n">subsample_dataset</span><span class="p">,</span> <span class="n">verify_dataset</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">fibber.defense_strategies</span> <span class="kn">import</span> <span class="n">AdvTrainStrategy</span><span class="p">,</span> <span class="n">LMAgStrategy</span><span class="p">,</span> <span class="n">SAPDStrategy</span><span class="p">,</span> <span class="n">SEMStrategy</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.attack_aggregation_utils</span> <span class="kn">import</span> <span class="n">add_sentence_level_adversarial_attack_metrics</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.classifier.classifier_base</span> <span class="kn">import</span> <span class="n">ClassifierBase</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.metric_utils</span> <span class="kn">import</span> <span class="n">MetricBundle</span>
+<span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ASRSStrategy</span><span class="p">,</span> <span class="n">FudgeStrategy</span><span class="p">,</span> <span class="n">IdentityStrategy</span><span class="p">,</span> <span class="n">OpenAttackStrategy</span><span class="p">,</span> <span class="n">RandomStrategy</span><span class="p">,</span>
+    <span class="n">RemoveStrategy</span><span class="p">,</span> <span class="n">RewriteRollbackStrategy</span><span class="p">,</span> <span class="n">SapStrategy</span><span class="p">,</span> <span class="n">TextAttackStrategy</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies.strategy_base</span> <span class="kn">import</span> <span class="n">StrategyBase</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">remove_logger_tf_handler</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+
+<span class="n">built_in_paraphrase_strategies</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;RandomStrategy&quot;</span><span class="p">:</span> <span class="n">RandomStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;IdentityStrategy&quot;</span><span class="p">:</span> <span class="n">IdentityStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;TextAttackStrategy&quot;</span><span class="p">:</span> <span class="n">TextAttackStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;ASRSStrategy&quot;</span><span class="p">:</span> <span class="n">ASRSStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;RewriteRollbackStrategy&quot;</span><span class="p">:</span> <span class="n">RewriteRollbackStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;OpenAttackStrategy&quot;</span><span class="p">:</span> <span class="n">OpenAttackStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;FudgeStrategy&quot;</span><span class="p">:</span> <span class="n">FudgeStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;SapStrategy&quot;</span><span class="p">:</span> <span class="n">SapStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;RemoveStrategy&quot;</span><span class="p">:</span> <span class="n">RemoveStrategy</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">built_in_defense_strategies</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;LMAgStrategy&quot;</span><span class="p">:</span> <span class="n">LMAgStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;SEMStrategy&quot;</span><span class="p">:</span> <span class="n">SEMStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;AdvTrainStrategy&quot;</span><span class="p">:</span> <span class="n">AdvTrainStrategy</span><span class="p">,</span>
+    <span class="s2">&quot;SAPDStrategy&quot;</span><span class="p">:</span> <span class="n">SAPDStrategy</span>
+<span class="p">}</span>
+
+<span class="n">DATASET_NAME_COL</span> <span class="o">=</span> <span class="s2">&quot;0_dataset_name&quot;</span>
+<span class="n">STRATEGY_NAME_COL</span> <span class="o">=</span> <span class="s2">&quot;1_paraphrase_strategy_name&quot;</span>
+
+
+<div class="viewcode-block" id="Benchmark"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark_adversarial_attack.html#fibber.benchmark.Benchmark">[docs]</a><span class="k">class</span> <span class="nc">Benchmark</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Benchmark framework for adversarial attack methods on text classification.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">output_dir</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span>
+                 <span class="n">trainset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">testset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">attack_set</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">subsample_attack_set</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">customized_clf</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">enable_transformer_clf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">enable_fasttext_classifier</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">use_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">bert_ppl_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">transformer_clf_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">transformer_clf_steps</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span>
+                 <span class="n">transformer_clf_bs</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+                 <span class="n">best_adv_metric_name</span><span class="o">=</span><span class="s2">&quot;USESimilarityMetric&quot;</span><span class="p">,</span>
+                 <span class="n">best_adv_metric_lower_better</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">target_classifier</span><span class="o">=</span><span class="s2">&quot;transformer&quot;</span><span class="p">,</span>
+                 <span class="n">transformer_clf_model_init</span><span class="o">=</span><span class="s2">&quot;bert-base-cased&quot;</span><span class="p">,</span>
+                 <span class="n">field</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Benchmark framework.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            output_dir (str): the directory to write outputs including model, sentences, metrics</span>
+<span class="sd">                and log.</span>
+<span class="sd">            dataset_name (str): the name of the dataset.</span>
+<span class="sd">            trainset (dict): the training set. If the ``dataset_name`` matches built-in datasets,</span>
+<span class="sd">                ``trainset`` should be None.</span>
+<span class="sd">            testset (dict): the test set. If the ``dataset_name`` matches built-in datasets,</span>
+<span class="sd">                ``testset`` should be None.</span>
+<span class="sd">            attack_set (dict or None): the set to run adversarial attack. Use None to attack the</span>
+<span class="sd">                ``testset``.</span>
+<span class="sd">            subsample_attack_set (int): subsample the attack set. 0 to use the whole attack set.</span>
+<span class="sd">            customized_clf (ClassifierBase): an classifier object.</span>
+<span class="sd">            enable_transformer_clf (bool): whether to enable transformer classifier in metrics.</span>
+<span class="sd">            enable_fasttext_classifier (bool): whether to enable fasttext classifier in metrics.</span>
+<span class="sd">            use_gpu_id (int): the gpu to run universal sentence encoder to compute metrics.</span>
+<span class="sd">                -1 for CPU.</span>
+<span class="sd">            bert_ppl_gpu_id (int): the gpu to run the BERT language model for perplexity.</span>
+<span class="sd">                -1 for CPU.</span>
+<span class="sd">            transformer_clf_gpu_id (int): the gpu to run the BERT text classifier, which is the</span>
+<span class="sd">                model being attacked. -1 for CPU.</span>
+<span class="sd">            transformer_clf_steps (int): number of steps to train the BERT text classifier.</span>
+<span class="sd">            transformer_clf_bs (int): the batch size to train the BERT classifier.</span>
+<span class="sd">            best_adv_metric_name (str): the metric name to identify the best adversarial example</span>
+<span class="sd">                if the paraphrase strategy outputs multiple options.</span>
+<span class="sd">            best_adv_metric_lower_better (bool): whether the metric is lower better.</span>
+<span class="sd">            target_classifier (str): the victim classifier. Choose from [&quot;transformer&quot;,</span>
+<span class="sd">                &quot;fasttext&quot;, &quot;customized&quot;].</span>
+<span class="sd">            transformer_clf_model_init (str): the backbone pretrained language model, e.g.,</span>
+<span class="sd">                `bert-base-cased`.</span>
+<span class="sd">            field (str): attack text field.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># make output dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span> <span class="o">=</span> <span class="n">output_dir</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_name</span> <span class="o">=</span> <span class="n">dataset_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_defense_desc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_field</span> <span class="o">=</span> <span class="n">field</span>
+
+        <span class="c1"># verify correct target classifier</span>
+        <span class="k">if</span> <span class="n">target_classifier</span> <span class="o">==</span> <span class="s2">&quot;customized&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">customized_clf</span><span class="p">,</span> <span class="n">ClassifierBase</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;customized_clf is not an instance of ClassifierBase&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">target_classifier</span> <span class="o">==</span> <span class="s2">&quot;transformer&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">enable_transformer_clf</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;target classifier is not enabled.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">target_classifier</span> <span class="o">==</span> <span class="s2">&quot;fasttext&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">enable_fasttext_classifier</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;target classifier is not enabled.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unknown target classifier.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># setup dataset</span>
+        <span class="k">if</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">builtin_datasets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">trainset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">testset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">((</span><span class="s2">&quot;dataset name </span><span class="si">%d</span><span class="s2"> conflict with builtin dataset. &quot;</span>
+                              <span class="s2">&quot;set trainset and testset to None.&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="n">dataset_name</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span>
+            <span class="n">trainset</span><span class="p">,</span> <span class="n">testset</span> <span class="o">=</span> <span class="n">get_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">verify_dataset</span><span class="p">(</span><span class="n">trainset</span><span class="p">)</span>
+            <span class="n">verify_dataset</span><span class="p">(</span><span class="n">testset</span><span class="p">)</span>
+
+        <span class="n">clip_sentence</span><span class="p">(</span><span class="n">trainset</span><span class="p">,</span> <span class="n">transformer_clf_model_init</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+        <span class="n">clip_sentence</span><span class="p">(</span><span class="n">testset</span><span class="p">,</span> <span class="n">transformer_clf_model_init</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">attack_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attack_set</span> <span class="o">=</span> <span class="n">testset</span>
+
+        <span class="k">if</span> <span class="n">subsample_attack_set</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">attack_set</span> <span class="o">=</span> <span class="n">subsample_dataset</span><span class="p">(</span><span class="n">attack_set</span><span class="p">,</span> <span class="n">subsample_attack_set</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trainset</span> <span class="o">=</span> <span class="n">trainset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_testset</span> <span class="o">=</span> <span class="n">testset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_attack_set</span> <span class="o">=</span> <span class="n">attack_set</span>
+
+        <span class="c1"># setup metric bundle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span> <span class="o">=</span> <span class="n">MetricBundle</span><span class="p">(</span>
+            <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
+            <span class="n">trainset</span><span class="o">=</span><span class="n">trainset</span><span class="p">,</span> <span class="n">testset</span><span class="o">=</span><span class="n">testset</span><span class="p">,</span>
+            <span class="n">enable_transformer_classifier</span><span class="o">=</span><span class="n">enable_transformer_clf</span><span class="p">,</span>
+            <span class="n">transformer_clf_gpu_id</span><span class="o">=</span><span class="n">transformer_clf_gpu_id</span><span class="p">,</span>
+            <span class="n">transformer_clf_model_init</span><span class="o">=</span><span class="n">transformer_clf_model_init</span><span class="p">,</span>
+            <span class="n">transformer_clf_steps</span><span class="o">=</span><span class="n">transformer_clf_steps</span><span class="p">,</span>
+            <span class="n">transformer_clf_bs</span><span class="o">=</span><span class="n">transformer_clf_bs</span><span class="p">,</span>
+            <span class="n">enable_fasttext_classifier</span><span class="o">=</span><span class="n">enable_fasttext_classifier</span><span class="p">,</span>
+            <span class="n">target_clf</span><span class="o">=</span><span class="n">target_classifier</span><span class="p">,</span>
+            <span class="n">enable_use_similarity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_gpu_id</span><span class="o">=</span><span class="n">use_gpu_id</span><span class="p">,</span>
+            <span class="n">enable_bert_perplexity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bert_ppl_gpu_id</span><span class="o">=</span><span class="n">bert_ppl_gpu_id</span><span class="p">,</span>
+            <span class="n">enable_ce_similarity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">enable_gpt2_perplexity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">enable_glove_similarity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">field</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">customized_clf</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">add_classifier</span><span class="p">(</span><span class="n">customized_clf</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">add_sentence_level_adversarial_attack_metrics</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="p">,</span>
+            <span class="n">best_adv_metric_name</span><span class="o">=</span><span class="n">best_adv_metric_name</span><span class="p">,</span>
+            <span class="n">best_adv_metric_lower_better</span><span class="o">=</span><span class="n">best_adv_metric_lower_better</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Benchmark.run_benchmark"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark_adversarial_attack.html#fibber.benchmark.Benchmark.run_benchmark">[docs]</a>    <span class="k">def</span> <span class="nf">run_benchmark</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                      <span class="n">paraphrase_strategy</span><span class="o">=</span><span class="s2">&quot;IdentityStrategy&quot;</span><span class="p">,</span>
+                      <span class="n">strategy_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                      <span class="n">max_paraphrases</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                      <span class="n">exp_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="n">update_global_results</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the benchmark.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            paraphrase_strategy (str or StrategyBase): the paraphrase strategy to benchmark.</span>
+<span class="sd">                Either the name of a builtin strategy or a customized strategy derived from</span>
+<span class="sd">                StrategyBase.</span>
+<span class="sd">            strategy_gpu_id (int): the gpu id to run the strategy. -1 for CPU. Ignored when</span>
+<span class="sd">                ``paraphrase_strategy`` is an object.</span>
+<span class="sd">            max_paraphrases (int): number of paraphrases for each sentence.</span>
+<span class="sd">            exp_name (str or None): the name of current experiment. None for default name. the</span>
+<span class="sd">                default name is ``&lt;dataset_name&gt;-&lt;strategy_name&gt;-&lt;date&gt;-&lt;time&gt;``.</span>
+<span class="sd">            update_global_results (bool): whether to write results in &lt;fibber_root_dir&gt; or the</span>
+<span class="sd">                benchmark output dir.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dict of evaluation results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># setup strategy</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">paraphrase_strategy</span> <span class="ow">in</span> <span class="n">built_in_paraphrase_strategies</span><span class="p">:</span>
+                <span class="n">paraphrase_strategy</span> <span class="o">=</span> <span class="n">built_in_paraphrase_strategies</span><span class="p">[</span><span class="n">paraphrase_strategy</span><span class="p">](</span>
+                    <span class="p">{},</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="p">,</span>
+                    <span class="n">field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="p">,</span> <span class="n">StrategyBase</span><span class="p">)</span>
+
+        <span class="c1"># get experiment name</span>
+        <span class="k">if</span> <span class="n">exp_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">exp_name</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset_name</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span>
+                        <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%m</span><span class="si">%d</span><span class="s2">-%H%M%S</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">))</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">add_file_handler</span><span class="p">(</span>
+            <span class="n">logger</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.log&quot;</span> <span class="o">%</span> <span class="n">exp_name</span><span class="p">))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">remove_logger_tf_handler</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="n">paraphrase_strategy</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trainset</span><span class="p">)</span>
+        <span class="n">tmp_output_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span> <span class="n">exp_name</span> <span class="o">+</span> <span class="s2">&quot;-tmp.json&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Write paraphrase temporary results in </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">tmp_output_filename</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">paraphrase_strategy</span><span class="o">.</span><span class="n">paraphrase_dataset</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_attack_set</span><span class="p">,</span> <span class="n">max_paraphrases</span><span class="p">,</span> <span class="n">tmp_output_filename</span><span class="p">)</span>
+
+        <span class="n">output_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span> <span class="n">exp_name</span> <span class="o">+</span> <span class="s2">&quot;-with-metric.json&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Write paraphrase with metrics in </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">tmp_output_filename</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">measure_dataset</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span> <span class="n">output_filename</span><span class="o">=</span><span class="n">output_filename</span><span class="p">)</span>
+
+        <span class="n">aggregated_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">aggregate_metrics</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="p">),</span> <span class="n">exp_name</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defense_desc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">update_detailed_result</span><span class="p">(</span><span class="n">aggregated_result</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">update_global_results</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">update_attack_robust_result</span><span class="p">(</span><span class="n">aggregated_result</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_defense_desc</span><span class="p">,</span>
+                                        <span class="mi">0</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">update_global_results</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">aggregated_result</span></div>
+
+<div class="viewcode-block" id="Benchmark.get_metric_bundle"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark_adversarial_attack.html#fibber.benchmark.Benchmark.get_metric_bundle">[docs]</a>    <span class="k">def</span> <span class="nf">get_metric_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span></div>
+
+<div class="viewcode-block" id="Benchmark.fit_defense"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark_adversarial_attack.html#fibber.benchmark.Benchmark.fit_defense">[docs]</a>    <span class="k">def</span> <span class="nf">fit_defense</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paraphrase_strategy</span><span class="p">,</span> <span class="n">defense_strategy</span><span class="p">):</span>
+        <span class="n">paraphrase_strategy</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trainset</span><span class="p">)</span>
+        <span class="n">defense_strategy</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trainset</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Benchmark.load_defense"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark_adversarial_attack.html#fibber.benchmark.Benchmark.load_defense">[docs]</a>    <span class="k">def</span> <span class="nf">load_defense</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">defense_strategy</span><span class="p">):</span>
+        <span class="n">clf</span> <span class="o">=</span> <span class="n">defense_strategy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trainset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">replace_target_classifier</span><span class="p">(</span><span class="n">clf</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="get_strategy"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark_adversarial_attack.html#fibber.benchmark.get_strategy">[docs]</a><span class="k">def</span> <span class="nf">get_strategy</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span>
+                 <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Take the strategy name and construct a strategy object.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">built_in_paraphrase_strategies</span><span class="p">[</span><span class="n">strategy_name</span><span class="p">](</span>
+        <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_defense_strategy"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark_adversarial_attack.html#fibber.benchmark.get_defense_strategy">[docs]</a><span class="k">def</span> <span class="nf">get_defense_strategy</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span>
+                         <span class="n">defense_desc</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">,</span> <span class="n">attack_strategy</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Take the strategy name and construct a strategy object.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">built_in_defense_strategies</span><span class="p">[</span><span class="n">strategy_name</span><span class="p">](</span>
+        <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">defense_desc</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">,</span>
+        <span class="n">attack_strategy</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../api/fibber.benchmark.benchmark_adversarial_attack.html#fibber.benchmark.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+
+    <span class="c1"># target clf</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--target_classifier&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;bert&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--transformer_clf_model_init&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;bert-base-cased&quot;</span><span class="p">)</span>
+
+    <span class="c1"># option on robust defense vs attack</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--task&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;defense&quot;</span><span class="p">,</span> <span class="s2">&quot;attack&quot;</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;attack&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Choose from defending the classifier vs. attack the classifier.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--defense_strategy&quot;</span><span class="p">,</span>
+                        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">built_in_defense_strategies</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;use `none` to disable defense. &quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--defense_desc&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A name to recognize this defense setup. &quot;</span><span class="p">)</span>
+
+    <span class="c1"># add experiment args</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--exp_name&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--dataset&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;ag&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--field&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;text0&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--output_dir&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--max_paraphrases&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--subsample_testset&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--strategy&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">built_in_paraphrase_strategies</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;RandomStrategy&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--strategy_gpu_id&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--seed&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+    <span class="c1"># metric args</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--bert_ppl_gpu_id&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--transformer_clf_gpu_id&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--use_gpu_id&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--transformer_clf_steps&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--best_adv_metric_name&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;USESimilarityMetric&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--best_adv_lower_better&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+
+    <span class="c1"># add builtin strategies&#39; args to parser.</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">built_in_paraphrase_strategies</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">add_parser_args</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">built_in_defense_strategies</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">add_parser_args</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
+
+    <span class="n">arg_dict</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;output_dir&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;seed&quot;</span><span class="p">])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;seed&quot;</span><span class="p">])</span>
+
+    <span class="n">benchmark</span> <span class="o">=</span> <span class="n">Benchmark</span><span class="p">(</span>
+        <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;output_dir&quot;</span><span class="p">],</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">],</span>
+        <span class="n">subsample_attack_set</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;subsample_testset&quot;</span><span class="p">],</span>
+        <span class="n">use_gpu_id</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;use_gpu_id&quot;</span><span class="p">],</span>
+        <span class="n">transformer_clf_gpu_id</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;transformer_clf_gpu_id&quot;</span><span class="p">],</span>
+        <span class="n">bert_ppl_gpu_id</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;bert_ppl_gpu_id&quot;</span><span class="p">],</span>
+        <span class="n">transformer_clf_steps</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;transformer_clf_steps&quot;</span><span class="p">],</span>
+        <span class="n">best_adv_metric_name</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;best_adv_metric_name&quot;</span><span class="p">],</span>
+        <span class="n">best_adv_metric_lower_better</span><span class="o">=</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;best_adv_lower_better&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">),</span>
+        <span class="n">target_classifier</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;target_classifier&quot;</span><span class="p">],</span>
+        <span class="n">transformer_clf_model_init</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;transformer_clf_model_init&quot;</span><span class="p">],</span>
+        <span class="n">field</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;field&quot;</span><span class="p">])</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">remove_logger_tf_handler</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="c1"># Get paraphrase strategy</span>
+    <span class="n">paraphrase_strategy</span> <span class="o">=</span> <span class="n">get_strategy</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">],</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;strategy&quot;</span><span class="p">],</span>
+                                       <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;strategy_gpu_id&quot;</span><span class="p">],</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;output_dir&quot;</span><span class="p">],</span>
+                                       <span class="n">benchmark</span><span class="o">.</span><span class="n">get_metric_bundle</span><span class="p">(),</span> <span class="n">field</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;field&quot;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;defense_strategy&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+        <span class="n">defense_strategy</span> <span class="o">=</span> <span class="n">get_defense_strategy</span><span class="p">(</span>
+            <span class="n">arg_dict</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">],</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;defense_strategy&quot;</span><span class="p">],</span>
+            <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;strategy_gpu_id&quot;</span><span class="p">],</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;defense_desc&quot;</span><span class="p">],</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">get_metric_bundle</span><span class="p">(),</span>
+            <span class="n">attack_strategy</span><span class="o">=</span><span class="n">paraphrase_strategy</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;field&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">defense_strategy</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;defense&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">defense_strategy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Defense strategy is None.&quot;</span><span class="p">)</span>
+        <span class="n">benchmark</span><span class="o">.</span><span class="n">fit_defense</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="o">=</span><span class="n">paraphrase_strategy</span><span class="p">,</span>
+                              <span class="n">defense_strategy</span><span class="o">=</span><span class="n">defense_strategy</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;attack&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">defense_strategy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">benchmark</span><span class="o">.</span><span class="n">load_defense</span><span class="p">(</span><span class="n">defense_strategy</span><span class="o">=</span><span class="n">defense_strategy</span><span class="p">)</span>
+
+        <span class="n">benchmark</span><span class="o">.</span><span class="n">run_benchmark</span><span class="p">(</span><span class="n">paraphrase_strategy</span><span class="o">=</span><span class="n">paraphrase_strategy</span><span class="p">,</span>
+                                <span class="n">max_paraphrases</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;max_paraphrases&quot;</span><span class="p">],</span>
+                                <span class="n">exp_name</span><span class="o">=</span><span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;exp_name&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unknown task.&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2020, MIT Data To AI Lab.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

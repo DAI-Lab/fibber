@@ -1,7 +1,0 @@
-fibber.datasets.preprocess\_snli module
-=======================================
-
-.. automodule:: fibber.datasets.preprocess_snli
-   :members:
-   :undoc-members:
-   :show-inheritance:

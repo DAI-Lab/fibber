@@ -1,0 +1,7 @@
+fibber.metrics.classifier.fasttext\_classifier module
+=====================================================
+
+.. automodule:: fibber.metrics.classifier.fasttext_classifier
+   :members:
+   :undoc-members:
+   :show-inheritance:

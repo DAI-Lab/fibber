@@ -1,0 +1,7 @@
+fibber.metrics.similarity.glove\_similarity\_metric module
+==========================================================
+
+.. automodule:: fibber.metrics.similarity.glove_similarity_metric
+   :members:
+   :undoc-members:
+   :show-inheritance:

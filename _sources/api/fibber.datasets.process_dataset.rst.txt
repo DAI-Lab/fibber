@@ -1,0 +1,7 @@
+fibber.datasets.process\_dataset module
+=======================================
+
+.. automodule:: fibber.datasets.process_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:

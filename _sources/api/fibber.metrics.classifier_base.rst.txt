@@ -1,7 +1,0 @@
-fibber.metrics.classifier\_base module
-======================================
-
-.. automodule:: fibber.metrics.classifier_base
-   :members:
-   :undoc-members:
-   :show-inheritance:

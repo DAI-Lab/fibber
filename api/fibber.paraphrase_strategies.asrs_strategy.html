@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.asrs_strategy module &#8212; fibber 0.3.1 documentation</title>
+    <title>fibber.paraphrase_strategies.asrs_strategy module &#8212; fibber 0.4.0 documentation</title>
     
-  <link href="../_static/css/theme.css" rel="stylesheet" />
-  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -22,10 +22,10 @@
       
 
     
-    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/css/blank.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -36,10 +36,13 @@
     <link rel="shortcut icon" href="../_static/dai-logo-white.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fibber.paraphrase_strategies.asrs_utils_lm module" href="fibber.paraphrase_strategies.asrs_utils_lm.html" />
+    <link rel="next" title="fibber.paraphrase_strategies.asrs_utils_wpe module" href="fibber.paraphrase_strategies.asrs_utils_wpe.html" />
     <link rel="prev" title="fibber.paraphrase_strategies package" href="fibber.paraphrase_strategies.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -160,8 +163,13 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="fibber.benchmark.benchmark.html">
-     fibber.benchmark.benchmark module
+    <a class="reference internal" href="fibber.benchmark.benchmark_adversarial_attack.html">
+     fibber.benchmark.benchmark_adversarial_attack module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.benchmark.benchmark_style_transfer.html">
+     fibber.benchmark.benchmark_style_transfer module
     </a>
    </li>
    <li class="toctree-l2">
@@ -202,45 +210,15 @@
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_ag.html">
-     fibber.datasets.preprocess_ag module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_imdb.html">
-     fibber.datasets.preprocess_imdb module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_mnli.html">
-     fibber.datasets.preprocess_mnli module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_mr.html">
-     fibber.datasets.preprocess_mr module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_snli.html">
-     fibber.datasets.preprocess_snli module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_utils.html">
-     fibber.datasets.preprocess_utils module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_yelp.html">
-     fibber.datasets.preprocess_yelp module
+    <a class="reference internal" href="fibber.datasets.process_dataset.html">
+     fibber.datasets.process_dataset module
     </a>
    </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="fibber.metrics.html">
-   fibber.metrics package
+  <a class="reference internal" href="fibber.defense_strategies.html">
+   fibber.defense_strategies package
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
   <label for="toctree-checkbox-3">
@@ -249,38 +227,163 @@
   </label>
   <ul>
    <li class="toctree-l2">
+    <a class="reference internal" href="fibber.defense_strategies.advtrain_strategy.html">
+     fibber.defense_strategies.advtrain_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.defense_strategies.defense_strategy_base.html">
+     fibber.defense_strategies.defense_strategy_base module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.defense_strategies.lmag_strategy.html">
+     fibber.defense_strategies.lmag_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.defense_strategies.sapd_strategy.html">
+     fibber.defense_strategies.sapd_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.defense_strategies.sem_strategy.html">
+     fibber.defense_strategies.sem_strategy module
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="fibber.metrics.html">
+   fibber.metrics package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="fibber.metrics.classifier.html">
+     fibber.metrics.classifier package
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+    <label for="toctree-checkbox-5">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.classifier.classifier_base.html">
+       fibber.metrics.classifier.classifier_base module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.classifier.fasttext_classifier.html">
+       fibber.metrics.classifier.fasttext_classifier module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.classifier.input_manipulation_classifier.html">
+       fibber.metrics.classifier.input_manipulation_classifier module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.classifier.shield_classifier.html">
+       fibber.metrics.classifier.shield_classifier module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.classifier.transformer_classifier.html">
+       fibber.metrics.classifier.transformer_classifier module
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="fibber.metrics.distance.html">
+     fibber.metrics.distance package
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+    <label for="toctree-checkbox-6">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.distance.edit_distance_metric.html">
+       fibber.metrics.distance.edit_distance_metric module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.distance.ref_bleu_metric.html">
+       fibber.metrics.distance.ref_bleu_metric module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.distance.self_bleu_metric.html">
+       fibber.metrics.distance.self_bleu_metric module
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="fibber.metrics.fluency.html">
+     fibber.metrics.fluency package
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.fluency.bert_perplexity_metric.html">
+       fibber.metrics.fluency.bert_perplexity_metric module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.fluency.gpt2_perplexity_metric.html">
+       fibber.metrics.fluency.gpt2_perplexity_metric module
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="fibber.metrics.similarity.html">
+     fibber.metrics.similarity package
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+    <label for="toctree-checkbox-8">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.similarity.ce_similarity_metric.html">
+       fibber.metrics.similarity.ce_similarity_metric module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.similarity.glove_similarity_metric.html">
+       fibber.metrics.similarity.glove_similarity_metric module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.similarity.use_similarity_metric.html">
+       fibber.metrics.similarity.use_similarity_metric module
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2">
     <a class="reference internal" href="fibber.metrics.attack_aggregation_utils.html">
      fibber.metrics.attack_aggregation_utils module
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.bert_classifier.html">
-     fibber.metrics.bert_classifier module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.ce_semantic_similarity_metric.html">
-     fibber.metrics.ce_semantic_similarity_metric module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.classifier_base.html">
-     fibber.metrics.classifier_base module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.edit_distance_metric.html">
-     fibber.metrics.edit_distance_metric module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.glove_semantic_similarity_metric.html">
-     fibber.metrics.glove_semantic_similarity_metric module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.gpt2_grammar_quality_metric.html">
-     fibber.metrics.gpt2_grammar_quality_metric module
+    <a class="reference internal" href="fibber.metrics.bert_lm_utils.html">
+     fibber.metrics.bert_lm_utils module
     </a>
    </li>
    <li class="toctree-l2">
@@ -293,19 +396,14 @@
      fibber.metrics.metric_utils module
     </a>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.use_semantic_similarity_metric.html">
-     fibber.metrics.use_semantic_similarity_metric module
-    </a>
-   </li>
   </ul>
  </li>
  <li class="toctree-l1 current active has-children">
   <a class="reference internal" href="fibber.paraphrase_strategies.html">
    fibber.paraphrase_strategies package
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-  <label for="toctree-checkbox-4">
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+  <label for="toctree-checkbox-9">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -316,18 +414,18 @@
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="fibber.paraphrase_strategies.asrs_utils_lm.html">
-     fibber.paraphrase_strategies.asrs_utils_lm module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.paraphrase_strategies.asrs_utils_text_parser.html">
-     fibber.paraphrase_strategies.asrs_utils_text_parser module
-    </a>
-   </li>
-   <li class="toctree-l2">
     <a class="reference internal" href="fibber.paraphrase_strategies.asrs_utils_wpe.html">
      fibber.paraphrase_strategies.asrs_utils_wpe module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.cheat_strategy.html">
+     fibber.paraphrase_strategies.cheat_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.fudge_strategy.html">
+     fibber.paraphrase_strategies.fudge_strategy module
     </a>
    </li>
    <li class="toctree-l2">
@@ -336,18 +434,38 @@
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="fibber.paraphrase_strategies.narrl_strategy.html">
-     fibber.paraphrase_strategies.narrl_strategy module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.html">
-     fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy module
+    <a class="reference internal" href="fibber.paraphrase_strategies.openattack_strategy.html">
+     fibber.paraphrase_strategies.openattack_strategy module
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="fibber.paraphrase_strategies.random_strategy.html">
      fibber.paraphrase_strategies.random_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.remove_strategy.html">
+     fibber.paraphrase_strategies.remove_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.rewrite_rollback_strategy.html">
+     fibber.paraphrase_strategies.rewrite_rollback_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.sap_strategy.html">
+     fibber.paraphrase_strategies.sap_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.sap_utils_euba.html">
+     fibber.paraphrase_strategies.sap_utils_euba module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.ssrs_strategy.html">
+     fibber.paraphrase_strategies.ssrs_strategy module
     </a>
    </li>
    <li class="toctree-l2">
@@ -366,8 +484,8 @@
   <a class="reference internal" href="fibber.resources.html">
    fibber.resources package
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
-  <label for="toctree-checkbox-5">
+  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+  <label for="toctree-checkbox-10">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -385,28 +503,6 @@
    <li class="toctree-l2">
     <a class="reference internal" href="fibber.resources.resource_utils.html">
      fibber.resources.resource_utils module
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="fibber.robust_tuning_strategy.html">
-   fibber.robust_tuning_strategy package
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
-  <label for="toctree-checkbox-6">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.robust_tuning_strategy.default_tuning_strategy.html">
-     fibber.robust_tuning_strategy.default_tuning_strategy module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.robust_tuning_strategy.tuning_strategy_base.html">
-     fibber.robust_tuning_strategy.tuning_strategy_base module
     </a>
    </li>
   </ul>
@@ -468,7 +564,7 @@
 <span id="fibber-paraphrase-strategies-asrs-strategy-module"></span><h1>fibber.paraphrase_strategies.asrs_strategy module<a class="headerlink" href="#module-fibber.paraphrase_strategies.asrs_strategy" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="fibber.paraphrase_strategies.asrs_strategy.ASRSStrategy">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">ASRSStrategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span></em>, <em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#ASRSStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.ASRSStrategy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">ASRSStrategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg_dict</span></em>, <em class="sig-param"><span class="n">dataset_name</span></em>, <em class="sig-param"><span class="n">strategy_gpu_id</span></em>, <em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">metric_bundle</span></em>, <em class="sig-param"><span class="n">field</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#ASRSStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.ASRSStrategy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fibber.paraphrase_strategies.strategy_base.html#fibber.paraphrase_strategies.strategy_base.StrategyBase" title="fibber.paraphrase_strategies.strategy_base.StrategyBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">fibber.paraphrase_strategies.strategy_base.StrategyBase</span></code></a></p>
 <p>Initialize the paraphrase_strategies.</p>
 <p>This function initialize the <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,
@@ -508,7 +604,7 @@ use this device.</p></li>
 
 <dl class="py method">
 <dt id="fibber.paraphrase_strategies.asrs_strategy.ASRSStrategy.paraphrase_example">
-<code class="sig-name descname">paraphrase_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#ASRSStrategy.paraphrase_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.ASRSStrategy.paraphrase_example" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paraphrase_example</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">early_stop</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#ASRSStrategy.paraphrase_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.ASRSStrategy.paraphrase_example" title="Permalink to this definition">¶</a></dt>
 <dd><p>Paraphrase one data record.</p>
 <p>This function should be overwritten by subclasses. When overwriting this class, you can
 use <code class="docutils literal notranslate"><span class="pre">self._strategy_config</span></code>, <code class="docutils literal notranslate"><span class="pre">self._metric_bundle</span></code>,  <code class="docutils literal notranslate"><span class="pre">self._device</span></code>,
@@ -517,7 +613,6 @@ use <code class="docutils literal notranslate"><span class="pre">self._strategy_
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_record</strong> (<em>dict</em>) – a dict storing one data of a dataset.</p></li>
-<li><p><strong>field_name</strong> (<em>str</em>) – the field needed to be paraphrased.</p></li>
 <li><p><strong>n</strong> (<em>int</em>) – number of paraphrases.</p></li>
 </ul>
 </dd>
@@ -534,7 +629,7 @@ use <code class="docutils literal notranslate"><span class="pre">self._strategy_
 
 <dl class="py function">
 <dt id="fibber.paraphrase_strategies.asrs_strategy.all_accept_criteria">
-<code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">all_accept_criteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">candidate_ids</span></em>, <em class="sig-param"><span class="n">stats</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#all_accept_criteria"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.all_accept_criteria" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">all_accept_criteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">candidate_ids</span></em>, <em class="sig-param"><span class="n">stats</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#all_accept_criteria"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.all_accept_criteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Always accept proposed words.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -557,25 +652,25 @@ None means this criteria does not have any state.</p>
 
 <dl class="py function">
 <dt id="fibber.paraphrase_strategies.asrs_strategy.allow_list_constraint">
-<code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">allow_list_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">allow_list</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#allow_list_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.allow_list_constraint" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">allow_list_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">allow_list</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#allow_list_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.allow_list_constraint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="fibber.paraphrase_strategies.asrs_strategy.clf_criteria_score">
-<code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">clf_criteria_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrases</span></em>, <em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span></em>, <em class="sig-param"><span class="n">clf_metric</span></em>, <em class="sig-param"><span class="n">clf_weight</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#clf_criteria_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.clf_criteria_score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">clf_criteria_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">paraphrases</span></em>, <em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field</span></em>, <em class="sig-param"><span class="n">clf_metric</span></em>, <em class="sig-param"><span class="n">clf_weight</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#clf_criteria_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.clf_criteria_score" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="fibber.paraphrase_strategies.asrs_strategy.joint_weighted_criteria">
-<code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">joint_weighted_criteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tokenizer</span></em>, <em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field_name</span></em>, <em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">batch_tensor</span></em>, <em class="sig-param"><span class="n">pos_st</span></em>, <em class="sig-param"><span class="n">pos_ed</span></em>, <em class="sig-param"><span class="n">previous_ids</span></em>, <em class="sig-param"><span class="n">candidate_ids</span></em>, <em class="sig-param"><span class="n">sim_metric</span></em>, <em class="sig-param"><span class="n">sim_threshold</span></em>, <em class="sig-param"><span class="n">sim_weight</span></em>, <em class="sig-param"><span class="n">clf_metric</span></em>, <em class="sig-param"><span class="n">clf_weight</span></em>, <em class="sig-param"><span class="n">ppl_metric</span></em>, <em class="sig-param"><span class="n">ppl_weight</span></em>, <em class="sig-param"><span class="n">burnin_weight</span></em>, <em class="sig-param"><span class="n">stats</span></em>, <em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">device</span></em>, <em class="sig-param"><span class="n">seq_len</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#joint_weighted_criteria"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.joint_weighted_criteria" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">joint_weighted_criteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tokenizer</span></em>, <em class="sig-param"><span class="n">data_record</span></em>, <em class="sig-param"><span class="n">field</span></em>, <em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">batch_tensor</span></em>, <em class="sig-param"><span class="n">pos_st</span></em>, <em class="sig-param"><span class="n">pos_ed</span></em>, <em class="sig-param"><span class="n">previous_ids</span></em>, <em class="sig-param"><span class="n">candidate_ids</span></em>, <em class="sig-param"><span class="n">sim_metric</span></em>, <em class="sig-param"><span class="n">sim_threshold</span></em>, <em class="sig-param"><span class="n">sim_weight</span></em>, <em class="sig-param"><span class="n">clf_metric</span></em>, <em class="sig-param"><span class="n">clf_weight</span></em>, <em class="sig-param"><span class="n">ppl_metric</span></em>, <em class="sig-param"><span class="n">ppl_weight</span></em>, <em class="sig-param"><span class="n">burnin_weight</span></em>, <em class="sig-param"><span class="n">stats</span></em>, <em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="n">device</span></em>, <em class="sig-param"><span class="n">seq_len</span></em>, <em class="sig-param"><span class="n">log_prob_previous_ids</span></em>, <em class="sig-param"><span class="n">log_prob_candidate_ids</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#joint_weighted_criteria"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.joint_weighted_criteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Accept or reject candidate word using the joint weighted criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tokenizer</strong> (<em>transformers.BertTokenizer</em>) – a bert tokenizer.</p></li>
 <li><p><strong>data_record</strong> (<em>dict</em>) – the data record dict.</p></li>
-<li><p><strong>field_name</strong> (<em>str</em>) – the field to rewritten.</p></li>
-<li><p><strong>origin</strong> (<em>str</em>) – original text. Same as <code class="docutils literal notranslate"><span class="pre">data_record[field_name]</span></code>.</p></li>
+<li><p><strong>field</strong> (<em>str</em>) – the field to rewritten.</p></li>
+<li><p><strong>origin</strong> (<em>str</em>) – original text. Same as <code class="docutils literal notranslate"><span class="pre">data_record[field]</span></code>.</p></li>
 <li><p><strong>batch_tensor</strong> (<em>torch.Tensor</em>) – tensor of a batch of text with size <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">L)</span></code>.</p></li>
 <li><p><strong>pos_st</strong> (<em>int</em>) – the start position of sampling (include).</p></li>
 <li><p><strong>pos_ed</strong> (<em>int</em>) – the end position of sampling (exclude).</p></li>
@@ -583,12 +678,12 @@ None means this criteria does not have any state.</p>
 size <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">pos_ed-pos_st)</span></code>.</p></li>
 <li><p><strong>candidate_ids</strong> (<em>torch.Tensor</em>) – proposed word ids in this sampling step with
 size <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">pos_ed-pos_st)</span></code>.</p></li>
-<li><p><strong>sim_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.USESemanticSimilarityMetric" title="fibber.metrics.USESemanticSimilarityMetric"><em>USESemanticSimilarityMetric</em></a>) – a universal sentence encoder metric object.</p></li>
+<li><p><strong>sim_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.USESimilarityMetric" title="fibber.metrics.USESimilarityMetric"><em>USESimilarityMetric</em></a>) – a universal sentence encoder metric object.</p></li>
 <li><p><strong>sim_threshold</strong> (<em>float</em>) – the universal sentence encoder similarity threshold.</p></li>
 <li><p><strong>sim_weight</strong> (<em>float</em>) – the weight for USE criteria score.</p></li>
-<li><p><strong>clf_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.BertClassifier" title="fibber.metrics.BertClassifier"><em>BertClassifier</em></a>) – a BertClassifier metric.</p></li>
+<li><p><strong>clf_metric</strong> (<em>BertClassifier</em>) – a BertClassifier metric.</p></li>
 <li><p><strong>clf_weight</strong> (<em>float</em>) – the weight for BERT criteria score.</p></li>
-<li><p><strong>ppl_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.GPT2GrammarQualityMetric" title="fibber.metrics.GPT2GrammarQualityMetric"><em>GPT2GrammarQualityMetric</em></a>) – a GPT2GrammarQualityMetric metric.</p></li>
+<li><p><strong>ppl_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.GPT2PerplexityMetric" title="fibber.metrics.GPT2PerplexityMetric"><em>GPT2PerplexityMetric</em></a>) – a GPT2PerplexityMetric metric.</p></li>
 <li><p><strong>ppl_weight</strong> (<em>float</em>) – the weight for GPT2 criteria score.</p></li>
 <li><p><strong>burnin_weight</strong> (<em>float</em>) – the discount factor.</p></li>
 <li><p><strong>stats</strong> (<em>dict</em>) – a dict to keep track the accept rate.</p></li>
@@ -613,7 +708,7 @@ size <code class="docutils literal notranslate"><span class="pre">(batch_size,</
 
 <dl class="py function">
 <dt id="fibber.paraphrase_strategies.asrs_strategy.none_constraint">
-<code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">none_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#none_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.none_constraint" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">none_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#none_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.none_constraint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -625,7 +720,7 @@ size <code class="docutils literal notranslate"><span class="pre">(batch_size,</
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>origin</strong> (<em>str</em>) – original sentence.</p></li>
 <li><p><strong>paraphrases</strong> (<em>[</em><em>str</em><em>]</em>) – a list of paraphrase_list.</p></li>
-<li><p><strong>ppl_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.GPT2GrammarQualityMetric" title="fibber.metrics.GPT2GrammarQualityMetric"><em>GPT2GrammarQualityMetric</em></a>) – a GPT2GrammarQualityMetric metric object.</p></li>
+<li><p><strong>ppl_metric</strong> (<a class="reference internal" href="fibber.metrics.html#fibber.metrics.GPT2PerplexityMetric" title="fibber.metrics.GPT2PerplexityMetric"><em>GPT2PerplexityMetric</em></a>) – a GPT2PerplexityMetric metric object.</p></li>
 <li><p><strong>ppl_weight</strong> (<em>float</em>) – the weight parameter for the criteria.</p></li>
 </ul>
 </dd>
@@ -707,7 +802,7 @@ size <code class="docutils literal notranslate"><span class="pre">(batch_size,</
 
 <dl class="py function">
 <dt id="fibber.paraphrase_strategies.asrs_strategy.wpe_constraint">
-<code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">wpe_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_emb</span></em>, <em class="sig-param"><span class="n">word_embs</span></em>, <em class="sig-param"><span class="n">batch_tensor</span></em>, <em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">wpe_threshold</span></em>, <em class="sig-param"><span class="n">wpe_weight</span></em>, <em class="sig-param"><span class="n">attention_mask_paraphrase_text_only</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#wpe_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.wpe_constraint" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fibber.paraphrase_strategies.asrs_strategy.</code><code class="sig-name descname">wpe_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_emb</span></em>, <em class="sig-param"><span class="n">word_embs</span></em>, <em class="sig-param"><span class="n">batch_tensor</span></em>, <em class="sig-param"><span class="n">pos_st</span></em>, <em class="sig-param"><span class="n">pos_ed</span></em>, <em class="sig-param"><span class="n">wpe_threshold</span></em>, <em class="sig-param"><span class="n">wpe_weight</span></em>, <em class="sig-param"><span class="n">attention_mask_paraphrase_text_only</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/paraphrase_strategies/asrs_strategy.html#wpe_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.paraphrase_strategies.asrs_strategy.wpe_constraint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -716,12 +811,23 @@ size <code class="docutils literal notranslate"><span class="pre">(batch_size,</
               </div>
               
               
-              <div class='prev-next-bottom'>
-                
-    <a class='left-prev' id="prev-link" href="fibber.paraphrase_strategies.html" title="previous page">fibber.paraphrase_strategies package</a>
-    <a class='right-next' id="next-link" href="fibber.paraphrase_strategies.asrs_utils_lm.html" title="next page">fibber.paraphrase_strategies.asrs_utils_lm module</a>
-
-              </div>
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="fibber.paraphrase_strategies.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">fibber.paraphrase_strategies package</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="fibber.paraphrase_strategies.asrs_utils_wpe.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">fibber.paraphrase_strategies.asrs_utils_wpe module</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
               
           </main>
           
@@ -729,20 +835,19 @@ size <code class="docutils literal notranslate"><span class="pre">(batch_size,</
       </div>
     </div>
   
-  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
-
-  <footer class="footer mt-5 mt-md-0">
+  <script src="../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
       <p class="copyright">
-    &copy; Copyright 2020, MIT Data To AI Lab.<br/>
+    &copy; Copyright 2020, MIT Data To AI Lab.<br>
 </p>
     </div>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br>
 </p>
     </div>
     

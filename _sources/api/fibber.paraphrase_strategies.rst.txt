@@ -8,13 +8,17 @@ Submodules
    :maxdepth: 4
 
    fibber.paraphrase_strategies.asrs_strategy
-   fibber.paraphrase_strategies.asrs_utils_lm
-   fibber.paraphrase_strategies.asrs_utils_text_parser
    fibber.paraphrase_strategies.asrs_utils_wpe
+   fibber.paraphrase_strategies.cheat_strategy
+   fibber.paraphrase_strategies.fudge_strategy
    fibber.paraphrase_strategies.identity_strategy
-   fibber.paraphrase_strategies.narrl_strategy
-   fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy
+   fibber.paraphrase_strategies.openattack_strategy
    fibber.paraphrase_strategies.random_strategy
+   fibber.paraphrase_strategies.remove_strategy
+   fibber.paraphrase_strategies.rewrite_rollback_strategy
+   fibber.paraphrase_strategies.sap_strategy
+   fibber.paraphrase_strategies.sap_utils_euba
+   fibber.paraphrase_strategies.ssrs_strategy
    fibber.paraphrase_strategies.strategy_base
    fibber.paraphrase_strategies.textattack_strategy
 

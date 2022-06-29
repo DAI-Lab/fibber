@@ -1,0 +1,7 @@
+fibber.paraphrase\_strategies.openattack\_strategy module
+=========================================================
+
+.. automodule:: fibber.paraphrase_strategies.openattack_strategy
+   :members:
+   :undoc-members:
+   :show-inheritance:

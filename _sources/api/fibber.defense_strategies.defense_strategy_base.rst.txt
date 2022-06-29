@@ -1,0 +1,7 @@
+fibber.defense\_strategies.defense\_strategy\_base module
+=========================================================
+
+.. automodule:: fibber.defense_strategies.defense_strategy_base
+   :members:
+   :undoc-members:
+   :show-inheritance:

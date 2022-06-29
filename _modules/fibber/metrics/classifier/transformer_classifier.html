@@ -1,0 +1,622 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>fibber.metrics.classifier.transformer_classifier &#8212; fibber 0.4.0 documentation</title>
+    
+  <link href="../../../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../../../../_static/css/blank.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="../../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/dai-logo-white.ico"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+
+<a class="navbar-brand" href="../../../../index.html">
+  <img src="../../../../_static/dai-logo-white-200.png" class="logo" alt="logo">
+</a>
+
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../../readme.html">
+  Fibber
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../../dataformat.html">
+  Data Format
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../../benchmark.html">
+  Benchmark
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../../api/fibber.html">
+  API Reference
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../../contributing.html">
+  Contributing
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../../authors.html">
+  Credits
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../../../history.html">
+  History
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/dai-lab/fibber" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <h1>Source code for fibber.metrics.classifier.transformer_classifier</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This metric outputs a transformer-based classifier prediction of the paraphrased text.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">import</span> <span class="nn">tqdm</span>
+<span class="kn">import</span> <span class="nn">transformers</span>
+<span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoModelForSequenceClassification</span><span class="p">,</span> <span class="n">AutoTokenizer</span>
+
+<span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">get_root_dir</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">resources</span>
+<span class="kn">from</span> <span class="nn">fibber.datasets</span> <span class="kn">import</span> <span class="n">DatasetForTransformers</span>
+<span class="kn">from</span> <span class="nn">fibber.metrics.classifier.classifier_base</span> <span class="kn">import</span> <span class="n">ClassifierBase</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_optimizer"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.get_optimizer">[docs]</a><span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">train_step</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create an optimizer and schedule of learning rate for parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        optimizer_name (str): choose from ``[&quot;adam&quot;, &quot;sgd&quot;, &quot;adamw&quot;]``.</span>
+<span class="sd">        lr (float): learning rate.</span>
+<span class="sd">        decay (float): weight decay.</span>
+<span class="sd">        train_step (int): number of training steps.</span>
+<span class="sd">        params (list): a list of parameters in the model.</span>
+<span class="sd">        warmup (int): number of warm up steps.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A torch optimizer and a scheduler.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">optimizer_name</span> <span class="o">==</span> <span class="s2">&quot;adam&quot;</span><span class="p">:</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="n">decay</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">optimizer_name</span> <span class="o">==</span> <span class="s2">&quot;sgd&quot;</span><span class="p">:</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="n">decay</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">optimizer_name</span> <span class="o">==</span> <span class="s2">&quot;adamw&quot;</span><span class="p">:</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="n">decay</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;unknown optimizer&quot;</span><span class="p">)</span>
+
+    <span class="n">schedule</span> <span class="o">=</span> <span class="n">transformers</span><span class="o">.</span><span class="n">get_linear_schedule_with_warmup</span><span class="p">(</span>
+        <span class="n">opt</span><span class="p">,</span> <span class="n">num_warmup_steps</span><span class="o">=</span><span class="n">warmup</span><span class="p">,</span> <span class="n">num_training_steps</span><span class="o">=</span><span class="n">train_step</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">opt</span><span class="p">,</span> <span class="n">schedule</span></div>
+
+
+<div class="viewcode-block" id="run_evaluate"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.run_evaluate">[docs]</a><span class="k">def</span> <span class="nf">run_evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataloader_iter</span><span class="p">,</span> <span class="n">eval_steps</span><span class="p">,</span> <span class="n">summary</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">model_init</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Evaluate a model and add error rate and validation loss to Tensorboard.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (transformers.BertForSequenceClassification): a BERT classification model.</span>
+<span class="sd">        dataloader_iter (torch.IterableDataset): an iterator of a torch.IterableDataset.</span>
+<span class="sd">        eval_steps (int): number of training steps.</span>
+<span class="sd">        summary (torch.utils.tensorboard.SummaryWriter): a Tensorboard SummaryWriter object.</span>
+<span class="sd">        global_step (int): current training steps.</span>
+<span class="sd">        device (torch.Device): the device where the model in running on.</span>
+<span class="sd">        model_init (str): a str specifies the pretrained model. used to determine model input.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+    <span class="n">correct</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">loss_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">v_step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">eval_steps</span><span class="p">):</span>
+        <span class="n">seq</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">tok_type</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">dataloader_iter</span><span class="p">)</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">tok_type</span> <span class="o">=</span> <span class="n">tok_type</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">model_init</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;bert-&quot;</span><span class="p">):</span>
+                <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">tok_type</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+            <span class="n">loss</span><span class="p">,</span> <span class="n">logits</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">loss_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="n">seq</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">correct</span> <span class="o">+=</span> <span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+                        <span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+
+    <span class="n">summary</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;clf_val/error_rate&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">correct</span> <span class="o">/</span> <span class="n">count</span><span class="p">,</span> <span class="n">global_step</span><span class="p">)</span>
+    <span class="n">summary</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;clf_val/loss&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss_list</span><span class="p">),</span> <span class="n">global_step</span><span class="p">)</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="load_or_train_transformer_clf"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.load_or_train_transformer_clf">[docs]</a><span class="k">def</span> <span class="nf">load_or_train_transformer_clf</span><span class="p">(</span>
+        <span class="n">model_init</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">trainset</span><span class="p">,</span> <span class="n">testset</span><span class="p">,</span>
+        <span class="n">transformer_clf_steps</span><span class="p">,</span> <span class="n">transformer_clf_bs</span><span class="p">,</span> <span class="n">transformer_clf_lr</span><span class="p">,</span> <span class="n">transformer_clf_optimizer</span><span class="p">,</span>
+        <span class="n">transformer_clf_weight_decay</span><span class="p">,</span> <span class="n">transformer_clf_period_summary</span><span class="p">,</span> <span class="n">transformer_clf_period_val</span><span class="p">,</span>
+        <span class="n">transformer_clf_period_save</span><span class="p">,</span> <span class="n">transformer_clf_val_steps</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Train transformer-based classification model on a dataset.</span>
+
+<span class="sd">    The trained model will be stored at ``&lt;fibber_root_dir&gt;/transformer_clf/&lt;dataset_name&gt;/``.</span>
+<span class="sd">    If there&#39;s a saved model, load and return the model. Otherwise, train the model using the</span>
+<span class="sd">    given data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_init (str): pretrained model name. e.g. ``[&quot;bert-base-cased&quot;,</span>
+<span class="sd">            &quot;bert-base-uncased&quot;, &quot;bert-large-cased&quot;, &quot;bert-large-uncased&quot;, &quot;roberta-large&quot;]``.</span>
+<span class="sd">        dataset_name (str): the name of the dataset. This is also the dir to save trained model.</span>
+<span class="sd">        trainset (dict): a fibber dataset.</span>
+<span class="sd">        testset (dict): a fibber dataset.</span>
+<span class="sd">        transformer_clf_steps (int): steps to train a classifier.</span>
+<span class="sd">        transformer_clf_bs (int): the batch size.</span>
+<span class="sd">        transformer_clf_lr (float): the learning rate.</span>
+<span class="sd">        transformer_clf_optimizer (str): the optimizer name.</span>
+<span class="sd">        transformer_clf_weight_decay (float): the weight decay.</span>
+<span class="sd">        transformer_clf_period_summary (int): the period in steps to write training summary.</span>
+<span class="sd">        transformer_clf_period_val (int): the period in steps to run validation and write</span>
+<span class="sd">            validation summary.</span>
+<span class="sd">        transformer_clf_period_save (int): the period in steps to save current model.</span>
+<span class="sd">        transformer_clf_val_steps (int): number of batched in each validation.</span>
+<span class="sd">        device (torch.Device): the device to run the model.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a torch transformer model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_root_dir</span><span class="p">(),</span> <span class="s2">&quot;transformer_clf&quot;</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span>
+    <span class="n">ckpt_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">model_init</span> <span class="o">+</span> <span class="s2">&quot;-</span><span class="si">%04d</span><span class="s2">k&quot;</span> <span class="o">%</span>
+                             <span class="p">(</span><span class="n">transformer_clf_steps</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Load transformer classifier from </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">ckpt_path</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+    <span class="n">num_labels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trainset</span><span class="p">[</span><span class="s2">&quot;label_mapping&quot;</span><span class="p">])</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+        <span class="n">resources</span><span class="o">.</span><span class="n">get_transformers</span><span class="p">(</span><span class="n">model_init</span><span class="p">),</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Use </span><span class="si">%s</span><span class="s2"> tokenizer and classifier.&quot;</span><span class="p">,</span> <span class="n">model_init</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Num labels: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">)</span>
+
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="s2">&quot;summary&quot;</span><span class="p">))</span>
+
+    <span class="n">dataloader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">DatasetForTransformers</span><span class="p">(</span><span class="n">trainset</span><span class="p">,</span> <span class="n">model_init</span><span class="p">,</span> <span class="n">transformer_clf_bs</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">dataloader_val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">DatasetForTransformers</span><span class="p">(</span><span class="n">testset</span><span class="p">,</span> <span class="n">model_init</span><span class="p">,</span> <span class="n">transformer_clf_bs</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dataloader_val_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">dataloader_val</span><span class="p">)</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
+
+    <span class="n">opt</span><span class="p">,</span> <span class="n">schedule</span> <span class="o">=</span> <span class="n">get_optimizer</span><span class="p">(</span>
+        <span class="n">transformer_clf_optimizer</span><span class="p">,</span> <span class="n">transformer_clf_lr</span><span class="p">,</span> <span class="n">transformer_clf_weight_decay</span><span class="p">,</span>
+        <span class="n">transformer_clf_steps</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+    <span class="n">global_step</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">correct_train</span><span class="p">,</span> <span class="n">count_train</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">seq</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">tok_type</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">dataloader</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">transformer_clf_steps</span><span class="p">):</span>
+        <span class="n">global_step</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">tok_type</span> <span class="o">=</span> <span class="n">tok_type</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model_init</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;bert-&quot;</span><span class="p">):</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_ids</span><span class="o">=</span><span class="n">seq</span><span class="p">,</span> <span class="n">attention_mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span>
+                            <span class="n">token_type_ids</span><span class="o">=</span><span class="n">tok_type</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_ids</span><span class="o">=</span><span class="n">seq</span><span class="p">,</span> <span class="n">attention_mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="n">loss</span><span class="p">,</span> <span class="n">logits</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">count_train</span> <span class="o">+=</span> <span class="n">seq</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">correct_train</span> <span class="o">+=</span> <span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+                          <span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+
+        <span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="n">schedule</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">global_step</span> <span class="o">%</span> <span class="n">transformer_clf_period_summary</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">summary</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;clf_train/loss&quot;</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">global_step</span><span class="p">)</span>
+            <span class="n">summary</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;clf_train/error_rate&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">correct_train</span> <span class="o">/</span> <span class="n">count_train</span><span class="p">,</span>
+                               <span class="n">global_step</span><span class="p">)</span>
+            <span class="n">correct_train</span><span class="p">,</span> <span class="n">count_train</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">global_step</span> <span class="o">%</span> <span class="n">transformer_clf_period_val</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">run_evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataloader_val_iter</span><span class="p">,</span>
+                         <span class="n">transformer_clf_val_steps</span><span class="p">,</span> <span class="n">summary</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">model_init</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">global_step</span> <span class="o">%</span> <span class="n">transformer_clf_period_save</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">global_step</span> <span class="o">==</span> <span class="n">transformer_clf_steps</span><span class="p">:</span>
+            <span class="n">ckpt_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">model_init</span> <span class="o">+</span> <span class="s2">&quot;-</span><span class="si">%04d</span><span class="s2">k&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">global_step</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="n">ckpt_path</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;transformer classifier saved at </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">ckpt_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">global_step</span> <span class="o">&gt;=</span> <span class="n">transformer_clf_steps</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+<div class="viewcode-block" id="trivial_filtering"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.trivial_filtering">[docs]</a><span class="k">def</span> <span class="nf">trivial_filtering</span><span class="p">(</span><span class="n">sents</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">vocab</span><span class="p">):</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">sent</span><span class="p">)</span> <span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">sents</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sents</span><span class="p">)):</span>
+        <span class="n">trivial_wid</span> <span class="o">=</span> <span class="p">[</span><span class="n">vocab</span><span class="p">[</span><span class="n">tok</span><span class="p">]</span> <span class="k">if</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">vocab</span> <span class="k">else</span> <span class="mf">1e9</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">trivial_wid</span><span class="p">)</span>
+        <span class="n">tokens</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;[MASK]&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_tokens_to_string</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TransformerClassifier"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.TransformerClassifier">[docs]</a><span class="k">class</span> <span class="nc">TransformerClassifier</span><span class="p">(</span><span class="n">ClassifierBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;BERT classifier prediction on paraphrase_list.</span>
+
+<span class="sd">    This metric is special, it does not compare the original and paraphrased sentence.</span>
+<span class="sd">    Instead, it outputs the classifier prediction on paraphrase_list. So we should not compute</span>
+<span class="sd">    mean or std on this metric.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset_name (str): the name of the dataset.</span>
+<span class="sd">        trainset (dict): a fibber dataset.</span>
+<span class="sd">        testset (dict): a fibber dataset.</span>
+<span class="sd">        transformer_clf_gpu_id (int): the gpu id for BERT model. Set -1 to use CPU.</span>
+<span class="sd">        transformer_clf_steps (int): steps to train a classifier.</span>
+<span class="sd">        transformer_clf_bs (int): the batch size.</span>
+<span class="sd">        transformer_clf_lr (float): the learning rate.</span>
+<span class="sd">        transformer_clf_optimizer (str): the optimizer name.</span>
+<span class="sd">        transformer_clf_weight_decay (float): the weight decay in the optimizer.</span>
+<span class="sd">        transformer_clf_period_summary (int): the period in steps to write training summary.</span>
+<span class="sd">        transformer_clf_period_val (int): the period in steps to run validation and write</span>
+<span class="sd">            validation summary.</span>
+<span class="sd">        transformer_clf_period_save (int): the period in steps to save current model.</span>
+<span class="sd">        transformer_clf_val_steps (int): number of batched in each validation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">trainset</span><span class="p">,</span> <span class="n">testset</span><span class="p">,</span> <span class="n">transformer_clf_gpu_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">transformer_clf_steps</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span> <span class="n">transformer_clf_bs</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">transformer_clf_lr</span><span class="o">=</span><span class="mf">0.00002</span><span class="p">,</span>
+                 <span class="n">transformer_clf_optimizer</span><span class="o">=</span><span class="s2">&quot;adamw&quot;</span><span class="p">,</span> <span class="n">transformer_clf_weight_decay</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+                 <span class="n">transformer_clf_period_summary</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">transformer_clf_period_val</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+                 <span class="n">transformer_clf_period_save</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span> <span class="n">transformer_clf_val_steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                 <span class="n">transformer_clf_model_init</span><span class="o">=</span><span class="s2">&quot;bert-base-cased&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TransformerClassifier</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Use </span><span class="si">%s</span><span class="s2"> classifier.&quot;</span><span class="p">,</span> <span class="n">transformer_clf_model_init</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+            <span class="n">resources</span><span class="o">.</span><span class="n">get_transformers</span><span class="p">(</span><span class="n">transformer_clf_model_init</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">transformer_clf_gpu_id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Transformer clf metric is running on CPU.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Transformer clf metric is running on GPU </span><span class="si">%d</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">transformer_clf_gpu_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">transformer_clf_gpu_id</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_init</span> <span class="o">=</span> <span class="n">transformer_clf_model_init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_name</span> <span class="o">=</span> <span class="n">dataset_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">load_or_train_transformer_clf</span><span class="p">(</span>
+            <span class="n">model_init</span><span class="o">=</span><span class="n">transformer_clf_model_init</span><span class="p">,</span>
+            <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
+            <span class="n">trainset</span><span class="o">=</span><span class="n">trainset</span><span class="p">,</span>
+            <span class="n">testset</span><span class="o">=</span><span class="n">testset</span><span class="p">,</span>
+            <span class="n">transformer_clf_steps</span><span class="o">=</span><span class="n">transformer_clf_steps</span><span class="p">,</span>
+            <span class="n">transformer_clf_lr</span><span class="o">=</span><span class="n">transformer_clf_lr</span><span class="p">,</span>
+            <span class="n">transformer_clf_bs</span><span class="o">=</span><span class="n">transformer_clf_bs</span><span class="p">,</span>
+            <span class="n">transformer_clf_optimizer</span><span class="o">=</span><span class="n">transformer_clf_optimizer</span><span class="p">,</span>
+            <span class="n">transformer_clf_weight_decay</span><span class="o">=</span><span class="n">transformer_clf_weight_decay</span><span class="p">,</span>
+            <span class="n">transformer_clf_period_summary</span><span class="o">=</span><span class="n">transformer_clf_period_summary</span><span class="p">,</span>
+            <span class="n">transformer_clf_period_val</span><span class="o">=</span><span class="n">transformer_clf_period_val</span><span class="p">,</span>
+            <span class="n">transformer_clf_period_save</span><span class="o">=</span><span class="n">transformer_clf_period_save</span><span class="p">,</span>
+            <span class="n">transformer_clf_val_steps</span><span class="o">=</span><span class="n">transformer_clf_val_steps</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fine_tune_schedule</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fine_tune_opt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ppl_filter_metric</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_labels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trainset</span><span class="p">[</span><span class="s2">&quot;label_mapping&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_init</span> <span class="o">+</span> <span class="s2">&quot;-Classifier&quot;</span>
+
+<div class="viewcode-block" id="TransformerClassifier.get_model_and_tokenizer"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.TransformerClassifier.get_model_and_tokenizer">[docs]</a>    <span class="k">def</span> <span class="nf">get_model_and_tokenizer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span></div>
+
+<div class="viewcode-block" id="TransformerClassifier.get_model_init"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.TransformerClassifier.get_model_init">[docs]</a>    <span class="k">def</span> <span class="nf">get_model_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_init</span></div>
+
+<div class="viewcode-block" id="TransformerClassifier.get_device"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.TransformerClassifier.get_device">[docs]</a>    <span class="k">def</span> <span class="nf">get_device</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span></div>
+
+<div class="viewcode-block" id="TransformerClassifier.enable_ppl_filter"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.TransformerClassifier.enable_ppl_filter">[docs]</a>    <span class="k">def</span> <span class="nf">enable_ppl_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ppl_metric</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ppl_filter_metric</span> <span class="o">=</span> <span class="n">ppl_metric</span></div>
+
+    <span class="k">def</span> <span class="nf">_predict_log_dist_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase_list</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predict the log-probability distribution over classes for one batch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            origin (str): the original text.</span>
+<span class="sd">            paraphrase_list (list): a set of paraphrase_list.</span>
+<span class="sd">            data_record (dict): the corresponding data record of original text.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (np.array): a numpy array of size ``(batch_size * num_labels)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ppl_filter_metric</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">paraphrase_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ppl_filter_metric</span><span class="o">.</span><span class="n">perplexity_filter</span><span class="p">(</span><span class="n">paraphrase_list</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span> <span class="o">==</span> <span class="s2">&quot;text0&quot;</span><span class="p">:</span>
+            <span class="n">batch_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">paraphrase_list</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span> <span class="o">==</span> <span class="s2">&quot;text1&quot;</span>
+            <span class="n">batch_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="p">[</span><span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;text0&quot;</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">paraphrase_list</span><span class="p">),</span>
+                                          <span class="n">text_pair</span><span class="o">=</span><span class="n">paraphrase_list</span><span class="p">,</span>
+                                          <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span><span class="o">**</span><span class="n">batch_input</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">def</span> <span class="nf">_predict_log_dist_multiple_examples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin_list</span><span class="p">,</span> <span class="n">paraphrase_list</span><span class="p">,</span>
+                                            <span class="n">data_record_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_raw_logits</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ppl_filter_metric</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">paraphrase_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ppl_filter_metric</span><span class="o">.</span><span class="n">perplexity_filter</span><span class="p">(</span><span class="n">paraphrase_list</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span> <span class="o">==</span> <span class="s2">&quot;text0&quot;</span><span class="p">:</span>
+            <span class="n">batch_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">paraphrase_list</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span> <span class="o">==</span> <span class="s2">&quot;text1&quot;</span>
+            <span class="n">batch_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;text0&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data_record_list</span><span class="p">],</span>
+                                          <span class="n">text_pair</span><span class="o">=</span><span class="n">paraphrase_list</span><span class="p">,</span>
+                                          <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span><span class="o">**</span><span class="n">batch_input</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">return_raw_logits</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">def</span> <span class="nf">_predict_log_dist_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">paraphrase</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predict the log-probability distribution over classes for one example.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            origin (str): the original text.</span>
+<span class="sd">            paraphrase (list): a set of paraphrase_list.</span>
+<span class="sd">            data_record (dict): the corresponding data record of original text.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (np.array): a numpy array of size ``(num_labels)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_log_dist_batch</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="p">[</span><span class="n">paraphrase</span><span class="p">],</span> <span class="n">data_record</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="TransformerClassifier.robust_tune_init"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.TransformerClassifier.robust_tune_init">[docs]</a>    <span class="k">def</span> <span class="nf">robust_tune_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">weight_decay</span><span class="p">,</span> <span class="n">steps</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fine_tune_schedule</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fine_tune_opt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;fine tuning has been initialized.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;fine tuning has been initialized.&quot;</span><span class="p">)</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fine_tune_opt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fine_tune_schedule</span> <span class="o">=</span> <span class="n">get_optimizer</span><span class="p">(</span>
+            <span class="n">optimizer</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">weight_decay</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TransformerClassifier.robust_tune_step"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.TransformerClassifier.robust_tune_step">[docs]</a>    <span class="k">def</span> <span class="nf">robust_tune_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record_list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fine_tune_schedule</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fine_tune_opt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;fine tuning not initialized.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;fine tuning not initialized.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="n">text0_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">text1_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">data_record</span> <span class="ow">in</span> <span class="n">data_record_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;text0&quot;</span> <span class="ow">in</span> <span class="n">data_record</span><span class="p">:</span>
+                <span class="n">text0_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;text0&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s2">&quot;text1&quot;</span> <span class="ow">in</span> <span class="n">data_record</span><span class="p">:</span>
+                <span class="n">text1_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;text1&quot;</span><span class="p">])</span>
+            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text1_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">text1_list</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">text1_list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text0_list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;data records are not consistent.&quot;</span><span class="p">)</span>
+
+        <span class="n">batch_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text0_list</span><span class="p">,</span> <span class="n">text_pair</span><span class="o">=</span><span class="n">text1_list</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                      <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+
+        <span class="n">loss</span><span class="p">,</span> <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span>
+            <span class="n">labels</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">batch_input</span>
+        <span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fine_tune_opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fine_tune_opt</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fine_tune_schedule</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">logits</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="nb">float</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="TransformerClassifier.load_robust_tuned_model"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.TransformerClassifier.load_robust_tuned_model">[docs]</a>    <span class="k">def</span> <span class="nf">load_robust_tuned_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load_path</span><span class="p">):</span>
+        <span class="n">model_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">load_path</span><span class="p">,</span> <span class="s2">&quot;model_ckpt&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_dir</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Load transformer-based classifier from </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">model_dir</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TransformerClassifier.save_robust_tuned_model"><a class="viewcode-back" href="../../../../api/fibber.metrics.classifier.transformer_classifier.html#fibber.metrics.TransformerClassifier.save_robust_tuned_model">[docs]</a>    <span class="k">def</span> <span class="nf">save_robust_tuned_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="p">):</span>
+        <span class="n">model_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;model_ckpt&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="n">model_dir</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Transformer-based classifier saved at </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">model_dir</span><span class="p">)</span></div></div>
+</pre></div>
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2020, MIT Data To AI Lab.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

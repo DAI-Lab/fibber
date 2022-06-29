@@ -1,0 +1,22 @@
+fibber.metrics.classifier package
+=================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   fibber.metrics.classifier.classifier_base
+   fibber.metrics.classifier.fasttext_classifier
+   fibber.metrics.classifier.input_manipulation_classifier
+   fibber.metrics.classifier.shield_classifier
+   fibber.metrics.classifier.transformer_classifier
+
+Module contents
+---------------
+
+.. automodule:: fibber.metrics.classifier
+   :members:
+   :undoc-members:
+   :show-inheritance:

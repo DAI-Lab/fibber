@@ -1,0 +1,7 @@
+fibber.metrics.distance.self\_bleu\_metric module
+=================================================
+
+.. automodule:: fibber.metrics.distance.self_bleu_metric
+   :members:
+   :undoc-members:
+   :show-inheritance:

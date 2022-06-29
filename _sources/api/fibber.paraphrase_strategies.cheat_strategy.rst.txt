@@ -1,0 +1,7 @@
+fibber.paraphrase\_strategies.cheat\_strategy module
+====================================================
+
+.. automodule:: fibber.paraphrase_strategies.cheat_strategy
+   :members:
+   :undoc-members:
+   :show-inheritance:

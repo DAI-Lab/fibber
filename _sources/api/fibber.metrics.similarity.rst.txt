@@ -1,0 +1,20 @@
+fibber.metrics.similarity package
+=================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   fibber.metrics.similarity.ce_similarity_metric
+   fibber.metrics.similarity.glove_similarity_metric
+   fibber.metrics.similarity.use_similarity_metric
+
+Module contents
+---------------
+
+.. automodule:: fibber.metrics.similarity
+   :members:
+   :undoc-members:
+   :show-inheritance:

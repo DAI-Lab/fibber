@@ -1,0 +1,7 @@
+fibber.paraphrase\_strategies.ssrs\_strategy module
+===================================================
+
+.. automodule:: fibber.paraphrase_strategies.ssrs_strategy
+   :members:
+   :undoc-members:
+   :show-inheritance:

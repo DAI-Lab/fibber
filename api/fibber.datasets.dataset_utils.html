@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.datasets.dataset_utils module &#8212; fibber 0.3.1 documentation</title>
+    <title>fibber.datasets.dataset_utils module &#8212; fibber 0.4.0 documentation</title>
     
-  <link href="../_static/css/theme.css" rel="stylesheet" />
-  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -22,10 +22,10 @@
       
 
     
-    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/css/blank.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -39,7 +39,10 @@
     <link rel="next" title="fibber.datasets.download_datasets module" href="fibber.datasets.download_datasets.html" />
     <link rel="prev" title="fibber.datasets package" href="fibber.datasets.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -160,8 +163,13 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="fibber.benchmark.benchmark.html">
-     fibber.benchmark.benchmark module
+    <a class="reference internal" href="fibber.benchmark.benchmark_adversarial_attack.html">
+     fibber.benchmark.benchmark_adversarial_attack module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.benchmark.benchmark_style_transfer.html">
+     fibber.benchmark.benchmark_style_transfer module
     </a>
    </li>
    <li class="toctree-l2">
@@ -202,45 +210,15 @@
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_ag.html">
-     fibber.datasets.preprocess_ag module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_imdb.html">
-     fibber.datasets.preprocess_imdb module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_mnli.html">
-     fibber.datasets.preprocess_mnli module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_mr.html">
-     fibber.datasets.preprocess_mr module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_snli.html">
-     fibber.datasets.preprocess_snli module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_utils.html">
-     fibber.datasets.preprocess_utils module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.datasets.preprocess_yelp.html">
-     fibber.datasets.preprocess_yelp module
+    <a class="reference internal" href="fibber.datasets.process_dataset.html">
+     fibber.datasets.process_dataset module
     </a>
    </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="fibber.metrics.html">
-   fibber.metrics package
+  <a class="reference internal" href="fibber.defense_strategies.html">
+   fibber.defense_strategies package
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
   <label for="toctree-checkbox-3">
@@ -249,38 +227,163 @@
   </label>
   <ul>
    <li class="toctree-l2">
+    <a class="reference internal" href="fibber.defense_strategies.advtrain_strategy.html">
+     fibber.defense_strategies.advtrain_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.defense_strategies.defense_strategy_base.html">
+     fibber.defense_strategies.defense_strategy_base module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.defense_strategies.lmag_strategy.html">
+     fibber.defense_strategies.lmag_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.defense_strategies.sapd_strategy.html">
+     fibber.defense_strategies.sapd_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.defense_strategies.sem_strategy.html">
+     fibber.defense_strategies.sem_strategy module
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="fibber.metrics.html">
+   fibber.metrics package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="fibber.metrics.classifier.html">
+     fibber.metrics.classifier package
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+    <label for="toctree-checkbox-5">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.classifier.classifier_base.html">
+       fibber.metrics.classifier.classifier_base module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.classifier.fasttext_classifier.html">
+       fibber.metrics.classifier.fasttext_classifier module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.classifier.input_manipulation_classifier.html">
+       fibber.metrics.classifier.input_manipulation_classifier module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.classifier.shield_classifier.html">
+       fibber.metrics.classifier.shield_classifier module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.classifier.transformer_classifier.html">
+       fibber.metrics.classifier.transformer_classifier module
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="fibber.metrics.distance.html">
+     fibber.metrics.distance package
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+    <label for="toctree-checkbox-6">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.distance.edit_distance_metric.html">
+       fibber.metrics.distance.edit_distance_metric module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.distance.ref_bleu_metric.html">
+       fibber.metrics.distance.ref_bleu_metric module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.distance.self_bleu_metric.html">
+       fibber.metrics.distance.self_bleu_metric module
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="fibber.metrics.fluency.html">
+     fibber.metrics.fluency package
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.fluency.bert_perplexity_metric.html">
+       fibber.metrics.fluency.bert_perplexity_metric module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.fluency.gpt2_perplexity_metric.html">
+       fibber.metrics.fluency.gpt2_perplexity_metric module
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="fibber.metrics.similarity.html">
+     fibber.metrics.similarity package
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+    <label for="toctree-checkbox-8">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.similarity.ce_similarity_metric.html">
+       fibber.metrics.similarity.ce_similarity_metric module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.similarity.glove_similarity_metric.html">
+       fibber.metrics.similarity.glove_similarity_metric module
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="fibber.metrics.similarity.use_similarity_metric.html">
+       fibber.metrics.similarity.use_similarity_metric module
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2">
     <a class="reference internal" href="fibber.metrics.attack_aggregation_utils.html">
      fibber.metrics.attack_aggregation_utils module
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.bert_classifier.html">
-     fibber.metrics.bert_classifier module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.ce_semantic_similarity_metric.html">
-     fibber.metrics.ce_semantic_similarity_metric module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.classifier_base.html">
-     fibber.metrics.classifier_base module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.edit_distance_metric.html">
-     fibber.metrics.edit_distance_metric module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.glove_semantic_similarity_metric.html">
-     fibber.metrics.glove_semantic_similarity_metric module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.gpt2_grammar_quality_metric.html">
-     fibber.metrics.gpt2_grammar_quality_metric module
+    <a class="reference internal" href="fibber.metrics.bert_lm_utils.html">
+     fibber.metrics.bert_lm_utils module
     </a>
    </li>
    <li class="toctree-l2">
@@ -293,19 +396,14 @@
      fibber.metrics.metric_utils module
     </a>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.metrics.use_semantic_similarity_metric.html">
-     fibber.metrics.use_semantic_similarity_metric module
-    </a>
-   </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
   <a class="reference internal" href="fibber.paraphrase_strategies.html">
    fibber.paraphrase_strategies package
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-  <label for="toctree-checkbox-4">
+  <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+  <label for="toctree-checkbox-9">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -316,18 +414,18 @@
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="fibber.paraphrase_strategies.asrs_utils_lm.html">
-     fibber.paraphrase_strategies.asrs_utils_lm module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.paraphrase_strategies.asrs_utils_text_parser.html">
-     fibber.paraphrase_strategies.asrs_utils_text_parser module
-    </a>
-   </li>
-   <li class="toctree-l2">
     <a class="reference internal" href="fibber.paraphrase_strategies.asrs_utils_wpe.html">
      fibber.paraphrase_strategies.asrs_utils_wpe module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.cheat_strategy.html">
+     fibber.paraphrase_strategies.cheat_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.fudge_strategy.html">
+     fibber.paraphrase_strategies.fudge_strategy module
     </a>
    </li>
    <li class="toctree-l2">
@@ -336,18 +434,38 @@
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="fibber.paraphrase_strategies.narrl_strategy.html">
-     fibber.paraphrase_strategies.narrl_strategy module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy.html">
-     fibber.paraphrase_strategies.non_autoregressive_bert_sampling_strategy module
+    <a class="reference internal" href="fibber.paraphrase_strategies.openattack_strategy.html">
+     fibber.paraphrase_strategies.openattack_strategy module
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="fibber.paraphrase_strategies.random_strategy.html">
      fibber.paraphrase_strategies.random_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.remove_strategy.html">
+     fibber.paraphrase_strategies.remove_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.rewrite_rollback_strategy.html">
+     fibber.paraphrase_strategies.rewrite_rollback_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.sap_strategy.html">
+     fibber.paraphrase_strategies.sap_strategy module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.sap_utils_euba.html">
+     fibber.paraphrase_strategies.sap_utils_euba module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fibber.paraphrase_strategies.ssrs_strategy.html">
+     fibber.paraphrase_strategies.ssrs_strategy module
     </a>
    </li>
    <li class="toctree-l2">
@@ -366,8 +484,8 @@
   <a class="reference internal" href="fibber.resources.html">
    fibber.resources package
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
-  <label for="toctree-checkbox-5">
+  <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+  <label for="toctree-checkbox-10">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -385,28 +503,6 @@
    <li class="toctree-l2">
     <a class="reference internal" href="fibber.resources.resource_utils.html">
      fibber.resources.resource_utils module
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="fibber.robust_tuning_strategy.html">
-   fibber.robust_tuning_strategy package
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
-  <label for="toctree-checkbox-6">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.robust_tuning_strategy.default_tuning_strategy.html">
-     fibber.robust_tuning_strategy.default_tuning_strategy module
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="fibber.robust_tuning_strategy.tuning_strategy_base.html">
-     fibber.robust_tuning_strategy.tuning_strategy_base module
     </a>
    </li>
   </ul>
@@ -481,8 +577,6 @@
     <span class="s2">&quot;Business&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Sci/Tech&quot;</span>
   <span class="p">],</span>
-  <span class="s2">&quot;cased&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
-  <span class="s2">&quot;paraphrase_field&quot;</span><span class="p">:</span> <span class="s2">&quot;text0&quot;</span><span class="p">,</span>
   <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span>
       <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -504,15 +598,15 @@
 </div>
 </li>
 <li><p>To convert a dataset dict to a <code class="docutils literal notranslate"><span class="pre">torch.IterableDataset</span></code> for BERT model, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">iterable_dataset</span> <span class="o">=</span> <span class="n">DatasetForBert</span><span class="p">(</span><span class="n">trainset</span><span class="p">,</span> <span class="s2">&quot;bert-base-cased&quot;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">);</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">iterable_dataset</span> <span class="o">=</span> <span class="n">DatasetForTransformers</span><span class="p">(</span><span class="n">trainset</span><span class="p">,</span> <span class="s2">&quot;bert-base-cased&quot;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">);</span>
 </pre></div>
 </div>
 </li>
 </ul>
 <p>For more details, see <code class="docutils literal notranslate"><span class="pre">https://dai-lab.github.io/fibber/</span></code></p>
 <dl class="py class">
-<dt id="fibber.datasets.dataset_utils.DatasetForBert">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">DatasetForBert</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#DatasetForBert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.DatasetForBert" title="Permalink to this definition">¶</a></dt>
+<dt id="fibber.datasets.dataset_utils.DatasetForTransformers">
+<em class="property">class </em><code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">DatasetForTransformers</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#DatasetForTransformers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.DatasetForTransformers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.IterableDataset</span></code></p>
 <p>Create a <code class="docutils literal notranslate"><span class="pre">torch.IterableDataset</span></code> for a BERT model.</p>
 <p>The module is an iterator that yields infinite batches from the dataset. To construct a
@@ -538,13 +632,14 @@ input text. And it is 1 if current position is in the second part of the input.
 For padding positions, token type is 0.</p></li>
 <li><p>The forth tensor an int tensor of size <code class="docutils literal notranslate"><span class="pre">(batch_size,)</span></code>, representing the
 classification label.</p></li>
-<li><p>(optional) If <code class="docutils literal notranslate"><span class="pre">masked_lm</span> <span class="pre">==</span> <span class="pre">True</span></code>, or <code class="docutils literal notranslate"><span class="pre">dynamic_masked_lm</span> <span class="pre">==</span> <span class="pre">True</span></code>
-the fifth tensor is a tensor of size
+<li><p>(optional) If <code class="docutils literal notranslate"><span class="pre">masked_lm</span> <span class="pre">==</span> <span class="pre">True</span></code> the fifth tensor is a tensor of size
 <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">L)</span></code>. Each entry in this tensor is either -100 if the position is
 not masked, or the correct word if the position is masked. Note that, a masked
 position is not always a <code class="docutils literal notranslate"><span class="pre">[MASK]</span></code> token in the first tensor. With 80%
 probability, it is a <code class="docutils literal notranslate"><span class="pre">[MASK]</span></code>. With 10% probability, it is the original word.
 And with 10% probability, it is a random word.</p></li>
+<li><p>(optional) If <code class="docutils literal notranslate"><span class="pre">autoregressive_lm</span> <span class="pre">==</span> <span class="pre">True</span></code> the fifth tensor is a tensor of size
+<code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">L)</span></code>. Each entry in this tensor is either -100 if it’s [CLS], [PAD].</p></li>
 <li><p>(optional) if <code class="docutils literal notranslate"><span class="pre">include_raw_text</span> <span class="pre">==</span> <span class="pre">True</span></code>, the last item is a list of str.</p></li>
 </ul>
 </dd>
@@ -561,46 +656,24 @@ And with 10% probability, it is a random word.</p></li>
 Use -1 (default) to include all categories.</p></li>
 <li><p><strong>masked_lm</strong> (<em>bool</em>) – whether to randomly replace words with mask tokens.</p></li>
 <li><p><strong>masked_lm_ratio</strong> (<em>float</em>) – the ratio of random masks. Ignored when masked_lm is False.</p></li>
-<li><p><strong>dynamic_masked_lm</strong> (<em>bool</em>) – whether to generate dynamic masked language model. lm ratio
-will be randomly sampled. <code class="docutils literal notranslate"><span class="pre">dynamic_masked_lm</span></code> and <code class="docutils literal notranslate"><span class="pre">masked_lm</span></code> should not be
-set True at the same time.</p></li>
-<li><p><strong>kw_and_padding</strong> (<em>bool</em>) – use keywords as the first sentence, and the field to paraphrase
-as the second sentence. Add a padding symbol at the beginning of the first
-sentence to input sentence embedding later.</p></li>
-<li><p><strong>split_sentences</strong> (<em>bool</em>) – split paragraph to sentence.</p></li>
-<li><p><strong>include_raw_text</strong> (<em>bool</em>) – whether to return the raw text.</p></li>
-<li><p><strong>seed</strong> – random seed.</p></li>
+<li><p><strong>select_field</strong> (<em>None</em><em> or </em><em>str</em>) – select one field. None to use all available fields.</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py class">
-<dt id="fibber.datasets.dataset_utils.KeywordsExtractor">
-<em class="property">class </em><code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">KeywordsExtractor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_length</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#KeywordsExtractor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.KeywordsExtractor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
-<dt id="fibber.datasets.dataset_utils.KeywordsExtractor.extract_keywords">
-<code class="sig-name descname">extract_keywords</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">keep_order</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#KeywordsExtractor.extract_keywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.KeywordsExtractor.extract_keywords" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract keywords from text.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<em>str</em>) – a paragraph of text.</p></li>
-<li><p><strong>n</strong> (<em>int</em>) – maximum number of keywords.</p></li>
-<li><p><strong>keep_order</strong> (<em>bool</em>) – if true, keep the order of the words appearing in the text.
-if false, ordered by importance.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a list of strs representing keywords. keywords will be lowercased.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>[str]</p>
-</dd>
-</dl>
+<dt id="fibber.datasets.dataset_utils.DatasetForTransformers.reinforce_type">
+<code class="sig-name descname">reinforce_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expected_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fibber.datasets.dataset_utils.DatasetForTransformers.reinforce_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reinforce the type for DataPipe instance. And the ‘expected_type’ is required
+to be a subtype of the original type hint to restrict the type requirement
+of DataPipe instance.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt id="fibber.datasets.dataset_utils.clip_sentence">
+<code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">clip_sentence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">model_init</span></em>, <em class="sig-param"><span class="n">max_len</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#clip_sentence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.clip_sentence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inplace clipping sentences.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -640,7 +713,7 @@ test set respectively.</p>
 
 <dl class="py function">
 <dt id="fibber.datasets.dataset_utils.subsample_dataset">
-<code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">subsample_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#subsample_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.subsample_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fibber.datasets.dataset_utils.</code><code class="sig-name descname">subsample_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fibber/datasets/dataset_utils.html#subsample_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fibber.datasets.dataset_utils.subsample_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sub-sample a dataset to <cite>n</cite> examples.</p>
 <p>Data is selected evenly and randomly from each category. Data in each category is sorted by
 its md5 hash value. The top <code class="docutils literal notranslate"><span class="pre">(n</span> <span class="pre">//</span> <span class="pre">k)</span></code> examples from each category are included in the
@@ -653,6 +726,7 @@ categories.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataset</strong> (<em>dict</em>) – a dataset dict.</p></li>
 <li><p><strong>n</strong> (<em>int</em>) – the size of the sub-sampled dataset.</p></li>
+<li><p><strong>offset</strong> (<em>int</em>) – dataset offset.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -688,12 +762,23 @@ categories.</p>
               </div>
               
               
-              <div class='prev-next-bottom'>
-                
-    <a class='left-prev' id="prev-link" href="fibber.datasets.html" title="previous page">fibber.datasets package</a>
-    <a class='right-next' id="next-link" href="fibber.datasets.download_datasets.html" title="next page">fibber.datasets.download_datasets module</a>
-
-              </div>
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="fibber.datasets.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">fibber.datasets package</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="fibber.datasets.download_datasets.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">fibber.datasets.download_datasets module</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
               
           </main>
           
@@ -701,20 +786,19 @@ categories.</p>
       </div>
     </div>
   
-  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
-
-  <footer class="footer mt-5 mt-md-0">
+  <script src="../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
       <p class="copyright">
-    &copy; Copyright 2020, MIT Data To AI Lab.<br/>
+    &copy; Copyright 2020, MIT Data To AI Lab.<br>
 </p>
     </div>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br>
 </p>
     </div>
     

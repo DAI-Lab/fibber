@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.paraphrase_strategies.textattack_strategy &#8212; fibber 0.3.1 documentation</title>
+    <title>fibber.paraphrase_strategies.textattack_strategy &#8212; fibber 0.4.0 documentation</title>
     
-  <link href="../../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -22,10 +22,10 @@
       
 
     
-    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/css/blank.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
-  <link rel="preload" as="script" href="../../../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
@@ -37,7 +37,10 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -172,6 +175,9 @@
 
 <span class="kn">import</span> <span class="nn">signal</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+<span class="kn">from</span> <span class="nn">nltk</span> <span class="kn">import</span> <span class="n">word_tokenize</span>
 
 <span class="kn">from</span> <span class="nn">fibber</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">fibber.paraphrase_strategies.strategy_base</span> <span class="kn">import</span> <span class="n">StrategyBase</span>
@@ -179,6 +185,7 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;./TextAttack&quot;</span><span class="p">)</span>
     <span class="kn">import</span> <span class="nn">textattack</span>
     <span class="kn">from</span> <span class="nn">textattack</span> <span class="kn">import</span> <span class="n">attack_recipes</span>
     <span class="kn">from</span> <span class="nn">textattack.models.wrappers.model_wrapper</span> <span class="kn">import</span> <span class="n">ModelWrapper</span>
@@ -197,20 +204,39 @@
     <span class="k">raise</span> <span class="n">TimeOutException</span><span class="p">()</span></div>
 
 
+<div class="viewcode-block" id="DefaultTokenizer"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.DefaultTokenizer">[docs]</a><span class="k">class</span> <span class="nc">DefaultTokenizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultTokenizer.batch_encode"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.DefaultTokenizer.batch_encode">[docs]</a>    <span class="k">def</span> <span class="nf">batch_encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DefaultTokenizer.encode"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.DefaultTokenizer.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div></div>
+
+
 <div class="viewcode-block" id="CLFModel"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.CLFModel">[docs]</a><span class="k">class</span> <span class="nc">CLFModel</span><span class="p">(</span><span class="n">ModelWrapper</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A classifier wrapper for textattack package.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf_metric</span><span class="p">,</span> <span class="n">field_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf_metric</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">clf_metric</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_field_name</span> <span class="o">=</span> <span class="n">field_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">clf_metric</span><span class="o">.</span><span class="n">_tokenizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_field</span> <span class="o">=</span> <span class="n">field</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">clf_metric</span><span class="p">,</span> <span class="s2">&quot;_tokenizer&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">clf_metric</span><span class="o">.</span><span class="n">_tokenizer</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">DefaultTokenizer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_record</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text_list</span><span class="p">):</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict_dist_batch</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_data_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_field_name</span><span class="p">],</span> <span class="n">text_list</span><span class="p">,</span>
-            <span class="n">data_record</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_record</span><span class="p">,</span> <span class="n">paraphrase_field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_field_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text_list</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict_log_dist_batch</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">],</span> <span class="n">text_list</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_record</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">ret</span>
+
+<div class="viewcode-block" id="CLFModel.reset_counter"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.CLFModel.reset_counter">[docs]</a>    <span class="k">def</span> <span class="nf">reset_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="CLFModel.get_counter"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.CLFModel.get_counter">[docs]</a>    <span class="k">def</span> <span class="nf">get_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span></div>
 
 <div class="viewcode-block" id="CLFModel.set_data_record"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.CLFModel.set_data_record">[docs]</a>    <span class="k">def</span> <span class="nf">set_data_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_record</span> <span class="o">=</span> <span class="n">data_record</span></div>
@@ -237,15 +263,15 @@
     <span class="n">__abbr__</span> <span class="o">=</span> <span class="s2">&quot;ta&quot;</span>
     <span class="n">__hyperparameters__</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span><span class="s2">&quot;recipe&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;TextFoolerJin2019&quot;</span><span class="p">,</span> <span class="s2">&quot;an attacking recipe implemented in TextAttack.&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;time_limit&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;time limit for each attack.&quot;</span><span class="p">)</span>
+        <span class="p">(</span><span class="s2">&quot;time_limit&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;time limit for each attack.&quot;</span><span class="p">)</span>
     <span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;textattack&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;TextAttack not installed. Please install textattack manually.&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">TextAttackStrategy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span>
-                                                 <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TextAttackStrategy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">arg_dict</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">strategy_gpu_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">metric_bundle</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;recipe&quot;</span><span class="p">]</span>
@@ -254,43 +280,44 @@
         <span class="k">if</span> <span class="n">ModelWrapper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;no internet connection.&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">CLFModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">get_target_classifier</span><span class="p">(),</span>
-                               <span class="n">trainset</span><span class="p">[</span><span class="s2">&quot;paraphrase_field&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">CLFModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_metric_bundle</span><span class="o">.</span><span class="n">get_target_classifier</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_recipe</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">attack_recipes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;recipe&quot;</span><span class="p">]</span>
                                <span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TextAttackStrategy.paraphrase_example"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.TextAttackStrategy.paraphrase_example">[docs]</a>    <span class="k">def</span> <span class="nf">paraphrase_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="TextAttackStrategy.paraphrase_example"><a class="viewcode-back" href="../../../api/fibber.paraphrase_strategies.textattack_strategy.html#fibber.paraphrase_strategies.TextAttackStrategy.paraphrase_example">[docs]</a>    <span class="k">def</span> <span class="nf">paraphrase_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_record</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate paraphrased sentences.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">set_data_record</span><span class="p">(</span><span class="n">data_record</span><span class="p">)</span>
 
-        <span class="n">attack_text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_record</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">200</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">reset_counter</span><span class="p">()</span>
+
+        <span class="n">attack_text</span> <span class="o">=</span> <span class="n">data_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">]</span>
 
         <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGALRM</span><span class="p">,</span> <span class="n">alarm_handler</span><span class="p">)</span>
         <span class="n">signal</span><span class="o">.</span><span class="n">alarm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_strategy_config</span><span class="p">[</span><span class="s2">&quot;time_limit&quot;</span><span class="p">])</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">att</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_recipe</span><span class="o">.</span><span class="n">attack_dataset</span><span class="p">(</span>
-                <span class="p">[(</span><span class="n">attack_text</span><span class="p">,</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">])]))</span>
+            <span class="n">att</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recipe</span><span class="o">.</span><span class="n">attack</span><span class="p">(</span><span class="n">attack_text</span><span class="p">,</span> <span class="n">data_record</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">])</span>
         <span class="k">except</span> <span class="n">TimeOutException</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Timeout.&quot;</span><span class="p">)</span>
             <span class="n">att</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;TextAttack package failure.&quot;</span><span class="p">)</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
             <span class="n">att</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">signal</span><span class="o">.</span><span class="n">alarm</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
+        <span class="n">clf_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">get_counter</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">att</span><span class="p">,</span> <span class="n">textattack</span><span class="o">.</span><span class="n">attack_results</span><span class="o">.</span><span class="n">SuccessfulAttackResult</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">att</span><span class="o">.</span><span class="n">perturbed_result</span><span class="o">.</span><span class="n">attacked_text</span><span class="o">.</span><span class="n">text</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">att</span><span class="o">.</span><span class="n">perturbed_result</span><span class="o">.</span><span class="n">attacked_text</span><span class="o">.</span><span class="n">text</span><span class="p">],</span> <span class="n">clf_count</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">data_record</span><span class="p">[</span><span class="n">field_name</span><span class="p">]]</span></div></div>
+            <span class="k">return</span> <span class="p">[</span><span class="n">data_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">]],</span> <span class="n">clf_count</span></div></div>
 </pre></div>
 
               </div>
               
               
-              <div class='prev-next-bottom'>
-                
-
-              </div>
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
               
           </main>
           
@@ -298,20 +325,19 @@
       </div>
     </div>
   
-  <script src="../../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
-
-  <footer class="footer mt-5 mt-md-0">
+  <script src="../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
       <p class="copyright">
-    &copy; Copyright 2020, MIT Data To AI Lab.<br/>
+    &copy; Copyright 2020, MIT Data To AI Lab.<br>
 </p>
     </div>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br>
 </p>
     </div>
     

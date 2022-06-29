@@ -1,0 +1,7 @@
+fibber.defense\_strategies.lmag\_strategy module
+================================================
+
+.. automodule:: fibber.defense_strategies.lmag_strategy
+   :members:
+   :undoc-members:
+   :show-inheritance:

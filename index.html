@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fibber &#8212; fibber 0.3.1 documentation</title>
+    <title>Fibber &#8212; fibber 0.4.0 documentation</title>
     
-  <link href="_static/css/theme.css" rel="stylesheet" />
-  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="_static/css/theme.css" rel="stylesheet">
+  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -22,10 +22,10 @@
       
 
     
-    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/css/blank.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -38,7 +38,10 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Fibber" href="readme.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -366,7 +369,7 @@ getting started with <strong>fibber</strong>.</p>
 <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;use_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="s2">&quot;gpt2_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;bert_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;transformer_clf_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="s2">&quot;ce_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="s2">&quot;strategy_gpu_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="s2">&quot;asrs_block_size&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
@@ -375,7 +378,7 @@ getting started with <strong>fibber</strong>.</p>
     <span class="s2">&quot;asrs_sim_threshold&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>
     <span class="s2">&quot;asrs_ppl_weight&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
     <span class="s2">&quot;asrs_clf_weight&quot;</span><span class="p">:</span> <span class="mi">3</span>
-    <span class="s2">&quot;asrs_sim_metric&quot;</span><span class="p">:</span> <span class="s2">&quot;CESemanticSimilarityMetric&quot;</span>
+    <span class="s2">&quot;asrs_sim_metric&quot;</span><span class="p">:</span> <span class="s2">&quot;CESimilarityMetric&quot;</span>
 <span class="p">}</span>
 
 <span class="c1"># create a fibber object.</span>
@@ -412,29 +415,29 @@ getting started with <strong>fibber</strong>.</p>
 <span class="c1"># Evaluation metrics of these 5 paraphrase_list.</span>
 
   <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9523628950119019</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9795315341042675</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQualityMetric&#39;</span><span class="p">:</span> <span class="mf">1.492070198059082</span><span class="p">,</span>
+   <span class="s1">&#39;USESimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9523628950119019</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9795315341042675</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2PerplexityMetric&#39;</span><span class="p">:</span> <span class="mf">1.492070198059082</span><span class="p">,</span>
    <span class="s1">&#39;BertClassifier&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
   <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9372092485427856</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9575780832312993</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQualityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9813404679298401</span><span class="p">,</span>
+   <span class="s1">&#39;USESimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9372092485427856</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9575780832312993</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2PerplexityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9813404679298401</span><span class="p">,</span>
    <span class="s1">&#39;BertClassifier&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
   <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9265919327735901</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9710499628056698</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQualityMetric&#39;</span><span class="p">:</span> <span class="mf">1.325406551361084</span><span class="p">,</span>
+   <span class="s1">&#39;USESimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9265919327735901</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9710499628056698</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2PerplexityMetric&#39;</span><span class="p">:</span> <span class="mf">1.325406551361084</span><span class="p">,</span>
    <span class="s1">&#39;BertClassifier&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
   <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.8913971185684204</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9800737898362042</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQualityMetric&#39;</span><span class="p">:</span> <span class="mf">1.2504483461380005</span><span class="p">,</span>
+   <span class="s1">&#39;USESimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.8913971185684204</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9800737898362042</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2PerplexityMetric&#39;</span><span class="p">:</span> <span class="mf">1.2504483461380005</span><span class="p">,</span>
    <span class="s1">&#39;BertClassifier&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
   <span class="p">{</span><span class="s1">&#39;EditingDistance&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-   <span class="s1">&#39;USESemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9124080538749695</span><span class="p">,</span>
-   <span class="s1">&#39;GloVeSemanticSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9744155151490856</span><span class="p">,</span>
-   <span class="s1">&#39;GPT2GrammarQualityMetric&#39;</span><span class="p">:</span> <span class="mf">1.1626977920532227</span><span class="p">,</span>
+   <span class="s1">&#39;USESimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9124080538749695</span><span class="p">,</span>
+   <span class="s1">&#39;GloVeSimilarityMetric&#39;</span><span class="p">:</span> <span class="mf">0.9744155151490856</span><span class="p">,</span>
+   <span class="s1">&#39;GPT2PerplexityMetric&#39;</span><span class="p">:</span> <span class="mf">1.1626977920532227</span><span class="p">,</span>
    <span class="s1">&#39;BertClassifier&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}]</span>
 </pre></div>
 </div>
@@ -507,11 +510,16 @@ and features, please check the <a class="reference external" href="https://DAI-L
               </div>
               
               
-              <div class='prev-next-bottom'>
-                
-    <a class='right-next' id="next-link" href="readme.html" title="next page">Fibber</a>
-
-              </div>
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='right-next' id="next-link" href="readme.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Fibber</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
               
           </main>
           
@@ -519,20 +527,19 @@ and features, please check the <a class="reference external" href="https://DAI-L
       </div>
     </div>
   
-  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
-
-  <footer class="footer mt-5 mt-md-0">
+  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
       <p class="copyright">
-    &copy; Copyright 2020, MIT Data To AI Lab.<br/>
+    &copy; Copyright 2020, MIT Data To AI Lab.<br>
 </p>
     </div>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br>
 </p>
     </div>
     

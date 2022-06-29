@@ -1,0 +1,7 @@
+fibber.metrics.fluency.gpt2\_perplexity\_metric module
+======================================================
+
+.. automodule:: fibber.metrics.fluency.gpt2_perplexity_metric
+   :members:
+   :undoc-members:
+   :show-inheritance:

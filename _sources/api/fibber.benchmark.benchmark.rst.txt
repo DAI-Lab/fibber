@@ -1,7 +1,0 @@
-fibber.benchmark.benchmark module
-=================================
-
-.. automodule:: fibber.benchmark.benchmark
-   :members:
-   :undoc-members:
-   :show-inheritance:

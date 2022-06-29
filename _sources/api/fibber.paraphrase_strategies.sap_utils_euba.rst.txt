@@ -1,0 +1,7 @@
+fibber.paraphrase\_strategies.sap\_utils\_euba module
+=====================================================
+
+.. automodule:: fibber.paraphrase_strategies.sap_utils_euba
+   :members:
+   :undoc-members:
+   :show-inheritance:

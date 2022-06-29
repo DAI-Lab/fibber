@@ -1,0 +1,7 @@
+fibber.metrics.fluency.bert\_perplexity\_metric module
+======================================================
+
+.. automodule:: fibber.metrics.fluency.bert_perplexity_metric
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,7 +1,0 @@
-fibber.robust\_tuning\_strategy.tuning\_strategy\_base module
-=============================================================
-
-.. automodule:: fibber.robust_tuning_strategy.tuning_strategy_base
-   :members:
-   :undoc-members:
-   :show-inheritance:

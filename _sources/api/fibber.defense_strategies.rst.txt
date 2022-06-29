@@ -1,0 +1,22 @@
+fibber.defense\_strategies package
+==================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   fibber.defense_strategies.advtrain_strategy
+   fibber.defense_strategies.defense_strategy_base
+   fibber.defense_strategies.lmag_strategy
+   fibber.defense_strategies.sapd_strategy
+   fibber.defense_strategies.sem_strategy
+
+Module contents
+---------------
+
+.. automodule:: fibber.defense_strategies
+   :members:
+   :undoc-members:
+   :show-inheritance:

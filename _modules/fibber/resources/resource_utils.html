@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fibber.resources.resource_utils &#8212; fibber 0.3.1 documentation</title>
+    <title>fibber.resources.resource_utils &#8212; fibber 0.4.0 documentation</title>
     
-  <link href="../../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -22,10 +22,10 @@
       
 
     
-    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/css/blank.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
-  <link rel="preload" as="script" href="../../../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
@@ -37,7 +37,10 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -242,6 +245,31 @@
     <span class="k">return</span> <span class="n">load_glove_model</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;glove.6B.300d.txt&quot;</span><span class="p">),</span> <span class="mi">300</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="get_counter_fitted_vector"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_counter_fitted_vector">[docs]</a><span class="k">def</span> <span class="nf">get_counter_fitted_vector</span><span class="p">(</span><span class="n">download_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Download default pretrained counter fitted embeddings and return a dict.</span>
+
+<span class="sd">    See https://github.com/nmrksic/counter-fitting</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        download_only (bool): set True to only download. (Returns None)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (dict): a dict of GloVe word embedding model.</span>
+<span class="sd">            &quot;emb_table&quot;: a numpy array of size(N, 300)</span>
+<span class="sd">            &quot;id2tok&quot;: a list of strings.</span>
+<span class="sd">            &quot;tok2id&quot;: a dict that maps word (string) to its id.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;common&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;counter-fitted-vectors.txt&quot;</span><span class="p">)):</span>
+        <span class="n">download_file</span><span class="p">(</span><span class="n">subdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">),</span>
+                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;counter-fitted-vectors&quot;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">download_only</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">load_glove_model</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;counter-fitted-vectors.txt&quot;</span><span class="p">),</span> <span class="mi">300</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="get_stopwords"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_stopwords">[docs]</a><span class="k">def</span> <span class="nf">get_stopwords</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Download default stopword words.</span>
 
@@ -290,16 +318,6 @@
     <span class="k">return</span> <span class="n">data_dir</span></div>
 
 
-<div class="viewcode-block" id="get_corenlp"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_corenlp">[docs]</a><span class="k">def</span> <span class="nf">get_corenlp</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Download stanford corenlp package.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
-    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;common&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;stanford-corenlp-4.1.0&quot;</span><span class="p">)):</span>
-        <span class="n">download_file</span><span class="p">(</span><span class="n">subdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">),</span>
-                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;stanford-corenlp&quot;</span><span class="p">])</span></div>
-
-
 <div class="viewcode-block" id="get_transformers"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_transformers">[docs]</a><span class="k">def</span> <span class="nf">get_transformers</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Download pretrained transformer models.</span>
 
@@ -322,34 +340,35 @@
 <div class="viewcode-block" id="get_bert_clf_demo"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_bert_clf_demo">[docs]</a><span class="k">def</span> <span class="nf">get_bert_clf_demo</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Download the pretrained classifier for demo dataset.&quot;&quot;&quot;</span>
     <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
-    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;bert_clf&quot;</span><span class="p">)</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;transformer_clf&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;demo&quot;</span><span class="p">)):</span>
         <span class="n">download_file</span><span class="p">(</span><span class="n">subdir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span>
-                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;bert-base-uncased-clf-demo&quot;</span><span class="p">])</span></div>
+                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;bert-base-cased-clf-demo&quot;</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="get_bert_lm_demo"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_bert_lm_demo">[docs]</a><span class="k">def</span> <span class="nf">get_bert_lm_demo</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Download the pretrained language model for demo dataset.</span>
+<div class="viewcode-block" id="get_bert_lm_demo"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_bert_lm_demo">[docs]</a><span class="k">def</span> <span class="nf">get_bert_lm_demo</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Download the pretrained language model for demo dataset.&quot;&quot;&quot;</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;bert_lm&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;demo&quot;</span><span class="p">)):</span>
+        <span class="n">download_file</span><span class="p">(</span><span class="n">subdir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span>
+                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;bert-base-cased-lm-demo&quot;</span><span class="p">])</span></div>
 
-<span class="sd">    Since this data is algorithm-specific, it is downloaded to ``path`` instead of</span>
-<span class="sd">    ``&lt;fibber_root_dir&gt;``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;lm_all&quot;</span><span class="p">)):</span>
-        <span class="n">download_file</span><span class="p">(</span><span class="n">abs_path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;bert-base-uncased-lm-demo&quot;</span><span class="p">])</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;wordpiece_emb-demo-0500.pt&quot;</span><span class="p">)):</span>
-        <span class="n">download_file</span><span class="p">(</span><span class="n">abs_path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-                      <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;wpe-demo&quot;</span><span class="p">])</span></div>
+<div class="viewcode-block" id="get_wordpiece_emb_demo"><a class="viewcode-back" href="../../../api/fibber.resources.resource_utils.html#fibber.resources.get_wordpiece_emb_demo">[docs]</a><span class="k">def</span> <span class="nf">get_wordpiece_emb_demo</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Download wordpiece embeddings for demo dataset.&quot;&quot;&quot;</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_root_dir</span><span class="p">()</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;wordpiece_emb_conterfited&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;wordpiece_emb-demo-0500.pt&quot;</span><span class="p">)):</span>
+        <span class="n">download_file</span><span class="p">(</span><span class="n">subdir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">downloadable_resource_urls</span><span class="p">[</span><span class="s2">&quot;wpe-demo&quot;</span><span class="p">])</span></div>
 </pre></div>
 
               </div>
               
               
-              <div class='prev-next-bottom'>
-                
-
-              </div>
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
               
           </main>
           
@@ -357,20 +376,19 @@
       </div>
     </div>
   
-  <script src="../../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
-
-  <footer class="footer mt-5 mt-md-0">
+  <script src="../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
       <p class="copyright">
-    &copy; Copyright 2020, MIT Data To AI Lab.<br/>
+    &copy; Copyright 2020, MIT Data To AI Lab.<br>
 </p>
     </div>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br>
 </p>
     </div>
     

@@ -1,0 +1,19 @@
+fibber.metrics.fluency package
+==============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   fibber.metrics.fluency.bert_perplexity_metric
+   fibber.metrics.fluency.gpt2_perplexity_metric
+
+Module contents
+---------------
+
+.. automodule:: fibber.metrics.fluency
+   :members:
+   :undoc-members:
+   :show-inheritance:

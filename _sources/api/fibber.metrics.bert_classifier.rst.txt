@@ -1,7 +1,0 @@
-fibber.metrics.bert\_classifier module
-======================================
-
-.. automodule:: fibber.metrics.bert_classifier
-   :members:
-   :undoc-members:
-   :show-inheritance:

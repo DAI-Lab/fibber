@@ -1,7 +1,0 @@
-fibber.paraphrase\_strategies.asrs\_utils\_lm module
-====================================================
-
-.. automodule:: fibber.paraphrase_strategies.asrs_utils_lm
-   :members:
-   :undoc-members:
-   :show-inheritance:
