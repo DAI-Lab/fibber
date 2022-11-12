@@ -1,10 +1,10 @@
 import numpy as np
 
+import fibber.paraphrase_strategies
 from fibber import log
 from fibber.datasets import builtin_datasets
 from fibber.datasets.dataset_utils import get_dataset, verify_dataset
 from fibber.metrics import MetricBundle
-from fibber.paraphrase_strategies import *
 
 logger = log.setup_custom_logger(__name__)
 
@@ -52,8 +52,8 @@ class Fibber(object):
             transformer_clf_steps=bert_clf_steps)
 
         strategy_gpu_id = arg_dict["strategy_gpu_id"]
-        strategy_class = globals()[strategy_name]
-        if issubclass(strategy_class, StrategyBase):
+        strategy_class = getattr(fibber.paraphrase_strategies, strategy_name)
+        if issubclass(strategy_class, fibber.paraphrase_strategies.StrategyBase):
             self._strategy = strategy_class(
                 arg_dict, dataset_name, strategy_gpu_id, output_dir,
                 self._metric_bundle, field=field)

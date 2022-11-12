@@ -10,15 +10,15 @@
 
 # Fibber
 
-Fibber is a library about text paraphrase methods. Text paraphrasing has sevaral applications such as adversarial attack and style transfer. 
+Fibber is a library about text paraphrase methods. Text paraphrasing has sevaral applications such as adversarial attack and style transfer.
 
 - Documentation: [https://DAI-Lab.github.io/fibber](https://DAI-Lab.github.io/fibber)
 - GitHub: [https://github.com/DAI-Lab/fibber](https://github.com/DAI-Lab/fibber)
 
 ## Highlights
 
-- **Adversarial Attack**: In Fibber, we provide built-in datasets, attack methods, defense method, evaluation metrics and a benchmark pipeline. 
-- **Text Style Transfer**: In Fibber, we provide built-in datasets, style transfer methods, evaluation metrics and a benchmark pipeline. 
+- **Adversarial Attack**: In Fibber, we provide built-in datasets, attack methods, defense method, evaluation metrics and a benchmark pipeline.
+- **Text Style Transfer**: In Fibber, we provide built-in datasets, style transfer methods, evaluation metrics and a benchmark pipeline.
 
 
 # Try it now!
@@ -146,15 +146,22 @@ arg_dict = {
     "use_gpu_id": 0,
     "gpt2_gpu_id": 0,
     "transformer_clf_gpu_id": 0,
-    "ce_gpu_id": 0,
     "strategy_gpu_id": 0,
-    "asrs_block_size": 3,
-    "asrs_wpe_weight": 10000,
-    "asrs_sim_weight": 500,
-    "asrs_sim_threshold": 0.95,
-    "asrs_ppl_weight": 5,
-    "asrs_clf_weight": 3
-    "asrs_sim_metric": "CESimilarityMetric"
+
+    "rr_enforcing_dist":  "wpe",
+    "rr_wpe_threshold":   1.0,
+    "rr_wpe_weight":      5,
+    "rr_sim_threshold":   0.95,
+    "rr_sim_weight":      20,
+    "rr_ppl_weight":      5,
+    "rr_sampling_steps":  200,
+    "rr_clf_weight":      3,
+    "rr_window_size":     3,
+    "rr_accept_criteria": "joint_weighted_criteria",
+    "rr_lm_option":       "finetune",
+    "rr_sim_metric":      "USESimilarityMetric",
+    "rr_early_stop":      "half",
+
 }
 
 # create a fibber object.
@@ -176,7 +183,7 @@ The following command can randomly paraphrase the sentence into 5 different ways
 fibber.paraphrase(
     {"text0": ("The Avengers is a good movie. Although it is 3 hours long, every scene has something to watch."),
      "label": 1},
-    field_name="text0",
+    field="text0",
     n=5)
 ```
 
@@ -242,8 +249,8 @@ In this version, we implement three strategies
 	- The random strategy outputs the random shuffle of words in the original text.
 - TextAttackStrategy:
 	- We create a wrapper around [TextAttack](https://github.com/QData/TextAttack). To use TextAttack, run `pip install textattack` first.
-- ASRSStrategy:
-	- The implementation for [ASRS](https://arxiv.org/abs/2104.08453)
+- RewriteRollbackStrategy:
+	- The implementation for [R&R](https://arxiv.org/abs/2104.08453)
 
 
 # Citing Fibber
