@@ -7,6 +7,7 @@
 [![PyPI Shield](https://img.shields.io/pypi/v/fibber.svg)](https://pypi.python.org/pypi/fibber)
 [![Downloads](https://pepy.tech/badge/fibber)](https://pepy.tech/project/fibber)
 ![build](https://github.com/DAI-Lab/fibber/workflows/build/badge.svg?branch=stable)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1zefsU19P3HdrBUqJy7HU9b9cSaB_nBMP#scrollTo=uNcmhgzHJ3VQ)
 
 # Fibber
 
@@ -31,7 +32,7 @@ downloaded, you can type in your own sentences, and use Fibber to rewrite it. Yo
 metric evaluation of rewritten sentence. You will see some rewritten sentences have the same meaning as your input but
 get misclassified by the classifier.
 
-**[Click here to Launch Colab!](https://colab.research.google.com/drive/1zefsU19P3HdrBUqJy7HU9b9cSaB_nBMP#scrollTo=uNcmhgzHJ3VQ)**
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1zefsU19P3HdrBUqJy7HU9b9cSaB_nBMP#scrollTo=uNcmhgzHJ3VQ)
 
 
 # Install
