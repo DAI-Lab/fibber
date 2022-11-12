@@ -10,14 +10,16 @@
 
 # Fibber
 
-Fibber is a library to evaluate different strategies to paraphrase natural language, especially how these strategies can break text classifiers without changing the meaning of a sentence.
+Fibber is a library about text paraphrase methods. Text paraphrasing has sevaral applications such as adversarial attack and style transfer. 
 
 - Documentation: [https://DAI-Lab.github.io/fibber](https://DAI-Lab.github.io/fibber)
 - GitHub: [https://github.com/DAI-Lab/fibber](https://github.com/DAI-Lab/fibber)
 
-# Overview
+## Highlights
 
-Fibber is a library to evaluate different strategies to paraphrase natural language. In this library, we have several built-in paraphrasing strategies. We also have a benchmark framework to evaluate the quality of paraphrase. In particular, we use the GPT2 language model to measure how meaningful is the paraphrased text. We use a universal sentence encoder to evaluate the semantic similarity between original and paraphrased text. We also train a BERT classifier on the original dataset, and check of paraphrased sentences can break the text classifier.
+- **Adversarial Attack**: In Fibber, we provide built-in datasets, attack methods, defense method, evaluation metrics and a benchmark pipeline. 
+- **Text Style Transfer**: In Fibber, we provide built-in datasets, style transfer methods, evaluation metrics and a benchmark pipeline. 
+
 
 # Try it now!
 
@@ -105,6 +107,11 @@ cd fibber
 git checkout stable
 make install
 ```
+
+
+# Overview
+
+Fibber is a library to evaluate different strategies to paraphrase natural language. In this library, we have several built-in paraphrasing strategies. We also have a benchmark framework to evaluate the quality of paraphrase. In particular, we use the BERT language model to measure how meaningful is the paraphrased text. We use a Universal Sentence Encoder to evaluate the semantic similarity between original and paraphrased text. We also train a BERT classifier on the original dataset, and check of paraphrased sentences can break the text classifier.
 
 
 # Quickstart

@@ -4,8 +4,7 @@ from fibber import log
 from fibber.datasets import builtin_datasets
 from fibber.datasets.dataset_utils import get_dataset, verify_dataset
 from fibber.metrics import MetricBundle
-from fibber.paraphrase_strategies import (
-    ASRSStrategy, IdentityStrategy, RandomStrategy, TextAttackStrategy)
+from fibber.paraphrase_strategies import *
 
 logger = log.setup_custom_logger(__name__)
 
@@ -53,25 +52,13 @@ class Fibber(object):
             transformer_clf_steps=bert_clf_steps)
 
         strategy_gpu_id = arg_dict["strategy_gpu_id"]
-        if strategy_name == "RandomStrategy":
-            self._strategy = RandomStrategy(
+        strategy_class = globals()[strategy_name]
+        if issubclass(strategy_class, StrategyBase):
+            self._strategy = strategy_class(
                 arg_dict, dataset_name, strategy_gpu_id, output_dir,
                 self._metric_bundle, field=field)
-        if strategy_name == "IdentityStrategy":
-            self._strategy = IdentityStrategy(
-                arg_dict, dataset_name, strategy_gpu_id, output_dir,
-                self._metric_bundle, field=field)
-        if strategy_name == "TextAttackStrategy":
-            self._strategy = TextAttackStrategy(
-                arg_dict, dataset_name, strategy_gpu_id, output_dir,
-                self._metric_bundle, field=field)
-        if strategy_name == "ASRSStrategy":
-            self._strategy = ASRSStrategy(
-                arg_dict, dataset_name, strategy_gpu_id, output_dir,
-                self._metric_bundle, field=field)
-        if self._strategy is None:
-            logger.error("unknown strategy name %s." % strategy_name)
-            raise RuntimeError
+        else:
+            raise RuntimeError("%s is not a paraphrase strategy.", strategy_name)
 
         self._strategy.fit(trainset)
 
