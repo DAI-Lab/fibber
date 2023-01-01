@@ -1,0 +1,30 @@
+name: Install Test
+on: [pull_request]
+jobs:
+  install:
+    name: ${{ matrix.os }} - ${{ matrix.python_version }} install
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python_version: ["3.8", "3.11"]
+    runs-on: ${{ matrix.os }}
+    if: github.event.pull_request.draft == false
+    steps:
+      - name: Set up python ${{ matrix.python_version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python_version }}
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Build package
+        run: make package
+      - name: Install package
+        run: |
+          python -m pip install "unpacked_sdist/."
+      - name: Test by importing packages
+        run: |
+          python -c "import fibber"
+      - name: Check package conflicts
+        run: |
+          python -m pip check

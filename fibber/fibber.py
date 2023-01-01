@@ -44,7 +44,6 @@ class Fibber(object):
             enable_bert_perplexity=True,
             enable_gpt2_perplexity=False,
             enable_glove_similarity=False,
-            bert_ppl_gpu_id=arg_dict["bert_ppl_gpu_id"],
             use_gpu_id=arg_dict["use_gpu_id"],
             transformer_gpu_id=arg_dict["transformer_clf_gpu_id"],
             dataset_name=dataset_name,
