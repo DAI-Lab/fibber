@@ -1,5 +1,6 @@
 
 import numpy as np
+import json
 
 from fibber.datasets import subsample_dataset
 from fibber.metrics.classifier.transformer_classifier import TransformerClassifier
@@ -20,12 +21,13 @@ class SapStrategy(StrategyBase):
 
     __abbr__ = "sap"
     __hyperparameters__ = [
-        ("euba_subsample_size", int, 1000, "the number of training examples to compute kappa.")
+        ("euba_subsample_size", int, 1000, "the number of training examples to compute kappa."),
+        ("load_word_kappa", str, None, "load word kappa from a json file.")
     ]
 
-    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle):
+    def __init__(self, arg_dict, dataset_name, strategy_gpu_id, output_dir, metric_bundle, field):
         super(SapStrategy, self).__init__(arg_dict, dataset_name, strategy_gpu_id,
-                                          output_dir, metric_bundle)
+                                          output_dir, metric_bundle, field)
         self._sim_metric = None
         self._clf_metric = None
         self._ppl_metric = None
@@ -35,6 +37,13 @@ class SapStrategy(StrategyBase):
         self._sim_metric = self._metric_bundle.get_metric("USESimilarityMetric")
         self._clf_metric = self._metric_bundle.get_target_classifier()
         self._ppl_metric = self._metric_bundle.get_metric("BertPerplexityMetric")
+
+        if self._strategy_config["load_word_kappa"] is not None:
+            with open(self._strategy_config["load_word_kappa"]) as f:
+                sac_result = json.load(f)["sac"]
+            sac_result = sorted(sac_result, key=lambda x: (-x[1], x[0]))
+            self._adversarial_word_candidates = sac_result[:50]
+            return
 
         if not isinstance(self._clf_metric, TransformerClassifier):
             raise RuntimeError("Sap attack only supports TransformerClassifier.")

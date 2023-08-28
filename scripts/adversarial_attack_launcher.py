@@ -194,6 +194,8 @@ def main():
     parser.add_argument("--exp_name", type=str, default=None)
     parser.add_argument("--classifier", type=str, default="bert-base-cased")
 
+    parser.add_argument("--sap_load_word_kappa", type=str, default=None)
+
     args = parser.parse_args()
 
     COMMON_CONFIG["--task"] = args.task
@@ -222,6 +224,9 @@ def main():
         command += to_command({"--defense_desc": args.defense_desc})
 
     command += to_command(STRATEGY_CONFIG[strategy])
+
+    if args.sap_load_word_kappa is not None and strategy == "sap":
+        command += ["--sap_load_word_kappa", args.sap_load_word_kappa]
 
     subprocess.call(command)
 
