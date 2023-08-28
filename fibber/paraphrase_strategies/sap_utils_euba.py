@@ -1,3 +1,5 @@
+import json
+
 import numpy as np
 import torch
 import tqdm
@@ -90,7 +92,7 @@ def estimate_weight(clf_model, embedding_layer, vocabulary, hook, example, token
 
 
 def solve_euba(clf_model, tokenizer, vocabulary, val_set,
-               use_mask, use_top1, early_stop, batch_size, device):
+               use_mask, use_top1, early_stop, batch_size, device, save_path):
     incorrect = np.zeros(len(vocabulary))
     detail_incorrect = np.zeros((len(vocabulary), len(val_set["label_mapping"])))
 
@@ -221,5 +223,11 @@ def solve_euba(clf_model, tokenizer, vocabulary, val_set,
             result = [(w[0], eps) for w, eps in zip(vocabulary, incorrect)]
             result = sorted(result, key=lambda x: -x[1])
             print(result[:10])
+
+    with open(save_path, "w") as f:
+        json.dump({
+            "sac": [(w[0], eps / len(val_set["data"])) for w, eps in zip(vocabulary, incorrect)],
+            "details": detail_incorrect.tolist(),
+        }, f, indent=2)
 
     return incorrect / len(val_set["data"]), detail_incorrect

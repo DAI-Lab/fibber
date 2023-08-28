@@ -1,3 +1,4 @@
+import os.path
 
 import numpy as np
 import json
@@ -67,7 +68,8 @@ class SapStrategy(StrategyBase):
             clf_model=model, tokenizer=tokenizer, vocabulary=vocabulary,
             val_set=subsample_dataset(trainset, self._strategy_config["euba_subsample_size"]),
             use_mask=True, use_top1=False, early_stop=512, batch_size=32,
-            device=self._clf_metric.get_device())
+            device=self._clf_metric.get_device(),
+            save_path=os.path.join(self._output_dir, f"{self._dataset_name}_kappa.json"))
 
         sac_result = [(w[0], float(eps))
                       for w, eps in zip(vocabulary, kappa)]
